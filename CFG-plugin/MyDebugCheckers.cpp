@@ -95,6 +95,40 @@ public:
           // ref: https://clang.llvm.org/doxygen/CFG_8h_source.html#l00056
           // ref for printing block:
           // https://clang.llvm.org/doxygen/CFG_8cpp_source.html#l05234
+
+          // Dump partial AST for each basic block
+          Optional<CFGStmt> CS = elem.getAs<CFGStmt>();
+          const Stmt *S = CS->getStmt();
+          // S->dump(); // Dumps partial AST
+
+          switch (S->getStmtClass()) {
+          case Stmt::DeclStmtClass:
+            llvm::errs() << "DeclStmt\n";
+            cast<DeclStmt>(S)->getSingleDecl();
+            break;
+          case Stmt::IfStmtClass: {
+            llvm::errs() << "IfStmt\n";
+            const VarDecl *var = cast<IfStmt>(S)->getConditionVariable();
+            break;
+          }
+          case Stmt::ForStmtClass: {
+            llvm::errs() << "ForStmt\n";
+            const VarDecl *var = cast<ForStmt>(S)->getConditionVariable();
+            break;
+          }
+          case Stmt::WhileStmtClass: {
+            llvm::errs() << "WhileStmt\n";
+            const VarDecl *var = cast<WhileStmt>(S)->getConditionVariable();
+            break;
+          }
+          case Stmt::SwitchStmtClass: {
+            llvm::errs() << "SwitchStmt\n";
+            const VarDecl *var = cast<SwitchStmt>(S)->getConditionVariable();
+            break;
+          }
+          default:
+            break;
+          }
         }
       }
     }
