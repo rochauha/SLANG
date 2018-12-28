@@ -16,6 +16,7 @@
 
 #include "ClangSACheckers.h"
 #include "clang/AST/Decl.h" //AD
+#include "clang/AST/Expr.h" //AD
 #include "clang/Analysis/Analyses/Dominators.h"
 #include "clang/Analysis/Analyses/LiveVariables.h"
 #include "clang/Analysis/CallGraph.h"
@@ -101,39 +102,26 @@ public:
           const Stmt *S = CS->getStmt();
           // S->dump(); // Dumps partial AST
 
-          switch (S->getStmtClass()) {
-          case Stmt::DeclStmtClass:
-            llvm::errs() << "DeclStmt\n";
-            cast<DeclStmt>(S)->getSingleDecl();
-            break;
-          case Stmt::IfStmtClass: {
-            llvm::errs() << "IfStmt\n";
-            const VarDecl *var = cast<IfStmt>(S)->getConditionVariable();
-            break;
+          std::string stmt_class = S->getStmtClassName();
+
+          if (stmt_class == "DeclStmt") {
+            // VarDecl *ident = cast<VarDecl>(S);
+            llvm::errs() << "Variable declaration for \n";
           }
-          case Stmt::ForStmtClass: {
-            llvm::errs() << "ForStmt\n";
-            const VarDecl *var = cast<ForStmt>(S)->getConditionVariable();
-            break;
+
+          else if (stmt_class == "DeclRefExpr") {
+            const ValueDecl *ident = cast<DeclRefExpr>(S)->getDecl();
+            llvm::errs() << "DeclRefExpr using " << ident->getName() << "\n";
           }
-          case Stmt::WhileStmtClass: {
-            llvm::errs() << "WhileStmt\n";
-            const VarDecl *var = cast<WhileStmt>(S)->getConditionVariable();
-            break;
-          }
-          case Stmt::SwitchStmtClass: {
-            llvm::errs() << "SwitchStmt\n";
-            const VarDecl *var = cast<SwitchStmt>(S)->getConditionVariable();
-            break;
-          }
-          default:
-            break;
+
+          else {
+            llvm::errs() << "found " << stmt_class << "\n";
           }
         }
       }
     }
   }
-};
+}; // namespace
 } // anonymous namespace
 
 void ento::registerMyCFGDumper(CheckerManager &mgr) {
