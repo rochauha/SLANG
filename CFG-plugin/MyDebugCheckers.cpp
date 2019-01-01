@@ -45,6 +45,8 @@ public:
   void checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
                         BugReporter &BR) const;
 
+  // TODO: make use of the visited set to refer to previously computed
+  // binary operators
   void handleBinaryOperator(const Expr *ES,
                             std::unordered_set<Stmt *> visited) const;
 
@@ -160,8 +162,22 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
         }
 
         if (stmt_class == "DeclStmt") {
-          // VarDecl *ident = catsgith<VarDecl>(S);
-          llvm::errs() << "Variable declaration for \n";
+          const DeclStmt *DS = cast<DeclStmt>(S);
+          const DeclGroupRef DG = DS->getDeclGroup();
+
+          for (auto decl : DG) { // DG contains all Decls
+            auto named_decl = cast<NamedDecl>(decl);
+            llvm::errs() << "Variable : " << named_decl->getNameAsString()
+                         << "\n";
+          }
+
+          // Now evaluate expressions for the variables
+          for (auto decl : DG) { // DG contains all VarDecls
+            const VarDecl *var_decl = cast<VarDecl>(decl);
+            const Expr *value = var_decl->getInit();
+            if (value)
+              handleBinaryOperator(value, visited_nodes);
+          }
         }
 
         if (stmt_class == "BinaryOperator") { // this is an Expr, so cast again
@@ -172,7 +188,7 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
         }
 
         else {
-          //llvm::errs() << "found " << stmt_class << "\n";
+          // llvm::errs() << "found " << stmt_class << "\n";
         }
         // llvm::errs() << "Partial AST info \n";
         // S->dump(); // Dumps partial AST
