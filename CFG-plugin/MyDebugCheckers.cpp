@@ -88,6 +88,11 @@ void MyCFGDumper::handleBinaryOperator(
     const IntegerLiteral *int_literal = cast<IntegerLiteral>(ES);
     handleIntegerLiteral(int_literal);
   }
+
+  else if (isa<ImplicitCastExpr>(ES)) {
+    auto ES2 = ES->IgnoreParenImpCasts();
+    handleBinaryOperator(ES2, visited);
+  }
 }
 
 void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
@@ -159,7 +164,6 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
           // llvm::errs() << "Ignoring implicit casts in AST...\n";
           ES = const_cast<Expr *>(
               cast<Expr>(S)); // const pointer to normal pointer
-          ES = ES->IgnoreImplicit();
         }
 
         if (stmt_class == "DeclStmt") {
