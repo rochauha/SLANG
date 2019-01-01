@@ -15,8 +15,9 @@
 //===----------------------------------------------------------------------===//
 
 #include "ClangSACheckers.h"
-#include "clang/AST/Decl.h" //AD
-#include "clang/AST/Expr.h" //AD
+#include "clang/AST/Decl.h"      //AD
+#include "clang/AST/Expr.h"      //AD
+#include "clang/AST/ParentMap.h" //AD
 #include "clang/Analysis/Analyses/Dominators.h"
 #include "clang/Analysis/Analyses/LiveVariables.h"
 #include "clang/Analysis/CallGraph.h"
@@ -29,6 +30,7 @@
 #include "llvm/Support/Process.h"
 #include "llvm/Support/raw_ostream.h" //AD
 #include <string>                     //AD
+#include <unordered_set>              //AD
 
 using namespace clang;
 using namespace ento;
@@ -42,7 +44,48 @@ class MyCFGDumper : public Checker<check::ASTCodeBody> {
 public:
   void checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
                         BugReporter &BR) const;
+
+  void handleBinaryOperator(const Expr *ES,
+                            std::unordered_set<Stmt *> visited) const;
+
 }; // namespace
+
+void MyCFGDumper::handleBinaryOperator(
+    const Expr *ES, std::unordered_set<Stmt *> visited) const {
+  if (isa<BinaryOperator>(ES)) {
+    BinaryOperator *bin_op =
+        const_cast<BinaryOperator *>(cast<BinaryOperator>(ES));
+    visited.insert(bin_op);
+    Expr *LHS = bin_op->getLHS();
+    if (isa<BinaryOperator>(LHS)) {
+      handleBinaryOperator(LHS, visited);
+
+    } else {
+      handleBinaryOperator(LHS, visited);
+    }
+
+    llvm::errs() << bin_op->getOpcodeStr() << " ";
+
+    Expr *RHS = bin_op->getRHS();
+    if (isa<BinaryOperator>(RHS)) {
+      handleBinaryOperator(RHS, visited);
+    } else {
+      handleBinaryOperator(RHS, visited);
+    }
+    llvm::errs() << "\n";
+  }
+
+  else if (isa<DeclRefExpr>(ES)) {
+    const ValueDecl *ident = cast<DeclRefExpr>(ES)->getDecl();
+    llvm::errs() << ident->getName() << " ";
+  }
+
+  else if (isa<IntegerLiteral>(ES)) {
+    const IntegerLiteral *int_literal = cast<IntegerLiteral>(ES);
+    bool is_signed = int_literal->getType()->isSignedIntegerType();
+    llvm::errs() << int_literal->getValue().toString(10, is_signed) << " ";
+  }
+}
 
 void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
                                    BugReporter &BR) const {
@@ -93,6 +136,9 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
   // STEP 2: Print the CFG.
   if (CFG *cfg = mgr.getCFG(D)) {
     for (auto bb : *cfg) {
+
+      std::unordered_set<Stmt *> visited_nodes;
+
       unsigned bb_id = bb->getBlockID();
       llvm::errs() << "BB" << bb_id << ":\n";
       for (auto elem : *bb) {
@@ -103,23 +149,34 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
         // Dump partial AST for each basic block
         Optional<CFGStmt> CS = elem.getAs<CFGStmt>();
         const Stmt *S = CS->getStmt();
-        // S->dump(); // Dumps partial AST
-
         std::string stmt_class = S->getStmtClassName();
+        Expr *ES = nullptr;
+
+        if (isa<Expr>(S)) {
+          // llvm::errs() << "Ignoring implicit casts in AST...\n";
+          ES = const_cast<Expr *>(
+              cast<Expr>(S)); // const pointer to normal pointer
+          ES = ES->IgnoreImplicit();
+        }
 
         if (stmt_class == "DeclStmt") {
-          // VarDecl *ident = cast<VarDecl>(S);
+          // VarDecl *ident = catsgith<VarDecl>(S);
           llvm::errs() << "Variable declaration for \n";
         }
 
-        else if (stmt_class == "DeclRefExpr") {
-          const ValueDecl *ident = cast<DeclRefExpr>(S)->getDecl();
-          llvm::errs() << "DeclRefExpr using " << ident->getName() << "\n";
+        if (stmt_class == "BinaryOperator") { // this is an Expr, so cast again
+
+          if (visited_nodes.find(ES) == visited_nodes.end()) {
+            handleBinaryOperator(ES, visited_nodes);
+          }
         }
 
         else {
-          llvm::errs() << "found " << stmt_class << "\n";
+          //llvm::errs() << "found " << stmt_class << "\n";
         }
+        // llvm::errs() << "Partial AST info \n";
+        // S->dump(); // Dumps partial AST
+        llvm::errs() << "\n";
       }
     }
   }
