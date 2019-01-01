@@ -45,47 +45,48 @@ public:
   void checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
                         BugReporter &BR) const;
 
+  void handleIntegerLiteral(const IntegerLiteral *IL) const;
+  void handleDeclRefExpr(const DeclRefExpr *DRE) const;
+
   // TODO: make use of the visited set to refer to previously computed
   // binary operators
   void handleBinaryOperator(const Expr *ES,
-                            std::unordered_set<Stmt *> visited) const;
+                            std::unordered_set<Expr *> visited) const;
 
 }; // namespace
 
-void MyCFGDumper::handleBinaryOperator(
-    const Expr *ES, std::unordered_set<Stmt *> visited) const {
-  if (isa<BinaryOperator>(ES)) {
-    BinaryOperator *bin_op =
-        const_cast<BinaryOperator *>(cast<BinaryOperator>(ES));
-    visited.insert(bin_op);
-    Expr *LHS = bin_op->getLHS();
-    if (isa<BinaryOperator>(LHS)) {
-      handleBinaryOperator(LHS, visited);
+void MyCFGDumper::handleIntegerLiteral(const IntegerLiteral *IL) const {
+  bool is_signed = IL->getType()->isSignedIntegerType();
+  llvm::errs() << IL->getValue().toString(10, is_signed) << " ";
+}
 
-    } else {
-      handleBinaryOperator(LHS, visited);
-    }
+void MyCFGDumper::handleDeclRefExpr(const DeclRefExpr *DRE) const {
+  const ValueDecl *ident = DRE->getDecl();
+  llvm::errs() << ident->getName() << " ";
+}
+
+void MyCFGDumper::handleBinaryOperator(
+    const Expr *ES, std::unordered_set<Expr *> visited) const {
+  if (isa<BinaryOperator>(ES)) {
+    const BinaryOperator *bin_op = cast<BinaryOperator>(ES);
+
+    Expr *LHS = bin_op->getLHS();
+    handleBinaryOperator(LHS, visited);
 
     llvm::errs() << bin_op->getOpcodeStr() << " ";
 
     Expr *RHS = bin_op->getRHS();
-    if (isa<BinaryOperator>(RHS)) {
-      handleBinaryOperator(RHS, visited);
-    } else {
-      handleBinaryOperator(RHS, visited);
-    }
-    llvm::errs() << "\n";
+    handleBinaryOperator(RHS, visited);
   }
 
   else if (isa<DeclRefExpr>(ES)) {
-    const ValueDecl *ident = cast<DeclRefExpr>(ES)->getDecl();
-    llvm::errs() << ident->getName() << " ";
+    const DeclRefExpr *decl_ref_expr = cast<DeclRefExpr>(ES);
+    handleDeclRefExpr(decl_ref_expr);
   }
 
   else if (isa<IntegerLiteral>(ES)) {
     const IntegerLiteral *int_literal = cast<IntegerLiteral>(ES);
-    bool is_signed = int_literal->getType()->isSignedIntegerType();
-    llvm::errs() << int_literal->getValue().toString(10, is_signed) << " ";
+    handleIntegerLiteral(int_literal);
   }
 }
 
@@ -139,7 +140,7 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
   if (CFG *cfg = mgr.getCFG(D)) {
     for (auto bb : *cfg) {
 
-      std::unordered_set<Stmt *> visited_nodes;
+      std::unordered_set<Expr *> visited_nodes;
 
       unsigned bb_id = bb->getBlockID();
       llvm::errs() << "BB" << bb_id << ":\n";
@@ -175,13 +176,16 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
           for (auto decl : DG) { // DG contains all VarDecls
             const VarDecl *var_decl = cast<VarDecl>(decl);
             const Expr *value = var_decl->getInit();
-            if (value)
-              handleBinaryOperator(value, visited_nodes);
+            if (value) {
+              if (isa<IntegerLiteral>(value))
+                handleIntegerLiteral(cast<IntegerLiteral>(value));
+              else
+                handleBinaryOperator(value, visited_nodes);
+            }
           }
         }
 
         if (stmt_class == "BinaryOperator") { // this is an Expr, so cast again
-
           if (visited_nodes.find(ES) == visited_nodes.end()) {
             handleBinaryOperator(ES, visited_nodes);
           }
