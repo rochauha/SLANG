@@ -178,8 +178,9 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
 
           for (auto decl : DG) { // DG contains all Decls
             auto named_decl = cast<NamedDecl>(decl);
-            llvm::errs() << "Variable : " << named_decl->getNameAsString()
-                         << "\n";
+            QualType T = (cast<ValueDecl>(decl))->getType();
+            llvm::errs() << T.getAsString() << " "
+                         << named_decl->getNameAsString() << "\n";
           }
 
           // Now evaluate expressions for the variables
