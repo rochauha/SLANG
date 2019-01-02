@@ -3,7 +3,7 @@ int main() {
 	int j = 1004;
 
 	if (x > j) {
-		x = 305;
+		x = 305 * 434 * 50 + j;
 	}
 	else x = 300;
 }
