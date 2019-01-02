@@ -157,7 +157,60 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
       std::unordered_set<Expr *> visited_nodes;
 
       unsigned bb_id = bb->getBlockID();
-      llvm::errs() << "BB" << bb_id << ":\n";
+      llvm::errs() << "BB" << bb_id << " ";
+      if (bb == &cfg->getEntry())
+        llvm::errs() << "[ ENTRY BLOCK ]\n";
+      else if (bb == &cfg->getExit())
+        llvm::errs() << "[ EXIT BLOCK ]\n";
+      else
+        llvm::errs() << "\n";
+
+      // details for predecessor blocks
+      llvm::errs() << "Predecessors : ";
+      if (!bb->pred_empty()) {
+        llvm::errs() << bb->pred_size() << "\n              ";
+
+        for (CFGBlock::const_pred_iterator I = bb->pred_begin();
+             I != bb->pred_end(); ++I) {
+          CFGBlock *B = *I;
+          bool Reachable = true;
+          if (!B) {
+            Reachable = false;
+            B = I->getPossiblyUnreachableBlock();
+          }
+
+          llvm::errs() << " B" << B->getBlockID();
+          if (!Reachable)
+            llvm::errs() << "(Unreachable)";
+        }
+        llvm::errs() << "\n";
+      } else {
+        llvm::errs() << "None\n";
+      }
+
+      // details for successor blocks
+      llvm::errs() << "Successors : ";
+      if (!bb->succ_empty()) {
+        llvm::errs() << bb->succ_size() << "\n            ";
+
+        for (CFGBlock::const_pred_iterator I = bb->succ_begin();
+             I != bb->succ_end(); ++I) {
+          CFGBlock *B = *I;
+          bool Reachable = true;
+          if (!B) {
+            Reachable = false;
+            B = I->getPossiblyUnreachableBlock();
+          }
+
+          llvm::errs() << " B" << B->getBlockID();
+          if (!Reachable)
+            llvm::errs() << "(Unreachable)";
+        }
+        llvm::errs() << "\n";
+      } else {
+        llvm::errs() << "None\n";
+      }
+
       for (auto elem : *bb) {
         // ref: https://clang.llvm.org/doxygen/CFG_8h_source.html#l00056
         // ref for printing block:
