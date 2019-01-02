@@ -13,11 +13,20 @@
 // AD ../../../include/clang/StaticAnalyzer/Checkers/Checkers.td
 //
 //===----------------------------------------------------------------------===//
+//
+
+// TODO :
+// Identify start and end BBs (RNC)
+// Successor and Predecessors of BBs (RNC)
+// Temporary variables for BinaryOperator (RNC) -> use unordered_map or
+// StmtPrinterHelper
+
+// Refer this for StmtPrinterHelper :
+// http://clang.llvm.org/doxygen/CFG_8cpp_source.html - maybe it can be reused
 
 #include "ClangSACheckers.h"
-#include "clang/AST/Decl.h"      //AD
-#include "clang/AST/Expr.h"      //AD
-#include "clang/AST/ParentMap.h" //AD
+#include "clang/AST/Decl.h" //AD
+#include "clang/AST/Expr.h" //AD
 #include "clang/Analysis/Analyses/Dominators.h"
 #include "clang/Analysis/Analyses/LiveVariables.h"
 #include "clang/Analysis/CallGraph.h"
@@ -154,16 +163,13 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
         // ref for printing block:
         // https://clang.llvm.org/doxygen/CFG_8cpp_source.html#l05234
 
-        // Dump partial AST for each basic block
         Optional<CFGStmt> CS = elem.getAs<CFGStmt>();
         const Stmt *S = CS->getStmt();
         std::string stmt_class = S->getStmtClassName();
         Expr *ES = nullptr;
 
         if (isa<Expr>(S)) {
-          // llvm::errs() << "Ignoring implicit casts in AST...\n";
-          ES = const_cast<Expr *>(
-              cast<Expr>(S)); // const pointer to normal pointer
+          ES = const_cast<Expr *>(cast<Expr>(S));
         }
 
         if (stmt_class == "DeclStmt") {
@@ -177,19 +183,17 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
           }
 
           // Now evaluate expressions for the variables
-          for (auto decl : DG) { // DG contains all VarDecls
+          for (auto decl : DG) {
             const VarDecl *var_decl = cast<VarDecl>(decl);
             const Expr *value = var_decl->getInit();
             if (value) {
-              if (isa<IntegerLiteral>(value))
-                handleIntegerLiteral(cast<IntegerLiteral>(value));
-              else
-                handleBinaryOperator(value, visited_nodes);
+              handleBinaryOperator(value, visited_nodes);
             }
           }
         }
 
         if (stmt_class == "BinaryOperator") { // this is an Expr, so cast again
+          // visited_nodes is not being used for anything as of now
           if (visited_nodes.find(ES) == visited_nodes.end()) {
             handleBinaryOperator(ES, visited_nodes);
           }
