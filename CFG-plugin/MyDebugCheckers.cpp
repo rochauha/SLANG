@@ -15,15 +15,6 @@
 //===----------------------------------------------------------------------===//
 //
 
-// TODO :
-// Identify start and end BBs (RNC)
-// Successor and Predecessors of BBs (RNC)
-// Temporary variables for BinaryOperator (RNC) -> use unordered_map or
-// StmtPrinterHelper
-
-// Refer this for StmtPrinterHelper :
-// http://clang.llvm.org/doxygen/CFG_8cpp_source.html - maybe it can be reused
-
 #include "ClangSACheckers.h"
 #include "clang/AST/Decl.h" //AD
 #include "clang/AST/Expr.h" //AD
@@ -38,11 +29,17 @@
 #include "clang/StaticAnalyzer/Core/PathSensitive/ExprEngine.h"
 #include "llvm/Support/Process.h"
 #include "llvm/Support/raw_ostream.h" //AD
+#include <cassert>                    //AD
 #include <string>                     //AD
-#include <unordered_set>              //AD
+#include <unordered_map>              //AD
 
 using namespace clang;
 using namespace ento;
+
+// TODO:
+// Each basic block should have fresh numbering for temporary variables (RNC)
+// Go through variable initialization properly, with assignment operator (RNC)
+// Get terminator for each basic block (RNC)
 
 //===----------------------------------------------------------------------===//
 // MyCFGDumper
@@ -60,7 +57,8 @@ public:
   // TODO: make use of the visited set to refer to previously computed
   // binary operators
   void handleBinaryOperator(const Expr *ES,
-                            std::unordered_set<Expr *> visited) const;
+                            std::unordered_map<const Expr *, int> &visited,
+                            unsigned int block_id) const;
 
 }; // namespace
 
@@ -74,18 +72,42 @@ void MyCFGDumper::handleDeclRefExpr(const DeclRefExpr *DRE) const {
   llvm::errs() << ident->getName() << " ";
 }
 
+// Before accessing an expression, the CFG accesses its sub expressions in a
+// bottom-up fashion. This can be seen when we dump the CFG using clang. To have
+// similar access manually, we keep track of already traversed sub-expressions
+// in the 'visited' hash table.
 void MyCFGDumper::handleBinaryOperator(
-    const Expr *ES, std::unordered_set<Expr *> visited) const {
+    const Expr *ES, std::unordered_map<const Expr *, int> &visited,
+    unsigned int block_id) const {
+
+  static int count = -1;
+
   if (isa<BinaryOperator>(ES)) {
     const BinaryOperator *bin_op = cast<BinaryOperator>(ES);
 
+    // Don't assign temporaries to assignments or comparison operators
+    if (!bin_op->isAssignmentOp()) {
+      // If the node visited, use it's temporary and return, otherwise store new
+      // temporary and continue evaluating.
+      if (visited.find(ES) != visited.end()) {
+        llvm::errs() << "B" << block_id << "." << visited[ES] << " ";
+        return;
+      }
+
+      else {
+        visited[ES] = -count;
+        llvm::errs() << "B" << block_id << "." << visited[ES] << " = ";
+        count--;
+      }
+    }
+
     Expr *LHS = bin_op->getLHS();
-    handleBinaryOperator(LHS, visited);
+    handleBinaryOperator(LHS, visited, block_id);
 
     llvm::errs() << bin_op->getOpcodeStr() << " ";
 
     Expr *RHS = bin_op->getRHS();
-    handleBinaryOperator(RHS, visited);
+    handleBinaryOperator(RHS, visited, block_id);
   }
 
   else if (isa<DeclRefExpr>(ES)) {
@@ -100,7 +122,7 @@ void MyCFGDumper::handleBinaryOperator(
 
   else if (isa<ImplicitCastExpr>(ES)) {
     auto ES2 = ES->IgnoreParenImpCasts();
-    handleBinaryOperator(ES2, visited);
+    handleBinaryOperator(ES2, visited, block_id);
   }
 }
 
@@ -154,7 +176,7 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
   if (CFG *cfg = mgr.getCFG(D)) {
     for (auto bb : *cfg) {
 
-      std::unordered_set<Expr *> visited_nodes;
+      std::unordered_map<const Expr *, int> visited_nodes;
 
       unsigned bb_id = bb->getBlockID();
       llvm::errs() << "BB" << bb_id << " ";
@@ -178,10 +200,9 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
             Reachable = false;
             B = I->getPossiblyUnreachableBlock();
           }
-
           llvm::errs() << " B" << B->getBlockID();
           if (!Reachable)
-            llvm::errs() << "(Unreachable)";
+            llvm::errs() << " (Unreachable)";
         }
         llvm::errs() << "\n";
       } else {
@@ -241,16 +262,14 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
             const VarDecl *var_decl = cast<VarDecl>(decl);
             const Expr *value = var_decl->getInit();
             if (value) {
-              handleBinaryOperator(value, visited_nodes);
+              handleBinaryOperator(value, visited_nodes, bb_id);
             }
           }
         }
 
-        if (stmt_class == "BinaryOperator") { // this is an Expr, so cast again
-          // visited_nodes is not being used for anything as of now
-          if (visited_nodes.find(ES) == visited_nodes.end()) {
-            handleBinaryOperator(ES, visited_nodes);
-          }
+        if (stmt_class == "BinaryOperator") {
+          handleBinaryOperator(ES, visited_nodes, bb_id);
+          llvm::errs() << "\n";
         }
 
         else {
@@ -258,7 +277,7 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
         }
         // llvm::errs() << "Partial AST info \n";
         // S->dump(); // Dumps partial AST
-        llvm::errs() << "\n";
+        // llvm::errs() << "\n";
       }
     }
   }
