@@ -11,11 +11,14 @@ The SLANG project interfaces SPAN (Synergistic Program Analyzer) with Clang. Spe
 1. Converts Clang's AST to CFG based SPAN IR.
 2. Processes SPAN resuts to generate Clang checkers reports.
 
-###What is the supported Clang version?
+FAQ's
+----------
+
+### What is the supported Clang version?
 
 Currently the system is tested to work on Clang 6.0.1 only. We have plans to shift to Clang 7.0.1 in the near future.
 
-###How to use?
+### How to use?
 
 We require that clang/llvm has been built from source and `MY_LLVM_DIR` points to the directory housing the `build` as well as the `llvm` source directory.
 
