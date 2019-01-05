@@ -29,17 +29,11 @@
 #include "clang/StaticAnalyzer/Core/PathSensitive/ExprEngine.h"
 #include "llvm/Support/Process.h"
 #include "llvm/Support/raw_ostream.h" //AD
-#include <cassert>                    //AD
 #include <string>                     //AD
 #include <unordered_map>              //AD
 
 using namespace clang;
 using namespace ento;
-
-// TODO:
-// Each basic block should have fresh numbering for temporary variables (RNC)
-// Go through variable initialization properly, with assignment operator (RNC)
-// Get terminator for each basic block (RNC)
 
 //===----------------------------------------------------------------------===//
 // MyCFGDumper
@@ -53,13 +47,9 @@ public:
 
   void handleIntegerLiteral(const IntegerLiteral *IL) const;
   void handleDeclRefExpr(const DeclRefExpr *DRE) const;
-
-  // TODO: make use of the visited set to refer to previously computed
-  // binary operators
   void handleBinaryOperator(const Expr *ES,
                             std::unordered_map<const Expr *, int> &visited,
                             unsigned int block_id) const;
-
 }; // namespace
 
 void MyCFGDumper::handleIntegerLiteral(const IntegerLiteral *IL) const {
@@ -80,12 +70,16 @@ void MyCFGDumper::handleBinaryOperator(
     const Expr *ES, std::unordered_map<const Expr *, int> &visited,
     unsigned int block_id) const {
 
-  static int count = -1;
+  static int count = 1;
+
+  if (visited.empty()) {
+    count = 1;
+  }
 
   if (isa<BinaryOperator>(ES)) {
     const BinaryOperator *bin_op = cast<BinaryOperator>(ES);
 
-    // Don't assign temporaries to assignments or comparison operators
+    // Don't assign temporaries to assignments
     if (!bin_op->isAssignmentOp()) {
       // If the node visited, use it's temporary and return, otherwise store new
       // temporary and continue evaluating.
@@ -95,9 +89,9 @@ void MyCFGDumper::handleBinaryOperator(
       }
 
       else {
-        visited[ES] = -count;
+        visited[ES] = count;
         llvm::errs() << "B" << block_id << "." << visited[ES] << " = ";
-        count--;
+        count++;
       }
     }
 
@@ -251,7 +245,7 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
           const DeclGroupRef DG = DS->getDeclGroup();
 
           for (auto decl : DG) { // DG contains all Decls
-            auto named_decl = cast<NamedDecl>(decl);
+            const NamedDecl *named_decl = cast<NamedDecl>(decl);
             QualType T = (cast<ValueDecl>(decl))->getType();
             llvm::errs() << T.getAsString() << " "
                          << named_decl->getNameAsString() << "\n";
@@ -260,9 +254,13 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
           // Now evaluate expressions for the variables
           for (auto decl : DG) {
             const VarDecl *var_decl = cast<VarDecl>(decl);
+            const NamedDecl *named_decl = cast<NamedDecl>(decl);
             const Expr *value = var_decl->getInit();
+
             if (value) {
+              llvm::errs() << named_decl->getNameAsString() << " = ";
               handleBinaryOperator(value, visited_nodes, bb_id);
+              llvm::errs() << "\n";
             }
           }
         }
@@ -279,6 +277,17 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
         // S->dump(); // Dumps partial AST
         // llvm::errs() << "\n";
       }
+
+      // get terminator
+      const Stmt *terminator = (bb->getTerminator()).getStmt();
+      if (terminator && isa<IfStmt>(terminator)) {
+        const Expr *condition = (cast<IfStmt>(terminator))->getCond();
+        llvm::errs() << "if ";
+        handleBinaryOperator(condition, visited_nodes, bb_id);
+        llvm::errs() << "\n";
+      }
+
+      llvm::errs() << "\n\n";
     }
   }
 }
