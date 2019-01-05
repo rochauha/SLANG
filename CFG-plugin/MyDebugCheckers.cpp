@@ -6,6 +6,8 @@
 // License. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//  Author: _________________ (____________________)
+//  Author: Anshuman Dhuliya (dhuliya@cse.iitb.ac.in)
 //
 //  This file defines checkers that display debugging information.
 // AD Modified to do custom things.
