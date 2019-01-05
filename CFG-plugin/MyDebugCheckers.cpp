@@ -1,4 +1,4 @@
-//==- DebugCheckers.cpp - Debugging Checkers ---------------------*- C++ -*-==//
+//==- MyDebugCheckers.cpp ------------------------------------------*- C99 -*-==//
 //
 //                     The LLVM Compiler Infrastructure
 //
@@ -6,13 +6,11 @@
 // License. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
-//  Author: _________________ (____________________)
-//  Author: Anshuman Dhuliya (dhuliya@cse.iitb.ac.in)
+//  Author: _________________  [__] (____________________)
+//  Author: Anshuman Dhuliya [AD] (dhuliya@cse.iitb.ac.in)
 //
-//  This file defines checkers that display debugging information.
-// AD Modified to do custom things.
-// AD If class name added or changed also edit,
-// AD ../../../include/clang/StaticAnalyzer/Checkers/Checkers.td
+//AD If MyCFGDumper class name is added or changed, then also edit,
+//AD ../../../include/clang/StaticAnalyzer/Checkers/Checkers.td
 //
 //===----------------------------------------------------------------------===//
 //
