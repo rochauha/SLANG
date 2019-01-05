@@ -208,7 +208,7 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
       if (!bb->succ_empty()) {
         llvm::errs() << bb->succ_size() << "\n            ";
 
-        for (CFGBlock::const_pred_iterator I = bb->succ_begin();
+        for (CFGBlock::const_succ_iterator I = bb->succ_begin();
              I != bb->succ_end(); ++I) {
           CFGBlock *B = *I;
           bool Reachable = true;
