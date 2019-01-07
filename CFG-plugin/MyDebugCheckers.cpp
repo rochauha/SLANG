@@ -6,8 +6,8 @@
 //  Ronak Chauhan (r.chauhan@somaiya.edu)
 //  Anshuman Dhuliya (dhuliya@cse.iitb.ac.in)
 //
-//AD If MyCFGDumper class name is added or changed, then also edit,
-//AD ../../../include/clang/StaticAnalyzer/Checkers/Checkers.td
+// AD If MyCFGDumper class name is added or changed, then also edit,
+// AD ../../../include/clang/StaticAnalyzer/Checkers/Checkers.td
 //
 //===----------------------------------------------------------------------===//
 //
@@ -43,10 +43,17 @@ public:
                         BugReporter &BR) const;
 
   void handleIntegerLiteral(const IntegerLiteral *IL) const;
+
   void handleDeclRefExpr(const DeclRefExpr *DRE) const;
+
   void handleBinaryOperator(const Expr *ES,
                             std::unordered_map<const Expr *, int> &visited,
                             unsigned int block_id) const;
+
+  void handleTerminator(const Stmt *terminator,
+                        std::unordered_map<const Expr *, int> &visited,
+                        unsigned int block_id) const;
+
 }; // namespace
 
 void MyCFGDumper::handleIntegerLiteral(const IntegerLiteral *IL) const {
@@ -114,6 +121,18 @@ void MyCFGDumper::handleBinaryOperator(
   else if (isa<ImplicitCastExpr>(ES)) {
     auto ES2 = ES->IgnoreParenImpCasts();
     handleBinaryOperator(ES2, visited, block_id);
+  }
+}
+
+void MyCFGDumper::handleTerminator(
+    const Stmt *terminator, std::unordered_map<const Expr *, int> &visited,
+    unsigned int block_id) const {
+
+  if (terminator && isa<IfStmt>(terminator)) {
+    const Expr *condition = (cast<IfStmt>(terminator))->getCond();
+    llvm::errs() << "if ";
+    handleBinaryOperator(condition, visited, block_id);
+    llvm::errs() << "\n";
   }
 }
 
@@ -277,12 +296,7 @@ void MyCFGDumper::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
 
       // get terminator
       const Stmt *terminator = (bb->getTerminator()).getStmt();
-      if (terminator && isa<IfStmt>(terminator)) {
-        const Expr *condition = (cast<IfStmt>(terminator))->getCond();
-        llvm::errs() << "if ";
-        handleBinaryOperator(condition, visited_nodes, bb_id);
-        llvm::errs() << "\n";
-      }
+      handleTerminator(terminator, visited_nodes, bb_id);
 
       llvm::errs() << "\n\n";
     }
