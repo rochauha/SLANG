@@ -1,13 +1,10 @@
-//==- MyDebugCheckers.cpp ------------------------------------------*- C99 -*-==//
 //
-//                     The LLVM Compiler Infrastructure
+//  MIT License.
+//  Copyright (c) 2019 The SLANG Authors.
 //
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
-//
-//===----------------------------------------------------------------------===//
-//  Author: _________________  [__] (____________________)
-//  Author: Anshuman Dhuliya [AD] (dhuliya@cse.iitb.ac.in)
+//  Authors:
+//  Ronak Chauhan (r.chauhan@somaiya.edu)
+//  Anshuman Dhuliya (dhuliya@cse.iitb.ac.in)
 //
 //AD If MyCFGDumper class name is added or changed, then also edit,
 //AD ../../../include/clang/StaticAnalyzer/Checkers/Checkers.td

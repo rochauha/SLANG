@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-# MIT License
-# Copyright (c) 2018 Anshuman Dhuliya
+# MIT License.
+# Copyright (c) 2019 The SLANG Authors.
 
 """
 A sample analysis unit.

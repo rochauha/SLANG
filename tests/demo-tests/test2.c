@@ -1,3 +1,6 @@
+// MIT License.
+// Copyright (c) 2019 The SLANG Authors.
+
 // test2.c: A sample test program. (This file)
 // test2.py: SPAN IR module for this file.
 
