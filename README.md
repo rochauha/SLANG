@@ -2,14 +2,16 @@ SLANG
 =======
 A bridge between SPAN and Clang.
 
-Author: Anshuman Dhuliya [AD] (dhuliya@cse.iitb.ac.in)
+Authors: <br>
+- Ronak Chauhan (r.chauhan@somaiya.edu) <br>
+- Anshuman Dhuliya (dhuliya@cse.iitb.ac.in)
 
 Summary
 --------
-The SLANG project interfaces SPAN (Synergistic Program Analyzer) with Clang. Specifically it does the following,
+The SLANG project interfaces SPAN (Synergistic Program Analyzer) with Clang. Specifically it does the following:
 
 1. Converts Clang's AST to CFG based SPAN IR.
-2. Processes SPAN resuts to generate Clang checkers reports.
+2. Processes SPAN resuts to generate Clang checker reports.
 
 Useful Info
 ------------
@@ -26,7 +28,7 @@ Currently the system is tested to work on Clang 6.0.1 only. We have plans to shi
 
 ### How to use?
 
-We require that clang/llvm has been built from source and `MY_LLVM_DIR` points to the directory housing the `build` as well as the `llvm` source directory.
+We require that clang/llvm to be built from source. `MY_LLVM_DIR` points to the directory housing the `build` as well as the `llvm` source directory.
 
 Now to use `CFG-plugin/MyDebugChecker.cpp` do the following,
 
@@ -61,4 +63,3 @@ Modify `$MY_LLVM_DIR/llvm/tools/clang/include/clang/StaticAnalyzer/Checkers/Chec
 Now go to the `$MY_LLVM_DIR/build` directory and build the system using `make` or `ninja` (which ever you have used to build clang/llvm system).
 
 Once done you can use the checker as any other checker in the system. The invocation name of the checker is `debug.MyDumpCFG`.
-
