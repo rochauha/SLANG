@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# Commit and Sync the changes of local git repo with the remote.
+
+# USAGE:
+# $ ./gitsync [optional comment in quotes]
+
+# STEP 1: Commit locally if needed.
+
+OUTPUT=$(git status --short)
+
+if [[ ! -z $OUTPUT ]]; then
+  echo -e "AD: GIT STATUS: Uncommitted changes!!!!"
+  git add --all
+  if [[ $? -ne 0 ]]; then exit 1; fi
+
+  if [ "$1" == "" ]; then
+    git commit -m 'semi-automated-update'
+    if [[ $? -ne 0 ]]; then exit 2; fi
+  else
+    git commit -m "$1"
+    if [[ $? -ne 0 ]]; then exit 3; fi
+  fi
+else
+  echo -e "AD: GIT STATUS: OK"
+fi
+
+
+# STEP 2: Fetch remote/origin
+
+echo -e "\nAD: Fetching origin/master."
+git fetch origin master
+if [[ $? -ne 0 ]]; then exit 4; fi
+
+# STEP 3: Merge and push if master and origin/master differ.
+
+# A fresh repo has no branch `master`.
+# Check if `master` exists and only then run `git diff`.
+OUTPUT=$(git branch --list)
+if [[ -n "$OUTPUT" ]]; then
+  echo -e "\nAD: git diff master origin/master."
+  OUTPUT=$(git diff master origin/master)
+  if [[ -z $OUTPUT ]]; then
+     echo "Local state matches origin/master"
+     exit
+  fi
+fi
+
+echo -e "\nAD: Local and Remote differ. Merging and Pushing."
+
+# reaches here only when any new content is present
+
+git merge -m "semi-automated-merge" origin/master
+if [[ $? -ne 0 ]]; then exit 5; fi
+git push origin master
+if [[ $? -ne 0 ]]; then exit 6; fi
+
+
