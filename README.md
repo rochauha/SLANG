@@ -2,7 +2,7 @@ SLANG
 =======
 A bridge between SPAN and Clang.
 
-Author: Anshuman Dhuliya (dhuliya@cse.iitb.ac.in)
+Author: Anshuman Dhuliya [AD] (dhuliya@cse.iitb.ac.in)
 
 Summary
 --------
@@ -11,12 +11,18 @@ The SLANG project interfaces SPAN (Synergistic Program Analyzer) with Clang. Spe
 1. Converts Clang's AST to CFG based SPAN IR.
 2. Processes SPAN resuts to generate Clang checkers reports.
 
+Useful Info
+------------
+* `grep -R TODO` to get list of things todo.
+* `grep -R FIXME` to get list of things to fix.
+* `grep -R Author` to get list of authors.
+
 FAQ's
 ----------
 
 ### What is the supported Clang version?
 
-Currently the system is tested to work on Clang 6.0.1 only. We have plans to shift to Clang 7.0.1 in the near future.
+Currently the system is tested to work on Clang 6.0.1 only. We have plans to shift to Clang 7.0.1.
 
 ### How to use?
 

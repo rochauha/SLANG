@@ -17,12 +17,12 @@ import span.sys.universe as universe
 name = "span.tests.test6"
 description = """
 Loop with pointers and expressions,
-Different format specification from span.tests.test5.
+Different format specification for span.tests.test5 code.
 
  1: a = 11;
  2: u = &a;
  3: input(cond); // special instruction
- 4: while cond: // `cond` value is indeterministic.
+ 4: while cond: // `cond` value is undeterministic.
  5:   tmp = *u; // point-of-interest
  6:   b = tmp % 2;
  7:   if b:
@@ -44,32 +44,33 @@ all_vars: Dict[types.VarNameT, types.ReturnT] = {
 all_func: Dict[types.FuncNameT, graph.FuncNode] = {
   "f:main":
     graph.FuncNode(
+      name= "f:main",
       params= [],
       returns= types.Int,
       basic_blocks= {
-        1: [ # 1 is always start/entry BB.
+        1: graph.BB([ # 1 is always start/entry BB. (REQUIRED)
           instr.AssignI(expr.VarE("v:main:a"), expr.LitE(11)),
           instr.AssignI(expr.VarE("v:main:u"), expr.UnaryE(op.AddrOf, expr.VarE("v:main:a"))),
           instr.InputI(expr.VarE("v:main:cond")),
-        ],
-        2: [
+        ]),
+        2: graph.BB([
           instr.CondI(expr.VarE("v:main:cond")),
-        ],
-        3: [
+        ]),
+        3: graph.BB([
           instr.AssignI(expr.VarE("v:main:tmp"), expr.UnaryE(op.Deref, expr.VarE("v:main:u"))),
           instr.AssignI(expr.VarE("v:main:b"), expr.BinaryE(expr.VarE("v:main:tmp"), op.Modulo, expr.LitE(2))),
           instr.CondI(expr.VarE("v:main:b")),
-        ],
-        4: [
+        ]),
+        4: graph.BB([
           instr.AssignI(expr.VarE("v:main:b"), expr.LitE(15)),
           instr.AssignI(expr.VarE("v:main:u"), expr.UnaryE(op.AddrOf, expr.VarE("v:main:b"))),
-        ],
-        5: [
+        ]),
+        5: graph.BB([
           instr.AssignI(expr.VarE("v:main:b"), expr.LitE(16))
-        ],
-        -1: [], # -1 is always the end/exit block.
+        ]),
+        -1: graph.BB(), # -1 is end/exit block (REQUIRED, if more than one BB present)
       },
-      control_flow= [
+      bb_edges= [
         graph.BbEdge(1, 2, graph.UnCondEdge),
         graph.BbEdge(2, -1, graph.FalseEdge),
         graph.BbEdge(2, 3, graph.TrueEdge),

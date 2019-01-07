@@ -61,52 +61,17 @@ all_func: Dict[types.FuncNameT, graph.FuncNode] = {
       name= "f:main",
       params= ["v:main:argc", "v:main:argv"],
       returns= types.Int,
-      cfg= graph.Cfg(
-        start_id= 1,
-        end_id= 4,
-
-        node_map= {
-          1: graph.CfgNode(
-            node_id=1,
-            insn= instr.AssignI(expr.VarE("v:main:x"), expr.LitE(10)),
-            pred_edges= [],
-            succ_edges= [
-              graph.CfgEdge.make(1, 2, graph.UnCondEdge)
-            ]
-          ),
-
-          2: graph.CfgNode(
-            node_id=2,
-            insn = instr.AssignI(expr.VarE("v:main:y"), expr.LitE(20)),
-            pred_edges = [
-              graph.CfgEdge.make(1, 2, graph.UnCondEdge)
-            ],
-            succ_edges = [
-              graph.CfgEdge.make(2, 3, graph.UnCondEdge)
-            ]
-          ),
-
-          3: graph.CfgNode(
-            node_id=3,
-            insn = instr.AssignI(expr.VarE("v:main:z"), expr.VarE("v:main:y")),
-            pred_edges = [
-              graph.CfgEdge.make(2, 3, graph.UnCondEdge)
-            ],
-            succ_edges = [
-              graph.CfgEdge.make(3, 4, graph.UnCondEdge)
-            ]
-          ),
-
-          4: graph.CfgNode(
-            node_id=4,
-            insn = instr.AssignI(expr.VarE("v:g"), expr.VarE("v:main:z")),
-            pred_edges = [
-              graph.CfgEdge.make(3, 4, graph.UnCondEdge)
-            ],
-            succ_edges = []
-          ),
-        }
-      )
+      basic_blocks= {
+        1: graph.BB([ # 1 is always start/entry BB. (REQUIRED)
+          instr.AssignI(expr.VarE("v:main:x"), expr.LitE(10)),
+          instr.AssignI(expr.VarE("v:main:y"), expr.LitE(20)),
+          instr.AssignI(expr.VarE("v:main:z"), expr.VarE("v:main:y")),
+          instr.AssignI(expr.VarE("v:g"), expr.VarE("v:main:z")),
+        ]),
+        #if only one BB, its START&END both.
+        #-1: graph.BB(), # -1 is end/exit block (REQUIRED, if more than one BB present)
+      },
+      bb_edges= [],
     ),
 } # end all_func dict.
 
