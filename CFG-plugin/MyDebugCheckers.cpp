@@ -54,7 +54,8 @@ namespace {
         void handleBBInfo(const CFGBlock *bb, const CFG *cfg) const;
         void handleBBStmts(const CFGBlock *bb) const;
 
-        void handleDeclStmt(const Stmt *S, const CFGBlock *bb) const;
+        void handleDeclStmt(const Stmt *S, const CFGBlock *bb,
+                              std::unordered_map<const Expr *, int>& visited_nodes) const;
 
         void handleIntegerLiteral(const IntegerLiteral *IL) const;
 
@@ -215,8 +216,10 @@ void MyCFGDumper::handleBBStmts(const CFGBlock *bb) const {
     }
 
     // the main statement selection conditions.
+    // Ronak and Manav: Create a separate function,
+    // to handle each kind of statement.
     if (stmt_class == "DeclStmt") {
-      handleDeclStmt(S, bb);
+      handleDeclStmt(S, bb, visited_nodes);
     } else if (stmt_class == "BinaryOperator") {
       handleBinaryOperator(ES, visited_nodes, bb_id);
       llvm::errs() << "\n";
@@ -235,7 +238,8 @@ void MyCFGDumper::handleBBStmts(const CFGBlock *bb) const {
   llvm::errs() << "\n\n";
 } // handleBBStmts()
 
-void MyCFGDumper::handleDeclStmt(const Stmt *S, const CFGBlock *bb) const {
+void MyCFGDumper::handleDeclStmt(const Stmt *S, const CFGBlock *bb,
+        std::unordered_map<const Expr *, int>& visited_nodes) const {
   unsigned bb_id = bb->getBlockID();
 
   const DeclStmt *DS = cast<DeclStmt>(S);
