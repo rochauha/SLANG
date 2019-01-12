@@ -5,12 +5,11 @@
 //  Author: Ronak Chauhan (r.chauhan@somaiya.edu)
 //  Author: Anshuman Dhuliya (dhuliya@cse.iitb.ac.in)
 //
-// AD If MyCFGDumper class name is added or changed, then also edit,
-// AD ../../../include/clang/StaticAnalyzer/Checkers/Checkers.td
+//AD If MyCFGDumper class name is added or changed, then also edit,
+//AD ../../../include/clang/StaticAnalyzer/Checkers/Checkers.td
 //
 //===----------------------------------------------------------------------===//
 //
-// Expanding the MyDebugCheckers.cpp from 323a0b8 to support more constructs
 
 #include "ClangSACheckers.h"
 #include "clang/AST/Decl.h" //AD
@@ -33,37 +32,44 @@ using namespace clang;
 using namespace ento;
 
 //===----------------------------------------------------------------------===//
+// TODO: TraversedInfoBuffer
+// Information is stored while traversing the function's CFG. Specifically,
+// 1. The information of the variables used.
+// 2. The CFG and the basic block structure.
+// 3. The three address code representation.
+//===----------------------------------------------------------------------===//
+
+//===----------------------------------------------------------------------===//
 // MyCFGDumper
 //===----------------------------------------------------------------------===//
 
 namespace {
-class MyCFGDumper : public Checker<check::ASTCodeBody> {
-public:
-  void checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
-                        BugReporter &BR) const;
+    class MyCFGDumper : public Checker<check::ASTCodeBody> {
+    public:
+        void checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
+                              BugReporter &BR) const;
 
-  void handleFunction(const FunctionDecl *D) const;
-  void handleCfg(const CFG *cfg) const;
-  void handleBBInfo(const CFGBlock *bb, const CFG *cfg) const;
-  void handleBBStmts(const CFGBlock *bb) const;
+        void handleFunction(const FunctionDecl *D) const;
+        void handleCfg(const CFG *cfg) const;
+        void handleBBInfo(const CFGBlock *bb, const CFG *cfg) const;
+        void handleBBStmts(const CFGBlock *bb) const;
 
-  void
-  handleDeclStmt(const Stmt *S, const CFGBlock *bb,
-                 std::unordered_map<const Expr *, int> &visited_nodes) const;
+        void handleDeclStmt(const Stmt *S, const CFGBlock *bb,
+                              std::unordered_map<const Expr *, int>& visited_nodes) const;
 
-  void handleIntegerLiteral(const IntegerLiteral *IL) const;
+        void handleIntegerLiteral(const IntegerLiteral *IL) const;
 
-  void handleDeclRefExpr(const DeclRefExpr *DRE) const;
+        void handleDeclRefExpr(const DeclRefExpr *DRE) const;
 
-  void handleBinaryOperator(const Expr *ES,
-                            std::unordered_map<const Expr *, int> &visited,
-                            unsigned int block_id) const;
+        void handleBinaryOperator(const Expr *ES,
+                                  std::unordered_map<const Expr *, int> &visited,
+                                  unsigned int block_id) const;
 
-  void handleTerminator(const Stmt *terminator,
-                        std::unordered_map<const Expr *, int> &visited,
-                        unsigned int block_id) const;
+        void handleTerminator(const Stmt *terminator,
+                              std::unordered_map<const Expr *, int> &visited,
+                              unsigned int block_id) const;
 
-}; // class MyCFGDumper
+    }; // class MyCFGDumper
 } // anonymous namespace
 
 // Main Entry Point. Invokes top level Function and Cfg handlers.
@@ -94,7 +100,7 @@ void MyCFGDumper::handleCfg(const CFG *cfg) const {
     handleBBInfo(bb, cfg);
     handleBBStmts(bb);
   }
-} // handleCfg
+} //handleCfg
 
 // Gets the function name, paramaters and return type.
 void MyCFGDumper::handleFunction(const FunctionDecl *func_decl) const {
@@ -116,9 +122,9 @@ void MyCFGDumper::handleFunction(const FunctionDecl *func_decl) const {
 
       // Parameter type
       QualType T = varDecl->getTypeSourceInfo()
-                       ? varDecl->getTypeSourceInfo()->getType()
-                       : varDecl->getASTContext().getUnqualifiedObjCPointerType(
-                             varDecl->getType());
+                   ? varDecl->getTypeSourceInfo()->getType()
+                   : varDecl->getASTContext().getUnqualifiedObjCPointerType(
+                      varDecl->getType());
       Proto += T.getAsString();
 
       // Parameter name
@@ -232,9 +238,8 @@ void MyCFGDumper::handleBBStmts(const CFGBlock *bb) const {
   llvm::errs() << "\n\n";
 } // handleBBStmts()
 
-void MyCFGDumper::handleDeclStmt(
-    const Stmt *S, const CFGBlock *bb,
-    std::unordered_map<const Expr *, int> &visited_nodes) const {
+void MyCFGDumper::handleDeclStmt(const Stmt *S, const CFGBlock *bb,
+        std::unordered_map<const Expr *, int>& visited_nodes) const {
   unsigned bb_id = bb->getBlockID();
 
   const DeclStmt *DS = cast<DeclStmt>(S);
@@ -243,8 +248,8 @@ void MyCFGDumper::handleDeclStmt(
   for (auto decl : DG) { // DG contains all Decls
     const NamedDecl *named_decl = cast<NamedDecl>(decl);
     QualType T = (cast<ValueDecl>(decl))->getType();
-    llvm::errs() << T.getAsString() << " " << named_decl->getNameAsString()
-                 << "\n";
+    llvm::errs() << T.getAsString() << " "
+                 << named_decl->getNameAsString() << "\n";
   }
 
   // Now evaluate expressions for the variables
@@ -333,33 +338,11 @@ void MyCFGDumper::handleTerminator(
     const Stmt *terminator, std::unordered_map<const Expr *, int> &visited,
     unsigned int block_id) const {
 
-  if (!terminator)
-    return;
-
-  Stmt::StmtClass terminator_class = terminator->getStmtClass();
-  switch (terminator_class) {
-  case Stmt::IfStmtClass: {
+  if (terminator && isa<IfStmt>(terminator)) {
     const Expr *condition = (cast<IfStmt>(terminator))->getCond();
     llvm::errs() << "if ";
     handleBinaryOperator(condition, visited, block_id);
     llvm::errs() << "\n";
-    break;
-  }
-
-  case Stmt::WhileStmtClass: {
-    const Expr *condition = (cast<WhileStmt>(terminator))->getCond();
-    llvm::errs() << "while ";
-    handleBinaryOperator(condition, visited, block_id);
-    llvm::errs() << "\n";
-    break;
-  }
-
-  default: {
-    llvm::errs() << "Unhandled terminator - " << terminator->getStmtClassName()
-                 << "\n\n";
-    terminator->dump();
-    break;
-  }
   }
 }
 
