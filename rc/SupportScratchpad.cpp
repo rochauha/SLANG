@@ -333,11 +333,24 @@ void MyCFGDumper::handleTerminator(
     const Stmt *terminator, std::unordered_map<const Expr *, int> &visited,
     unsigned int block_id) const {
 
-  if (terminator && isa<IfStmt>(terminator)) {
+  if (!terminator)
+    return;
+
+  Stmt::StmtClass terminator_class = terminator->getStmtClass();
+  switch (terminator_class) {
+  case Stmt::IfStmtClass: {
     const Expr *condition = (cast<IfStmt>(terminator))->getCond();
     llvm::errs() << "if ";
     handleBinaryOperator(condition, visited, block_id);
     llvm::errs() << "\n";
+    break;
+  }
+
+  default:
+    llvm::errs() << "Unhandled terminator - " << terminator->getStmtClassName()
+                 << "\n\n";
+    terminator->dump();
+    break;
   }
 }
 
