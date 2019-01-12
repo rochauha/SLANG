@@ -1,9 +1,8 @@
-int main() {
+int main(int argc, char** argv) {
 	int x = 100;
 	int j = 1004;
 
-	if (x > j) {
-		x = 305 * 434 * 50 + j;
+	for (int i = 0; i < 5; i++) {
+		x = x + j + i;
 	}
-	else x = 300;
 }
