@@ -196,6 +196,10 @@ TraversedInfoBuffer& TraversedInfoBuffer::printSpanIr() {
 }
 
 std::string TraversedInfoBuffer::convertBbEdges() {
+    for (auto i :remap_bb_ids) {
+        llvm::errs() << "BB" << i.first << " --> BB" << i.second << "\n";
+    }
+
     std::string span_bb_edges = "";
     for (auto p: bb_edges) {
         span_bb_edges += "graph.BbEdge(";
@@ -281,8 +285,9 @@ void SlangGenChecker::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
 
     if (const CFG *cfg = mgr.getCFG(D)) {
         handleCfg(cfg);
-        // print and clear the buffer after each function.
-        tib.printSpanIr().clear();
+        // print the function as SPAN IR.
+        tib.printSpanIr();
+        tib.clear(); // clear the buffer for next function.
     } else {
         llvm::errs() << "SLANG: ERROR: No CFG for function.\n";
     }
@@ -341,15 +346,13 @@ void SlangGenChecker::handleBBInfo(const CFGBlock *bb, const CFG *cfg) const {
     unsigned succ_id;
 
     if (bb == &cfg->getEntry()) {
-        if (tib.remap_bb_ids.find(bb_id) != tib.remap_bb_ids.end()) {
-            tib.remap_bb_ids[bb_id] = 1;
-        }
+        tib.remap_bb_ids[bb_id] = 1;
+        llvm::errs() << "ENTRY BB\n";
     } else if (bb == &cfg->getExit()) {
-        if (tib.remap_bb_ids.find(bb_id) != tib.remap_bb_ids.end()) {
-            tib.remap_bb_ids[bb_id] = -1;
-        }
+        tib.remap_bb_ids[bb_id] = -1;
+        llvm::errs() << "EXIT BB\n";
     } else {
-        if (tib.remap_bb_ids.find(bb_id) != tib.remap_bb_ids.end()) {
+        if (tib.remap_bb_ids.find(bb_id) == tib.remap_bb_ids.end()) {
             tib.remap_bb_ids[bb_id] = counter;
             counter += 1;
         }
@@ -368,7 +371,7 @@ void SlangGenChecker::handleBBInfo(const CFGBlock *bb, const CFG *cfg) const {
 
             CFGBlock *succ = *I;
             succ_id = succ->getBlockID();
-            if (tib.remap_bb_ids.find(succ_id) != tib.remap_bb_ids.end()) {
+            if (tib.remap_bb_ids.find(succ_id) == tib.remap_bb_ids.end()) {
                 tib.remap_bb_ids[succ_id] = counter;
                 counter += 1;
             }
@@ -395,7 +398,7 @@ void SlangGenChecker::handleBBInfo(const CFGBlock *bb, const CFG *cfg) const {
                 }
 
                 succ_id = succ->getBlockID();
-                if (tib.remap_bb_ids.find(succ_id) != tib.remap_bb_ids.end()) {
+                if (tib.remap_bb_ids.find(succ_id) == tib.remap_bb_ids.end()) {
                     tib.remap_bb_ids[succ_id] = counter;
                     counter += 1;
                 }
@@ -427,15 +430,15 @@ void SlangGenChecker::handleBBStmts(const CFGBlock *bb) const {
             default: {
                 llvm::errs() << "SLANG: ERROR: Unhandled Stmt Class: " <<
                              stmt->getStmtClassName() << ".\n";
-                //stmt->dump();
-                //llvm::errs() << "\n";
+                stmt->dump();
+                llvm::errs() << "\n";
                 break;
             }
-            case Stmt::IntegerLiteralClass: {
-                const IntegerLiteral *int_lit = cast<IntegerLiteral>(stmt);
-                handleIntegerLiteral(int_lit);
-                break;
-            }
+            // case Stmt::IntegerLiteralClass: {
+            //     const IntegerLiteral *int_lit = cast<IntegerLiteral>(stmt);
+            //     handleIntegerLiteral(int_lit);
+            //     break;
+            // }
             // case Stmt::DeclStmtClass: {
             //     handleDeclStmt(stmt, bb, visited_nodes);
             //     break;
