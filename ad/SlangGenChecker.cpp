@@ -72,6 +72,24 @@ void Utility::readFile1() {
 namespace {
     enum EdgeKind {FalseEdge, TrueEdge, UnCondEdge} EK;
 
+    class VarInfo {
+    public:
+        uint64_t id;
+        // variable name: e.g. a variable 'x' in main function, is "v:main:x".
+        std::string var_name;
+        std::string type_str;
+
+        std::string convertToString() {
+            std::string str = "";
+            str += "\"";
+            str += var_name;
+            str += "\": ";
+            str += type_str;
+            str += ",";
+            return str;
+        }
+    };
+
     class TraversedInfoBuffer {
     public:
         int id;
@@ -81,10 +99,12 @@ namespace {
         std::string func_ret_t;
         std::string func_params;
 
+        int32_t bb_counter; // give bb their unique (new) id.
+
         // stack to help convert ast structure to 3-address code.
         std::vector<Stmt*> stmt_stack;
         // maps a unique variable id to its string representation.
-        std::unordered_map<uint32_t , std::string> var_map;
+        std::unordered_map<uint64_t , VarInfo> var_map;
         // maps bb_edge
         std::vector<std::pair<int, std::pair<int , EdgeKind>>> bb_edges;
         // map to help remap bb ids, to mark start as 1 and end as -1.
@@ -181,6 +201,7 @@ void TraversedInfoBuffer::clear() {
     func_ret_t = "";
     func_params = "";
 
+    bb_counter = 0;
     stmt_stack.clear();
     var_map.clear();
     bb_edges.clear();
@@ -196,8 +217,9 @@ TraversedInfoBuffer& TraversedInfoBuffer::printSpanIr() {
 }
 
 std::string TraversedInfoBuffer::convertBbEdges() {
+    llvm::errs() << "Remapped BB ids:\n";
     for (auto i :remap_bb_ids) {
-        llvm::errs() << "BB" << i.first << " --> BB" << i.second << "\n";
+        llvm::errs() << "  BB" << i.first << " as BB" << i.second << ".\n";
     }
 
     std::string span_bb_edges = "";
@@ -253,8 +275,9 @@ namespace {
 
         void handleBBStmts(const CFGBlock *bb) const;
 
-        void handleDeclStmt(const Stmt *S, const CFGBlock *bb,
-                            std::unordered_map<const Expr *, int> &visited_nodes) const;
+        void handleVariable(const ValueDecl *val_decl) const;
+
+        void handleDeclStmt(const DeclStmt *declStmt) const;
 
         void handleIntegerLiteral(const IntegerLiteral *IL) const;
 
@@ -308,39 +331,19 @@ void SlangGenChecker::handleFunctionDef(const FunctionDecl *func_decl) const {
     tib.func_name = func_decl->getNameInfo().getAsString();
 
     // STEP 1.2: Get function parameters.
-    std::string Proto;
-    llvm::errs() << "Params  : ";
     if (func_decl->doesThisDeclarationHaveABody()) { //& !func_decl->hasPrototype())
         for (unsigned i = 0, e = func_decl->getNumParams(); i != e; ++i) {
-            if (i)
-                Proto += ", ";
             const ParmVarDecl *paramVarDecl = func_decl->getParamDecl(i);
-            const VarDecl *varDecl = dyn_cast<VarDecl>(paramVarDecl);
-
-            // Parameter type
-            QualType T = varDecl->getTypeSourceInfo()
-                         ? varDecl->getTypeSourceInfo()->getType()
-                         : varDecl->getASTContext().getUnqualifiedObjCPointerType(
-                            varDecl->getType());
-            //Proto += T.getAsString();
-            Proto += tib.convertClangType(T);
-
-            // Parameter name
-            Proto += " \"";
-            Proto += tib.convertLocalVarName(varDecl->getNameAsString());
-            Proto += "\"";
+            handleVariable(paramVarDecl);
         }
     }
-    llvm::errs() << Proto << "\n";
 
-    // STEP 1.3: Print function return type.
+    // STEP 1.3: Get function return type.
     const QualType returnQType = func_decl->getReturnType();
-    llvm::errs() << "ReturnT : " << returnQType.getAsString() << "\n";
+    tib.func_ret_t = tib.convertClangType(returnQType);
 } // handleFunctionDef()
 
 void SlangGenChecker::handleBBInfo(const CFGBlock *bb, const CFG *cfg) const {
-    int32_t counter = 2;
-
     unsigned bb_id = bb->getBlockID();
     llvm::errs() << "BB" << bb_id << "\n";
     unsigned succ_id;
@@ -353,8 +356,8 @@ void SlangGenChecker::handleBBInfo(const CFGBlock *bb, const CFG *cfg) const {
         llvm::errs() << "EXIT BB\n";
     } else {
         if (tib.remap_bb_ids.find(bb_id) == tib.remap_bb_ids.end()) {
-            tib.remap_bb_ids[bb_id] = counter;
-            counter += 1;
+            tib.remap_bb_ids[bb_id] = tib.bb_counter;
+            tib.bb_counter += 1;
         }
     }
 
@@ -372,8 +375,8 @@ void SlangGenChecker::handleBBInfo(const CFGBlock *bb, const CFG *cfg) const {
             CFGBlock *succ = *I;
             succ_id = succ->getBlockID();
             if (tib.remap_bb_ids.find(succ_id) == tib.remap_bb_ids.end()) {
-                tib.remap_bb_ids[succ_id] = counter;
-                counter += 1;
+                tib.remap_bb_ids[succ_id] = tib.bb_counter;
+                tib.bb_counter += 1;
             }
             if (true_edge) {
                 tib.bb_edges.push_back(std::make_pair(tib.remap_bb_ids[bb_id],
@@ -393,14 +396,14 @@ void SlangGenChecker::handleBBInfo(const CFGBlock *bb, const CFG *cfg) const {
                 if (!succ) {
                     // unreachable block ??
                     succ = I->getPossiblyUnreachableBlock();
-                    llvm::errs() << "(Unreachable)";
+                    llvm::errs() << "(Unreachable BB)";
                     continue;
                 }
 
                 succ_id = succ->getBlockID();
                 if (tib.remap_bb_ids.find(succ_id) == tib.remap_bb_ids.end()) {
-                    tib.remap_bb_ids[succ_id] = counter;
-                    counter += 1;
+                    tib.remap_bb_ids[succ_id] = tib.bb_counter;
+                    tib.bb_counter += 1;
                 }
                 tib.bb_edges.push_back(std::make_pair(tib.remap_bb_ids[bb_id],
                          std::make_pair(tib.remap_bb_ids[succ_id], UnCondEdge)));
@@ -434,13 +437,20 @@ void SlangGenChecker::handleBBStmts(const CFGBlock *bb) const {
                 llvm::errs() << "\n";
                 break;
             }
+            case Stmt::DeclRefExprClass: {
+                const DeclRefExpr *dre = cast<DeclRefExpr>(stmt);
+                const ValueDecl *val_decl = dre->getDecl();
+                handleVariable(val_decl);
+                break;
+            }
+            case Stmt::DeclStmtClass: {
+                const DeclStmt *declStmt = cast<DeclStmt>(stmt);
+                handleDeclStmt(declStmt);
+                break;
+            }
             // case Stmt::IntegerLiteralClass: {
             //     const IntegerLiteral *int_lit = cast<IntegerLiteral>(stmt);
             //     handleIntegerLiteral(int_lit);
-            //     break;
-            // }
-            // case Stmt::DeclStmtClass: {
-            //     handleDeclStmt(stmt, bb, visited_nodes);
             //     break;
             // }
             // case Stmt::BinaryOperatorClass : {
@@ -468,33 +478,36 @@ void SlangGenChecker::handleBBStmts(const CFGBlock *bb) const {
     llvm::errs() << "\n\n";
 } // handleBBStmts()
 
-void SlangGenChecker::handleDeclStmt(const Stmt *S, const CFGBlock *bb,
-                                 std::unordered_map<const Expr *, int>& visited_nodes) const {
-    unsigned bb_id = bb->getBlockID();
-
-    const DeclStmt *DS = cast<DeclStmt>(S);
-    const DeclGroupRef DG = DS->getDeclGroup();
-
-    for (auto decl : DG) { // DG contains all Decls
-        const NamedDecl *named_decl = cast<NamedDecl>(decl);
-        QualType T = (cast<ValueDecl>(decl))->getType();
-        llvm::errs() << T.getAsString() << " "
-                     << named_decl->getNameAsString() << "\n";
-    }
-
-    // Now evaluate expressions for the variables
-    for (auto decl : DG) {
-        const VarDecl *var_decl = cast<VarDecl>(decl);
-        var_decl->dump();
-        const NamedDecl *named_decl = cast<NamedDecl>(decl);
-        const Expr *value = var_decl->getInit();
-
-        if (value) {
-            llvm::errs() << named_decl->getNameAsString() << " = ";
-            handleBinaryOperator(value, visited_nodes, bb_id);
-            llvm::errs() << "\n";
+void SlangGenChecker::handleVariable(const ValueDecl *val_decl) const {
+    uint64_t var_id = (uint64_t) val_decl;
+    if (tib.var_map.find(var_id) == tib.var_map.end()) {
+        // seeing the variable for the first time.
+        VarInfo varInfo{};
+        varInfo.id = var_id;
+        const VarDecl *varDecl = dyn_cast<VarDecl>(val_decl);
+        if (varDecl) {
+            if (varDecl->hasLocalStorage()) {
+                varInfo.var_name = tib.convertLocalVarName(val_decl->getNameAsString());
+            } else if(varDecl->hasGlobalStorage()) {
+                varInfo.var_name = tib.convertGlobalVarName(val_decl->getNameAsString());
+            } else {
+                llvm::errs() << "SLANG: ERROR: Unknown variable storage.\n";
+            }
+        } else {
+            llvm::errs() << "SLANG: ERROR: ValueDecl not a VarDecl!\n";
         }
+        varInfo.type_str = tib.convertClangType(val_decl->getType());
+        tib.var_map[var_id] = varInfo;
+        llvm::errs() << "NEW_VAR: " << varInfo.convertToString() << "\n";
+    } else {
+        llvm::errs() << "SEEN_VAR: " << tib.var_map[var_id].convertToString() << "\n";
     }
+}
+
+void SlangGenChecker::handleDeclStmt(const DeclStmt *declStmt) const {
+    // assumes there is only single decl inside (the likely case).
+    const VarDecl *varDecl = cast<VarDecl>(declStmt->getSingleDecl());
+    handleVariable(varDecl);
 }
 
 void SlangGenChecker::handleIntegerLiteral(const IntegerLiteral *IL) const {

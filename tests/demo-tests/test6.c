@@ -1,3 +1,4 @@
+int g;
 int main(int argc, char **argv) {
   int x, y = 1 + 2;
   int *u;
@@ -6,6 +7,7 @@ int main(int argc, char **argv) {
   } else {
     *u = y + 1 + 3;
   }
+  g = 0;
   return x = func(1);
 }
 
