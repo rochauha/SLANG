@@ -30,14 +30,14 @@
 #include <vector>                     //AD
 #include <utility>                    //AD
 #include <unordered_map>              //AD
-#include <fstream>                     //AD
+#include <fstream>                    //AD
 
 using namespace clang;
 using namespace ento;
 
 //===----------------------------------------------------------------------===//
 // FIXME: Utility Class
-// Some static utility functions in a class.
+// Some useful static utility functions in a class.
 //===----------------------------------------------------------------------===//
 namespace {
     class Utility {
@@ -81,18 +81,24 @@ namespace {
         std::string func_ret_t;
         std::string func_params;
 
+        // stack to help convert ast structure to 3-address code.
         std::vector<Stmt*> stmt_stack;
         // maps a unique variable id to its string representation.
         std::unordered_map<uint32_t , std::string> var_map;
         // maps bb_edge
-        std::vector<std::pair<unsigned, std::pair<unsigned , EdgeKind>>> bb_edges;
+        std::vector<std::pair<int, std::pair<int , EdgeKind>>> bb_edges;
+        // map to help remap bb ids, to mark start as 1 and end as -1.
+        std::unordered_map<unsigned, int32_t> remap_bb_ids;
         std::unordered_map<uint32_t , std::vector<std::string>> bb_stmts;
 
         TraversedInfoBuffer();
         void clear();
+
         // conversion to SPAN Strings
         std::string convertClangType(QualType qt);
+        std::string convertFuncName(std::string func_name);
         std::string convertLocalVarName(std::string var_name);
+        std::string convertGlobalVarName(std::string var_name);
 
         // SPAN IR Printing routines
         TraversedInfoBuffer& printSpanIr();
@@ -110,6 +116,24 @@ namespace {
     };
 }
 
+TraversedInfoBuffer::TraversedInfoBuffer(): id{1}, tmp_var_counter{}, stmt_stack{}, var_map{},
+        bb_edges{}, bb_stmts{}, remap_bb_ids{} {
+}
+
+std::string TraversedInfoBuffer::convertFuncName(std::string func_name) {
+    std::string fname = "";
+    fname += "f:";
+    fname += func_name;
+    return fname;
+}
+
+std::string TraversedInfoBuffer::convertGlobalVarName(std::string var_name) {
+    std::string vname = "";
+    vname += "v:";
+    vname += var_name;
+    return vname;
+}
+
 std::string TraversedInfoBuffer::convertLocalVarName(std::string var_name) {
     // assumes func_name is set
     std::string vname = "";
@@ -120,7 +144,7 @@ std::string TraversedInfoBuffer::convertLocalVarName(std::string var_name) {
     return vname;
 }
 
-// Converts Clang Types into SPAN parseable type strings:
+// Converts Clang Types into SPAN parsable type strings:
 // Examples,
 // for `int` it returns `types.Int`.
 // for `int*` it returns `types.Ptr(to=types.Int)`.
@@ -129,16 +153,27 @@ std::string TraversedInfoBuffer::convertClangType(QualType qt) {
    const Type *type = qt.getTypePtr();
    if (type->isBuiltinType()) {
        if(type->isIntegerType()) {
-           span_t += "types.Int";
+           if(type->isCharType()) {
+               span_t += "types.Char";
+           } else {
+               span_t += "types.Int";
+           }
+       } else if(type->isFloatingType()) {
+           span_t += "types.Float";
+       } else {
+           span_t += "UnknownBuiltinType.";
        }
+   } else if(type->isPointerType()) {
+       span_t += "types.Ptr(to=";
+       QualType pqt = type->getPointeeType();
+       span_t += convertClangType(pqt);
+       span_t += ")";
+   } else {
+       span_t += "UnknownType.";
    }
 
    return span_t;
 } // convertClangType()
-
-TraversedInfoBuffer::TraversedInfoBuffer(): id{1}, tmp_var_counter{}, stmt_stack{}, var_map{},
-        bb_edges{}, bb_stmts{} {
-}
 
 // clear the buffer for the next function.
 void TraversedInfoBuffer::clear() {
@@ -150,6 +185,7 @@ void TraversedInfoBuffer::clear() {
     var_map.clear();
     bb_edges.clear();
     bb_stmts.clear();
+    remap_bb_ids.clear();
 }
 
 TraversedInfoBuffer& TraversedInfoBuffer::printSpanIr() {
@@ -298,62 +334,75 @@ void SlangGenChecker::handleFunctionDef(const FunctionDecl *func_decl) const {
 } // handleFunctionDef()
 
 void SlangGenChecker::handleBBInfo(const CFGBlock *bb, const CFG *cfg) const {
+    int32_t counter = 2;
+
     unsigned bb_id = bb->getBlockID();
+    llvm::errs() << "BB" << bb_id << "\n";
+    unsigned succ_id;
 
-    llvm::errs() << "BB" << bb_id << " ";
-    if (bb == &cfg->getEntry())
-        llvm::errs() << "[ ENTRY BLOCK ]\n";
-    else if (bb == &cfg->getExit())
-        llvm::errs() << "[ EXIT BLOCK ]\n";
-    else
-        llvm::errs() << "\n";
-
-    // details for predecessor blocks
-    llvm::errs() << "Predecessors : ";
-    if (!bb->pred_empty()) {
-        llvm::errs() << bb->pred_size() << "\n              ";
-
-        for (CFGBlock::const_pred_iterator I = bb->pred_begin();
-             I != bb->pred_end(); ++I) {
-            CFGBlock *B = *I;
-            bool Reachable = true;
-            if (!B) {
-                Reachable = false;
-                B = I->getPossiblyUnreachableBlock();
-            }
-            llvm::errs() << " B" << B->getBlockID();
-            if (!Reachable)
-                llvm::errs() << " (Unreachable)";
+    if (bb == &cfg->getEntry()) {
+        if (tib.remap_bb_ids.find(bb_id) != tib.remap_bb_ids.end()) {
+            tib.remap_bb_ids[bb_id] = 1;
         }
-        llvm::errs() << "\n";
+    } else if (bb == &cfg->getExit()) {
+        if (tib.remap_bb_ids.find(bb_id) != tib.remap_bb_ids.end()) {
+            tib.remap_bb_ids[bb_id] = -1;
+        }
     } else {
-        llvm::errs() << "None\n";
+        if (tib.remap_bb_ids.find(bb_id) != tib.remap_bb_ids.end()) {
+            tib.remap_bb_ids[bb_id] = counter;
+            counter += 1;
+        }
     }
 
-    // details for successor blocks
-    llvm::errs() << "Successors : ";
-    if (!bb->succ_empty()) {
-        llvm::errs() << bb->succ_size() << "\n            ";
+    // access and record successor blocks
+    const Stmt *terminator = (bb->getTerminator()).getStmt();
+    if (terminator && isa<IfStmt>(terminator)) {
+        bool true_edge = true;
 
         for (CFGBlock::const_succ_iterator I = bb->succ_begin();
              I != bb->succ_end(); ++I) {
-            CFGBlock *succ = *I;
-            bool Reachable = true;
-            if (!succ) {
-                Reachable = false;
-                succ = I->getPossiblyUnreachableBlock();
+            if (!true_edge) {
+                llvm::errs() << "SPAN: ERROR: If has more than two successors.\n";
             }
 
-            tib.bb_edges.push_back(std::make_pair(bb->getBlockID(),
-                    std::make_pair(succ->getBlockID(), UnCondEdge)));
-
-            // llvm::errs() << " B" << succ->getBlockID();
-            if (!Reachable)
-                llvm::errs() << "(Unreachable)";
+            CFGBlock *succ = *I;
+            succ_id = succ->getBlockID();
+            if (tib.remap_bb_ids.find(succ_id) != tib.remap_bb_ids.end()) {
+                tib.remap_bb_ids[succ_id] = counter;
+                counter += 1;
+            }
+            if (true_edge) {
+                tib.bb_edges.push_back(std::make_pair(tib.remap_bb_ids[bb_id],
+                        std::make_pair(tib.remap_bb_ids[succ_id], TrueEdge)));
+                true_edge = false;
+            } else {
+                tib.bb_edges.push_back(std::make_pair(tib.remap_bb_ids[bb_id],
+                        std::make_pair(tib.remap_bb_ids[succ_id], FalseEdge)));
+            }
         }
-        llvm::errs() << "\n";
     } else {
-        llvm::errs() << "None\n";
+        if (!bb->succ_empty()) {
+            // num. of succ: bb->succ_size()
+            for (CFGBlock::const_succ_iterator I = bb->succ_begin();
+                    I != bb->succ_end(); ++I) {
+                CFGBlock *succ = *I;
+                if (!succ) {
+                    // unreachable block ??
+                    succ = I->getPossiblyUnreachableBlock();
+                    llvm::errs() << "(Unreachable)";
+                    continue;
+                }
+
+                succ_id = succ->getBlockID();
+                if (tib.remap_bb_ids.find(succ_id) != tib.remap_bb_ids.end()) {
+                    tib.remap_bb_ids[succ_id] = counter;
+                    counter += 1;
+                }
+                tib.bb_edges.push_back(std::make_pair(tib.remap_bb_ids[bb_id],
+                         std::make_pair(tib.remap_bb_ids[succ_id], UnCondEdge)));
+            }
+        }
     }
 } // handleBBInfo()
 
@@ -378,8 +427,8 @@ void SlangGenChecker::handleBBStmts(const CFGBlock *bb) const {
             default: {
                 llvm::errs() << "SLANG: ERROR: Unhandled Stmt Class: " <<
                              stmt->getStmtClassName() << ".\n";
-                stmt->dump();
-                llvm::errs() << "\n";
+                //stmt->dump();
+                //llvm::errs() << "\n";
                 break;
             }
             case Stmt::IntegerLiteralClass: {

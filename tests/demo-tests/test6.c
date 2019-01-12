@@ -1,4 +1,4 @@
-int main() {
+int main(int argc, char **argv) {
   int x, y = 1;
   int *u;
   u = &x;
