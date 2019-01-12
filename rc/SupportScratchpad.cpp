@@ -346,11 +346,20 @@ void MyCFGDumper::handleTerminator(
     break;
   }
 
-  default:
+  case Stmt::WhileStmtClass: {
+    const Expr *condition = (cast<WhileStmt>(terminator))->getCond();
+    llvm::errs() << "while ";
+    handleBinaryOperator(condition, visited, block_id);
+    llvm::errs() << "\n";
+    break;
+  }
+
+  default: {
     llvm::errs() << "Unhandled terminator - " << terminator->getStmtClassName()
                  << "\n\n";
     terminator->dump();
     break;
+  }
   }
 }
 
