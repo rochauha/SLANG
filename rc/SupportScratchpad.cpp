@@ -26,6 +26,7 @@
 #include "clang/StaticAnalyzer/Core/PathSensitive/ExprEngine.h"
 #include "llvm/Support/Process.h"
 #include "llvm/Support/raw_ostream.h" //AD
+#include <stack>                      // RC
 #include <string>                     //AD
 #include <unordered_map>              //AD
 
@@ -37,6 +38,7 @@ using namespace ento;
 //===----------------------------------------------------------------------===//
 
 namespace {
+
 class MyCFGDumper : public Checker<check::ASTCodeBody> {
 public:
   void checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
@@ -51,20 +53,14 @@ public:
   handleDeclStmt(const Stmt *S, const CFGBlock *bb,
                  std::unordered_map<const Expr *, int> &visited_nodes) const;
 
-  void handleIntegerLiteral(const IntegerLiteral *IL) const;
+  void handleIntegerLiteral(const Stmt *IL_Stmt) const;
 
-  void handleDeclRefExpr(const DeclRefExpr *DRE) const;
+  void handleDeclRefExpr(const Stmt *DRE_Stmt) const;
 
-  void handleBinaryOperator(const Expr *ES,
-                            std::unordered_map<const Expr *, int> &visited,
-                            unsigned int block_id) const;
-
-  void handleTerminator(const Stmt *terminator,
-                        std::unordered_map<const Expr *, int> &visited,
-                        unsigned int block_id) const;
+  void handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
+                            int &temp_counter, unsigned &block_id) const;
 
 }; // class MyCFGDumper
-} // anonymous namespace
 
 // Main Entry Point. Invokes top level Function and Cfg handlers.
 // Invoked once for each source translation unit function.
@@ -190,10 +186,111 @@ void MyCFGDumper::handleBBInfo(const CFGBlock *bb, const CFG *cfg) const {
   }
 } // handleBBInfo()
 
+void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
+                                       int &temp_counter,
+                                       unsigned &block_id) const {
+  const Stmt *bin_op_stmt = helper_stack.top();
+  const BinaryOperator *bin_op = cast<BinaryOperator>(bin_op_stmt);
+  helper_stack.pop();
+
+  Stmt *RHS = const_cast<Stmt *>(helper_stack.top());
+  helper_stack.pop();
+
+  Stmt *LHS = const_cast<Stmt *>(helper_stack.top());
+  helper_stack.pop();
+
+  // don't assign temporary variable to assignments
+  if (bin_op->isAssignmentOp()) {
+
+    // Assignments can be an issue in presence of temporaries when using a
+    // stack. If LHS (3rd last element in the stack) is not a DeclRefExpr (i.e a
+    // varable), it will cause a runtime error. Hence, we check and swap them
+    if (!isa<DeclRefExpr>(LHS)) {
+      auto tmp = LHS;
+      LHS = RHS;
+      RHS = tmp;
+    }
+
+    handleDeclRefExpr(LHS);
+
+    llvm::errs() << " " << bin_op->getOpcodeStr() << " ";
+
+    switch (RHS->getStmtClass()) {
+    case Stmt::BinaryOperatorClass:
+      llvm::errs() << "B" << block_id << "." << temp_counter;
+      break;
+
+    case Stmt::IntegerLiteralClass:
+      handleIntegerLiteral(const_cast<Stmt *>(RHS));
+      break;
+
+    case Stmt::DeclRefExprClass:
+      handleDeclRefExpr(const_cast<Stmt *>(RHS));
+      break;
+
+    default:
+      llvm::errs() << "Unhandled "
+                   << const_cast<Stmt *>(RHS)->getStmtClassName();
+      break;
+    } // switch
+  }
+
+  // Assign temporaries otherwise
+  else {
+    llvm::errs() << "B" << block_id << "." << temp_counter << " = ";
+    temp_counter++;
+
+    switch (LHS->getStmtClass()) {
+    case Stmt::IntegerLiteralClass:
+      handleIntegerLiteral(const_cast<Stmt *>(LHS));
+      break;
+
+    case Stmt::DeclRefExprClass:
+      handleDeclRefExpr(const_cast<Stmt *>(LHS));
+      break;
+
+    case Stmt::BinaryOperatorClass:
+      llvm::errs() << "B" << block_id << "." << temp_counter - 2;
+      break;
+
+    default:
+      llvm::errs() << "Unhandled "
+                   << const_cast<Stmt *>(LHS)->getStmtClassName();
+      break;
+    } // switch
+
+    llvm::errs() << " " << bin_op->getOpcodeStr() << " ";
+
+    switch (RHS->getStmtClass()) {
+    case Stmt::IntegerLiteralClass:
+      handleIntegerLiteral(const_cast<Stmt *>(RHS));
+      break;
+
+    case Stmt::DeclRefExprClass:
+      handleDeclRefExpr(const_cast<Stmt *>(RHS));
+      break;
+
+    case Stmt::BinaryOperatorClass:
+      llvm::errs() << "B" << block_id << "." << temp_counter - 2;
+      break;
+
+    default:
+      llvm::errs() << "Unhandled "
+                   << const_cast<Stmt *>(RHS)->getStmtClassName();
+      break;
+    } // switch
+    helper_stack.push(bin_op_stmt);
+  } // else
+  llvm::errs() << "\n";
+} // handleBinaryOperator()
+
 void MyCFGDumper::handleBBStmts(const CFGBlock *bb) const {
   std::unordered_map<const Expr *, int> visited_nodes;
 
   unsigned bb_id = bb->getBlockID();
+
+  std::stack<const Stmt *> helper_stack;
+  int temp_counter = 1; // for naming temporaries
 
   for (auto elem : *bb) {
     // ref: https://clang.llvm.org/doxygen/CFG_8h_source.html#l00056
@@ -202,166 +299,43 @@ void MyCFGDumper::handleBBStmts(const CFGBlock *bb) const {
 
     Optional<CFGStmt> CS = elem.getAs<CFGStmt>();
     const Stmt *S = CS->getStmt();
-    std::string stmt_class = S->getStmtClassName();
-    Expr *ES = nullptr;
 
-    if (isa<Expr>(S)) {
-      ES = const_cast<Expr *>(cast<Expr>(S));
-    }
+    switch (S->getStmtClass()) {
+    case Stmt::BinaryOperatorClass:
+      helper_stack.push(S);
+      handleBinaryOperator(helper_stack, temp_counter, bb_id);
+      break;
 
-    // the main statement selection conditions.
-    // Ronak and Manav: Create a separate function,
-    // to handle each kind of statement.
-    if (stmt_class == "DeclStmt") {
-      handleDeclStmt(S, bb, visited_nodes);
-    } else if (stmt_class == "BinaryOperator") {
-      handleBinaryOperator(ES, visited_nodes, bb_id);
-      llvm::errs() << "\n";
-    } else {
-      // llvm::errs() << "found " << stmt_class << "\n";
-    }
-    // llvm::errs() << "Partial AST info \n";
-    // S->dump(); // Dumps partial AST
-    // llvm::errs() << "\n";
-  } // for (auto elem : *bb)
+    default:
+      if (!isa<ImplicitCastExpr>(S)) {
+        // llvm::errs() << S->getStmtClassName() << ".\n";
+        helper_stack.push(S);
+        // S->dump();
+      }
+      // llvm::errs() << "\n";
+      break;
+    } // switch()
+  }   // for
 
   // get terminator
-  const Stmt *terminator = (bb->getTerminator()).getStmt();
-  handleTerminator(terminator, visited_nodes, bb_id);
-
+  // const Stmt *terminator = (bb->getTerminator()).getStmt();
+  // handleTerminator(terminator, visited_nodes, bb_id);
   llvm::errs() << "\n\n";
 } // handleBBStmts()
 
-void MyCFGDumper::handleDeclStmt(
-    const Stmt *S, const CFGBlock *bb,
-    std::unordered_map<const Expr *, int> &visited_nodes) const {
-  unsigned bb_id = bb->getBlockID();
-
-  const DeclStmt *DS = cast<DeclStmt>(S);
-  const DeclGroupRef DG = DS->getDeclGroup();
-
-  for (auto decl : DG) { // DG contains all Decls
-    const NamedDecl *named_decl = cast<NamedDecl>(decl);
-    QualType T = (cast<ValueDecl>(decl))->getType();
-    llvm::errs() << T.getAsString() << " " << named_decl->getNameAsString()
-                 << "\n";
-  }
-
-  // Now evaluate expressions for the variables
-  for (auto decl : DG) {
-    const VarDecl *var_decl = cast<VarDecl>(decl);
-    const NamedDecl *named_decl = cast<NamedDecl>(decl);
-    const Expr *value = var_decl->getInit();
-
-    if (value) {
-      llvm::errs() << named_decl->getNameAsString() << " = ";
-      handleBinaryOperator(value, visited_nodes, bb_id);
-      llvm::errs() << "\n";
-    }
-  }
-}
-
-void MyCFGDumper::handleIntegerLiteral(const IntegerLiteral *IL) const {
+void MyCFGDumper::handleIntegerLiteral(const Stmt *IL_Stmt) const {
+  const IntegerLiteral *IL = cast<IntegerLiteral>(IL_Stmt);
   bool is_signed = IL->getType()->isSignedIntegerType();
-  llvm::errs() << IL->getValue().toString(10, is_signed) << " ";
+  llvm::errs() << IL->getValue().toString(10, is_signed);
 }
 
-void MyCFGDumper::handleDeclRefExpr(const DeclRefExpr *DRE) const {
+void MyCFGDumper::handleDeclRefExpr(const Stmt *DRE_Stmt) const {
+  const DeclRefExpr *DRE = cast<DeclRefExpr>(DRE_Stmt);
   const ValueDecl *ident = DRE->getDecl();
-  llvm::errs() << ident->getName() << " ";
+  llvm::errs() << ident->getName();
 }
 
-// Before accessing an expression, the CFG accesses its sub expressions in a
-// bottom-up fashion. This can be seen when we dump the CFG using clang. To have
-// similar access manually, we keep track of already traversed sub-expressions
-// in the 'visited' hash table.
-void MyCFGDumper::handleBinaryOperator(
-    const Expr *ES, std::unordered_map<const Expr *, int> &visited,
-    unsigned int block_id) const {
-
-  static int count = 1;
-
-  if (visited.empty()) {
-    count = 1;
-  }
-
-  if (isa<BinaryOperator>(ES)) {
-    const BinaryOperator *bin_op = cast<BinaryOperator>(ES);
-
-    // Don't assign temporaries to assignments
-    if (!bin_op->isAssignmentOp()) {
-      // If the node visited, use it's temporary and return, otherwise store new
-      // temporary and continue evaluating.
-      if (visited.find(ES) != visited.end()) {
-        llvm::errs() << "B" << block_id << "." << visited[ES] << " ";
-        return;
-      }
-
-      else {
-        visited[ES] = count;
-        llvm::errs() << "B" << block_id << "." << visited[ES] << " = ";
-        count++;
-      }
-    }
-
-    Expr *LHS = bin_op->getLHS();
-    handleBinaryOperator(LHS, visited, block_id);
-
-    llvm::errs() << bin_op->getOpcodeStr() << " ";
-
-    Expr *RHS = bin_op->getRHS();
-    handleBinaryOperator(RHS, visited, block_id);
-  }
-
-  else if (isa<DeclRefExpr>(ES)) {
-    const DeclRefExpr *decl_ref_expr = cast<DeclRefExpr>(ES);
-    handleDeclRefExpr(decl_ref_expr);
-  }
-
-  else if (isa<IntegerLiteral>(ES)) {
-    const IntegerLiteral *int_literal = cast<IntegerLiteral>(ES);
-    handleIntegerLiteral(int_literal);
-  }
-
-  else if (isa<ImplicitCastExpr>(ES)) {
-    auto ES2 = ES->IgnoreParenImpCasts();
-    handleBinaryOperator(ES2, visited, block_id);
-  }
-}
-
-void MyCFGDumper::handleTerminator(
-    const Stmt *terminator, std::unordered_map<const Expr *, int> &visited,
-    unsigned int block_id) const {
-
-  if (!terminator)
-    return;
-
-  Stmt::StmtClass terminator_class = terminator->getStmtClass();
-  switch (terminator_class) {
-  case Stmt::IfStmtClass: {
-    const Expr *condition = (cast<IfStmt>(terminator))->getCond();
-    llvm::errs() << "if ";
-    handleBinaryOperator(condition, visited, block_id);
-    llvm::errs() << "\n";
-    break;
-  }
-
-  case Stmt::WhileStmtClass: {
-    const Expr *condition = (cast<WhileStmt>(terminator))->getCond();
-    llvm::errs() << "while ";
-    handleBinaryOperator(condition, visited, block_id);
-    llvm::errs() << "\n";
-    break;
-  }
-
-  default: {
-    llvm::errs() << "Unhandled terminator - " << terminator->getStmtClassName()
-                 << "\n\n";
-    terminator->dump();
-    break;
-  }
-  }
-}
+} // anonymous namespace
 
 // Register the Checker
 void ento::registerMyCFGDumper(CheckerManager &mgr) {
