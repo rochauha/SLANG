@@ -217,7 +217,7 @@ void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
 
     switch (RHS->getStmtClass()) {
     case Stmt::BinaryOperatorClass:
-      llvm::errs() << "B" << block_id << "." << temp_counter;
+      llvm::errs() << "B" << block_id << "." << temp_counter - 1;
       break;
 
     case Stmt::IntegerLiteralClass:
