@@ -44,14 +44,17 @@ public:
   void checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
                         BugReporter &BR) const;
 
+private:
   void handleFunction(const FunctionDecl *D) const;
+
   void handleCfg(const CFG *cfg) const;
+
   void handleBBInfo(const CFGBlock *bb, const CFG *cfg) const;
+
   void handleBBStmts(const CFGBlock *bb) const;
 
-  void
-  handleDeclStmt(const Stmt *S, const CFGBlock *bb,
-                 std::unordered_map<const Expr *, int> &visited_nodes) const;
+  void handleDeclStmt(std::stack<const Stmt *> &helper_stack, int &temp_counter,
+                      unsigned &block_id) const;
 
   void handleIntegerLiteral(const Stmt *IL_Stmt) const;
 
@@ -59,6 +62,10 @@ public:
 
   void handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
                             int &temp_counter, unsigned &block_id) const;
+
+  void handleTerminator(const Stmt *terminator,
+                        std::stack<const Stmt *> &helper_stack,
+                        int &temp_counter, unsigned &block_id) const;
 
 }; // class MyCFGDumper
 
@@ -186,6 +193,51 @@ void MyCFGDumper::handleBBInfo(const CFGBlock *bb, const CFG *cfg) const {
   }
 } // handleBBInfo()
 
+void MyCFGDumper::handleDeclStmt(std::stack<const Stmt *> &helper_stack,
+                                 int &temp_counter, unsigned &block_id) const {
+  const DeclStmt *DS = cast<DeclStmt>(helper_stack.top());
+  helper_stack.pop();
+
+  const Decl *decl = DS->getSingleDecl();
+  const NamedDecl *named_decl = cast<NamedDecl>(decl);
+  QualType T = (cast<ValueDecl>(decl))->getType();
+
+  if (helper_stack.empty()) {
+    return;
+  }
+
+  const Stmt *S = helper_stack.top();
+  helper_stack.pop();
+
+  switch (S->getStmtClass()) {
+  case Stmt::BinaryOperatorClass:
+    llvm::errs() << T.getAsString() << " " << named_decl->getNameAsString()
+                 << " = "
+                 << "B" << block_id << "." << temp_counter - 1;
+    break;
+
+  case Stmt::IntegerLiteralClass:
+    llvm::errs() << T.getAsString() << " " << named_decl->getNameAsString()
+                 << " = ";
+    handleIntegerLiteral(S);
+    break;
+
+  case Stmt::DeclRefExprClass:
+    llvm::errs() << T.getAsString() << " " << named_decl->getNameAsString()
+                 << " = ";
+
+    handleDeclRefExpr(S);
+    break;
+
+  default:
+    llvm::errs() << T.getAsString() << " " << named_decl->getNameAsString()
+                 << " = ";
+    llvm::errs() << "Unhandled " << S->getStmtClassName();
+    break;
+  }
+  llvm::errs() << "\n";
+} // handleDeclStmt()
+
 void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
                                        int &temp_counter,
                                        unsigned &block_id) const {
@@ -301,6 +353,17 @@ void MyCFGDumper::handleBBStmts(const CFGBlock *bb) const {
     const Stmt *S = CS->getStmt();
 
     switch (S->getStmtClass()) {
+      // default:
+      //   llvm::errs() << S->getStmtClassName() << ".\n";
+      //   S->dump();
+      //   llvm::errs() << "\n";
+      //   break;
+
+    case Stmt::DeclStmtClass:
+      helper_stack.push(S);
+      handleDeclStmt(helper_stack, temp_counter, bb_id);
+      break;
+
     case Stmt::BinaryOperatorClass:
       helper_stack.push(S);
       handleBinaryOperator(helper_stack, temp_counter, bb_id);
@@ -318,8 +381,8 @@ void MyCFGDumper::handleBBStmts(const CFGBlock *bb) const {
   }   // for
 
   // get terminator
-  // const Stmt *terminator = (bb->getTerminator()).getStmt();
-  // handleTerminator(terminator, visited_nodes, bb_id);
+  const Stmt *terminator = (bb->getTerminator()).getStmt();
+  handleTerminator(terminator, helper_stack, temp_counter, bb_id);
   llvm::errs() << "\n\n";
 } // handleBBStmts()
 
@@ -333,6 +396,33 @@ void MyCFGDumper::handleDeclRefExpr(const Stmt *DRE_Stmt) const {
   const DeclRefExpr *DRE = cast<DeclRefExpr>(DRE_Stmt);
   const ValueDecl *ident = DRE->getDecl();
   llvm::errs() << ident->getName();
+}
+
+void MyCFGDumper::handleTerminator(const Stmt *terminator,
+                                   std::stack<const Stmt *> &helper_stack,
+                                   int &temp_counter,
+                                   unsigned &block_id) const {
+  if (!terminator)
+    return;
+
+  Stmt::StmtClass terminator_class = terminator->getStmtClass();
+
+  switch (terminator_class) {
+  case Stmt::IfStmtClass:
+    llvm::errs() << "if ";
+    break;
+
+  case Stmt::WhileStmtClass:
+    llvm::errs() << "while ";
+    break;
+
+  default:
+    llvm::errs() << "Unhandled terminator - " << terminator->getStmtClassName()
+                 << "\n\n";
+    terminator->dump();
+    break;
+  } // switch
+  llvm::errs() << "B" << block_id << "." << temp_counter - 1 << "\n";
 }
 
 } // anonymous namespace
