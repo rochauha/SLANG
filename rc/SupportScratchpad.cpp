@@ -63,6 +63,9 @@ private:
   void handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
                             int &temp_counter, unsigned &block_id) const;
 
+  void subHandleBinaryOperator(const Stmt *expression, int &temp_counter,
+                                 unsigned &block_id, bool is_assignment) const;
+
   void handleTerminator(const Stmt *terminator,
                         std::stack<const Stmt *> &helper_stack,
                         int &temp_counter, unsigned &block_id) const;
@@ -233,6 +236,35 @@ void MyCFGDumper::handleDeclStmt(std::stack<const Stmt *> &helper_stack,
   llvm::errs() << "\n";
 } // handleDeclStmt()
 
+// Handle subexpressions
+void MyCFGDumper::subHandleBinaryOperator(const Stmt *expression_stmt,
+                                            int &temp_counter,
+                                            unsigned &block_id,
+                                            bool is_assignment) const {
+  switch (expression_stmt->getStmtClass()) {
+  case Stmt::IntegerLiteralClass:
+    handleIntegerLiteral(const_cast<Stmt *>(expression_stmt));
+    break;
+
+  case Stmt::DeclRefExprClass:
+    handleDeclRefExpr(const_cast<Stmt *>(expression_stmt));
+    break;
+
+  case Stmt::BinaryOperatorClass:
+    llvm::errs() << "B" << block_id << ".";
+    if (is_assignment)
+      llvm::errs() << temp_counter - 1;
+    else
+      llvm::errs() << temp_counter - 2;
+    break;
+
+  default:
+    llvm::errs() << "Unhandled "
+                 << const_cast<Stmt *>(expression_stmt)->getStmtClassName();
+    break;
+  }
+} // subHandleBinaryOperator()
+
 void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
                                        int &temp_counter,
                                        unsigned &block_id) const {
@@ -250,8 +282,9 @@ void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
   if (bin_op->isAssignmentOp()) {
 
     // Assignments can be an issue in presence of temporaries when using a
-    // stack. If LHS (3rd last element in the stack) is not a DeclRefExpr (i.e a
-    // varable), it will cause a runtime error. Hence, we check and swap them
+    // stack. If LHS (3rd last element in the stack) is not a DeclRefExpr (i.e
+    // a varable), it will cause a runtime error. Hence, we check and swap
+    // them
     if (!isa<DeclRefExpr>(LHS)) {
       auto tmp = LHS;
       LHS = RHS;
@@ -259,27 +292,8 @@ void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
     }
 
     handleDeclRefExpr(LHS);
-
     llvm::errs() << " " << bin_op->getOpcodeStr() << " ";
-
-    switch (RHS->getStmtClass()) {
-    case Stmt::BinaryOperatorClass:
-      llvm::errs() << "B" << block_id << "." << temp_counter - 1;
-      break;
-
-    case Stmt::IntegerLiteralClass:
-      handleIntegerLiteral(const_cast<Stmt *>(RHS));
-      break;
-
-    case Stmt::DeclRefExprClass:
-      handleDeclRefExpr(const_cast<Stmt *>(RHS));
-      break;
-
-    default:
-      llvm::errs() << "Unhandled "
-                   << const_cast<Stmt *>(RHS)->getStmtClassName();
-      break;
-    } // switch
+    subHandleBinaryOperator(RHS, temp_counter, block_id, true);
   }
 
   // Assign temporaries otherwise
@@ -287,47 +301,13 @@ void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
     llvm::errs() << "B" << block_id << "." << temp_counter << " = ";
     temp_counter++;
 
-    switch (LHS->getStmtClass()) {
-    case Stmt::IntegerLiteralClass:
-      handleIntegerLiteral(const_cast<Stmt *>(LHS));
-      break;
-
-    case Stmt::DeclRefExprClass:
-      handleDeclRefExpr(const_cast<Stmt *>(LHS));
-      break;
-
-    case Stmt::BinaryOperatorClass:
-      llvm::errs() << "B" << block_id << "." << temp_counter - 2;
-      break;
-
-    default:
-      llvm::errs() << "Unhandled "
-                   << const_cast<Stmt *>(LHS)->getStmtClassName();
-      break;
-    } // switch
-
+    subHandleBinaryOperator(LHS, temp_counter, block_id, false);
     llvm::errs() << " " << bin_op->getOpcodeStr() << " ";
+    subHandleBinaryOperator(RHS, temp_counter, block_id, false);
 
-    switch (RHS->getStmtClass()) {
-    case Stmt::IntegerLiteralClass:
-      handleIntegerLiteral(const_cast<Stmt *>(RHS));
-      break;
-
-    case Stmt::DeclRefExprClass:
-      handleDeclRefExpr(const_cast<Stmt *>(RHS));
-      break;
-
-    case Stmt::BinaryOperatorClass:
-      llvm::errs() << "B" << block_id << "." << temp_counter - 2;
-      break;
-
-    default:
-      llvm::errs() << "Unhandled "
-                   << const_cast<Stmt *>(RHS)->getStmtClassName();
-      break;
-    } // switch
     helper_stack.push(bin_op_stmt);
   } // else
+
   llvm::errs() << "\n";
 } // handleBinaryOperator()
 
