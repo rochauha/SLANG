@@ -64,7 +64,7 @@ private:
                             int &temp_counter, unsigned &block_id) const;
 
   void subHandleBinaryOperator(const Stmt *expression, int &temp_counter,
-                                 unsigned &block_id, bool is_assignment) const;
+                               unsigned &block_id, bool is_assignment) const;
 
   void handleTerminator(const Stmt *terminator,
                         std::stack<const Stmt *> &helper_stack,
@@ -238,9 +238,8 @@ void MyCFGDumper::handleDeclStmt(std::stack<const Stmt *> &helper_stack,
 
 // Handle subexpressions
 void MyCFGDumper::subHandleBinaryOperator(const Stmt *expression_stmt,
-                                            int &temp_counter,
-                                            unsigned &block_id,
-                                            bool is_assignment) const {
+                                          int &temp_counter, unsigned &block_id,
+                                          bool is_assignment) const {
   switch (expression_stmt->getStmtClass()) {
   case Stmt::IntegerLiteralClass:
     handleIntegerLiteral(const_cast<Stmt *>(expression_stmt));
@@ -373,6 +372,7 @@ void MyCFGDumper::handleDeclRefExpr(const Stmt *DRE_Stmt) const {
   llvm::errs() << ident->getName();
 }
 
+// TODO: handle ForStmt and GotoStmt
 void MyCFGDumper::handleTerminator(const Stmt *terminator,
                                    std::stack<const Stmt *> &helper_stack,
                                    int &temp_counter,
@@ -381,13 +381,15 @@ void MyCFGDumper::handleTerminator(const Stmt *terminator,
     return;
 
   Stmt::StmtClass terminator_class = terminator->getStmtClass();
-
+  Expr *condition_expr = nullptr;
   switch (terminator_class) {
   case Stmt::IfStmtClass:
+    condition_expr = const_cast<Expr *>(cast<IfStmt>(terminator)->getCond());
     llvm::errs() << "if ";
     break;
 
   case Stmt::WhileStmtClass:
+    condition_expr = const_cast<Expr *>(cast<WhileStmt>(terminator)->getCond());
     llvm::errs() << "while ";
     break;
 
@@ -397,7 +399,24 @@ void MyCFGDumper::handleTerminator(const Stmt *terminator,
     terminator->dump();
     break;
   } // switch
-  llvm::errs() << "B" << block_id << "." << temp_counter - 1 << "\n";
+
+  if (condition_expr) {
+    if (isa<BinaryOperator>(condition_expr)) {
+      const BinaryOperator *bin_op = cast<BinaryOperator>(condition_expr);
+      if (bin_op->isAssignmentOp()) {
+        // take LHS of assignment
+        handleDeclRefExpr(bin_op->getLHS());
+      } else {
+        // this is already visited, so just take it's temporary
+        llvm::errs() << "B" << block_id << "." << temp_counter - 1;
+      }
+    } else {
+      // take whatever is on top of the stack
+      subHandleBinaryOperator(helper_stack.top(), temp_counter, block_id,
+                              false);
+    }
+  }
+  llvm::errs() << "\n";
 } // handleTerminator()
 
 } // anonymous namespace
