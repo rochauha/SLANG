@@ -271,10 +271,10 @@ void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
   const BinaryOperator *bin_op = cast<BinaryOperator>(bin_op_stmt);
   helper_stack.pop();
 
-  Stmt *RHS = const_cast<Stmt *>(helper_stack.top());
+  Stmt *LHS = const_cast<Stmt *>(helper_stack.top());
   helper_stack.pop();
 
-  Stmt *LHS = const_cast<Stmt *>(helper_stack.top());
+  Stmt *RHS = const_cast<Stmt *>(helper_stack.top());
   helper_stack.pop();
 
   // don't assign temporary variable to assignments
