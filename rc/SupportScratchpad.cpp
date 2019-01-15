@@ -202,36 +202,31 @@ void MyCFGDumper::handleDeclStmt(std::stack<const Stmt *> &helper_stack,
   const NamedDecl *named_decl = cast<NamedDecl>(decl);
   QualType T = (cast<ValueDecl>(decl))->getType();
 
+  llvm::errs() << T.getAsString() << " " << named_decl->getNameAsString();
+
   if (helper_stack.empty()) {
+    llvm::errs() << "\n";
     return;
   }
 
   const Stmt *S = helper_stack.top();
   helper_stack.pop();
 
+  llvm::errs() << " = ";
   switch (S->getStmtClass()) {
   case Stmt::BinaryOperatorClass:
-    llvm::errs() << T.getAsString() << " " << named_decl->getNameAsString()
-                 << " = "
-                 << "B" << block_id << "." << temp_counter - 1;
+    llvm::errs() << "B" << block_id << "." << temp_counter - 1;
     break;
 
   case Stmt::IntegerLiteralClass:
-    llvm::errs() << T.getAsString() << " " << named_decl->getNameAsString()
-                 << " = ";
     handleIntegerLiteral(S);
     break;
 
   case Stmt::DeclRefExprClass:
-    llvm::errs() << T.getAsString() << " " << named_decl->getNameAsString()
-                 << " = ";
-
     handleDeclRefExpr(S);
     break;
 
   default:
-    llvm::errs() << T.getAsString() << " " << named_decl->getNameAsString()
-                 << " = ";
     llvm::errs() << "Unhandled " << S->getStmtClassName();
     break;
   }
@@ -423,7 +418,7 @@ void MyCFGDumper::handleTerminator(const Stmt *terminator,
     break;
   } // switch
   llvm::errs() << "B" << block_id << "." << temp_counter - 1 << "\n";
-}
+} // handleTerminator()
 
 } // anonymous namespace
 
