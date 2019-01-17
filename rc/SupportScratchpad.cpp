@@ -53,7 +53,8 @@ private:
 
   void handleBBStmts(const CFGBlock *bb) const;
 
-  void handleDeclStmt(std::stack<const Stmt *> &helper_stack, int &temp_counter,
+  void handleDeclStmt(const DeclStmt *DS,
+                      std::stack<const Stmt *> &helper_stack, int &temp_counter,
                       unsigned &block_id) const;
 
   void handleIntegerLiteral(const Stmt *IL_Stmt) const;
@@ -63,8 +64,8 @@ private:
   void handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
                             int &temp_counter, unsigned &block_id) const;
 
-  void subHandleBinaryOperator(const Stmt *expression, int &temp_counter,
-                               unsigned &block_id, bool is_assignment) const;
+  void handleOperand(const Stmt *expression_stmt, int &temp_counter,
+                     unsigned &block_id, bool is_assignment) const;
 
   void handleTerminator(const Stmt *terminator,
                         std::stack<const Stmt *> &helper_stack,
@@ -196,10 +197,9 @@ void MyCFGDumper::handleBBInfo(const CFGBlock *bb, const CFG *cfg) const {
   }
 } // handleBBInfo()
 
-void MyCFGDumper::handleDeclStmt(std::stack<const Stmt *> &helper_stack,
+void MyCFGDumper::handleDeclStmt(const DeclStmt *DS,
+                                 std::stack<const Stmt *> &helper_stack,
                                  int &temp_counter, unsigned &block_id) const {
-  const DeclStmt *DS = cast<DeclStmt>(helper_stack.top());
-  helper_stack.pop();
 
   const Decl *decl = DS->getSingleDecl();
   const NamedDecl *named_decl = cast<NamedDecl>(decl);
@@ -216,37 +216,21 @@ void MyCFGDumper::handleDeclStmt(std::stack<const Stmt *> &helper_stack,
   helper_stack.pop();
 
   llvm::errs() << " = ";
-  switch (S->getStmtClass()) {
-  case Stmt::BinaryOperatorClass:
-    llvm::errs() << "B" << block_id << "." << temp_counter - 1;
-    break;
+  handleOperand(S, temp_counter, block_id, true);
 
-  case Stmt::IntegerLiteralClass:
-    handleIntegerLiteral(S);
-    break;
-
-  case Stmt::DeclRefExprClass:
-    handleDeclRefExpr(S);
-    break;
-
-  default:
-    llvm::errs() << "Unhandled " << S->getStmtClassName();
-    break;
-  }
   llvm::errs() << "\n";
 } // handleDeclStmt()
 
 // Handle subexpressions
-void MyCFGDumper::subHandleBinaryOperator(const Stmt *expression_stmt,
-                                          int &temp_counter, unsigned &block_id,
-                                          bool is_assignment) const {
+void MyCFGDumper::handleOperand(const Stmt *expression_stmt, int &temp_counter,
+                                unsigned &block_id, bool is_assignment) const {
   switch (expression_stmt->getStmtClass()) {
   case Stmt::IntegerLiteralClass:
-    handleIntegerLiteral(const_cast<Stmt *>(expression_stmt));
+    handleIntegerLiteral(expression_stmt);
     break;
 
   case Stmt::DeclRefExprClass:
-    handleDeclRefExpr(const_cast<Stmt *>(expression_stmt));
+    handleDeclRefExpr(expression_stmt);
     break;
 
   case Stmt::BinaryOperatorClass:
@@ -258,11 +242,10 @@ void MyCFGDumper::subHandleBinaryOperator(const Stmt *expression_stmt,
     break;
 
   default:
-    llvm::errs() << "Unhandled "
-                 << const_cast<Stmt *>(expression_stmt)->getStmtClassName();
+    llvm::errs() << "Unhandled " << expression_stmt->getStmtClassName();
     break;
   }
-} // subHandleBinaryOperator()
+} // handleOperand()
 
 void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
                                        int &temp_counter,
@@ -271,28 +254,22 @@ void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
   const BinaryOperator *bin_op = cast<BinaryOperator>(bin_op_stmt);
   helper_stack.pop();
 
-  Stmt *LHS = const_cast<Stmt *>(helper_stack.top());
+  Stmt *RHS = const_cast<Stmt *>(helper_stack.top());
   helper_stack.pop();
 
-  Stmt *RHS = const_cast<Stmt *>(helper_stack.top());
+  Stmt *LHS = const_cast<Stmt *>(helper_stack.top());
   helper_stack.pop();
 
   // don't assign temporary variable to assignments
   if (bin_op->isAssignmentOp()) {
-
-    // Assignments can be an issue in presence of temporaries when using a
-    // stack. If LHS (3rd last element in the stack) is not a DeclRefExpr (i.e
-    // a varable), it will cause a runtime error. Hence, we check and swap
-    // them
-    if (!isa<DeclRefExpr>(LHS)) {
-      auto tmp = LHS;
-      LHS = RHS;
-      RHS = tmp;
-    }
+    // in case of assignments, RHS is accessed before LHS, hence we swap orders
+    auto tmp = LHS;
+    LHS = RHS;
+    RHS = tmp;
 
     handleDeclRefExpr(LHS);
     llvm::errs() << " " << bin_op->getOpcodeStr() << " ";
-    subHandleBinaryOperator(RHS, temp_counter, block_id, true);
+    handleOperand(RHS, temp_counter, block_id, true);
   }
 
   // Assign temporaries otherwise
@@ -300,9 +277,9 @@ void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
     llvm::errs() << "B" << block_id << "." << temp_counter << " = ";
     temp_counter++;
 
-    subHandleBinaryOperator(LHS, temp_counter, block_id, false);
+    handleOperand(LHS, temp_counter, block_id, false);
     llvm::errs() << " " << bin_op->getOpcodeStr() << " ";
-    subHandleBinaryOperator(RHS, temp_counter, block_id, false);
+    handleOperand(RHS, temp_counter, block_id, false);
 
     helper_stack.push(bin_op_stmt);
   } // else
@@ -331,11 +308,10 @@ void MyCFGDumper::handleBBStmts(const CFGBlock *bb) const {
       //   llvm::errs() << S->getStmtClassName() << ".\n";
       //   S->dump();
       //   llvm::errs() << "\n";
-      //   break;
+      //  break;
 
     case Stmt::DeclStmtClass:
-      helper_stack.push(S);
-      handleDeclStmt(helper_stack, temp_counter, bb_id);
+      handleDeclStmt(cast<DeclStmt>(S), helper_stack, temp_counter, bb_id);
       break;
 
     case Stmt::BinaryOperatorClass:
@@ -412,8 +388,7 @@ void MyCFGDumper::handleTerminator(const Stmt *terminator,
       }
     } else {
       // take whatever is on top of the stack
-      subHandleBinaryOperator(helper_stack.top(), temp_counter, block_id,
-                              false);
+      handleOperand(helper_stack.top(), temp_counter, block_id, false);
     }
   }
   llvm::errs() << "\n";
