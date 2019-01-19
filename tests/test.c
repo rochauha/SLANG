@@ -1,8 +1,11 @@
 int main(int argc, char** argv) {
-	int x = 100;
-	int j = 1004;
+	int x = 20;
+	int *y = &x;
+	int *z = &x;
 
-	for (int i = 0; i < 5; i++) {
-		x = x + j + i;
+	*z = 200 * 5 + x;
+
+	if (*(y + 300 * x + *z)) {
+		x = 30;
 	}
 }
