@@ -28,7 +28,6 @@
 #include "llvm/Support/raw_ostream.h" //AD
 #include <stack>                      // RC
 #include <string>                     //AD
-#include <unordered_map>              //AD
 
 using namespace clang;
 using namespace ento;
@@ -46,8 +45,9 @@ public:
 
 private:
   enum OperandInfoTy {
-    IS_LHS_OP___BOTH_BINOPS = 1,
-    IS_RHS_OP___BOTH_BINOPS,
+    IS_LHS_OP___BOTH_TEMPS = 1,
+    IS_RHS_OP___BOTH_TEMPS,
+    IS_LHS_UN_OP,
     IS_BEING_ASSIGNED,
     IS_CONDITION_FOR_JUMP,
     IS_MAKING_NEW_TEMP_VAR
@@ -68,6 +68,9 @@ private:
   void handleIntegerLiteral(const Stmt *IL_Stmt) const;
 
   void handleDeclRefExpr(const Stmt *DRE_Stmt) const;
+
+  void handleUnaryOperator(std::stack<const Stmt *> &helper_stack,
+                           int &temp_counter, unsigned &block_id) const;
 
   void handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
                             int &temp_counter, unsigned &block_id) const;
@@ -242,14 +245,18 @@ void MyCFGDumper::handleOperand(const Stmt *expression_stmt, int &temp_counter,
     handleDeclRefExpr(expression_stmt);
     break;
 
+  case Stmt::UnaryOperatorClass:
   case Stmt::BinaryOperatorClass:
     llvm::errs() << "B" << block_id << ".";
     switch (operand_info) {
-    case IS_RHS_OP___BOTH_BINOPS:
+    case IS_LHS_UN_OP:
+      llvm::errs() << temp_counter;
+      break;
+    case IS_RHS_OP___BOTH_TEMPS:
       llvm::errs() << temp_counter - 1;
       break;
 
-    case IS_LHS_OP___BOTH_BINOPS:
+    case IS_LHS_OP___BOTH_TEMPS:
       llvm::errs() << temp_counter - 2;
       break;
 
@@ -273,6 +280,27 @@ void MyCFGDumper::handleOperand(const Stmt *expression_stmt, int &temp_counter,
   } // switch
 } // handleOperand()
 
+// TODO: Get more details instead of just showing 'UNOP'
+void MyCFGDumper::handleUnaryOperator(std::stack<const Stmt *> &helper_stack,
+                                      int &temp_counter,
+                                      unsigned &block_id) const {
+  const Stmt *un_op_stmt = helper_stack.top();
+  helper_stack.pop();
+
+  const Stmt *sub_expr = helper_stack.top();
+  helper_stack.pop();
+
+  // Assign temporary
+  temp_counter++;
+  llvm::errs() << "B" << block_id << "." << temp_counter << " = UNOP ";
+  handleOperand(sub_expr, temp_counter, block_id, IS_MAKING_NEW_TEMP_VAR);
+
+  helper_stack.push(un_op_stmt);
+
+  llvm::errs() << "\n";
+
+} // handleUnaryOperator()
+
 void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
                                        int &temp_counter,
                                        unsigned &block_id) const {
@@ -286,6 +314,17 @@ void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
   Stmt *LHS = const_cast<Stmt *>(helper_stack.top());
   helper_stack.pop();
 
+  auto lhs_class = LHS->getStmtClass();
+  auto rhs_class = RHS->getStmtClass();
+
+  bool lhs_is_temp = lhs_class == Stmt::UnaryOperatorClass ||
+                     lhs_class == Stmt::BinaryOperatorClass;
+
+  bool rhs_is_temp = rhs_class == Stmt::UnaryOperatorClass ||
+                     rhs_class == Stmt::BinaryOperatorClass;
+
+  bool both_are_temp = lhs_is_temp && rhs_is_temp;
+
   // don't assign temporary variable to assignments
   if (bin_op->isAssignmentOp()) {
     // in case of assignments, RHS is accessed before LHS, hence
@@ -294,9 +333,15 @@ void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
     LHS = RHS;
     RHS = tmp;
 
-    handleDeclRefExpr(LHS);
+    // the last parameter helps ONLY when LHS is a pointer dereference
+    handleOperand(LHS, temp_counter, block_id, IS_LHS_UN_OP);
     llvm::errs() << " " << bin_op->getOpcodeStr() << " ";
-    handleOperand(RHS, temp_counter, block_id, IS_BEING_ASSIGNED);
+
+    if (both_are_temp) {
+      handleOperand(RHS, temp_counter, block_id, IS_RHS_OP___BOTH_TEMPS);
+    } else {
+      handleOperand(RHS, temp_counter, block_id, IS_BEING_ASSIGNED);
+    }
   }
 
   // Assign temporaries otherwise
@@ -304,10 +349,10 @@ void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
     temp_counter++;
     llvm::errs() << "B" << block_id << "." << temp_counter << " = ";
 
-    if (isa<BinaryOperator>(LHS) && isa<BinaryOperator>(RHS)) {
-      handleOperand(LHS, temp_counter, block_id, IS_LHS_OP___BOTH_BINOPS);
+    if (both_are_temp) {
+      handleOperand(LHS, temp_counter, block_id, IS_LHS_OP___BOTH_TEMPS);
       llvm::errs() << " " << bin_op->getOpcodeStr() << " ";
-      handleOperand(RHS, temp_counter, block_id, IS_RHS_OP___BOTH_BINOPS);
+      handleOperand(RHS, temp_counter, block_id, IS_RHS_OP___BOTH_TEMPS);
     }
 
     else {
@@ -322,7 +367,6 @@ void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
 } // handleBinaryOperator()
 
 void MyCFGDumper::handleBBStmts(const CFGBlock *bb) const {
-  std::unordered_map<const Expr *, int> visited_nodes;
 
   unsigned bb_id = bb->getBlockID();
 
@@ -346,6 +390,11 @@ void MyCFGDumper::handleBBStmts(const CFGBlock *bb) const {
 
     case Stmt::DeclStmtClass:
       handleDeclStmt(cast<DeclStmt>(S), helper_stack, temp_counter, bb_id);
+      break;
+
+    case Stmt::UnaryOperatorClass:
+      helper_stack.push(S);
+      handleUnaryOperator(helper_stack, temp_counter, bb_id);
       break;
 
     case Stmt::BinaryOperatorClass:
