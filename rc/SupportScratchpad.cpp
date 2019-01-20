@@ -47,7 +47,6 @@ private:
   enum OperandInfoTy {
     IS_LHS_OP___BOTH_TEMPS = 1,
     IS_RHS_OP___BOTH_TEMPS,
-    IS_LHS_UN_OP,
     IS_BEING_ASSIGNED,
     IS_CONDITION_FOR_JUMP,
     IS_MAKING_NEW_TEMP_VAR
@@ -69,8 +68,10 @@ private:
 
   void handleDeclRefExpr(const Stmt *DRE_Stmt) const;
 
-  void handleUnaryOperator(std::stack<const Stmt *> &helper_stack,
-                           int &temp_counter, unsigned &block_id) const;
+  void handleUnaryOperator(const Stmt *operand_stmt,
+                           std::stack<const UnaryOperator *> &un_op_stack,
+                           int &temp_counter, unsigned &block_id,
+                           OperandInfoTy operand_info) const;
 
   void handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
                             int &temp_counter, unsigned &block_id) const;
@@ -223,11 +224,17 @@ void MyCFGDumper::handleDeclStmt(const DeclStmt *DS,
     return;
   }
 
+  std::stack<const UnaryOperator *> un_op_stack;
+  while (isa<UnaryOperator>(helper_stack.top())) {
+    un_op_stack.push(cast<UnaryOperator>(helper_stack.top()));
+    helper_stack.pop();
+  }
   const Stmt *S = helper_stack.top();
   helper_stack.pop();
 
   llvm::errs() << " = ";
-  handleOperand(S, temp_counter, block_id, IS_BEING_ASSIGNED);
+  handleUnaryOperator(S, un_op_stack, temp_counter, block_id,
+                      IS_BEING_ASSIGNED);
 
   llvm::errs() << "\n";
 } // handleDeclStmt()
@@ -245,13 +252,9 @@ void MyCFGDumper::handleOperand(const Stmt *expression_stmt, int &temp_counter,
     handleDeclRefExpr(expression_stmt);
     break;
 
-  case Stmt::UnaryOperatorClass:
   case Stmt::BinaryOperatorClass:
     llvm::errs() << "B" << block_id << ".";
     switch (operand_info) {
-    case IS_LHS_UN_OP:
-      llvm::errs() << temp_counter;
-      break;
     case IS_RHS_OP___BOTH_TEMPS:
       llvm::errs() << temp_counter - 1;
       break;
@@ -280,68 +283,119 @@ void MyCFGDumper::handleOperand(const Stmt *expression_stmt, int &temp_counter,
   } // switch
 } // handleOperand()
 
-// TODO: Get more details instead of just showing 'UNOP'
-void MyCFGDumper::handleUnaryOperator(std::stack<const Stmt *> &helper_stack,
-                                      int &temp_counter,
-                                      unsigned &block_id) const {
-  const Stmt *un_op_stmt = helper_stack.top();
-  helper_stack.pop();
+// The idea is as follows
+// Before calling this function, we keep pushing UnaryOperator(s) on a stack.
+// Then when we actually find our operand, we call this function with the
+// operand and the stack. Note that now the top-most element on the stack is the
+// most recent UnaryOperator, and so on. Finally we evaluate everything in the
+// correct order based on the top element
+void MyCFGDumper::handleUnaryOperator(
+    const Stmt *operand_stmt, std::stack<const UnaryOperator *> &un_op_stack,
+    int &temp_counter, unsigned &block_id, OperandInfoTy operand_info) const {
 
-  const Stmt *sub_expr = helper_stack.top();
-  helper_stack.pop();
+  if (un_op_stack.empty()) {
+    handleOperand(operand_stmt, temp_counter, block_id, operand_info);
+  }
 
-  // Assign temporary
-  temp_counter++;
-  llvm::errs() << "B" << block_id << "." << temp_counter << " = UNOP ";
-  handleOperand(sub_expr, temp_counter, block_id, IS_MAKING_NEW_TEMP_VAR);
+  else {
+    while (!un_op_stack.empty()) {
+      const UnaryOperator *un_op = un_op_stack.top();
+      un_op_stack.pop();
+      switch (un_op->getOpcode()) {
+      case UO_PostInc:
+        llvm::errs() << "( ";
+        handleUnaryOperator(operand_stmt, un_op_stack, temp_counter, block_id,
+                            operand_info);
+        llvm::errs() << " )++";
+        break;
 
-  helper_stack.push(un_op_stmt);
+      case UO_PreInc:
+        llvm::errs() << "++( ";
+        handleUnaryOperator(operand_stmt, un_op_stack, temp_counter, block_id,
+                            operand_info);
+        llvm::errs() << " )";
+        break;
 
-  llvm::errs() << "\n";
+      case UO_PostDec:
+        llvm::errs() << "( ";
+        handleUnaryOperator(operand_stmt, un_op_stack, temp_counter, block_id,
+                            operand_info);
+        llvm::errs() << " )--";
+        break;
 
+      case UO_PreDec:
+        llvm::errs() << "--( ";
+        handleUnaryOperator(operand_stmt, un_op_stack, temp_counter, block_id,
+                            operand_info);
+        llvm::errs() << " )";
+        break;
+
+      case UO_AddrOf:
+        llvm::errs() << "&( ";
+        handleUnaryOperator(operand_stmt, un_op_stack, temp_counter, block_id,
+                            operand_info);
+        llvm::errs() << " )";
+        break;
+
+      case UO_Deref:
+        llvm::errs() << "*( ";
+        handleUnaryOperator(operand_stmt, un_op_stack, temp_counter, block_id,
+                            operand_info);
+        llvm::errs() << " )";
+        break;
+
+      case UO_Plus:
+      case UO_Minus:
+      case UO_Not:
+      case UO_LNot:
+      case UO_Coawait:
+      default:
+        llvm::errs() << "UNOP ";
+        break;
+
+      } // switch
+    }   // while
+  }     // else
 } // handleUnaryOperator()
 
 void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
                                        int &temp_counter,
                                        unsigned &block_id) const {
+
+  std::stack<const UnaryOperator *> RHS_un_op_stack;
+  std::stack<const UnaryOperator *> LHS_un_op_stack;
+
   const Stmt *bin_op_stmt = helper_stack.top();
   const BinaryOperator *bin_op = cast<BinaryOperator>(bin_op_stmt);
   helper_stack.pop();
 
+  while (isa<UnaryOperator>(helper_stack.top())) {
+    RHS_un_op_stack.push(cast<UnaryOperator>(helper_stack.top()));
+    helper_stack.pop();
+  }
   Stmt *RHS = const_cast<Stmt *>(helper_stack.top());
   helper_stack.pop();
 
+  while (isa<UnaryOperator>(helper_stack.top())) {
+    LHS_un_op_stack.push(cast<UnaryOperator>(helper_stack.top()));
+    helper_stack.pop();
+  }
   Stmt *LHS = const_cast<Stmt *>(helper_stack.top());
   helper_stack.pop();
-
-  auto lhs_class = LHS->getStmtClass();
-  auto rhs_class = RHS->getStmtClass();
-
-  bool lhs_is_temp = lhs_class == Stmt::UnaryOperatorClass ||
-                     lhs_class == Stmt::BinaryOperatorClass;
-
-  bool rhs_is_temp = rhs_class == Stmt::UnaryOperatorClass ||
-                     rhs_class == Stmt::BinaryOperatorClass;
-
-  bool both_are_temp = lhs_is_temp && rhs_is_temp;
 
   // don't assign temporary variable to assignments
   if (bin_op->isAssignmentOp()) {
     // in case of assignments, RHS is accessed before LHS, hence
     // we swap order
-    auto tmp = LHS;
-    LHS = RHS;
-    RHS = tmp;
-
-    // the last parameter helps ONLY when LHS is a pointer dereference
-    handleOperand(LHS, temp_counter, block_id, IS_LHS_UN_OP);
+    // auto tmp = LHS;
+    // LHS = RHS;
+    // RHS = tmp;
+    // since operands are swapped, the stacks must also be swapped
+    handleUnaryOperator(RHS, RHS_un_op_stack, temp_counter, block_id,
+                        IS_BEING_ASSIGNED);
     llvm::errs() << " " << bin_op->getOpcodeStr() << " ";
-
-    if (both_are_temp) {
-      handleOperand(RHS, temp_counter, block_id, IS_RHS_OP___BOTH_TEMPS);
-    } else {
-      handleOperand(RHS, temp_counter, block_id, IS_BEING_ASSIGNED);
-    }
+    handleUnaryOperator(LHS, LHS_un_op_stack, temp_counter, block_id,
+                        IS_BEING_ASSIGNED);
   }
 
   // Assign temporaries otherwise
@@ -349,16 +403,20 @@ void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
     temp_counter++;
     llvm::errs() << "B" << block_id << "." << temp_counter << " = ";
 
-    if (both_are_temp) {
-      handleOperand(LHS, temp_counter, block_id, IS_LHS_OP___BOTH_TEMPS);
+    if (isa<BinaryOperator>(LHS) && isa<BinaryOperator>(RHS)) {
+      handleUnaryOperator(LHS, LHS_un_op_stack, temp_counter, block_id,
+                          IS_LHS_OP___BOTH_TEMPS);
       llvm::errs() << " " << bin_op->getOpcodeStr() << " ";
-      handleOperand(RHS, temp_counter, block_id, IS_RHS_OP___BOTH_TEMPS);
+      handleUnaryOperator(RHS, RHS_un_op_stack, temp_counter, block_id,
+                          IS_RHS_OP___BOTH_TEMPS);
     }
 
     else {
-      handleOperand(LHS, temp_counter, block_id, IS_MAKING_NEW_TEMP_VAR);
+      handleUnaryOperator(LHS, LHS_un_op_stack, temp_counter, block_id,
+                          IS_MAKING_NEW_TEMP_VAR);
       llvm::errs() << " " << bin_op->getOpcodeStr() << " ";
-      handleOperand(RHS, temp_counter, block_id, IS_MAKING_NEW_TEMP_VAR);
+      handleUnaryOperator(RHS, RHS_un_op_stack, temp_counter, block_id,
+                          IS_MAKING_NEW_TEMP_VAR);
     }
     helper_stack.push(bin_op_stmt);
   } // else
@@ -392,14 +450,13 @@ void MyCFGDumper::handleBBStmts(const CFGBlock *bb) const {
       handleDeclStmt(cast<DeclStmt>(S), helper_stack, temp_counter, bb_id);
       break;
 
-    case Stmt::UnaryOperatorClass:
-      helper_stack.push(S);
-      handleUnaryOperator(helper_stack, temp_counter, bb_id);
-      break;
-
     case Stmt::BinaryOperatorClass:
       helper_stack.push(S);
       handleBinaryOperator(helper_stack, temp_counter, bb_id);
+      break;
+
+    case Stmt::ParenExprClass:
+      // simply ignore
       break;
 
     default:
@@ -431,7 +488,7 @@ void MyCFGDumper::handleDeclRefExpr(const Stmt *DRE_Stmt) const {
   llvm::errs() << ident->getName();
 }
 
-// TODO: handle ForStmt and GotoStmt
+// TODO: handle ForStmt and GotoStmt and UnaryOperator in conditions
 void MyCFGDumper::handleTerminator(const Stmt *terminator,
                                    std::stack<const Stmt *> &helper_stack,
                                    int &temp_counter,
@@ -459,6 +516,7 @@ void MyCFGDumper::handleTerminator(const Stmt *terminator,
     break;
   } // switch
 
+  // TODO: some how handle unary operator here
   if (condition_expr) {
     if (isa<BinaryOperator>(condition_expr)) {
       const BinaryOperator *bin_op = cast<BinaryOperator>(condition_expr);
