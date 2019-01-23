@@ -28,7 +28,6 @@
 #include "llvm/Support/raw_ostream.h" //AD
 #include <stack>                      // RC
 #include <string>                     //AD
-#include <unordered_map>              //AD
 
 using namespace clang;
 using namespace ento;
@@ -45,6 +44,14 @@ public:
                         BugReporter &BR) const;
 
 private:
+  enum OperandInfoTy {
+    IS_LHS_OP___BOTH_TEMPS = 1,
+    IS_RHS_OP___BOTH_TEMPS,
+    IS_BEING_ASSIGNED,
+    IS_CONDITION_FOR_JUMP,
+    IS_MAKING_NEW_TEMP_VAR
+  };
+
   void handleFunction(const FunctionDecl *D) const;
 
   void handleCfg(const CFG *cfg) const;
@@ -53,18 +60,24 @@ private:
 
   void handleBBStmts(const CFGBlock *bb) const;
 
-  void handleDeclStmt(std::stack<const Stmt *> &helper_stack, int &temp_counter,
+  void handleDeclStmt(const DeclStmt *DS,
+                      std::stack<const Stmt *> &helper_stack, int &temp_counter,
                       unsigned &block_id) const;
 
   void handleIntegerLiteral(const Stmt *IL_Stmt) const;
 
   void handleDeclRefExpr(const Stmt *DRE_Stmt) const;
 
+  void handleUnaryOperator(const Stmt *operand_stmt,
+                           std::stack<const UnaryOperator *> &un_op_stack,
+                           int &temp_counter, unsigned &block_id,
+                           OperandInfoTy operand_info) const;
+
   void handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
                             int &temp_counter, unsigned &block_id) const;
 
-  void subHandleBinaryOperator(const Stmt *expression, int &temp_counter,
-                               unsigned &block_id, bool is_assignment) const;
+  void handleOperand(const Stmt *expression_stmt, int &temp_counter,
+                     unsigned &block_id, OperandInfoTy operand_info) const;
 
   void handleTerminator(const Stmt *terminator,
                         std::stack<const Stmt *> &helper_stack,
@@ -196,10 +209,9 @@ void MyCFGDumper::handleBBInfo(const CFGBlock *bb, const CFG *cfg) const {
   }
 } // handleBBInfo()
 
-void MyCFGDumper::handleDeclStmt(std::stack<const Stmt *> &helper_stack,
+void MyCFGDumper::handleDeclStmt(const DeclStmt *DS,
+                                 std::stack<const Stmt *> &helper_stack,
                                  int &temp_counter, unsigned &block_id) const {
-  const DeclStmt *DS = cast<DeclStmt>(helper_stack.top());
-  helper_stack.pop();
 
   const Decl *decl = DS->getSingleDecl();
   const NamedDecl *named_decl = cast<NamedDecl>(decl);
@@ -212,98 +224,200 @@ void MyCFGDumper::handleDeclStmt(std::stack<const Stmt *> &helper_stack,
     return;
   }
 
+  std::stack<const UnaryOperator *> un_op_stack;
+  while (isa<UnaryOperator>(helper_stack.top())) {
+    un_op_stack.push(cast<UnaryOperator>(helper_stack.top()));
+    helper_stack.pop();
+  }
   const Stmt *S = helper_stack.top();
   helper_stack.pop();
 
   llvm::errs() << " = ";
-  switch (S->getStmtClass()) {
-  case Stmt::BinaryOperatorClass:
-    llvm::errs() << "B" << block_id << "." << temp_counter - 1;
-    break;
+  handleUnaryOperator(S, un_op_stack, temp_counter, block_id,
+                      IS_BEING_ASSIGNED);
 
-  case Stmt::IntegerLiteralClass:
-    handleIntegerLiteral(S);
-    break;
-
-  case Stmt::DeclRefExprClass:
-    handleDeclRefExpr(S);
-    break;
-
-  default:
-    llvm::errs() << "Unhandled " << S->getStmtClassName();
-    break;
-  }
   llvm::errs() << "\n";
 } // handleDeclStmt()
 
 // Handle subexpressions
-void MyCFGDumper::subHandleBinaryOperator(const Stmt *expression_stmt,
-                                          int &temp_counter, unsigned &block_id,
-                                          bool is_assignment) const {
+void MyCFGDumper::handleOperand(const Stmt *expression_stmt, int &temp_counter,
+                                unsigned &block_id,
+                                OperandInfoTy operand_info) const {
   switch (expression_stmt->getStmtClass()) {
   case Stmt::IntegerLiteralClass:
-    handleIntegerLiteral(const_cast<Stmt *>(expression_stmt));
+    handleIntegerLiteral(expression_stmt);
     break;
 
   case Stmt::DeclRefExprClass:
-    handleDeclRefExpr(const_cast<Stmt *>(expression_stmt));
+    handleDeclRefExpr(expression_stmt);
     break;
 
   case Stmt::BinaryOperatorClass:
     llvm::errs() << "B" << block_id << ".";
-    if (is_assignment)
+    switch (operand_info) {
+    case IS_RHS_OP___BOTH_TEMPS:
       llvm::errs() << temp_counter - 1;
-    else
+      break;
+
+    case IS_LHS_OP___BOTH_TEMPS:
       llvm::errs() << temp_counter - 2;
+      break;
+
+    case IS_BEING_ASSIGNED:
+      llvm::errs() << temp_counter;
+      break;
+
+    case IS_CONDITION_FOR_JUMP:
+      llvm::errs() << temp_counter;
+      break;
+
+    case IS_MAKING_NEW_TEMP_VAR:
+      llvm::errs() << temp_counter - 1;
+      break;
+    } // switch
     break;
 
   default:
-    llvm::errs() << "Unhandled "
-                 << const_cast<Stmt *>(expression_stmt)->getStmtClassName();
+    llvm::errs() << "Unhandled " << expression_stmt->getStmtClassName();
     break;
+  } // switch
+} // handleOperand()
+
+// The idea is as follows
+// Before calling this function, we keep pushing UnaryOperator(s) on a stack.
+// Then when we actually find our operand, we call this function with the
+// operand and the stack. Note that now the top-most element on the stack is the
+// most recent UnaryOperator, and so on. Finally we evaluate everything in the
+// correct order based on the top element
+void MyCFGDumper::handleUnaryOperator(
+    const Stmt *operand_stmt, std::stack<const UnaryOperator *> &un_op_stack,
+    int &temp_counter, unsigned &block_id, OperandInfoTy operand_info) const {
+
+  if (un_op_stack.empty()) {
+    handleOperand(operand_stmt, temp_counter, block_id, operand_info);
   }
-} // subHandleBinaryOperator()
+
+  else {
+    while (!un_op_stack.empty()) {
+      const UnaryOperator *un_op = un_op_stack.top();
+      un_op_stack.pop();
+      switch (un_op->getOpcode()) {
+      case UO_PostInc:
+        llvm::errs() << "( ";
+        handleUnaryOperator(operand_stmt, un_op_stack, temp_counter, block_id,
+                            operand_info);
+        llvm::errs() << " )++";
+        break;
+
+      case UO_PreInc:
+        llvm::errs() << "++( ";
+        handleUnaryOperator(operand_stmt, un_op_stack, temp_counter, block_id,
+                            operand_info);
+        llvm::errs() << " )";
+        break;
+
+      case UO_PostDec:
+        llvm::errs() << "( ";
+        handleUnaryOperator(operand_stmt, un_op_stack, temp_counter, block_id,
+                            operand_info);
+        llvm::errs() << " )--";
+        break;
+
+      case UO_PreDec:
+        llvm::errs() << "--( ";
+        handleUnaryOperator(operand_stmt, un_op_stack, temp_counter, block_id,
+                            operand_info);
+        llvm::errs() << " )";
+        break;
+
+      case UO_AddrOf:
+        llvm::errs() << "&( ";
+        handleUnaryOperator(operand_stmt, un_op_stack, temp_counter, block_id,
+                            operand_info);
+        llvm::errs() << " )";
+        break;
+
+      case UO_Deref:
+        llvm::errs() << "*( ";
+        handleUnaryOperator(operand_stmt, un_op_stack, temp_counter, block_id,
+                            operand_info);
+        llvm::errs() << " )";
+        break;
+
+      case UO_Plus:
+      case UO_Minus:
+      case UO_Not:
+      case UO_LNot:
+      case UO_Coawait:
+      default:
+        llvm::errs() << "UNOP ";
+        break;
+
+      } // switch
+    }   // while
+  }     // else
+} // handleUnaryOperator()
 
 void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
                                        int &temp_counter,
                                        unsigned &block_id) const {
+
+  std::stack<const UnaryOperator *> RHS_un_op_stack;
+  std::stack<const UnaryOperator *> LHS_un_op_stack;
+
   const Stmt *bin_op_stmt = helper_stack.top();
   const BinaryOperator *bin_op = cast<BinaryOperator>(bin_op_stmt);
   helper_stack.pop();
 
-  Stmt *LHS = const_cast<Stmt *>(helper_stack.top());
+  while (isa<UnaryOperator>(helper_stack.top())) {
+    RHS_un_op_stack.push(cast<UnaryOperator>(helper_stack.top()));
+    helper_stack.pop();
+  }
+  Stmt *RHS = const_cast<Stmt *>(helper_stack.top());
   helper_stack.pop();
 
-  Stmt *RHS = const_cast<Stmt *>(helper_stack.top());
+  while (isa<UnaryOperator>(helper_stack.top())) {
+    LHS_un_op_stack.push(cast<UnaryOperator>(helper_stack.top()));
+    helper_stack.pop();
+  }
+  Stmt *LHS = const_cast<Stmt *>(helper_stack.top());
   helper_stack.pop();
 
   // don't assign temporary variable to assignments
   if (bin_op->isAssignmentOp()) {
-
-    // Assignments can be an issue in presence of temporaries when using a
-    // stack. If LHS (3rd last element in the stack) is not a DeclRefExpr (i.e
-    // a varable), it will cause a runtime error. Hence, we check and swap
-    // them
-    if (!isa<DeclRefExpr>(LHS)) {
-      auto tmp = LHS;
-      LHS = RHS;
-      RHS = tmp;
-    }
-
-    handleDeclRefExpr(LHS);
+    // in case of assignments, RHS is accessed before LHS, hence
+    // we swap order
+    // auto tmp = LHS;
+    // LHS = RHS;
+    // RHS = tmp;
+    // since operands are swapped, the stacks must also be swapped
+    handleUnaryOperator(RHS, RHS_un_op_stack, temp_counter, block_id,
+                        IS_BEING_ASSIGNED);
     llvm::errs() << " " << bin_op->getOpcodeStr() << " ";
-    subHandleBinaryOperator(RHS, temp_counter, block_id, true);
+    handleUnaryOperator(LHS, LHS_un_op_stack, temp_counter, block_id,
+                        IS_BEING_ASSIGNED);
   }
 
   // Assign temporaries otherwise
   else {
-    llvm::errs() << "B" << block_id << "." << temp_counter << " = ";
     temp_counter++;
+    llvm::errs() << "B" << block_id << "." << temp_counter << " = ";
 
-    subHandleBinaryOperator(LHS, temp_counter, block_id, false);
-    llvm::errs() << " " << bin_op->getOpcodeStr() << " ";
-    subHandleBinaryOperator(RHS, temp_counter, block_id, false);
+    if (isa<BinaryOperator>(LHS) && isa<BinaryOperator>(RHS)) {
+      handleUnaryOperator(LHS, LHS_un_op_stack, temp_counter, block_id,
+                          IS_LHS_OP___BOTH_TEMPS);
+      llvm::errs() << " " << bin_op->getOpcodeStr() << " ";
+      handleUnaryOperator(RHS, RHS_un_op_stack, temp_counter, block_id,
+                          IS_RHS_OP___BOTH_TEMPS);
+    }
 
+    else {
+      handleUnaryOperator(LHS, LHS_un_op_stack, temp_counter, block_id,
+                          IS_MAKING_NEW_TEMP_VAR);
+      llvm::errs() << " " << bin_op->getOpcodeStr() << " ";
+      handleUnaryOperator(RHS, RHS_un_op_stack, temp_counter, block_id,
+                          IS_MAKING_NEW_TEMP_VAR);
+    }
     helper_stack.push(bin_op_stmt);
   } // else
 
@@ -311,12 +425,11 @@ void MyCFGDumper::handleBinaryOperator(std::stack<const Stmt *> &helper_stack,
 } // handleBinaryOperator()
 
 void MyCFGDumper::handleBBStmts(const CFGBlock *bb) const {
-  std::unordered_map<const Expr *, int> visited_nodes;
 
   unsigned bb_id = bb->getBlockID();
 
   std::stack<const Stmt *> helper_stack;
-  int temp_counter = 1; // for naming temporaries
+  int temp_counter = 0; // for naming temporaries
 
   for (auto elem : *bb) {
     // ref: https://clang.llvm.org/doxygen/CFG_8h_source.html#l00056
@@ -331,16 +444,19 @@ void MyCFGDumper::handleBBStmts(const CFGBlock *bb) const {
       //   llvm::errs() << S->getStmtClassName() << ".\n";
       //   S->dump();
       //   llvm::errs() << "\n";
-      //   break;
+      //  break;
 
     case Stmt::DeclStmtClass:
-      helper_stack.push(S);
-      handleDeclStmt(helper_stack, temp_counter, bb_id);
+      handleDeclStmt(cast<DeclStmt>(S), helper_stack, temp_counter, bb_id);
       break;
 
     case Stmt::BinaryOperatorClass:
       helper_stack.push(S);
       handleBinaryOperator(helper_stack, temp_counter, bb_id);
+      break;
+
+    case Stmt::ParenExprClass:
+      // simply ignore
       break;
 
     default:
@@ -372,7 +488,7 @@ void MyCFGDumper::handleDeclRefExpr(const Stmt *DRE_Stmt) const {
   llvm::errs() << ident->getName();
 }
 
-// TODO: handle ForStmt and GotoStmt
+// TODO: handle ForStmt and GotoStmt and UnaryOperator in conditions
 void MyCFGDumper::handleTerminator(const Stmt *terminator,
                                    std::stack<const Stmt *> &helper_stack,
                                    int &temp_counter,
@@ -400,20 +516,19 @@ void MyCFGDumper::handleTerminator(const Stmt *terminator,
     break;
   } // switch
 
+  // TODO: some how handle unary operator here
   if (condition_expr) {
     if (isa<BinaryOperator>(condition_expr)) {
       const BinaryOperator *bin_op = cast<BinaryOperator>(condition_expr);
-      if (bin_op->isAssignmentOp()) {
-        // take LHS of assignment
+      if (bin_op->isAssignmentOp()) // take LHS of assignment
         handleDeclRefExpr(bin_op->getLHS());
-      } else {
-        // this is already visited, so just take it's temporary
-        llvm::errs() << "B" << block_id << "." << temp_counter - 1;
-      }
+      else // take temporary
+        handleOperand(helper_stack.top(), temp_counter, block_id,
+                      IS_CONDITION_FOR_JUMP);
     } else {
       // take whatever is on top of the stack
-      subHandleBinaryOperator(helper_stack.top(), temp_counter, block_id,
-                              false);
+      handleOperand(helper_stack.top(), temp_counter, block_id,
+                    IS_CONDITION_FOR_JUMP);
     }
   }
   llvm::errs() << "\n";
