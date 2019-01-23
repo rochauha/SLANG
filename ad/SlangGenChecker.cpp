@@ -31,6 +31,7 @@
 #include <utility>                    //AD
 #include <unordered_map>              //AD
 #include <fstream>                    //AD
+#include <sstream>                    //AD
 
 using namespace clang;
 using namespace ento;
@@ -70,7 +71,7 @@ void Utility::readFile1() {
 // 3. The three address code representation.
 //===----------------------------------------------------------------------===//
 namespace {
-    enum EdgeKind {FalseEdge, TrueEdge, UnCondEdge} EK;
+    enum EdgeLabel {FalseEdge, TrueEdge, UnCondEdge};
 
     class VarInfo {
     public:
@@ -80,13 +81,9 @@ namespace {
         std::string type_str;
 
         std::string convertToString() {
-            std::string str = "";
-            str += "\"";
-            str += var_name;
-            str += "\": ";
-            str += type_str;
-            str += ",";
-            return str;
+            std::stringstream ss;
+            ss << "\"" << var_name << "\": " << type_str << ",";
+            return ss.str();
         }
     };
 
@@ -106,7 +103,7 @@ namespace {
         // maps a unique variable id to its string representation.
         std::unordered_map<uint64_t , VarInfo> var_map;
         // maps bb_edge
-        std::vector<std::pair<int, std::pair<int , EdgeKind>>> bb_edges;
+        std::vector<std::pair<int, std::pair<int , EdgeLabel>>> bb_edges;
         // map to help remap bb ids, to mark start as 1 and end as -1.
         std::unordered_map<unsigned, int32_t> remap_bb_ids;
         std::unordered_map<uint32_t , std::vector<std::string>> bb_stmts;
@@ -114,6 +111,7 @@ namespace {
         TraversedInfoBuffer();
         void clear();
 
+        int32_t nextBbId();
         // conversion to SPAN Strings
         std::string convertClangType(QualType qt);
         std::string convertFuncName(std::string func_name);
@@ -121,11 +119,11 @@ namespace {
         std::string convertGlobalVarName(std::string var_name);
 
         // SPAN IR Printing routines
-        TraversedInfoBuffer& printSpanIr();
-        // void printHeader();
-        // void printVariables();
-        // void printFunctions();
-        // void printFooter();
+        TraversedInfoBuffer& dumpSpanIr();
+        // void dumpHeader();
+        // void dumpVariables();
+        // void dumpFunctions();
+        // void dumpFooter();
         std::string convertBbEdges();
 
         // For Program state purpose.
@@ -140,28 +138,28 @@ TraversedInfoBuffer::TraversedInfoBuffer(): id{1}, tmp_var_counter{}, stmt_stack
         bb_edges{}, bb_stmts{}, remap_bb_ids{} {
 }
 
+int32_t TraversedInfoBuffer::nextBbId() {
+    bb_counter += 1;
+    return bb_counter;
+}
+
 std::string TraversedInfoBuffer::convertFuncName(std::string func_name) {
-    std::string fname = "";
-    fname += "f:";
-    fname += func_name;
-    return fname;
+    std::stringstream ss;
+    ss << "f:" << func_name;
+    return ss.str();
 }
 
 std::string TraversedInfoBuffer::convertGlobalVarName(std::string var_name) {
-    std::string vname = "";
-    vname += "v:";
-    vname += var_name;
-    return vname;
+    std::stringstream ss;
+    ss << "v:" << var_name;
+    return ss.str();
 }
 
 std::string TraversedInfoBuffer::convertLocalVarName(std::string var_name) {
     // assumes func_name is set
-    std::string vname = "";
-    vname += "v:";
-    vname += func_name;
-    vname += ":";
-    vname += var_name;
-    return vname;
+    std::stringstream ss;
+    ss << "v:" << func_name << ":" << var_name;
+    return ss.str();
 }
 
 // Converts Clang Types into SPAN parsable type strings:
@@ -169,30 +167,30 @@ std::string TraversedInfoBuffer::convertLocalVarName(std::string var_name) {
 // for `int` it returns `types.Int`.
 // for `int*` it returns `types.Ptr(to=types.Int)`.
 std::string TraversedInfoBuffer::convertClangType(QualType qt) {
-   std::string span_t = "";
-   const Type *type = qt.getTypePtr();
-   if (type->isBuiltinType()) {
-       if(type->isIntegerType()) {
-           if(type->isCharType()) {
-               span_t += "types.Char";
-           } else {
-               span_t += "types.Int";
-           }
-       } else if(type->isFloatingType()) {
-           span_t += "types.Float";
-       } else {
-           span_t += "UnknownBuiltinType.";
-       }
-   } else if(type->isPointerType()) {
-       span_t += "types.Ptr(to=";
-       QualType pqt = type->getPointeeType();
-       span_t += convertClangType(pqt);
-       span_t += ")";
-   } else {
-       span_t += "UnknownType.";
-   }
+    std::stringstream ss;
+    const Type *type = qt.getTypePtr();
+    if (type->isBuiltinType()) {
+        if(type->isIntegerType()) {
+            if(type->isCharType()) {
+                ss << "types.Char";
+            } else {
+                ss << "types.Int";
+            }
+        } else if(type->isFloatingType()) {
+            ss << "types.Float";
+        } else {
+            ss << "UnknownBuiltinType.";
+        }
+    } else if(type->isPointerType()) {
+        ss << "types.Ptr(to=";
+        QualType pqt = type->getPointeeType();
+        ss << convertClangType(pqt);
+        ss << ")";
+    } else {
+        ss << "UnknownType.";
+    }
 
-   return span_t;
+    return ss.str();
 } // convertClangType()
 
 // clear the buffer for the next function.
@@ -201,7 +199,7 @@ void TraversedInfoBuffer::clear() {
     func_ret_t = "";
     func_params = "";
 
-    bb_counter = 0;
+    bb_counter = 1;
     stmt_stack.clear();
     var_map.clear();
     bb_edges.clear();
@@ -209,7 +207,7 @@ void TraversedInfoBuffer::clear() {
     remap_bb_ids.clear();
 }
 
-TraversedInfoBuffer& TraversedInfoBuffer::printSpanIr() {
+TraversedInfoBuffer& TraversedInfoBuffer::dumpSpanIr() {
     llvm::errs() << "Printing the TraversedInfoBuffer as SPAN IR:\n";
     llvm::errs() << "FuncName: " << func_name << "\n";
     llvm::errs() << convertBbEdges();
@@ -217,35 +215,32 @@ TraversedInfoBuffer& TraversedInfoBuffer::printSpanIr() {
 }
 
 std::string TraversedInfoBuffer::convertBbEdges() {
-    llvm::errs() << "Remapped BB ids:\n";
+    std::stringstream ss;
+    ss << "Remapped BB ids:\n";
     for (auto i :remap_bb_ids) {
-        llvm::errs() << "  BB" << i.first << " as BB" << i.second << ".\n";
+        ss << "  BB" << i.first << " as BB" << i.second << ".\n";
     }
 
-    std::string span_bb_edges = "";
     for (auto p: bb_edges) {
-        span_bb_edges += "graph.BbEdge(";
-        span_bb_edges += std::to_string(p.first);
-        span_bb_edges += ", ";
-        span_bb_edges += std::to_string(p.second.first);
-        span_bb_edges += ", ";
+        ss << "graph.BbEdge(" << std::to_string(p.first);
+        ss << ", " << std::to_string(p.second.first) << ", ";
         switch(p.second.second) {
             case FalseEdge: {
-                span_bb_edges += "graph.FalseEdge";
+                ss << "graph.FalseEdge";
                 break;
             }
             case TrueEdge: {
-                span_bb_edges += "graph.TrueEdge";
+                ss << "graph.TrueEdge";
                 break;
             }
             case UnCondEdge: {
-                span_bb_edges += "graph.UnCondEdge";
+                ss << "graph.UnCondEdge";
                 break;
             }
         }
-        span_bb_edges += "),\n";
+        ss << "),\n";
     }
-    return span_bb_edges;
+    return ss.str();
 }
 
 // For Program state's purpose: not in use currently.
@@ -308,8 +303,7 @@ void SlangGenChecker::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
 
     if (const CFG *cfg = mgr.getCFG(D)) {
         handleCfg(cfg);
-        // print the function as SPAN IR.
-        tib.printSpanIr();
+        tib.dumpSpanIr();
         tib.clear(); // clear the buffer for next function.
     } else {
         llvm::errs() << "SLANG: ERROR: No CFG for function.\n";
@@ -356,8 +350,7 @@ void SlangGenChecker::handleBBInfo(const CFGBlock *bb, const CFG *cfg) const {
         llvm::errs() << "EXIT BB\n";
     } else {
         if (tib.remap_bb_ids.find(bb_id) == tib.remap_bb_ids.end()) {
-            tib.remap_bb_ids[bb_id] = tib.bb_counter;
-            tib.bb_counter += 1;
+            tib.remap_bb_ids[bb_id] = tib.nextBbId();
         }
     }
 
@@ -365,18 +358,17 @@ void SlangGenChecker::handleBBInfo(const CFGBlock *bb, const CFG *cfg) const {
     const Stmt *terminator = (bb->getTerminator()).getStmt();
     if (terminator && isa<IfStmt>(terminator)) {
         bool true_edge = true;
+        if (bb->succ_size() > 2) {
+            llvm::errs() << "SPAN: ERROR: 'If' has more than two successors.\n";
+        }
 
         for (CFGBlock::const_succ_iterator I = bb->succ_begin();
              I != bb->succ_end(); ++I) {
-            if (!true_edge) {
-                llvm::errs() << "SPAN: ERROR: If has more than two successors.\n";
-            }
 
             CFGBlock *succ = *I;
             succ_id = succ->getBlockID();
             if (tib.remap_bb_ids.find(succ_id) == tib.remap_bb_ids.end()) {
-                tib.remap_bb_ids[succ_id] = tib.bb_counter;
-                tib.bb_counter += 1;
+                tib.remap_bb_ids[succ_id] = tib.nextBbId();
             }
             if (true_edge) {
                 tib.bb_edges.push_back(std::make_pair(tib.remap_bb_ids[bb_id],
@@ -402,8 +394,7 @@ void SlangGenChecker::handleBBInfo(const CFGBlock *bb, const CFG *cfg) const {
 
                 succ_id = succ->getBlockID();
                 if (tib.remap_bb_ids.find(succ_id) == tib.remap_bb_ids.end()) {
-                    tib.remap_bb_ids[succ_id] = tib.bb_counter;
-                    tib.bb_counter += 1;
+                    tib.remap_bb_ids[succ_id] = tib.nextBbId();
                 }
                 tib.bb_edges.push_back(std::make_pair(tib.remap_bb_ids[bb_id],
                          std::make_pair(tib.remap_bb_ids[succ_id], UnCondEdge)));
