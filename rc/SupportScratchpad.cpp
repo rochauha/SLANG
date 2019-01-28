@@ -73,13 +73,19 @@ private:
                      InstructionListTy &instr_list, int &temp_counter,
                      unsigned &block_id, BehaviorTy behavior) const;
 
+  std::string getOperandWithSideEffects(std::string operand,
+                                        const UnaryOperator *un_op,
+                                        InstructionListTy &instr_list,
+                                        int &temp_counter,
+                                        unsigned &block_id) const;
+
   std::string getReducedTemporary(std::stack<const Stmt *> &helper_stack,
                                   InstructionListTy &instr_list,
                                   int &temp_counter, unsigned &block_id) const;
 
-  std::string getDevelopedValue(std::stack<const Stmt *> &helper_stack,
-                                InstructionListTy &instr_list,
-                                int &temp_counter, unsigned &block_id) const;
+  std::string getDevelopedRValue(std::stack<const Stmt *> &helper_stack,
+                                 InstructionListTy &instr_list,
+                                 int &temp_counter, unsigned &block_id) const;
 
   std::string getPrimitiveValue(std::stack<const Stmt *> &helper_stack) const;
 
@@ -237,7 +243,7 @@ MyCFGDumper::getReducedTemporary(std::stack<const Stmt *> &helper_stack,
                                  InstructionListTy &instr_list,
                                  int &temp_counter, unsigned &block_id) const {
   if (isa<UnaryOperator>(helper_stack.top())) {
-    return getDevelopedValue(helper_stack, instr_list, temp_counter, block_id);
+    return getDevelopedRValue(helper_stack, instr_list, temp_counter, block_id);
   }
 
   else if (!isa<BinaryOperator>(helper_stack.top())) {
@@ -267,30 +273,29 @@ MyCFGDumper::getReducedTemporary(std::stack<const Stmt *> &helper_stack,
   return reduced_value_str;
 }
 
+// Do additional work if UnaryOperator is present, otherwise simply go back to
+// getReducedTemporary
 std::string
-MyCFGDumper::getDevelopedValue(std::stack<const Stmt *> &helper_stack,
-                               InstructionListTy &instr_list, int &temp_counter,
-                               unsigned &block_id) const {
-  const Stmt *current_stmt = helper_stack.top();
+MyCFGDumper::getDevelopedRValue(std::stack<const Stmt *> &helper_stack,
+                                InstructionListTy &instr_list,
+                                int &temp_counter, unsigned &block_id) const {
+  const UnaryOperator *un_op = cast<UnaryOperator>(helper_stack.top());
+  helper_stack.pop();
   std::stringstream current_instr_stream;
   std::string reduced_value_str;
+  std::string operand;
 
-  if (isa<UnaryOperator>(current_stmt)) {
-    helper_stack.pop();
-    const UnaryOperator *un_op = cast<UnaryOperator>(current_stmt);
-    current_instr_stream << "B" << block_id << "." << temp_counter;
-    reduced_value_str = current_instr_stream.str();
-    ++temp_counter;
+  current_instr_stream << "B" << block_id << "." << temp_counter;
+  reduced_value_str = current_instr_stream.str();
 
-    current_instr_stream << " = UNOP "
-                         << getReducedTemporary(helper_stack, instr_list,
-                                                temp_counter, block_id);
-  }
+  ++temp_counter;
+  operand =
+      getReducedTemporary(helper_stack, instr_list, temp_counter, block_id);
 
-  else {
-    reduced_value_str =
-        getReducedTemporary(helper_stack, instr_list, temp_counter, block_id);
-  }
+  operand = getOperandWithSideEffects(operand, un_op, instr_list, temp_counter,
+                                      block_id);
+
+  current_instr_stream << " = " << operand;
 
   instr_list.push_back(current_instr_stream.str());
   return reduced_value_str;
@@ -316,6 +321,63 @@ MyCFGDumper::getPrimitiveValue(std::stack<const Stmt *> &helper_stack) const {
     break;
   }
   return reduced_value;
+}
+
+// Deal with effects of ++ and --
+std::string MyCFGDumper::getOperandWithSideEffects(
+    std::string operand, const UnaryOperator *un_op,
+    InstructionListTy &instr_list, int &temp_counter,
+    unsigned &block_id) const {
+  if (!un_op)
+    return operand;
+
+  std::stringstream current_instr_stream;
+  std::string updated_operand;
+  switch (un_op->getOpcode()) {
+  case UO_PostInc:
+    current_instr_stream << "B" << block_id << "." << temp_counter;
+    ++temp_counter;
+    updated_operand = current_instr_stream.str();
+    current_instr_stream << " = " << operand;
+    instr_list.push_back(current_instr_stream.str());
+    instr_list.push_back(operand + " = " + operand + " + 1");
+    return updated_operand;
+
+  case UO_PreInc:
+    instr_list.push_back(operand + " = " + operand + " + 1");
+    return operand;
+
+  case UO_PostDec:
+    current_instr_stream << "B" << block_id << "." << temp_counter;
+    ++temp_counter;
+    updated_operand = current_instr_stream.str();
+    current_instr_stream << " = " << operand;
+    instr_list.push_back(current_instr_stream.str());
+    instr_list.push_back(operand + " = " + operand + " - 1");
+    return updated_operand;
+
+  case UO_PreDec:
+    instr_list.push_back(operand + " = " + operand + " - 1");
+    return operand;
+
+  case UO_AddrOf:
+    return ("&" + operand);
+
+  case UO_Deref:
+    return ("*" + operand);
+
+  case UO_Plus:
+    return ("+" + operand);
+  case UO_Minus:
+    return ("-" + operand);
+
+  case UO_Not:
+  case UO_LNot:
+  case UO_Coawait:
+  default:
+    llvm::errs() << "UNOP ";
+    break;
+  }
 }
 
 std::string MyCFGDumper::reduce(std::stack<const Stmt *> &helper_stack,
@@ -344,20 +406,28 @@ std::string MyCFGDumper::reduce(std::stack<const Stmt *> &helper_stack,
   return current_instr_stream.str();
 }
 
+// Start handling LHS and RHS separately
 void MyCFGDumper::handleAssignment(std::stack<const Stmt *> &helper_stack,
                                    InstructionListTy &instr_list,
                                    int &temp_counter,
                                    unsigned &block_id) const {
   helper_stack.pop(); // remove the assignment operator
   std::stringstream current_instr_stream;
+  std::string LHS;
+  UnaryOperator *un_op = nullptr;
   if (isa<UnaryOperator>(helper_stack.top())) {
-    const Stmt *un_op_stmt = helper_stack.top();
+    un_op =
+        const_cast<UnaryOperator *>(cast<UnaryOperator>(helper_stack.top()));
     helper_stack.pop();
-    current_instr_stream << "UNOP ";
   }
-  current_instr_stream << reduce(helper_stack, instr_list, temp_counter,
-                                 block_id, REDUCE_EXPR_TO_SINGLE_TEMP);
-  current_instr_stream << " = ";
+
+  LHS = reduce(helper_stack, instr_list, temp_counter, block_id,
+               REDUCE_EXPR_TO_SINGLE_TEMP);
+
+  // in this case, only possible unary operators are * and &
+  LHS =
+      getOperandWithSideEffects(LHS, un_op, instr_list, temp_counter, block_id);
+  current_instr_stream << LHS << " = ";
   current_instr_stream << reduce(helper_stack, instr_list, temp_counter,
                                  block_id, REDUCE_EXPR_TO_THREE_ADDR);
   instr_list.push_back(current_instr_stream.str());
@@ -391,6 +461,7 @@ void MyCFGDumper::handleBBStmts(const CFGBlock *bb) const {
       // S->dump();
       // llvm::errs() << "\n\n";
       // break;
+
     case Stmt::BinaryOperatorClass: {
       const BinaryOperator *bin_op = cast<BinaryOperator>(S);
       if (bin_op->isAssignmentOp()) {
