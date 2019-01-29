@@ -2,3 +2,4 @@
 *.plist
 a.out
 *.log
+*.swp
