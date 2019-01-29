@@ -876,8 +876,8 @@ SpanExpr SlangGenChecker::convertBinaryOperator(const BinaryOperator *binOp,
         }
 
         case BO_Rem: {
-            auto exprL = convertExpr(true);
             auto exprR = convertExpr(true);
+            auto exprL = convertExpr(true);
             if (compound_receiver) {
                 auto varExpr = tib.genTmpVariable(exprL.qualType);
                 ss << "instr.AssignI(" << varExpr.expr << ", ";
