@@ -803,6 +803,8 @@ void SlangGenChecker::handleBinaryOperator(const BinaryOperator *binOp) const {
     if (binOp->isAssignmentOp()) {
         SpanExpr spanExpr = convertAssignment(binOp);
         addStmtToCurrBlock(spanExpr.expr);
+    } else {
+        tib.pushToMainStack(binOp);
     }
 }
 
