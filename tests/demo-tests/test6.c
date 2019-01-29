@@ -9,6 +9,7 @@ int main(int argc, char **argv) {
   }
   g = 0;
   return x = func(1);
+  g = 1;
 }
 
 int func(int x) {

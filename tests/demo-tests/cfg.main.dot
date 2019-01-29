@@ -1,0 +1,14 @@
+digraph "CFG for 'main' function" {
+	label="CFG for 'main' function";
+
+	Node0x5555c0634b10 [shape=record,label="{entry:\l  %argc.addr = alloca i32, align 4\l  %argv.addr = alloca i8**, align 8\l  %x = alloca i32, align 4\l  %i = alloca i32, align 4\l  store i32 %argc, i32* %argc.addr, align 4\l  store i8** %argv, i8*** %argv.addr, align 8\l  store i32 20, i32* %x, align 4\l  store i32 0, i32* %i, align 4\l  br label %for.cond\l}"];
+	Node0x5555c0634b10 -> Node0x5555c063a4a0;
+	Node0x5555c063a4a0 [shape=record,label="{for.cond:                                         \l  %0 = load i32, i32* %i, align 4\l  %cmp = icmp slt i32 %0, 10\l  br i1 %cmp, label %for.body, label %for.end\l|{<s0>T|<s1>F}}"];
+	Node0x5555c063a4a0:s0 -> Node0x5555c063a4f0;
+	Node0x5555c063a4a0:s1 -> Node0x5555c063a590;
+	Node0x5555c063a4f0 [shape=record,label="{for.body:                                         \l  %1 = load i32, i32* %x, align 4\l  %add = add nsw i32 %1, 10\l  store i32 %add, i32* %x, align 4\l  br label %for.inc\l}"];
+	Node0x5555c063a4f0 -> Node0x5555c063a540;
+	Node0x5555c063a540 [shape=record,label="{for.inc:                                          \l  %2 = load i32, i32* %i, align 4\l  %inc = add nsw i32 %2, 1\l  store i32 %inc, i32* %i, align 4\l  br label %for.cond\l}"];
+	Node0x5555c063a540 -> Node0x5555c063a4a0;
+	Node0x5555c063a590 [shape=record,label="{for.end:                                          \l  ret void\l}"];
+}
