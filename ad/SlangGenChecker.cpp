@@ -12,12 +12,14 @@
 //
 
 #include "ClangSACheckers.h"
-#include "clang/AST/Decl.h" //AD
 #include "clang/AST/Expr.h" //AD
 #include "clang/AST/Stmt.h" //AD
-#include "clang/Analysis/Analyses/Dominators.h"
-#include "clang/Analysis/Analyses/LiveVariables.h"
-#include "clang/Analysis/CallGraph.h"
+#include "clang/AST/Type.h" //AD
+#include "clang/AST/Decl.h" //AD
+#include "clang/AST/ASTContext.h" //AD
+//AD #include "clang/Analysis/Analyses/Dominators.h"
+//AD #include "clang/Analysis/Analyses/LiveVariables.h"
+//AD #include "clang/Analysis/CallGraph.h"
 #include "clang/StaticAnalyzer/Core/BugReporter/BugType.h"
 #include "clang/StaticAnalyzer/Core/Checker.h"
 #include "clang/StaticAnalyzer/Core/PathSensitive/AnalysisManager.h"
@@ -46,6 +48,28 @@ using namespace ento;
 
 // #define LOG_ME(X) if (Utility::debug_mode) Utility::log((X), __FUNCTION__, __LINE__)
 
+namespace {
+    // Expr class to store converted expression info.
+    class SpanExpr {
+    public:
+        std::string expr;
+        bool complex;
+        QualType qualType;
+
+        SpanExpr(std::string e, bool cmplx, QualType qt) {
+            expr = e;
+            complex = cmplx;
+            qualType = qt;
+        }
+
+        void printExpr() {
+            llvm::errs() << "SpanExpr(";
+            llvm::errs() << expr << ", " << complex << ", ";
+            qualType.dump();
+            llvm::errs() << ")\n";
+        }
+    };
+}
 //===----------------------------------------------------------------------===//
 // FIXME: Utility Class
 // Some useful static utility functions in a class.
@@ -111,30 +135,32 @@ namespace {
     public:
         int id;
         uint32_t tmp_var_counter;
-        uint32_t curr_bb_id;
+        int32_t curr_bb_id;
+
+        Decl *D;
 
         std::string func_name;
         std::string func_ret_t;
         std::string func_params;
 
         // stack to help convert ast structure to 3-address code.
-        std::stack<const Stmt*> main_stack;
+        std::vector<const Stmt*> main_stack;
         // contains names of the temporary vars for expressions.
-        std::stack<std::string> sub_stack;
+        std::vector<std::string> sub_stack;
 
         // maps a unique variable id to its string representation.
         std::unordered_map<uint64_t , VarInfo> var_map;
         // maps bb_edge
         std::vector<std::pair<int32_t, std::pair<int32_t , EdgeLabel>>> bb_edges;
         // entry bb id is mapped to -1
-        std::unordered_map<uint32_t , std::vector<std::string>> bb_stmts;
+        std::unordered_map<int32_t , std::vector<std::string>> bb_stmts;
 
         std::vector<std::string> edge_labels;
 
         TraversedInfoBuffer();
         void clear();
 
-        std::string genTmpVariable(QualType qt);
+        SpanExpr genTmpVariable(QualType qt);
         uint32_t nextTmpCount();
 
         // conversion_routines 1 to SPAN Strings
@@ -143,7 +169,6 @@ namespace {
         std::string convertVarExpr(uint64_t var_addr);
         std::string convertLocalVarName(std::string var_name);
         std::string convertGlobalVarName(std::string var_name);
-        std::string convertBbStmts(const std::vector<std::string>& stmts);
         std::string convertBbEdges();
 
         // SPAN IR dumping_routines
@@ -152,6 +177,12 @@ namespace {
         void dumpVariables();
         void dumpFunctions();
         void dumpFooter();
+
+        // helper_functions for tib
+        void printMainStack() const;
+        void pushToMainStack(const Stmt *stmt);
+        const Stmt* popFromMainStack();
+        bool isMainStackEmpty() const;
 
         // // For Program state purpose.
         // // Overload the == operator
@@ -193,7 +224,7 @@ std::string TraversedInfoBuffer::convertLocalVarName(std::string var_name) {
     return ss.str();
 }
 
-std::string TraversedInfoBuffer::genTmpVariable(const QualType qt) {
+SpanExpr TraversedInfoBuffer::genTmpVariable(QualType qt) {
     std::stringstream ss;
     // STEP 1: generate the name.
     uint32_t var_id = nextTmpCount();
@@ -208,7 +239,11 @@ std::string TraversedInfoBuffer::genTmpVariable(const QualType qt) {
     // The 'var_id' here should be small enough to interfere with uint64_t addresses.
     var_map[var_id] = varInfo;
 
-    return varInfo.var_name;
+    // STEP 4: generate var expression.
+    std::stringstream ss1;
+    ss1 << "expr.VarE(\"" << varInfo.var_name << "\")";
+
+    return SpanExpr(ss1.str(), false, qt);
 }
 
 // Converts Clang Types into SPAN parsable type strings:
@@ -244,6 +279,35 @@ std::string TraversedInfoBuffer::convertClangType(QualType qt) {
     return ss.str();
 } // convertClangType()
 
+//BOUND START: helper_functions for tib
+
+void TraversedInfoBuffer::printMainStack() const {
+    llvm::errs() << "MAIN_STACK: [";
+    for(auto stmt: main_stack) {
+        llvm::errs() << stmt->getStmtClassName() << ", ";
+    }
+    llvm::errs() << "]\n";
+}
+
+void TraversedInfoBuffer::pushToMainStack(const Stmt *stmt) {
+    main_stack.push_back(stmt);
+}
+
+const Stmt* TraversedInfoBuffer::popFromMainStack() {
+    if(main_stack.size()) {
+        auto stmt = main_stack[main_stack.size() - 1];
+        main_stack.pop_back();
+        return stmt;
+    }
+    return nullptr;
+}
+
+bool TraversedInfoBuffer::isMainStackEmpty() const {
+    return main_stack.empty();
+}
+
+//BOUND END  : helper_functions for tib
+
 //BOUND START: conversion_routines 1
 
 std::string TraversedInfoBuffer::convertVarExpr(uint64_t var_addr) {
@@ -255,16 +319,6 @@ std::string TraversedInfoBuffer::convertVarExpr(uint64_t var_addr) {
 
     return ss.str();
 }
-
-std::string TraversedInfoBuffer::convertBbStmts(const std::vector<std::string>& stmts) {
-    std::stringstream ss;
-
-    for (auto stmt : stmts) {
-        ss << stmt << ",\n";
-    }
-
-    return ss.str();
-} // convertBbStmts()
 
 //BOUND END  : conversion_routines 1
 
@@ -279,12 +333,8 @@ void TraversedInfoBuffer::clear() {
     var_map.clear();
     bb_edges.clear();
     bb_stmts.clear();
-    while (!main_stack.empty()) {
-        main_stack.pop();
-    }
-    while (!sub_stack.empty()) {
-        sub_stack.pop();
-    }
+    main_stack.clear();
+    sub_stack.clear();
 }
 
 //BLOCK START: dumping_routines
@@ -332,7 +382,7 @@ void TraversedInfoBuffer::dumpHeader() {
 void TraversedInfoBuffer::dumpFooter() {
     std::stringstream ss;
     ss << "\n";
-    ss << "# Always build the universe from a 'program' module.\n";
+    ss << "# Always build the universe from a 'program module'.\n";
     ss << "# Initialize the universe with program in this module.\n";
     ss << "universe.build(name, description, all_vars, all_func)\n";
     llvm::errs() << ss.str();
@@ -353,14 +403,20 @@ void TraversedInfoBuffer::dumpFunctions() {
     // fields: basic_blocks
     llvm::errs() << "\n";
     llvm::errs() << NBSP6 << "# if -1, its start_block. (REQUIRED)\n";
+    llvm::errs() << NBSP6 << "# if  0, its end_block. (REQUIRED)\n";
     llvm::errs() << NBSP6 << "basic_blocks= {\n";
     for (auto bb : bb_stmts) {
         llvm::errs() << NBSP8 << bb.first << ": graph.BB([\n";
-        for(auto stmt: bb.second) {
-            llvm::errs() << NBSP10 << stmt << ",\n";
+        if (bb.second.size()) {
+            for (auto stmt: bb.second) {
+                llvm::errs() << NBSP10 << stmt << ",\n";
+            }
+        } else {
+            llvm::errs() << NBSP10 << "instr.NopI()" << ",\n";
         }
+        llvm::errs() << NBSP8 << "]),\n";
     }
-    llvm::errs() << NBSP8 << "]),\n";
+    llvm::errs() << NBSP6 << "}, # basic_blocks end.\n";
 
     // fields: bb_edges
     llvm::errs() << "\n";
@@ -419,30 +475,35 @@ namespace {
         // handling_routines
         void handleFunctionDef(const FunctionDecl *D) const;
         void handleCfg(const CFG *cfg) const;
-        void handleBBInfo(const CFGBlock *bb, const CFG *cfg) const;
-        void handleBBStmts(const CFGBlock *bb) const;
+        void handleBbInfo(const CFGBlock *bb, const CFG *cfg) const;
+        void handleBbStmts(const CFGBlock *bb) const;
+        void handleStmt(const Stmt *stmt) const;
         void handleVariable(const ValueDecl *valueDecl) const;
         void handleDeclStmt(const DeclStmt *declStmt) const;
         void handleDeclRefExpr(const DeclRefExpr *DRE) const;
         void handleBinaryOperator(const BinaryOperator *binOp) const;
+        void handleReturnStmt() const;
+        void handleIfStmt() const;
 
         // helper_functions
         void addStmtToCurrBlock(std::string stmt) const;
 
         // conversion_routines
-        std::pair<std::string, bool> convertAssignment(const BinaryOperator *binOp) const;
-        std::pair<std::string, bool> convertIntegerLiteral(const IntegerLiteral *IL) const;
+        SpanExpr convertAssignment(const BinaryOperator *binOp) const;
+        SpanExpr convertIntegerLiteral(const IntegerLiteral *IL) const;
         // a function, if stmt, *y on lhs, arr[i] on lhs are examples of a compound_receiver.
-        std::pair<std::string, bool> convertExpr(bool compound_receiver) const;
-        std::pair<std::string, bool> convertDeclRefExpr(const DeclRefExpr *dre) const;
-        std::pair<std::string, bool> convertVarDecl(const VarDecl *varDecl) const;
+        SpanExpr convertExpr(bool compound_receiver) const;
+        SpanExpr convertDeclRefExpr(const DeclRefExpr *dre) const;
+        SpanExpr convertVarDecl(const VarDecl *varDecl) const;
+        SpanExpr convertUnaryOperator(const UnaryOperator *unOp, bool compound_receiver) const;
+        SpanExpr convertBinaryOperator(const BinaryOperator *binOp, bool compound_receiver) const;
 
     }; // class SlangGenChecker
 } // anonymous namespace
 
 TraversedInfoBuffer SlangGenChecker::tib = TraversedInfoBuffer();
 
-// Main Entry Point. Invokes top level Function and Cfg handlers.
+// main entry point. Invokes top level Function and Cfg handlers.
 // Invoked once for each source translation unit function.
 void SlangGenChecker::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
                                    BugReporter &BR) const {
@@ -450,6 +511,7 @@ void SlangGenChecker::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
     llvm::errs() << "\nBOUND START: SLANG_Generated_Output.\n";
 
     tib.clear(); // clear the buffer for this function.
+    tib.D = const_cast<Decl*>(D);
 
     const FunctionDecl *func_decl = dyn_cast<FunctionDecl>(D);
     handleFunctionDef(func_decl);
@@ -468,9 +530,8 @@ void SlangGenChecker::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
 
 void SlangGenChecker::handleCfg(const CFG *cfg) const {
     for (const CFGBlock *bb : *cfg) {
-        tib.curr_bb_id = bb->getBlockID();
-        handleBBInfo(bb, cfg);
-        handleBBStmts(bb);
+        handleBbInfo(bb, cfg);
+        handleBbStmts(bb);
     }
 } // handleCfg()
 
@@ -499,13 +560,17 @@ void SlangGenChecker::handleFunctionDef(const FunctionDecl *func_decl) const {
     tib.func_ret_t = tib.convertClangType(returnQType);
 } // handleFunctionDef()
 
-void SlangGenChecker::handleBBInfo(const CFGBlock *bb, const CFG *cfg) const {
+void SlangGenChecker::handleBbInfo(const CFGBlock *bb, const CFG *cfg) const {
     int32_t succ_id, bb_id;
     unsigned entry_bb_id = cfg->getEntry().getBlockID();
 
     if ((bb_id = bb->getBlockID()) == (int32_t)entry_bb_id) {
         bb_id = -1; //entry block is ided -1.
     }
+
+    tib.curr_bb_id = bb_id;
+    std::vector<std::string> empty_vector;
+    tib.bb_stmts[bb_id] = empty_vector;
 
     llvm::errs() << "BB" << bb_id << "\n";
 
@@ -516,8 +581,8 @@ void SlangGenChecker::handleBBInfo(const CFGBlock *bb, const CFG *cfg) const {
     }
 
     // access and record successor blocks
-    const Stmt *terminator = (bb->getTerminator()).getStmt();
-    if (terminator && isa<IfStmt>(terminator)) {
+    const Stmt *stmt = (bb->getTerminator()).getStmt();
+    if (stmt && (isa<IfStmt>(stmt) || isa<WhileStmt>(stmt))) {
         bool true_edge = true;
         if (bb->succ_size() > 2) {
             llvm::errs() << "SPAN: ERROR: 'If' has more than two successors.\n";
@@ -559,11 +624,9 @@ void SlangGenChecker::handleBBInfo(const CFGBlock *bb, const CFG *cfg) const {
             }
         }
     }
-} // handleBBInfo()
+} // handleBbInfo()
 
-void SlangGenChecker::handleBBStmts(const CFGBlock *bb) const {
-    std::unordered_map<const Expr *, int> visited_nodes;
-
+void SlangGenChecker::handleBbStmts(const CFGBlock *bb) const {
     unsigned bb_id = bb->getBlockID();
 
     for (auto elem : *bb) {
@@ -573,63 +636,81 @@ void SlangGenChecker::handleBBStmts(const CFGBlock *bb) const {
 
         Optional<CFGStmt> CS = elem.getAs<CFGStmt>();
         const Stmt *stmt = CS->getStmt();
-        Stmt::StmtClass stmt_cls = stmt->getStmtClass();
 
-        llvm::errs() << "Processing: " << stmt->getStmtClassName() << "\n";
-
-        // the main statement selection conditions.
-        // Ronak and Manav: Create a separate function,
-        // to handle each kind of statement/expression.
         if (Utility::debug_mode) {
             llvm::errs() << "Unhandled " << stmt->getStmtClassName() << "\n";
             stmt->dump();
             llvm::errs() << "\n";
         } else {
-            switch (stmt_cls) {
-                default: {
-                    // push to stack by default.
-                    tib.main_stack.push(stmt);
-
-                    llvm::errs() << "SLANG: DEFAULT: Pushed to stack: " <<
-                                 stmt->getStmtClassName() << ".\n";
-                    stmt->dump();
-                    llvm::errs() << "\n";
-                    break;
-                }
-
-                case Stmt::DeclRefExprClass: {
-                    tib.main_stack.push(stmt);
-                    const DeclRefExpr *declRefExpr = cast<DeclRefExpr>(stmt);
-                    handleDeclRefExpr(declRefExpr);
-                    break;
-                }
-
-                case Stmt::DeclStmtClass: {
-                    const DeclStmt *declStmt = cast<DeclStmt>(stmt);
-                    handleDeclStmt(declStmt);
-                    break;
-                }
-
-                case Stmt::BinaryOperatorClass: {
-                    const BinaryOperator *binOp = cast<BinaryOperator>(stmt);
-                    handleBinaryOperator(binOp);
-                    break;
-                }
-
-                case Stmt::ImplicitCastExprClass: {
-                    // do nothing
-                    break;
-                }
-            }
+            handleStmt(stmt);
         }
     } // for (auto elem : *bb)
 
     // get terminator
-    const Stmt *terminator = (bb->getTerminator()).getStmt();
-    // handleTerminator(terminator, visited_nodes, bb_id);
+    const Stmt *stmt = (bb->getTerminator()).getStmt();
+    if (stmt) {
+        handleStmt(stmt);
+    }
 
     llvm::errs() << "\n\n";
-} // handleBBStmts()
+} // handleBbStmts()
+
+void SlangGenChecker::handleStmt(const Stmt *stmt) const {
+    Stmt::StmtClass stmt_cls = stmt->getStmtClass();
+
+    tib.printMainStack();
+    llvm::errs() << "Processing: " << stmt->getStmtClassName() << "\n";
+
+    // to handle each kind of statement/expression.
+    switch (stmt_cls) {
+        default: {
+            // push to stack by default.
+            tib.pushToMainStack(stmt);
+
+            llvm::errs() << "SLANG: DEFAULT: Pushed to stack: " <<
+                         stmt->getStmtClassName() << ".\n";
+            stmt->dump();
+            llvm::errs() << "\n";
+            break;
+        }
+
+        case Stmt::DeclRefExprClass: {
+            tib.pushToMainStack(stmt);
+            const DeclRefExpr *declRefExpr = cast<DeclRefExpr>(stmt);
+            handleDeclRefExpr(declRefExpr);
+            break;
+        }
+
+        case Stmt::DeclStmtClass: {
+            const DeclStmt *declStmt = cast<DeclStmt>(stmt);
+            handleDeclStmt(declStmt);
+            break;
+        }
+
+        case Stmt::BinaryOperatorClass: {
+            const BinaryOperator *binOp = cast<BinaryOperator>(stmt);
+            handleBinaryOperator(binOp);
+            break;
+        }
+
+        case Stmt::ReturnStmtClass: {
+            handleReturnStmt();
+            break;
+        }
+
+        case Stmt::WhileStmtClass:
+        case Stmt::IfStmtClass: {
+            handleIfStmt();
+            break;
+        }
+
+
+        case Stmt::ImplicitCastExprClass: {
+            // do nothing
+            break;
+        }
+    }
+}
 
 // record the variable name and type
 void SlangGenChecker::handleVariable(const ValueDecl *valueDecl) const {
@@ -667,23 +748,45 @@ void SlangGenChecker::handleDeclStmt(const DeclStmt *declStmt) const {
     const VarDecl *varDecl = cast<VarDecl>(declStmt->getSingleDecl());
     handleVariable(varDecl);
 
-    if (!tib.main_stack.empty()) {
+    if (!tib.isMainStackEmpty()) {
         // there is smth on the stack, hence on the rhs.
-        auto pairLhs = convertVarDecl(varDecl);
-        auto pairRhs = convertExpr(false);
-        ss << "instr.AssignI(" << pairLhs.first << ", " << pairRhs.first << ")";
+        auto exprLhs = convertVarDecl(varDecl);
+        auto exprRhs = convertExpr(exprLhs.complex);
+        ss << "instr.AssignI(" << exprLhs.expr << ", " << exprRhs.expr << ")";
         addStmtToCurrBlock(ss.str());
     }
 }
 
-std::pair<std::string, bool> SlangGenChecker::convertIntegerLiteral(const IntegerLiteral *il) const {
+void SlangGenChecker::handleIfStmt() const {
+    std::stringstream ss;
+
+    auto exprArg = convertExpr(true);
+    ss << "instr.CondI(" << exprArg.expr << ")";
+    addStmtToCurrBlock(ss.str());
+}
+
+void SlangGenChecker::handleReturnStmt() const {
+    std::stringstream ss;
+
+    if (!tib.isMainStackEmpty()) {
+        // return has an argument
+        auto exprArg = convertExpr(true);
+        ss << "instr.ReturnI(" << exprArg.expr << ")";
+        addStmtToCurrBlock(ss.str());
+    } else {
+        ss << "instr.ReturnI()";
+        addStmtToCurrBlock(ss.str());
+    }
+}
+
+SpanExpr SlangGenChecker::convertIntegerLiteral(const IntegerLiteral *il) const {
     std::stringstream ss;
 
     bool is_signed = il->getType()->isSignedIntegerType();
     ss << "expr.Lit(" << il->getValue().toString(10, is_signed) << ")";
     llvm::errs() << ss.str() << "\n";
 
-    return std::make_pair<std::string, bool>(ss.str(), false);
+    return SpanExpr(ss.str(), false, il->getType());
 }
 
 void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
@@ -698,37 +801,10 @@ void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
 
 void SlangGenChecker::handleBinaryOperator(const BinaryOperator *binOp) const {
     if (binOp->isAssignmentOp()) {
-        auto pair = convertAssignment(binOp);
-        addStmtToCurrBlock(pair.first);
+        SpanExpr spanExpr = convertAssignment(binOp);
+        addStmtToCurrBlock(spanExpr.expr);
     }
 }
-
-std::pair<std::string, bool> SlangGenChecker::convertAssignment(const BinaryOperator *binOp) const {
-    std::stringstream ss;
-
-    if (binOp->isAssignmentOp()) {
-        auto pairLhs = convertExpr(false);
-        auto pairRhs = convertExpr(pairLhs.second);
-
-        ss << "instr.AssignI(" << pairLhs.first << ", " << pairRhs.first << ")";
-        return std::make_pair<std::string, bool>(ss.str(), false); // TODO: could be true
-    }
-
-    return std::make_pair<std::string, bool>("", false); // TODO: could be true
-
-}
-
-// void SlangGenChecker::handleTerminator(
-//         const Stmt *terminator, std::unordered_        auto rhs = tib.main_stack.top();map<const Expr *, int> &visited,
-//         unsigned int block_id) const {
-//
-//     if (terminator && isa<IfStmt>(terminator)) {
-//         const Expr *condition = (cast<IfStmt>(terminator))->getCond();
-//         llvm::errs() << "if ";
-//         handleBinaryOperator(condition, visited, block_id);
-//         llvm::errs() << "\n";
-//     }
-// }
 
 //BOUND END  : handling_routines
 
@@ -736,47 +812,137 @@ std::pair<std::string, bool> SlangGenChecker::convertAssignment(const BinaryOper
 
 // convert top of stack to SPAN IR.
 // returns converted string, and false if the converted string is only a simple const/var expression.
-std::pair<std::string, bool> SlangGenChecker::convertExpr(bool compound_receiver) const {
+SpanExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
     std::stringstream ss;
 
-    const Stmt *stmt = tib.main_stack.top();
-    tib.main_stack.pop();
+    const Stmt *stmt = tib.popFromMainStack();
 
     switch(stmt->getStmtClass()) {
         case Stmt::IntegerLiteralClass: {
-            ss << convertIntegerLiteral(cast<IntegerLiteral>(stmt)).first;
-            return std::make_pair<std::string, bool>(ss.str(), false);
+            const IntegerLiteral *il = cast<IntegerLiteral>(stmt);
+            return convertIntegerLiteral(il);
         }
 
         case Stmt::DeclRefExprClass: {
-            ss << convertDeclRefExpr(cast<DeclRefExpr>(stmt)).first;
-            return std::make_pair<std::string, bool>(ss.str(), false);
+            const DeclRefExpr *declRefExpr = cast<DeclRefExpr>(stmt);
+            return convertDeclRefExpr(declRefExpr);
         }
 
         case Stmt::BinaryOperatorClass: {
-            break;
+            const BinaryOperator *binOp = cast<BinaryOperator>(stmt);
+            return convertBinaryOperator(binOp, compound_receiver);
+        }
+
+        case Stmt::UnaryOperatorClass: {
+            auto unOp = cast<UnaryOperator>(stmt);
+            return convertUnaryOperator(unOp, compound_receiver);
         }
 
         default: {
             // error state
             llvm::errs() << "SLANG: ERROR: convertExpr: " << stmt->getStmtClassName() << "\n";
             stmt->dump();
-            return std::make_pair<std::string, bool>("ERROR:convertExpr", false);
+            return SpanExpr("ERROR:convertExpr", false, QualType());
         }
-
-        return std::make_pair<std::string, bool>("ERROR:convertExpr", false);
     }
+
+    return SpanExpr("ERROR:convertExpr", false, QualType());
 } // convertExpr()
 
-std::pair<std::string, bool> SlangGenChecker::convertVarDecl(const VarDecl *varDecl) const {
+SpanExpr SlangGenChecker::convertAssignment(const BinaryOperator *binOp) const {
+    std::stringstream ss;
+
+    if (binOp->isAssignmentOp()) {
+        auto exprLhs = convertExpr(false);
+        auto exprRhs = convertExpr(exprLhs.complex);
+
+        ss << "instr.AssignI(" << exprLhs.expr << ", " << exprRhs.expr << ")";
+        return SpanExpr(ss.str(), false, exprLhs.qualType); // TODO: could be true
+    }
+
+    return SpanExpr("ERROR:convertAssignment", false, QualType()); // TODO: could be true
+}
+
+SpanExpr SlangGenChecker::convertBinaryOperator(const BinaryOperator *binOp,
+        bool compound_receiver) const {
+    std::stringstream ss;
+
+    switch(binOp->getOpcode()) {
+        default: {
+            llvm::errs() << "SLANG: ERROR: convertBinaryOperator: " << binOp->getOpcodeStr() << "\n";
+            return SpanExpr("ERROR:convertBinaryOperator", false, QualType());
+        }
+
+        case BO_Rem: {
+            auto exprL = convertExpr(true);
+            auto exprR = convertExpr(true);
+            if (compound_receiver) {
+                auto varExpr = tib.genTmpVariable(exprL.qualType);
+                ss << "instr.AssignI(" << varExpr.expr << ", ";
+                ss << "expr.BinaryE(" << exprL.expr << ", op.Modulo, " << exprR.expr << ")";
+                addStmtToCurrBlock(ss.str());
+                return varExpr;
+            } else {
+                ss << "expr.BinaryE(" << exprL.expr << ", op.Modulo, " << exprR.expr << ")";
+                return SpanExpr(ss.str(), true, exprL.qualType);
+            }
+        }
+    }
+}
+
+SpanExpr SlangGenChecker::convertUnaryOperator(const UnaryOperator *unOp,
+        bool compound_receiver) const {
+    std::stringstream ss;
+
+    switch(unOp->getOpcode()) {
+        case UO_AddrOf: {
+            auto exprArg = convertExpr(true);
+            auto type = tib.D->getASTContext().getPointerType(exprArg.qualType);
+            if (compound_receiver) {
+                auto varExpr = tib.genTmpVariable(type);
+                ss << "instr.AssignI(" << varExpr.expr << ", ";
+                ss << "expr.UnaryE(op.AddrOf, " << exprArg.expr << ")";
+                addStmtToCurrBlock(ss.str());
+                return varExpr;
+            } else {
+                ss << "expr.UnaryE(op.AddrOf, " << exprArg.expr << ")";
+                return SpanExpr(ss.str(), true, type);
+            }
+        }
+
+        case UO_Deref: {
+            auto exprArg = convertExpr(true);
+            auto ptr_type = cast<PointerType>(exprArg.qualType.getTypePtr());
+            auto type = ptr_type->getPointeeType();
+            if (compound_receiver) {
+                auto varExpr = tib.genTmpVariable(type);
+                ss << "instr.AssignI(" << varExpr.expr << ", ";
+                ss << "expr.UnaryE(op.Deref, " << exprArg.expr << ")";
+                addStmtToCurrBlock(ss.str());
+                return varExpr;
+            } else {
+                ss << "expr.UnaryE(op.Deref, " << exprArg.expr << ")";
+                return SpanExpr(ss.str(), true, type);
+            }
+        }
+
+        default: {
+            break;
+        }
+
+    }
+
+}
+
+SpanExpr SlangGenChecker::convertVarDecl(const VarDecl *varDecl) const {
     std::stringstream ss;
 
     ss << "expr.VarE(\"" << tib.convertVarExpr((uint64_t)varDecl) << "\")";
 
-    return std::make_pair<std::string, bool>(ss.str(), false);
+    return SpanExpr(ss.str(), false, varDecl->getType());
 }
 
-std::pair<std::string, bool> SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
+SpanExpr SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
     std::stringstream ss;
 
     const ValueDecl *valueDecl = dre->getDecl();
@@ -785,7 +951,7 @@ std::pair<std::string, bool> SlangGenChecker::convertDeclRefExpr(const DeclRefEx
         return convertVarDecl(varDecl);
     } else {
         llvm::errs() << "SLANG: ERROR: " << __func__ << ": Not a VarDecl.";
-        return std::make_pair<std::string, bool>("", false);
+        return SpanExpr("ERROR:convertDeclRefExpr", false, QualType());
     }
 }
 

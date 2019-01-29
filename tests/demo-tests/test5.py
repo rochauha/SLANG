@@ -30,7 +30,7 @@ Different format specification for span.tests.test5 code.
  9:     u = &b;
 ..:   else:
 10:     b = 16;
-11: noop();
+11: nop();
 """
 
 all_vars: Dict[types.VarNameT, types.ReturnT] = {
