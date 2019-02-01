@@ -471,7 +471,7 @@ namespace {
         static TraversedInfoBuffer tib;
 
     public:
-        // mainfunc
+        // mainstart
         void checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
                               BugReporter &BR) const;
 
@@ -506,7 +506,7 @@ namespace {
 
 TraversedInfoBuffer SlangGenChecker::tib = TraversedInfoBuffer();
 
-// mainfunc, main entry point. Invokes top level Function and Cfg handlers.
+// mainstart, main entry point. Invokes top level Function and Cfg handlers.
 // It is invoked once for each source translation unit function.
 void SlangGenChecker::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
                                    BugReporter &BR) const {
@@ -874,6 +874,7 @@ SpanExpr SlangGenChecker::convertBinaryOperator(const BinaryOperator *binOp,
         case BO_Add: { op = "op.Add"; break; }
         case BO_Sub: { op = "op.Sub"; break;}
         case BO_Mul: { op = "op.Mul"; break;}
+        case BO_Div: { op = "op.Div"; break;}
     }
 
     ss << "expr.BinaryE(" << exprL.expr << ", " << op << ", " << exprR.expr << ")";

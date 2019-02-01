@@ -1,0 +1,5 @@
+LINE: 10
+COLUMN: 17
+BUG_NAME: Span Dead Store
+BUG_CATEGORY: Dead Store
+BUG_MSG: Value assigned is not used
