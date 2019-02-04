@@ -1,5 +1,5 @@
-LINE 9
-COLUMN 11
-BUG_NAME SPAN
-BUG_CATEGORY Anshuman
-BUG_MSG Hello There!
+LINE 10
+COLUMN 3
+BUG_NAME Dead Store
+BUG_CATEGORY Dead Variable
+BUG_MSG x is not used ahead.

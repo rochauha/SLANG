@@ -1,17 +1,13 @@
-int g;
-int main(int argc, char **argv) {
-  int x, y = 1 + 2;
-  int *u;
-  if (y) {
-    u = &x;
-  } else {
-    *u = y + 1 + 3;
+void main() {
+  int x = 5, y = 6, *z;
+  z = &x;
+  x = *z = y = 10;
+  {
+    x = y = 30;
   }
-  g = 0;
-  return x = func(1);
-  g = 1;
+  
+  y = x + x++;
+  
+  x = y + ++y + y;
 }
 
-int func(int x) {
-  return x;
-}

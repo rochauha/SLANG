@@ -55,22 +55,46 @@ namespace {
     class SpanExpr {
     public:
         std::string expr;
-        bool complex;
+        bool compound;
         QualType qualType;
+        std::vector<std::string> spanStmts;
 
-        SpanExpr() {}
+        bool nonTmpVar;
+        uint64_t varId;
 
-        SpanExpr(std::string e, bool cmplx, QualType qt) {
+        SpanExpr() {
+            expr = "";
+            compound = true;
+
+            nonTmpVar = false;
+            varId = 0;
+        }
+
+        SpanExpr(std::string e, bool compnd, QualType qt) {
             expr = e;
-            complex = cmplx;
+            compound = compnd;
             qualType = qt;
         }
 
         void printExpr() {
             llvm::errs() << "SpanExpr(";
-            llvm::errs() << expr << ", " << complex << ", ";
+            llvm::errs() << expr << ", " << compound << ", ";
             qualType.dump();
             llvm::errs() << ")\n";
+        }
+
+        void addSpanStmt(std::string spanStmt) {
+            spanStmts.push_back(spanStmt);
+        }
+
+        void addSpanStmts(std::vector<std::string>& spanStmts) {
+            for (std::string spanStmt: spanStmts) {
+                this->spanStmts.push_back(spanStmt);
+            }
+        }
+
+        bool isNonTmpVar() {
+            return nonTmpVar;
         }
     };
 }
@@ -150,6 +174,7 @@ namespace {
 
         // maps a unique variable id to its VarInfo.
         std::unordered_map<uint64_t , VarInfo> var_map;
+        std::unordered_map<uint64_t, SpanExpr> dirtyVars;
         // stores bb_edge(s); entry bb id is mapped to -1
         std::vector<std::pair<int32_t, std::pair<int32_t , EdgeLabel>>> bb_edges;
         // stmts in bb; entry bb id is mapped to -1
@@ -170,6 +195,13 @@ namespace {
         std::string convertLocalVarName(std::string var_name);
         std::string convertGlobalVarName(std::string var_name);
         std::string convertBbEdges();
+
+        // dirtyVars convenience functions
+        void setDirtyVar(uint64_t varId);
+        bool isDirtyVar(uint64_t varId);
+        SpanExpr getTmpVarForDirtyVar(uint64_t varId, QualType qualType, bool& newTmp);
+        void clearDirtyVars();
+        void clearMainStack();
 
         // SPAN IR dumping_routines
         void dumpSpanIr();
@@ -193,11 +225,15 @@ namespace {
 }
 
 TraversedInfoBuffer::TraversedInfoBuffer(): id{1}, tmp_var_counter{}, main_stack{},
-    var_map{}, bb_edges{}, bb_stmts{}, edge_labels{3} {
+    var_map{}, dirtyVars{}, bb_edges{}, bb_stmts{}, edge_labels{3} {
 
     edge_labels[FalseEdge] = "FalseEdge";
     edge_labels[TrueEdge] = "TrueEdge";
     edge_labels[UnCondEdge] = "UnCondEdge";
+}
+
+void TraversedInfoBuffer::clearMainStack() {
+    main_stack.clear();
 }
 
 uint32_t TraversedInfoBuffer::nextTmpCount() {
@@ -214,6 +250,7 @@ void TraversedInfoBuffer::clear() {
     tmp_var_counter = 0;
 
     var_map.clear();
+    dirtyVars.clear();
     bb_edges.clear();
     bb_stmts.clear();
     main_stack.clear();
@@ -221,6 +258,7 @@ void TraversedInfoBuffer::clear() {
 
 SpanExpr TraversedInfoBuffer::genTmpVariable(QualType qt) {
     std::stringstream ss;
+    SpanExpr spanExpr{};
     // STEP 1: generate the name.
     uint32_t var_id = nextTmpCount();
     ss << VAR_NAME_PREFIX << func_name << ":t." << var_id;
@@ -231,15 +269,61 @@ SpanExpr TraversedInfoBuffer::genTmpVariable(QualType qt) {
     varInfo.type_str = convertClangType(qt);
 
     // STEP 3: Add to the var map.
-    // The 'var_id' here should be small enough to interfere with uint64_t addresses.
+    // FIXME: The 'var_id' here should be small enough to not interfere with uint64_t addresses.
     var_map[var_id] = varInfo;
 
     // STEP 4: generate var expression.
-    std::stringstream ss1;
-    ss1 << "expr.VarE(\"" << varInfo.var_name << "\")";
+    ss.str(""); // empty the stream
+    ss << "expr.VarE(\"" << varInfo.var_name << "\")";
 
-    return SpanExpr(ss1.str(), false, qt);
+    spanExpr.expr = ss.str();
+    spanExpr.compound = false;
+    spanExpr.qualType = qt;
+    spanExpr.nonTmpVar = false;
+
+    return spanExpr;
+} // genTmpVariable()
+
+//BOUND START: dirtyVars
+
+void TraversedInfoBuffer::setDirtyVar(uint64_t varId) {
+    // clearing the value or setting new value leads to
+    // the creation of a new tmp var to hold the value
+    // whenever getCleanVar() is called.
+    SpanExpr spanExpr{};
+    dirtyVars[varId] = spanExpr;
 }
+
+bool TraversedInfoBuffer::isDirtyVar(uint64_t varId) {
+    if (dirtyVars.find(varId) == dirtyVars.end()) {
+        return false;
+    }
+    return true;
+}
+
+// returns an empty SpanExpr if var is not dirty
+SpanExpr TraversedInfoBuffer::getTmpVarForDirtyVar(uint64_t varId, QualType qualType,
+        bool& newTmp) {
+    SpanExpr spanExpr;
+    newTmp = false;
+
+    if (!isDirtyVar(varId)) {
+        return spanExpr;
+    } else if(dirtyVars[varId].expr.size() == 0) {
+        newTmp = true;
+        // allocate tmp var on demand
+        dirtyVars[varId] = genTmpVariable(qualType);
+    }
+
+    spanExpr = dirtyVars[varId];
+    return spanExpr;
+}
+
+void TraversedInfoBuffer::clearDirtyVars() {
+    dirtyVars.clear();
+}
+
+//BOUND END  : dirtyVars
 
 //BOUND START: conversion_routines 1 to SPAN Strings
 
@@ -490,16 +574,20 @@ namespace {
 
         // helper_functions
         void addStmtToCurrBlock(std::string stmt) const;
+        void addSpanStmtsToCurrBlock(std::vector<std::string>& spanStmts) const;
+        bool isTopLevel(const Stmt* stmt) const;
 
         // conversion_routines to SpanExpr
-        SpanExpr convertAssignment(const BinaryOperator *binOp) const;
+        SpanExpr convertAssignment(bool topLevel, bool compound_receiver) const;
         SpanExpr convertIntegerLiteral(const IntegerLiteral *IL) const;
         // a function, if stmt, *y on lhs, arr[i] on lhs are examples of a compound_receiver.
         SpanExpr convertExpr(bool compound_receiver) const;
         SpanExpr convertDeclRefExpr(const DeclRefExpr *dre) const;
         SpanExpr convertVarDecl(const VarDecl *varDecl) const;
-        SpanExpr convertUnaryOperator(const UnaryOperator *unOp, bool compound_receiver) const;
-        SpanExpr convertBinaryOperator(const BinaryOperator *binOp, bool compound_receiver) const;
+        SpanExpr convertUnaryOp(const UnaryOperator *unOp, bool compound_receiver) const;
+        SpanExpr convertUnaryIncDec(const UnaryOperator *unOp, bool compound_receiver) const;
+        SpanExpr convertBinaryOp(const BinaryOperator *binOp, bool compound_receiver) const;
+        void adjustDirtyVar(SpanExpr& spanExpr) const;
 
     }; // class SlangGenChecker
 } // anonymous namespace
@@ -640,6 +728,11 @@ void SlangGenChecker::handleBbStmts(const CFGBlock *bb) const {
         Optional<CFGStmt> CS = elem.getAs<CFGStmt>();
         const Stmt *stmt = CS->getStmt();
         handleStmt(stmt);
+
+        if (isTopLevel(stmt)) {
+            tib.clearDirtyVars();
+            // tib.clearMainStack();
+        }
     } // for (auto elem : *bb)
 
     // get terminator
@@ -733,10 +826,20 @@ void SlangGenChecker::handleDeclStmt(const DeclStmt *declStmt) const {
 
     if (!tib.isMainStackEmpty()) {
         // there is smth on the stack, hence on the rhs.
+        SpanExpr spanExpr{};
         auto exprLhs = convertVarDecl(varDecl);
-        auto exprRhs = convertExpr(exprLhs.complex);
+        auto exprRhs = convertExpr(exprLhs.compound);
+
+        // order_correction for DeclStmt
+        spanExpr.addSpanStmts(exprRhs.spanStmts);
+        spanExpr.addSpanStmts(exprLhs.spanStmts);
+
+        // spanExpr.qualType = exprLhs.qualType;
         ss << "instr.AssignI(" << exprLhs.expr << ", " << exprRhs.expr << ")";
-        addStmtToCurrBlock(ss.str());
+        spanExpr.addSpanStmt(ss.str());
+
+        addSpanStmtsToCurrBlock(spanExpr.spanStmts);
+        // addStmtToCurrBlock(ss.str());
     }
 } // handleDeclStmt()
 
@@ -745,8 +848,12 @@ void SlangGenChecker::handleIfStmt() const {
 
     auto exprArg = convertExpr(true);
     ss << "instr.CondI(" << exprArg.expr << ")";
-    addStmtToCurrBlock(ss.str());
-}  // handleIfStmt()
+
+    // order_correction for if stmt
+    exprArg.addSpanStmt(ss.str());
+    addSpanStmtsToCurrBlock(exprArg.spanStmts);
+    // addStmtToCurrBlock(ss.str());
+} // handleIfStmt()
 
 void SlangGenChecker::handleReturnStmt() const {
     std::stringstream ss;
@@ -755,10 +862,14 @@ void SlangGenChecker::handleReturnStmt() const {
         // return has an argument
         auto exprArg = convertExpr(true);
         ss << "instr.ReturnI(" << exprArg.expr << ")";
-        addStmtToCurrBlock(ss.str());
+
+        // order_correction for return stmt
+        exprArg.addSpanStmt(ss.str());
+        addSpanStmtsToCurrBlock(exprArg.spanStmts);
+        // addStmtToCurrBlock(ss.str());
     } else {
         ss << "instr.ReturnI()";
-        addStmtToCurrBlock(ss.str());
+        addStmtToCurrBlock(ss.str()); // okay
     }
 } // handleReturnStmt()
 
@@ -775,9 +886,9 @@ void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
 } // handleDeclRefExpr()
 
 void SlangGenChecker::handleBinaryOperator(const BinaryOperator *binOp) const {
-    if (binOp->isAssignmentOp()) {
-        SpanExpr spanExpr = convertAssignment(binOp);
-        addStmtToCurrBlock(spanExpr.expr);
+    if (binOp->isAssignmentOp() && isTopLevel(binOp)) {
+        SpanExpr spanExpr = convertAssignment(true, false); // top level is never compound
+        addSpanStmtsToCurrBlock(spanExpr.spanStmts);
     } else {
         tib.pushToMainStack(binOp);
     }
@@ -807,12 +918,12 @@ SpanExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
 
         case Stmt::BinaryOperatorClass: {
             const BinaryOperator *binOp = cast<BinaryOperator>(stmt);
-            return convertBinaryOperator(binOp, compound_receiver);
+            return convertBinaryOp(binOp, compound_receiver);
         }
 
         case Stmt::UnaryOperatorClass: {
             auto unOp = cast<UnaryOperator>(stmt);
-            return convertUnaryOperator(unOp, compound_receiver);
+            return convertUnaryOp(unOp, compound_receiver);
         }
 
         default: {
@@ -822,8 +933,7 @@ SpanExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
             return SpanExpr("ERROR:convertExpr", false, QualType());
         }
     }
-
-    return SpanExpr("ERROR:convertExpr", false, QualType());
+    // return SpanExpr("ERROR:convertExpr", false, QualType());
 } // convertExpr()
 
 SpanExpr SlangGenChecker::convertIntegerLiteral(const IntegerLiteral *il) const {
@@ -836,38 +946,96 @@ SpanExpr SlangGenChecker::convertIntegerLiteral(const IntegerLiteral *il) const 
     return SpanExpr(ss.str(), false, il->getType());
 } // convertIntegerLiteral()
 
-SpanExpr SlangGenChecker::convertAssignment(const BinaryOperator *binOp) const {
+SpanExpr SlangGenChecker::convertAssignment(bool topLevel, bool compound_receiver) const {
     std::stringstream ss;
+    SpanExpr spanExpr{};
 
-    if (binOp->isAssignmentOp()) {
-        auto exprLhs = convertExpr(false);
-        auto exprRhs = convertExpr(exprLhs.complex);
+    auto exprLhs = convertExpr(false); // unconditionally false
+    auto exprRhs = convertExpr(exprLhs.compound);
+
+    if (compound_receiver && exprLhs.compound) {
+        spanExpr = tib.genTmpVariable(exprLhs.qualType);
+
+        // order_correction for assignment
+        spanExpr.addSpanStmts(exprRhs.spanStmts);
+        spanExpr.addSpanStmts(exprLhs.spanStmts);
 
         ss << "instr.AssignI(" << exprLhs.expr << ", " << exprRhs.expr << ")";
-        return SpanExpr(ss.str(), false, exprLhs.qualType); // TODO: could be true
+        spanExpr.addSpanStmt(ss.str());
+
+        ss.str(""); // empty the stream
+        ss << "instr.AssignI(" << spanExpr.expr << ", " << exprLhs.expr << ")";
+        spanExpr.addSpanStmt(ss.str());
+    } else {
+        // order_correction for assignment
+        spanExpr.addSpanStmts(exprRhs.spanStmts);
+        spanExpr.addSpanStmts(exprLhs.spanStmts);
+
+        ss << "instr.AssignI(" << exprLhs.expr << ", " << exprRhs.expr << ")";
+        spanExpr.addSpanStmt(ss.str());
+
+        spanExpr.expr = exprLhs.expr;
+        spanExpr.qualType = exprLhs.qualType;
+        spanExpr.compound = exprLhs.compound;
+        spanExpr.nonTmpVar = exprLhs.nonTmpVar;
+        spanExpr.varId = exprLhs.varId;
+
     }
 
-    return SpanExpr("ERROR:convertAssignment", false, QualType()); // TODO: could be true
+    // if (!topLevel) {
+        if (spanExpr.nonTmpVar) {
+            tib.setDirtyVar(spanExpr.varId);
+        }
+        // adjustDirtyVar(spanExpr);
+    // }
+
+    return spanExpr;
 }
 
-SpanExpr SlangGenChecker::convertBinaryOperator(const BinaryOperator *binOp,
+void SlangGenChecker::adjustDirtyVar(SpanExpr& spanExpr) const {
+    std::stringstream ss;
+    bool newTmp;
+    if (spanExpr.isNonTmpVar() && tib.isDirtyVar(spanExpr.varId)) {
+        SpanExpr sp = tib.getTmpVarForDirtyVar(spanExpr.varId, spanExpr.qualType, newTmp);
+        if (newTmp) {
+            // only add if a new temporary was generated
+            ss << "instr.AssignI(" << sp.expr << ", " << spanExpr.expr << ")";
+            spanExpr.addSpanStmt(ss.str());
+        }
+        spanExpr.expr = sp.expr;
+        spanExpr.nonTmpVar = false;
+    }
+}
+
+SpanExpr SlangGenChecker::convertBinaryOp(const BinaryOperator *binOp,
         bool compound_receiver) const {
     std::stringstream ss;
     std::string op;
     SpanExpr varExpr{};
 
+    if (binOp->isAssignmentOp()) {
+        return convertAssignment(false, compound_receiver);
+    }
+
     SpanExpr exprR = convertExpr(true);
     SpanExpr exprL = convertExpr(true);
+    adjustDirtyVar(exprL);
 
     if (compound_receiver) {
         varExpr = tib.genTmpVariable(exprL.qualType);
         ss << "instr.AssignI(" << varExpr.expr << ", ";
     }
 
+    // order_correction binary operator
+    varExpr.addSpanStmts(exprL.spanStmts);
+    varExpr.addSpanStmts(exprR.spanStmts);
+
+    varExpr.qualType = exprL.qualType;
+
     switch(binOp->getOpcode()) {
         default: {
-            llvm::errs() << "SLANG: ERROR: convertBinaryOperator: " << binOp->getOpcodeStr() << "\n";
-            return SpanExpr("ERROR:convertBinaryOperator", false, QualType());
+            llvm::errs() << "SLANG: ERROR: convertBinaryOp: " << binOp->getOpcodeStr() << "\n";
+            return SpanExpr("ERROR:convertBinaryOp", false, QualType());
         }
 
         case BO_Rem: { op = "op.Modulo"; break; }
@@ -881,28 +1049,46 @@ SpanExpr SlangGenChecker::convertBinaryOperator(const BinaryOperator *binOp,
 
     if (compound_receiver) {
         ss << ")"; // close instr.AssignI(...
-        addStmtToCurrBlock(ss.str());
-        return varExpr;
+        varExpr.addSpanStmt(ss.str());
+        // addStmtToCurrBlock(ss.str());
     } else {
-        return SpanExpr(ss.str(), true, exprL.qualType);
+        varExpr.expr = ss.str();
+        varExpr.compound = true; // since a binary expression
     }
+
+    return varExpr;
 }
 
-SpanExpr SlangGenChecker::convertUnaryOperator(const UnaryOperator *unOp,
+SpanExpr SlangGenChecker::convertUnaryOp(const UnaryOperator *unOp,
         bool compound_receiver) const {
     std::stringstream ss;
     std::string op;
     SpanExpr varExpr{};
     QualType qualType;
 
+    switch (unOp->getOpcode()) {
+        // special handling
+        case UO_PreInc:
+        case UO_PreDec:
+        case UO_PostInc:
+        case UO_PostDec: {
+            return convertUnaryIncDec(unOp, compound_receiver);
+        }
+
+        default: {
+            break;
+        }
+    }
+
     SpanExpr exprArg = convertExpr(true);
+    adjustDirtyVar(exprArg);
     qualType = exprArg.qualType;
 
     switch(unOp->getOpcode()) {
         default: {
-            llvm::errs() << "SLANG: ERROR: convertUnaryOperator: "
+            llvm::errs() << "SLANG: ERROR: convertUnaryOp: "
                          << unOp->getOpcodeStr(unOp->getOpcode()) << "\n";
-            return SpanExpr("ERROR:convertUnaryOperator", false, QualType());
+            return SpanExpr("ERROR:convertUnaryOp", false, QualType());
         }
 
         case UO_AddrOf: {
@@ -922,28 +1108,81 @@ SpanExpr SlangGenChecker::convertUnaryOperator(const UnaryOperator *unOp,
         case UO_Plus: { op = "op.Plus"; break;}
     }
 
+    ss << "expr.UnaryE(" << op << ", " << exprArg.expr << ")";
+
     if (compound_receiver) {
         varExpr = tib.genTmpVariable(qualType);
         ss << "instr.AssignI(" << varExpr.expr << ", ";
     }
 
-    ss << "expr.UnaryE(" << op << ", " << exprArg.expr << ")";
+    // order_correction unary operator
+    varExpr.addSpanStmts(exprArg.spanStmts);
 
     if (compound_receiver) {
         ss << ")"; // close instr.AssignI(...
-        addStmtToCurrBlock(ss.str());
-        return varExpr;
+        varExpr.addSpanStmt(ss.str());
+        // addStmtToCurrBlock(ss.str());
     } else {
-        return SpanExpr(ss.str(), true, qualType);
+        varExpr.expr = ss.str();
+        varExpr.compound = true;
+        varExpr.qualType = qualType;
     }
-}
+    return varExpr;
+} // convertUnaryOp()
+
+SpanExpr SlangGenChecker::convertUnaryIncDec(const UnaryOperator *unOp,
+                                             bool compound_receiver) const {
+    std::stringstream ss;
+    SpanExpr exprArg = convertExpr(true);
+
+    switch(unOp->getOpcode()) {
+        case UO_PreInc: {
+            ss << "instr.AssignI(" << exprArg.expr << ", ";
+            ss << "expr.BinaryE(" << exprArg.expr << ", op.Add, expr.LitE(1)))";
+            exprArg.addSpanStmt(ss.str());
+
+            uint64_t varId = exprArg.varId;
+            if (exprArg.nonTmpVar && tib.isDirtyVar(exprArg.varId)) {
+                adjustDirtyVar(exprArg);
+            }
+            tib.setDirtyVar(varId);
+            break;
+        }
+
+        case UO_PostInc: {
+            ss << "instr.AssignI(" << exprArg.expr << ", ";
+            ss << "expr.BinaryE(" << exprArg.expr << ", op.Add, expr.LitE(1)))";
+
+            if (exprArg.nonTmpVar) {
+                tib.setDirtyVar(exprArg.varId);
+                adjustDirtyVar(exprArg);
+            }
+            // add increment after storing in temporary
+            exprArg.addSpanStmt(ss.str());
+            break;
+        }
+
+        default: {
+            llvm::errs() << "SLANG: ERROR.convertUnaryIncDec unknown op\n";
+            break;
+        }
+    }
+
+    return exprArg;
+} // convertUnaryIncDec()
 
 SpanExpr SlangGenChecker::convertVarDecl(const VarDecl *varDecl) const {
     std::stringstream ss;
+    SpanExpr spanExpr{};
 
     ss << "expr.VarE(\"" << tib.convertVarExpr((uint64_t)varDecl) << "\")";
+    spanExpr.expr = ss.str();
+    spanExpr.compound = false;
+    spanExpr.qualType = varDecl->getType();
+    spanExpr.nonTmpVar = true;
+    spanExpr.varId = (uint64_t)varDecl;
 
-    return SpanExpr(ss.str(), false, varDecl->getType());
+    return spanExpr;
 }
 
 SpanExpr SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
@@ -964,12 +1203,42 @@ SpanExpr SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
 //BOUND START: helper_functions
 
 void SlangGenChecker::addStmtToCurrBlock(std::string stmt) const {
-    // tib.bb_stmts[tib.curr_bb_id].push_back(stmt);
+    tib.bb_stmts[tib.curr_bb_id].push_back(stmt);
+}
 
-    std::vector<std::string> stmt_seq;
-    stmt_seq = tib.bb_stmts[tib.curr_bb_id];
-    stmt_seq.push_back(stmt);
-    tib.bb_stmts[tib.curr_bb_id] = stmt_seq;
+void SlangGenChecker::addSpanStmtsToCurrBlock(std::vector<std::string>& spanStmts) const {
+    for (std::string spanStmt: spanStmts) {
+        tib.bb_stmts[tib.curr_bb_id].push_back(spanStmt);
+    }
+}
+
+// If an element is top level, return true.
+// e.g. in statement "x = y = z = 10;" the first "=" from left is top level.
+bool SlangGenChecker::isTopLevel(const Stmt* stmt) const {
+    // see MyTraverseAST.cpp for more details.
+    const auto &parents = tib.D->getASTContext().getParents(*stmt);
+    if (!parents.empty()) {
+        const Stmt *stmt1 = parents[0].get<Stmt>();
+        if (stmt1) {
+            // llvm::errs() << "Parent: " << stmt1->getStmtClassName() << "\n";
+            switch (stmt1->getStmtClass()) {
+                default: {
+                    return false;
+                    break;
+                }
+                case Stmt::CaseStmtClass:
+                case Stmt::DefaultStmtClass:
+                case Stmt::CompoundStmtClass: {
+                    return true; // top level
+                }
+            }
+        } else {
+            // llvm::errs() << "Parent: Cannot print.\n";
+            return false;
+        }
+    } else {
+        return true; // top level
+    }
 }
 
 //BOUND END  : helper_functions
