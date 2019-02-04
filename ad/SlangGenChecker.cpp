@@ -62,6 +62,8 @@ namespace {
         bool nonTmpVar;
         uint64_t varId;
 
+        uint64_t locId; // line_32 | col_32
+
         SpanExpr() {
             expr = "";
             compound = true;
@@ -98,6 +100,7 @@ namespace {
         }
     };
 }
+
 //===----------------------------------------------------------------------===//
 // FIXME: Utility Class
 // Some useful static utility functions in a class.
@@ -117,8 +120,8 @@ bool Utility::LS = true;
 //     llvm::errs() << "SLANG: " << func_name << ":" << line << " " << msg << "\n";
 // }
 
+// code to read file, just for reference
 void Utility::readFile1() {
-    //Read a specific local file.
     std::ifstream inputTxtFile;
     std::string line;
     std::string fileName("/home/codeman/.itsoflife/local/tmp/checker-input.txt");
@@ -253,7 +256,7 @@ void TraversedInfoBuffer::clear() {
     dirtyVars.clear();
     bb_edges.clear();
     bb_stmts.clear();
-    main_stack.clear();
+    clearMainStack();
 } // clear()
 
 SpanExpr TraversedInfoBuffer::genTmpVariable(QualType qt) {
@@ -287,9 +290,9 @@ SpanExpr TraversedInfoBuffer::genTmpVariable(QualType qt) {
 //BOUND START: dirtyVars
 
 void TraversedInfoBuffer::setDirtyVar(uint64_t varId) {
-    // clearing the value or setting new value leads to
-    // the creation of a new tmp var to hold the value
-    // whenever getCleanVar() is called.
+    // Clear the value for varId to an empty SpanExpr.
+    // This forces the creation of a new tmp var,
+    // whenever getTmpVarForDirtyVar() is called.
     SpanExpr spanExpr{};
     dirtyVars[varId] = spanExpr;
 }
@@ -358,8 +361,9 @@ std::string TraversedInfoBuffer::convertVarExpr(uint64_t var_addr) {
 
 // Converts Clang Types into SPAN parsable type strings:
 // Examples,
-// for `int` it returns `types.Int`.
-// for `int*` it returns `types.Ptr(to=types.Int)`.
+//   for `int` it returns `types.Int`.
+//   for `int*` it returns `types.Ptr(to=types.Int)`.
+// TODO: handle all possible types
 std::string TraversedInfoBuffer::convertClangType(QualType qt) {
     std::stringstream ss;
     const Type *type = qt.getTypePtr();
@@ -401,11 +405,11 @@ std::string TraversedInfoBuffer::convertBbEdges() {
     return ss.str();
 } // convertBbEdges()
 
-
 //BOUND END  : conversion_routines 1 to SPAN Strings
 
 //BOUND START: helper_functions for tib
 
+// used only for debugging purposes
 void TraversedInfoBuffer::printMainStack() const {
     if (Utility::LS) {
         llvm::errs() << "MAIN_STACK: [";
@@ -436,6 +440,14 @@ bool TraversedInfoBuffer::isMainStackEmpty() const {
 //BOUND END  : helper_functions for tib
 
 //BOUND START: dumping_routines
+
+// dump entire span ir module for the translation unit.
+void TraversedInfoBuffer::dumpSpanIr() {
+    dumpHeader();
+    dumpVariables();
+    dumpFunctions();
+    dumpFooter();
+} // dumpSpanIr()
 
 void TraversedInfoBuffer::dumpVariables() {
     llvm::errs() << "all_vars: Dict[types.VarNameT, types.ReturnT] = {\n";
@@ -529,14 +541,6 @@ void TraversedInfoBuffer::dumpFunctions() {
     llvm::errs() << "} # end all_func dict.\n";
 } // dumpFunctions()
 
-// dump entire span ir for the translation unit.
-void TraversedInfoBuffer::dumpSpanIr() {
-    dumpHeader();
-    dumpVariables();
-    dumpFunctions();
-    dumpFooter();
-} // dumpSpanIr()
-
 //BOUND END  : dumping_routines
 
 // // For Program state's purpose: not in use currently.
@@ -576,9 +580,10 @@ namespace {
         void addStmtToCurrBlock(std::string stmt) const;
         void addSpanStmtsToCurrBlock(std::vector<std::string>& spanStmts) const;
         bool isTopLevel(const Stmt* stmt) const;
+        uint64_t getLocationId(const Stmt *stmt) const;
 
         // conversion_routines to SpanExpr
-        SpanExpr convertAssignment(bool topLevel, bool compound_receiver) const;
+        SpanExpr convertAssignment(bool compound_receiver) const;
         SpanExpr convertIntegerLiteral(const IntegerLiteral *IL) const;
         // a function, if stmt, *y on lhs, arr[i] on lhs are examples of a compound_receiver.
         SpanExpr convertExpr(bool compound_receiver) const;
@@ -828,6 +833,7 @@ void SlangGenChecker::handleDeclStmt(const DeclStmt *declStmt) const {
         // there is smth on the stack, hence on the rhs.
         SpanExpr spanExpr{};
         auto exprLhs = convertVarDecl(varDecl);
+        exprLhs.locId = getLocationId(declStmt);
         auto exprRhs = convertExpr(exprLhs.compound);
 
         // order_correction for DeclStmt
@@ -839,7 +845,6 @@ void SlangGenChecker::handleDeclStmt(const DeclStmt *declStmt) const {
         spanExpr.addSpanStmt(ss.str());
 
         addSpanStmtsToCurrBlock(spanExpr.spanStmts);
-        // addStmtToCurrBlock(ss.str());
     }
 } // handleDeclStmt()
 
@@ -852,7 +857,6 @@ void SlangGenChecker::handleIfStmt() const {
     // order_correction for if stmt
     exprArg.addSpanStmt(ss.str());
     addSpanStmtsToCurrBlock(exprArg.spanStmts);
-    // addStmtToCurrBlock(ss.str());
 } // handleIfStmt()
 
 void SlangGenChecker::handleReturnStmt() const {
@@ -866,7 +870,6 @@ void SlangGenChecker::handleReturnStmt() const {
         // order_correction for return stmt
         exprArg.addSpanStmt(ss.str());
         addSpanStmtsToCurrBlock(exprArg.spanStmts);
-        // addStmtToCurrBlock(ss.str());
     } else {
         ss << "instr.ReturnI()";
         addStmtToCurrBlock(ss.str()); // okay
@@ -887,7 +890,7 @@ void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
 
 void SlangGenChecker::handleBinaryOperator(const BinaryOperator *binOp) const {
     if (binOp->isAssignmentOp() && isTopLevel(binOp)) {
-        SpanExpr spanExpr = convertAssignment(true, false); // top level is never compound
+        SpanExpr spanExpr = convertAssignment(false); // top level is never compound
         addSpanStmtsToCurrBlock(spanExpr.spanStmts);
     } else {
         tib.pushToMainStack(binOp);
@@ -946,7 +949,7 @@ SpanExpr SlangGenChecker::convertIntegerLiteral(const IntegerLiteral *il) const 
     return SpanExpr(ss.str(), false, il->getType());
 } // convertIntegerLiteral()
 
-SpanExpr SlangGenChecker::convertAssignment(bool topLevel, bool compound_receiver) const {
+SpanExpr SlangGenChecker::convertAssignment(bool compound_receiver) const {
     std::stringstream ss;
     SpanExpr spanExpr{};
 
@@ -982,12 +985,9 @@ SpanExpr SlangGenChecker::convertAssignment(bool topLevel, bool compound_receive
 
     }
 
-    // if (!topLevel) {
-        if (spanExpr.nonTmpVar) {
-            tib.setDirtyVar(spanExpr.varId);
-        }
-        // adjustDirtyVar(spanExpr);
-    // }
+    if (spanExpr.nonTmpVar) {
+        tib.setDirtyVar(spanExpr.varId);
+    }
 
     return spanExpr;
 }
@@ -1014,7 +1014,7 @@ SpanExpr SlangGenChecker::convertBinaryOp(const BinaryOperator *binOp,
     SpanExpr varExpr{};
 
     if (binOp->isAssignmentOp()) {
-        return convertAssignment(false, compound_receiver);
+        return convertAssignment(compound_receiver);
     }
 
     SpanExpr exprR = convertExpr(true);
@@ -1050,7 +1050,6 @@ SpanExpr SlangGenChecker::convertBinaryOp(const BinaryOperator *binOp,
     if (compound_receiver) {
         ss << ")"; // close instr.AssignI(...
         varExpr.addSpanStmt(ss.str());
-        // addStmtToCurrBlock(ss.str());
     } else {
         varExpr.expr = ss.str();
         varExpr.compound = true; // since a binary expression
@@ -1121,7 +1120,6 @@ SpanExpr SlangGenChecker::convertUnaryOp(const UnaryOperator *unOp,
     if (compound_receiver) {
         ss << ")"; // close instr.AssignI(...
         varExpr.addSpanStmt(ss.str());
-        // addStmtToCurrBlock(ss.str());
     } else {
         varExpr.expr = ss.str();
         varExpr.compound = true;
@@ -1191,7 +1189,9 @@ SpanExpr SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
     const ValueDecl *valueDecl = dre->getDecl();
     if (isa<VarDecl>(valueDecl)) {
         auto varDecl = cast<VarDecl>(valueDecl);
-        return convertVarDecl(varDecl);
+        SpanExpr spanExpr = convertVarDecl(varDecl);
+        spanExpr.locId = getLocationId(dre);
+        return spanExpr;
     } else {
         llvm::errs() << "SLANG: ERROR: " << __func__ << ": Not a VarDecl.";
         return SpanExpr("ERROR:convertDeclRefExpr", false, QualType());
@@ -1211,6 +1211,17 @@ void SlangGenChecker::addSpanStmtsToCurrBlock(std::vector<std::string>& spanStmt
         tib.bb_stmts[tib.curr_bb_id].push_back(spanStmt);
     }
 }
+
+// get and encode the location of a statement element
+uint64_t SlangGenChecker::getLocationId(const Stmt *stmt) const {
+    uint64_t locId = 0;
+
+    locId |= tib.D->getASTContext().getSourceManager().getExpansionLineNumber(stmt->getLocStart());
+    locId <<= 32;
+    locId |= tib.D->getASTContext().getSourceManager().getExpansionColumnNumber(stmt->getLocStart());
+
+    return locId; // line_32 | col_32
+} // getLocationId()
 
 // If an element is top level, return true.
 // e.g. in statement "x = y = z = 10;" the first "=" from left is top level.
@@ -1239,7 +1250,7 @@ bool SlangGenChecker::isTopLevel(const Stmt* stmt) const {
     } else {
         return true; // top level
     }
-}
+} // isTopLevel()
 
 //BOUND END  : helper_functions
 
