@@ -69,6 +69,7 @@ namespace {
 
         void handleBBStmts(const CFGBlock *bb) const;
         void handleLocation(const Stmt *stmt) const;
+        void printParent(const Stmt *stmt) const;
     }; // class MyTraverseAST
 } // anonymous namespace
 
@@ -111,6 +112,7 @@ void MyTraverseAST::handleBBStmts(const CFGBlock *bb) const {
         llvm::errs() << "Visiting: " << stmt->getStmtClassName() << "\n";
         stmt->dump();
 
+        printParent(stmt);
         handleLocation(stmt);
 
         llvm::errs() << "\n";
@@ -121,12 +123,27 @@ void MyTraverseAST::handleBBStmts(const CFGBlock *bb) const {
     if(terminator = (bb->getTerminator()).getStmt()) {
         llvm::errs() << "Visiting Terminator: " << terminator->getStmtClassName() << "\n";
         terminator->dump();
+        printParent(terminator);
         handleLocation(terminator);
         llvm::errs() << "\n";
     }
 
     llvm::errs() << "\n\n";
 } // handleBBStmts()
+
+void MyTraverseAST::printParent(const Stmt *stmt) const {
+    const auto &parents = D->getASTContext().getParents(*stmt);
+    if (!parents.empty()) {
+        const Stmt *stmt1 = parents[0].get<Stmt>();
+        if (stmt1) {
+            llvm::errs() << "Parent: " << stmt1->getStmtClassName() << "\n";
+        } else {
+            llvm::errs() << "Parent: Cannot print.\n";
+        }
+    } else {
+        llvm::errs() << "Parent: None\n";
+    }
+}
 
 void MyTraverseAST::handleLocation(const Stmt *stmt) const {
     Location loc;
@@ -141,5 +158,4 @@ void MyTraverseAST::handleLocation(const Stmt *stmt) const {
 void ento::registerMyTraverseAST(CheckerManager &mgr) {
     mgr.registerChecker<MyTraverseAST>();
 }
-
 
