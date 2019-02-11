@@ -20,7 +20,7 @@ gen_test:
 	clang -cc1 -analyze -analyzer-checker=debug.SlangGen -std=c99 tests/test.c
 
 gen_replace:
-	cp ad/SlangGenChecker.cpp \
+	cp CFG-plugin/SlangGenChecker.cpp \
 ~/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangGenChecker.cpp	
 
 simple_test:
