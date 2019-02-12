@@ -226,7 +226,8 @@ class TraversedInfoBuffer {
     std::vector<std::string> edge_labels;
 
     // Stuff for handling SwitchStmts
-    std::vector<AuxiliaryIfBlock> aux_blocks; // additional blocks corresponding to CaseStmts
+    std::vector<AuxiliaryIfBlock>
+        processed_aux_blocks; // additional blocks corresponding to CaseStmts
 
     CFGBlock *currentBlockWithSwitch; // block containing SwitchStmt, used for mapping successors
 
@@ -263,7 +264,7 @@ class TraversedInfoBuffer {
     void pushToMainStack(const Stmt *stmt);
     const Stmt *popFromMainStack();
     bool isMainStackEmpty() const;
-    uint32_t incMaxBlockId();
+    uint32_t nxtBlockId();
 
     // // For Program state purpose.
     // // Overload the == operator
@@ -289,7 +290,7 @@ uint32_t TraversedInfoBuffer::nextTmpCount() {
     return tmp_var_counter;
 }
 
-uint32_t TraversedInfoBuffer::incMaxBlockId() {
+uint32_t TraversedInfoBuffer::nxtBlockId() {
     max_block_id += 1;
     return max_block_id;
 }
@@ -307,7 +308,6 @@ void TraversedInfoBuffer::clear() {
     dirtyVars.clear();
     bb_edges.clear();
     bb_stmts.clear();
-    aux_blocks.clear();
     clearMainStack();
 } // clear()
 
@@ -581,8 +581,8 @@ void TraversedInfoBuffer::dumpFunctions() {
         llvm::errs() << NBSP8 << "]),\n";
     }
 
-    // Print auxiliary basic blocks
-    for (auto it = aux_blocks.begin(); it != aux_blocks.end(); ++it) {
+    // Dump auxiliary basic blocks
+    for (auto it = processed_aux_blocks.begin(); it != processed_aux_blocks.end(); ++it) {
         it->dumpInstructions();
     }
 
@@ -594,8 +594,8 @@ void TraversedInfoBuffer::dumpFunctions() {
 
     llvm::errs() << convertBbEdges();
 
-    // dump all auxiliary edges first
-    for (auto it = aux_blocks.begin(); it != aux_blocks.end(); ++it) {
+    // Now dump all auxiliary edges
+    for (auto it = processed_aux_blocks.begin(); it != processed_aux_blocks.end(); ++it) {
         it->dumpEdges();
     }
 
@@ -696,8 +696,8 @@ void SlangGenChecker::checkASTCodeBody(const Decl *D, AnalysisManager &mgr, BugR
 // BOUND START: handling_routines
 
 void SlangGenChecker::handleCfg(const CFG *cfg) const {
+    tib.max_block_id = cfg->size() - 1;
     for (const CFGBlock *bb : *cfg) {
-        tib.max_block_id = cfg->size();
         handleBbInfo(bb, cfg);
         handleBbStmts(bb);
     }
@@ -729,11 +729,12 @@ void SlangGenChecker::handleFunctionDef(const FunctionDecl *func_decl) const {
 } // handleFunctionDef()
 
 void SlangGenChecker::handleBbInfo(const CFGBlock *bb, const CFG *cfg) const {
-    // Don't handle info in presence of
+    // Don't handle info in presence of SwitchStmt
     const Stmt *terminatorStmt = (bb->getTerminator()).getStmt();
     if (terminatorStmt && isa<SwitchStmt>(terminatorStmt)) {
         // needed for predecessors and successors since we add new basic blocks
         tib.currentBlockWithSwitch = const_cast<CFGBlock *>(bb);
+        tib.curr_bb_id = bb->getBlockID();
         return;
     }
     int32_t succ_id, bb_id;
@@ -936,8 +937,8 @@ void SlangGenChecker::handleDeclStmt(const DeclStmt *declStmt) const {
 } // handleDeclStmt()
 
 void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switch_stmt) const {
-    std::stringstream ss;
     std::vector<ElementListTy> instr_stack_list;
+    std::vector<AuxiliaryIfBlock> aux_blocks;
     switch_stmt->dump();
 
     auto exprArg = convertExpr(true);
@@ -951,8 +952,10 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switch_stmt) const {
          I != (tib.currentBlockWithSwitch)->succ_end(); ++I) {
         CFGBlock *succ = *I;
         int succ_id = succ->getBlockID();
+        llvm::errs() << succ_id << " ";
         thenBlockIds.push_back(succ_id);
     }
+    llvm::errs() << "\n";
 
     // get nodes in Clang-style order
     for (auto it = body->body_begin(); it != body->body_end(); ++it) {
@@ -962,31 +965,32 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switch_stmt) const {
         }
     }
 
-    for (auto current_stack = instr_stack_list.begin(); current_stack != instr_stack_list.end();
-         ++current_stack) {
+    llvm::errs() << "#new blocks = " << instr_stack_list.size() << "\n";
+
+    for (auto current_stack = instr_stack_list.end() - 1;
+         current_stack != instr_stack_list.begin() - 1; --current_stack) {
         // for each stack now handle every thing including predecessors and successors
         for (auto it = current_stack->begin(); it != current_stack->end(); ++it) {
             tib.pushToMainStack(*it);
         }
 
-        std::stringstream new_bb_stream;
         AuxiliaryIfBlock new_if_block;
 
         // unconditional edge needed from this block to the first AuxiliaryIfBlock
-        if (current_stack == instr_stack_list.begin()) {
-            new_if_block.setPredecessorId((tib.currentBlockWithSwitch)->getBlockID());
+        if (current_stack == instr_stack_list.end() - 1) {
+            new_if_block.setPredecessorId(tib.curr_bb_id);
         }
 
-        new_if_block.setBlockId(tib.max_block_id);
-        new_bb_stream << NBSP8 << tib.max_block_id << ": graph.BB([\n";
-        tib.incMaxBlockId();
+        llvm::errs() << "Max block ID = " << tib.max_block_id << "\n";
+        int32_t new_id = tib.nxtBlockId();
+        new_if_block.setBlockId(new_id);
 
         auto newExprArg = convertExpr(true);
         auto tmpVar = tib.genTmpVariable();
 
         tmpVar.addSpanStmts(newExprArg.spanStmts);
 
-        ss.str("");
+        std::stringstream ss;
         ss << "instr.AssignI(" << tmpVar.expr << ", "
            << "expr.BinaryE(" << newExprArg.expr << ", op.Eq, " << exprArg.expr << "))";
         tmpVar.addSpanStmt(ss.str());
@@ -995,22 +999,32 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switch_stmt) const {
         ss << "instr.CondI(" << tmpVar.expr << ")";
         tmpVar.addSpanStmt(ss.str());
 
+        std::stringstream new_bb_stream;
+        new_bb_stream << NBSP8 << new_if_block.getBlockId() << ": graph.BB([\n";
         for (auto it = tmpVar.spanStmts.begin(); it != tmpVar.spanStmts.end(); ++it) {
             new_bb_stream << NBSP10 << *it << ",\n";
         }
         new_bb_stream << NBSP8 << "])\n";
         new_if_block.setBlockInstructions(new_bb_stream.str());
-        tib.aux_blocks.push_back(new_if_block);
+        new_bb_stream.str("");
+        aux_blocks.push_back(new_if_block);
     }
 
-    llvm::errs() << tib.aux_blocks.size() << "  " << thenBlockIds.size() << "\n";
-    int successors_len = tib.aux_blocks.size();
-    for (int i = 0; i < successors_len; i++) {
-        tib.aux_blocks[i].setTrueSuccessor(thenBlockIds[i]);
-        tib.aux_blocks[i].setFalseSuccessor(tib.aux_blocks[i].getBlockId() + 1);
+    llvm::errs() << aux_blocks.size() << "  " << thenBlockIds.size() << "\n";
+    int successors_len = aux_blocks.size();
+
+    for (int i = 0; i < successors_len; ++i) {
+        aux_blocks[i].setTrueSuccessor(thenBlockIds[i]);
+        aux_blocks[i].setFalseSuccessor(aux_blocks[i].getBlockId() + 1);
     }
     // set last false edge to default block / immediate next block
-    tib.aux_blocks[successors_len - 1].setFalseSuccessor(thenBlockIds[successors_len]);
+    aux_blocks[successors_len - 1].setFalseSuccessor(thenBlockIds[successors_len]);
+
+    for (int i = 0; i < successors_len; ++i) {
+        tib.processed_aux_blocks.push_back(aux_blocks[i]);
+        aux_blocks[i].dumpInstructions();
+        llvm::errs() << "\n\n";
+    }
 } // handleSwitchStmt()
 
 // Return vector of Stmts in clang's traversal order.
