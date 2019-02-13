@@ -156,48 +156,6 @@ class VarInfo {
     }
 };
 
-class AuxiliaryIfBlock {
-  private:
-    std::string instructions; // All instructions go here
-    int32_t id;               // new block id which we assign
-    int32_t true_succ_id;
-    int32_t false_succ_id;
-
-  public:
-    int32_t pred_id; // this will only be used for the first case
-
-    AuxiliaryIfBlock() {
-        instructions = "";
-        true_succ_id = -5;
-        false_succ_id = -5;
-        pred_id = -5;
-    }
-
-    void setBlockInstructions(std::string instrs) { instructions = instrs; }
-
-    void setPredecessorId(int32_t id_) { pred_id = id_; }
-
-    void setBlockId(int32_t id_) { id = id_; }
-
-    void setTrueSuccessor(int32_t id_) { true_succ_id = id_; }
-
-    void setFalseSuccessor(int32_t id_) { false_succ_id = id_; }
-
-    int32_t getBlockId() { return id; }
-
-    void dumpInstructions() { llvm::errs() << instructions; }
-
-    void dumpEdges() {
-        std::stringstream ss;
-        if (pred_id != -5) {
-            ss << NBSP8 << "graph.bbEdge(" << pred_id << ", " << id << ", graph.UnCondEdge),\n";
-        }
-        ss << NBSP8 << "graph.bbEdge(" << id << ", " << true_succ_id << ", graph.TrueEdge),\n";
-        ss << NBSP8 << "graph.bbEdge(" << id << ", " << false_succ_id << ", graph.FalseEdge),\n";
-        llvm::errs() << ss.str();
-    }
-};
-
 typedef std::vector<const Stmt *> ElementListTy;
 class TraversedInfoBuffer {
   public:
@@ -224,10 +182,6 @@ class TraversedInfoBuffer {
     std::unordered_map<int32_t, std::vector<std::string>> bb_stmts;
 
     std::vector<std::string> edge_labels;
-
-    // Stuff for handling SwitchStmts
-    std::vector<AuxiliaryIfBlock>
-        processed_aux_blocks; // additional blocks corresponding to CaseStmts
 
     CFGBlock *currentBlockWithSwitch; // block containing SwitchStmt, used for mapping successors
 
@@ -581,11 +535,6 @@ void TraversedInfoBuffer::dumpFunctions() {
         llvm::errs() << NBSP8 << "]),\n";
     }
 
-    // Dump auxiliary basic blocks
-    for (auto it = processed_aux_blocks.begin(); it != processed_aux_blocks.end(); ++it) {
-        it->dumpInstructions();
-    }
-
     llvm::errs() << NBSP6 << "}, # basic_blocks end.\n";
 
     // fields: bb_edges
@@ -593,11 +542,6 @@ void TraversedInfoBuffer::dumpFunctions() {
     llvm::errs() << NBSP6 << "bb_edges= [\n";
 
     llvm::errs() << convertBbEdges();
-
-    // Now dump all auxiliary edges
-    for (auto it = processed_aux_blocks.begin(); it != processed_aux_blocks.end(); ++it) {
-        it->dumpEdges();
-    }
 
     llvm::errs() << NBSP6 << "],\n";
 
@@ -936,9 +880,16 @@ void SlangGenChecker::handleDeclStmt(const DeclStmt *declStmt) const {
     }
 } // handleDeclStmt()
 
+// Convert switch to if-else ladder
 void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switch_stmt) const {
-    std::vector<ElementListTy> instr_stack_list;
-    std::vector<AuxiliaryIfBlock> aux_blocks;
+    std::vector<ElementListTy> instr_queue_list;
+    std::vector<int32_t> successor_ids;
+    int32_t successor_count = 0;
+
+    int32_t new_if_block_id;
+    std::vector<std::string> new_if_block;
+    std::vector<int32_t> new_ids; // used in the end to make edges
+
     switch_stmt->dump();
 
     auto exprArg = convertExpr(true);
@@ -946,44 +897,44 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switch_stmt) const {
 
     const CompoundStmt *body = cast<CompoundStmt>(switch_stmt->getBody());
 
-    // get ids for then jumps
-    std::vector<int32_t> thenBlockIds;
+    // Get successor ids
+    llvm::errs() << "successor ids : ";
     for (CFGBlock::const_succ_iterator I = (tib.currentBlockWithSwitch)->succ_begin();
          I != (tib.currentBlockWithSwitch)->succ_end(); ++I) {
         CFGBlock *succ = *I;
         int succ_id = succ->getBlockID();
         llvm::errs() << succ_id << " ";
-        thenBlockIds.push_back(succ_id);
+        successor_ids.push_back(succ_id);
     }
     llvm::errs() << "\n";
+    successor_count = successor_ids.size();
 
-    // get nodes in Clang-style order
+    // Get nodes in Clang-style order
     for (auto it = body->body_begin(); it != body->body_end(); ++it) {
         if (isa<CaseStmt>(*it)) {
             auto elems = getElementsFromCaseStmt(cast<CaseStmt>(*it));
-            instr_stack_list.push_back(elems);
+            instr_queue_list.push_back(elems);
         }
     }
 
-    llvm::errs() << "#new blocks = " << instr_stack_list.size() << "\n";
+    llvm::errs() << "#new blocks = " << instr_queue_list.size() << "\n";
 
-    for (auto current_stack = instr_stack_list.end() - 1;
-         current_stack != instr_stack_list.begin() - 1; --current_stack) {
-        // for each stack now handle every thing including predecessors and successors
-        for (auto it = current_stack->begin(); it != current_stack->end(); ++it) {
-            tib.pushToMainStack(*it);
+    for (auto current_queue = instr_queue_list.end() - 1;
+         current_queue != instr_queue_list.begin() - 1; --current_queue) {
+
+        // Push everything to the main_stack and start evaluating
+        for (auto elem : *current_queue) {
+            tib.pushToMainStack(elem);
         }
 
-        AuxiliaryIfBlock new_if_block;
+        new_if_block_id = tib.nxtBlockId();
+        new_ids.push_back(new_if_block_id);
 
-        // unconditional edge needed from this block to the first AuxiliaryIfBlock
-        if (current_stack == instr_stack_list.end() - 1) {
-            new_if_block.setPredecessorId(tib.curr_bb_id);
+        // Unconditional edge from current_bb_id to the first if_block
+        if (current_queue == instr_queue_list.end() - 1) {
+            tib.bb_edges.push_back(
+                std::make_pair(tib.curr_bb_id, std::make_pair(new_if_block_id, UnCondEdge)));
         }
-
-        llvm::errs() << "Max block ID = " << tib.max_block_id << "\n";
-        int32_t new_id = tib.nxtBlockId();
-        new_if_block.setBlockId(new_id);
 
         auto newExprArg = convertExpr(true);
         auto tmpVar = tib.genTmpVariable();
@@ -999,31 +950,38 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switch_stmt) const {
         ss << "instr.CondI(" << tmpVar.expr << ")";
         tmpVar.addSpanStmt(ss.str());
 
-        std::stringstream new_bb_stream;
-        new_bb_stream << NBSP8 << new_if_block.getBlockId() << ": graph.BB([\n";
-        for (auto it = tmpVar.spanStmts.begin(); it != tmpVar.spanStmts.end(); ++it) {
-            new_bb_stream << NBSP10 << *it << ",\n";
+        // Push statements to the new block
+        for (auto stmt : tmpVar.spanStmts) {
+            new_if_block.push_back(stmt);
         }
-        new_bb_stream << NBSP8 << "])\n";
-        new_if_block.setBlockInstructions(new_bb_stream.str());
-        new_bb_stream.str("");
-        aux_blocks.push_back(new_if_block);
+        tib.bb_stmts[new_if_block_id] = new_if_block;
+        new_if_block.clear();
     }
 
-    llvm::errs() << aux_blocks.size() << "  " << thenBlockIds.size() << "\n";
-    int successors_len = aux_blocks.size();
-
-    for (int i = 0; i < successors_len; ++i) {
-        aux_blocks[i].setTrueSuccessor(thenBlockIds[i]);
-        aux_blocks[i].setFalseSuccessor(aux_blocks[i].getBlockId() + 1);
-    }
-    // set last false edge to default block / immediate next block
-    aux_blocks[successors_len - 1].setFalseSuccessor(thenBlockIds[successors_len]);
-
-    for (int i = 0; i < successors_len; ++i) {
-        tib.processed_aux_blocks.push_back(aux_blocks[i]);
-        aux_blocks[i].dumpInstructions();
-        llvm::errs() << "\n\n";
+    // Create edges for these extra blocks, if there are any extra blocks
+    if (successor_count > 1) {
+        for (int i = 0; i < successor_count; ++i) {
+            if (i == successor_count - 2) {
+                // #successors = #new_blocks + 1 (the default / exit block)
+                // Hence if_block for last CaseStmt will have false edge to the default / exit block
+                // i.e the last successor
+                tib.bb_edges.push_back(
+                    std::make_pair(new_ids[i], std::make_pair(successor_ids[i], TrueEdge)));
+                tib.bb_edges.push_back(
+                    std::make_pair(new_ids[i], std::make_pair(successor_ids[i + 1], FalseEdge)));
+                break;
+            } else {
+                tib.bb_edges.push_back(
+                    std::make_pair(new_ids[i], std::make_pair(successor_ids[i], TrueEdge)));
+                tib.bb_edges.push_back(
+                    std::make_pair(new_ids[i], std::make_pair(new_ids[i] + 1, FalseEdge)));
+            }
+        }
+    } else {
+        // The switch doesn't have CaseStmts, so connect the default / exit block, which is
+        // the only successor
+        tib.bb_edges.push_back(
+            std::make_pair(tib.curr_bb_id, std::make_pair(successor_ids[0], UnCondEdge)));
     }
 } // handleSwitchStmt()
 
