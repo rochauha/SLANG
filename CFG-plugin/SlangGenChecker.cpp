@@ -987,16 +987,13 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switch_stmt) const {
 
 // Return vector of Stmts in clang's traversal order.
 ElementListTy SlangGenChecker::getElementsFromCaseStmt(const CaseStmt *case_stmt) const {
-    const Expr *raw_condition = cast<Expr>(*(case_stmt->child_begin()));
-    const Expr *condition = (isa<ImplicitCastExpr>(raw_condition) || isa<ParenExpr>(raw_condition))
-                                ? raw_condition->IgnoreParenImpCasts()
-                                : raw_condition;
+    const Expr *condition = cast<Expr>(*(case_stmt->child_begin()));
     ElementListTy elem_list;
     getElementsIn(elem_list, condition);
     return elem_list;
 } // getElementsFromCaseStmt()
 
-// store elements in elem_list, which will be our new stack for new basic block for a CaseStmt
+// Store elements in elem_list, to make a new basic block for CaseStmt
 void SlangGenChecker::getElementsIn(ElementListTy &elem_list, const Stmt *expression_top) const {
     switch (expression_top->getStmtClass()) {
     case Stmt::BinaryOperatorClass: {
@@ -1013,6 +1010,11 @@ void SlangGenChecker::getElementsIn(ElementListTy &elem_list, const Stmt *expres
     case Stmt::ImplicitCastExprClass: {
         const ImplicitCastExpr *imp_cast = cast<ImplicitCastExpr>(expression_top);
         getElementsIn(elem_list, imp_cast->getSubExpr());
+        return;
+    }
+    case Stmt::ParenExprClass: {
+        const ParenExpr *paren_expr = cast<ParenExpr>(expression_top);
+        getElementsIn(elem_list, paren_expr->getSubExpr());
         return;
     }
     }
