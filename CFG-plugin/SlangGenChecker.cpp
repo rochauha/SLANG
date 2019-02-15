@@ -156,6 +156,52 @@ class VarInfo {
     }
 };
 
+class FunctionInfo {
+  private:
+    uint64_t id;
+    std::string name;
+    QualType return_type;
+    bool variadic;
+    std::vector<QualType> param_type_list;
+    uint32_t min_param_count;
+    size_t passed_param_count;
+
+  public:
+    FunctionInfo(const FunctionDecl *func_decl) {
+        id = (uint64_t)(func_decl);
+        name = (func_decl->getNameInfo()).getAsString();
+        return_type = func_decl->getReturnType();
+        variadic = func_decl->isVariadic();
+        min_param_count = func_decl->getNumParams();
+        passed_param_count = func_decl->param_size();
+
+        for (auto param_ref_ref = func_decl->param_begin(); param_ref_ref != func_decl->param_end();
+             ++param_ref_ref) {
+            param_type_list.push_back((*param_ref_ref)->getType());
+        }
+    }
+
+    uint64_t getId() { return id; }
+
+    void log() {
+        llvm::errs() << "Function id : " << id << "\n";
+        llvm::errs() << "Function name : " << name << "\n";
+        // llvm::errs() << "Return type : " << current_buff.convertClangType(return_type) << "\n";
+        llvm::errs() << "Variadic : " << (variadic ? "Yes" : "No") << "\n";
+        llvm::errs() << "Param count : " << passed_param_count << "\n\n";
+    }
+
+    std::string getName() { return name; }
+
+    QualType getReturnType() { return return_type; }
+
+    std::vector<QualType> getParamTypeList() { return param_type_list; }
+
+    bool isVariadic() { return variadic; };
+
+    size_t getParamCount() { return passed_param_count; };
+};
+
 typedef std::vector<const Stmt *> ElementListTy;
 class TraversedInfoBuffer {
   public:
@@ -166,6 +212,7 @@ class TraversedInfoBuffer {
 
     Decl *D;
 
+    // These are for the function being walked currently
     std::string func_name;
     std::string func_ret_t;
     std::string func_params;
@@ -184,6 +231,10 @@ class TraversedInfoBuffer {
     std::vector<std::string> edge_labels;
 
     CFGBlock *currentBlockWithSwitch; // block containing SwitchStmt, used for mapping successors
+
+    // Maps unique function id to its FunctionInfo. The unique id is the FunctionDecl's address
+    // This is used to deal with function calls
+    std::unordered_map<uint64_t, FunctionInfo> function_map;
 
     TraversedInfoBuffer();
     void clear();
@@ -226,6 +277,7 @@ class TraversedInfoBuffer {
     // // LLVMs equivalent of a hash function
     // void Profile(llvm::FoldingSetNodeID &ID) const;
 };
+
 } // namespace
 
 TraversedInfoBuffer::TraversedInfoBuffer()
@@ -259,6 +311,7 @@ void TraversedInfoBuffer::clear() {
     currentBlockWithSwitch = nullptr;
 
     var_map.clear();
+    function_map.clear();
     dirtyVars.clear();
     bb_edges.clear();
     bb_stmts.clear();
@@ -587,6 +640,8 @@ class SlangGenChecker : public Checker<check::ASTCodeBody> {
     void handleDeclRefExpr(const DeclRefExpr *DRE) const;
     void handleBinaryOperator(const BinaryOperator *binOp) const;
     void handleReturnStmt() const;
+    void handleCallExpr(const CallExpr *function_call) const;
+    bool isCallExprDirectlyAssignedToVariable(const CallExpr *function_call) const;
     void handleIfStmt() const;
     void handleSwitchStmt(const SwitchStmt *switch_stmt) const;
     ElementListTy getElementsFromCaseStmt(const CaseStmt *case_stmt) const;
@@ -608,6 +663,7 @@ class SlangGenChecker : public Checker<check::ASTCodeBody> {
     SpanExpr convertUnaryOp(const UnaryOperator *unOp, bool compound_receiver) const;
     SpanExpr convertUnaryIncDec(const UnaryOperator *unOp, bool compound_receiver) const;
     SpanExpr convertBinaryOp(const BinaryOperator *binOp, bool compound_receiver) const;
+    SpanExpr convertCallExpr(const CallExpr *callExpr, bool compound_receiver) const;
     void adjustDirtyVar(SpanExpr &spanExpr) const;
 
 }; // class SlangGenChecker
@@ -799,6 +855,11 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
 
     case Stmt::BinaryOperatorClass: {
         handleBinaryOperator(cast<BinaryOperator>(stmt));
+        break;
+    }
+
+    case Stmt::CallExprClass: {
+        handleCallExpr(cast<CallExpr>(stmt));
         break;
     }
 
@@ -1049,12 +1110,34 @@ void SlangGenChecker::handleReturnStmt() const {
     }
 } // handleReturnStmt()
 
+void SlangGenChecker::handleCallExpr(const CallExpr *function_call) const {
+    tib.pushToMainStack(function_call);
+    if (isTopLevel(function_call)) {
+        SpanExpr spanExpr = convertExpr(false); // top level is never compound
+        addSpanStmtsToCurrBlock(spanExpr.spanStmts);
+    }
+}
+
 void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
     tib.pushToMainStack(declRefExpr);
 
     const ValueDecl *valueDecl = declRefExpr->getDecl();
     if (isa<VarDecl>(valueDecl)) {
         handleVariable(valueDecl);
+
+    } else if (isa<FunctionDecl>(valueDecl)) {
+        llvm::errs() << "Found function\n";
+        tib.popFromMainStack();
+
+        // Get details of the function and insert map it in function_map if it is not already mapped
+        FunctionInfo func_info = FunctionInfo(cast<FunctionDecl>(valueDecl));
+        func_info.log();
+
+        if (tib.function_map.find(func_info.getId()) == tib.function_map.end()) {
+            llvm::errs() << "inserted key-val pair\n";
+            tib.function_map.emplace(func_info.getId(), func_info);
+        }
+
     } else {
         llvm::errs() << "SLANG: ERROR: handleDeclRefExpr: unhandled "
                      << declRefExpr->getStmtClassName() << "\n";
@@ -1078,7 +1161,6 @@ void SlangGenChecker::handleBinaryOperator(const BinaryOperator *binOp) const {
 // returns converted string, and false if the converted string is only a simple const/var
 // expression.
 SpanExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
-    std::stringstream ss;
 
     const Stmt *stmt = tib.popFromMainStack();
 
@@ -1101,6 +1183,12 @@ SpanExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
     case Stmt::UnaryOperatorClass: {
         auto unOp = cast<UnaryOperator>(stmt);
         return convertUnaryOp(unOp, compound_receiver);
+    }
+
+    case Stmt::CallExprClass: {
+        llvm::errs() << "function conversion\n";
+        const CallExpr *function_call = cast<CallExpr>(stmt);
+        return convertCallExpr(function_call, compound_receiver);
     }
 
     default: {
@@ -1386,6 +1474,67 @@ SpanExpr SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
     } else {
         llvm::errs() << "SLANG: ERROR: " << __func__ << ": Not a VarDecl.";
         return SpanExpr("ERROR:convertDeclRefExpr", false, QualType());
+    }
+}
+
+bool SlangGenChecker::isCallExprDirectlyAssignedToVariable(const CallExpr *function_call) const {
+    const auto &parents = tib.D->getASTContext().getParents(*(cast<Stmt>(function_call)));
+    if (!parents.empty()) {
+        const Stmt *stmt1 = parents[0].get<Stmt>();
+        if (stmt1 && isa<BinaryOperator>(stmt1)) {
+            const BinaryOperator *bin_op = cast<BinaryOperator>(stmt1);
+            return bin_op->isAssignmentOp();
+        } else {
+            return false;
+        }
+    }
+    return false;
+} // isCallExprDirectlyAssignedToVariable()
+
+SpanExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr, bool compound_receiver) const {
+    std::stringstream ss;
+    std::vector<SpanExpr> params;
+    const FunctionDecl *callee_func = callExpr->getDirectCallee();
+    auto elem_iterator = tib.function_map.find((uint64_t)callee_func);
+    FunctionInfo func_info = elem_iterator->second;
+
+    SpanExpr call_expr{};
+    call_expr.compound = true;
+    call_expr.qualType = func_info.getReturnType();
+
+    llvm::errs() << "Converting arguements...\n";
+    uint32_t arg_count = callExpr->getNumArgs();
+    for (uint32_t i = 0; i < arg_count; ++i) {
+        params.push_back(convertExpr(true));
+    }
+
+    std::vector<std::string> statements;
+
+    ss << "instr.CallI(expr.CallE(f:\"" << func_info.getName() << "\", [";
+
+    for (auto param_ref = params.end() - 1; param_ref != params.begin() - 1; --param_ref) {
+        call_expr.addSpanStmts(param_ref->spanStmts);
+        if (param_ref == params.begin()) {
+            ss << param_ref->expr << "]))";
+        } else {
+            ss << param_ref->expr << ", ";
+        }
+    }
+    call_expr.expr = ss.str();
+
+    if (compound_receiver) {
+        ss.str("");
+        SpanExpr tmpVar = tib.genTmpVariable(func_info.getReturnType());
+        ss << "instr.AssignI(" << tmpVar.expr << ", " << call_expr.expr << ")";
+        tmpVar.addSpanStmts(call_expr.spanStmts);
+        tmpVar.addSpanStmt(ss.str());
+        return tmpVar;
+    } else if (isCallExprDirectlyAssignedToVariable(callExpr)) {
+        // No storing any statements when assigning directly to a variable
+        return call_expr;
+    } else {
+        call_expr.addSpanStmt(ss.str());
+        return call_expr;
     }
 }
 
