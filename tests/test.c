@@ -1,25 +1,8 @@
-int g = 0;
+int g = 20, x, y, z;
+int sum(int a, int b);
+int prod(int a, int b, int c);
+
 int main(int argc, char** argv) {
-	int x = 20;
-	int *y = &x;
-	int *z = &(*(&x));
-
-	*y = *(y + 6) + *(y + 7);
-	 
-	*z = 200 * 5 + x;
-	 
-	*(z+2) = *y + x;
-
-	if (*(y + 300 * x + *z)) { 
-		x = 30;
-		
-		int a, b, c;
-		a = 30 + x;
-		b = a * 30 - b * 5 + a * g;
-
-		if (b) {
-			b = ++a;
-			a++; // does'nt show any output
-		}
-	}
+	// prod(1, 2*prod(x, y, 30), 50);
+	g = sum(sum(3, 4), g+5) + sum(1, 2);
 }

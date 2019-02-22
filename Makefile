@@ -1,23 +1,31 @@
-.PHONY: replace format test ast-dump cfg-dump
+.PHONY: replace format test ast-dump cfg-dump gen_replace simple_replace
 
 replace:
-	cp rc/SupportScratchpad.cpp \
+	cp CFG-plugin/MyDebugCheckers.cpp \
 ~/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/MyDebugCheckers.cpp
 
 format:
-	clang-format --style=LLVM -i rc/SupportScratchpad.cpp
-	clang-format --style=LLVM -i rc/ProgramStateScratchpad.cpp
-
+	clang-format --style="{BasedOnStyle: llvm, IndentWidth: 4, ColumnLimit: 100}" -i CFG-plugin/SlangGenChecker.cpp
+	clang-format --style="{BasedOnStyle: llvm, IndentWidth: 4, ColumnLimit: 100}" -i CFG-plugin/MyDebugCheckers.cpp
 test:
 	clang -cc1 -analyze -analyzer-checker=debug.MyDumpCFG -std=c99 tests/test.c
 
 cfg-dump:
-	clang -cc1 -analyze -analyzer-checker=debug.DumpCFG -std=c99 tests/test.c
+	clang -cc1 -analyze -analyzer-checker=debug.ViewCFG -std=c99 tests/test.c
 
 ast-dump:
 	clang -Xclang -ast-dump -fsyntax-only -std=c99 tests/test.c
 
+gen_test:
+	clang -cc1 -analyze -analyzer-checker=debug.SlangGen -std=c99 tests/test.c
 
-pscratch:
-		cp rc/ProgramStateScratchpad.cpp \
-~/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/MyDebugCheckers.cpp
+gen_replace:
+	cp CFG-plugin/SlangGenChecker.cpp \
+~/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangGenChecker.cpp	
+
+simple_test:
+	clang -cc1 -analyze -analyzer-checker=debug.TraverseAST -std=c99 tests/test.c
+
+simple_replace:
+		cp ad/MyTraverseAST.cpp \
+~/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/MyTraverseAST.cpp
