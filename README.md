@@ -63,3 +63,26 @@ Modify `$MY_LLVM_DIR/llvm/tools/clang/include/clang/StaticAnalyzer/Checkers/Chec
 Now go to the `$MY_LLVM_DIR/build` directory and build the system using `make` or `ninja` (which ever you have used to build clang/llvm system).
 
 Once done you can use the checker as any other checker in the system. The invocation name of the checker is `debug.MyDumpCFG`.
+
+
+Misc Info
+--------------------------------
+
+### Why does CMake use full paths, or can I copy my build tree?
+
+CMake uses full paths because:
+
+* configured header files may have full paths in them, and moving those files without re-configuring would cause upredictable behavior.
+
+* because cmake supports out of source builds, if custom commands used relative paths to the source tree, they would not work when they are run in the build tree because the current directory would be incorrect.
+
+* on Unix systems rpaths might be built into executables so they can find shared libraries at run time. If the build tree is moved old executables may use the old shared libraries, and not the new ones.
+
+#### Can the build tree be copied or moved?
+
+The short answer is NO. The reason is because full paths are used in CMake, see above. The main problem is that cmake would need to detect when the binary tree has been moved and rerun. Often when people want to move a binary tree it is so that they can distribute it to other users who may not have cmake in which case this would not work even if cmake would detect the move.
+
+The workaround is to create a new build tree without copying or moving the old one.
+
+Resource = [kitware-faq](https://gitlab.kitware.com/cmake/community/wikis/FAQ#why-does-cmake-use-full-paths-or-can-i-copy-my-build-tree)
+

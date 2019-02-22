@@ -1,5 +1,11 @@
 LINE: 10
-COLUMN: 17
-BUG_NAME: Span Dead Store
+COLUMN: 7
+BUG_NAME: Unused value
+BUG_CATEGORY: Dead Store
+BUG_MSG: Value assigned is not used
+
+LINE: 13
+COLUMN: 7
+BUG_NAME: Unused value
 BUG_CATEGORY: Dead Store
 BUG_MSG: Value assigned is not used

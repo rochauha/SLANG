@@ -6,7 +6,7 @@
 //  Author: Anshuman Dhuliya (dhuliya@cse.iitb.ac.in)
 //
 //AD If SlangGenChecker class name is added or changed, then also edit,
-//AD ../../../include/clang/StaticAnalyzer/Checkers/Checkers.td
+//AD ../../../../include/clang/StaticAnalyzer/Checkers/Checkers.td
 //
 //===----------------------------------------------------------------------===//
 //
@@ -37,6 +37,8 @@
 
 using namespace clang;
 using namespace ento;
+
+// int span_add_nums(int a, int b);
 
 // non-breaking space
 #define NBSP2  "  "
@@ -605,6 +607,8 @@ void SlangGenChecker::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
                                    BugReporter &BR) const {
     Utility::readFile1();
     llvm::errs() << "\nBOUND START: SLANG_Generated_Output.\n";
+
+    // llvm::errs() << "span_add_nums: " << span_add_nums(1,2) << "only\n";
 
     tib.clear(); // clear the buffer for this function.
     tib.D = const_cast<Decl*>(D);

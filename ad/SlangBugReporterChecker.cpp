@@ -110,10 +110,10 @@ namespace {
                 llvm::errs() << "SLANG: loaded_file " << bugFileName << "\n";
                 while (1) {
                     b = loadSingleBugReport(inputTxtFile);
-                    llvm::errs() << "SLANG: loaded_bug: " << b.getEncodedId() << "\n";
                     if (b.getEncodedId() == 0) {
                         break; // error in loading bug report
                     }
+                    llvm::errs() << "SLANG: loading_bug: " << b.getEncodedId() << "\n";
                     addBug(b);
                 }
                 inputTxtFile.close();
@@ -121,6 +121,7 @@ namespace {
                 llvm::errs() << "SLANG: ERROR: Cannot load from file '" << fileName << "'\n";
             }
 
+            llvm::errs() << "SLANG: Total bugs loaded: " << bugIds.size() << "\n";
             // sort the bugs w.r.t line and col num.
             std::sort(bugIds.begin(), bugIds.end());
         }
@@ -272,6 +273,7 @@ void SlangBugReporterChecker::checkASTCodeBody(const Decl *D, AnalysisManager &m
         llvm::errs() << "SLANG: ERROR: No CFG for function.\n";
     }
 
+    llvm::errs() << "SLANG: Reporting Bugs.\n";
     reportBugs();
 } // checkASTCodeBody()
 
@@ -325,7 +327,12 @@ void SlangBugReporterChecker::reportBugs() const {
     // report all the bugs collected
     for(uint64_t locId: bugRepo.bugIds) {
         for(Bug &bug: bugRepo.bugVectorMap[locId]) {
-            reportBug(bug.stmt, bug.bugName, bug.bugCategory, bug.bugMsg);
+            if (bug.stmt != nullptr) {
+                reportBug(bug.stmt, bug.bugName, bug.bugCategory, bug.bugMsg);
+            } else {
+                llvm::errs() << "SLANG: Unmatched location: ";
+                bug.printLocation();
+            }
         }
     }
 }
@@ -343,3 +350,4 @@ void SlangBugReporterChecker::reportBug(Stmt *stmt,
 void ento::registerSlangBugReporterChecker(CheckerManager &mgr) {
     mgr.registerChecker<SlangBugReporterChecker>();
 }
+
