@@ -5,8 +5,9 @@ replace:
 ~/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/MyDebugCheckers.cpp
 
 format:
+	clang-format --style="{BasedOnStyle: llvm, IndentWidth: 4, ColumnLimit: 100}" -i rc/SlangGenChecker.cpp
 	clang-format --style="{BasedOnStyle: llvm, IndentWidth: 4, ColumnLimit: 100}" -i CFG-plugin/SlangGenChecker.cpp
-	clang-format --style="{BasedOnStyle: llvm, IndentWidth: 4, ColumnLimit: 100}" -i CFG-plugin/MyDebugCheckers.cpp
+	# clang-format --style="{BasedOnStyle: llvm, IndentWidth: 4, ColumnLimit: 100}" -i CFG-plugin/MyDebugCheckers.cpp
 test:
 	clang -cc1 -analyze -analyzer-checker=debug.MyDumpCFG -std=c99 tests/test.c
 
@@ -20,7 +21,7 @@ gen_test:
 	clang -cc1 -analyze -analyzer-checker=debug.SlangGen -std=c99 tests/test.c
 
 gen_replace:
-	cp CFG-plugin/SlangGenChecker.cpp \
+	cp rc/SlangGenChecker.cpp \
 ~/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangGenChecker.cpp	
 
 simple_test:
