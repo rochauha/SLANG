@@ -141,6 +141,7 @@ void Utility::readFile1() {
 //===----------------------------------------------------------------------===//
 namespace {
 enum EdgeLabel { FalseEdge = 0, TrueEdge = 1, UnCondEdge = 2 };
+enum RecordKind { StructRecord, UnionRecord };
 
 class VarInfo {
   public:
@@ -202,6 +203,64 @@ class FunctionInfo {
     size_t getParamCount() { return passed_param_count; };
 };
 
+class RecordInfo {
+  private:
+    uint64_t id;
+    std::string type_string;
+    RecordKind rec_kind;
+    std::vector<std::string> field_names;
+    std::vector<std::string> field_type_strings;
+
+  public:
+    RecordInfo() { id = 0; }
+
+    RecordInfo(uint64_t id__, QualType qt, RecordKind rec_kind__,
+               std::vector<std::string> &field_names_list,
+               std::vector<std::string> &field_types_string_list) {
+        id = id__;
+        rec_kind = rec_kind__;
+
+        int start = 0;
+        if (rec_kind == StructRecord)
+            start = 7;
+        else if (rec_kind == UnionRecord)
+            start = 6;
+
+        // s:<TypeName> => ignore 'struct ' or 'union ' and only consider the type name
+        type_string = "s:" + (qt.getAsString()).substr(start);
+
+        for (auto field_name : field_names_list) {
+            field_names.push_back(field_name);
+        }
+        for (auto field_type_str : field_types_string_list) {
+            field_type_strings.push_back(field_type_str);
+        }
+    }
+
+    std::string getTypeString() const { return type_string; }
+
+    bool isEmpty() const { return id == 0; }
+
+    void dump() const {
+        llvm::errs() << NBSP2 << "\"" << type_string << "\":\n";
+        llvm::errs() << NBSP4 << "obj.Struct(\n";
+        llvm::errs() << NBSP6 << "name = \"" << type_string << "\",\n";
+
+        llvm::errs() << NBSP6 << "fieldNames = [";
+        for (auto field_name : field_names) {
+            llvm::errs() << "\"" << field_name << "\", ";
+        }
+        llvm::errs() << "],\n";
+
+        llvm::errs() << NBSP6 << "fieldTypes = [";
+        for (auto field_type_str : field_type_strings) {
+            llvm::errs() << field_type_str << ", ";
+        }
+        llvm::errs() << "]\n";
+        llvm::errs() << NBSP4 << "),\n";
+    }
+};
+
 typedef std::vector<const Stmt *> ElementListTy;
 class TraversedInfoBuffer {
   public:
@@ -236,6 +295,10 @@ class TraversedInfoBuffer {
     // This is used to deal with function calls
     std::unordered_map<uint64_t, FunctionInfo> function_map;
 
+    // maps unique it to struct/union's type definition
+    std::unordered_map<uint64_t, RecordInfo> record_map;
+    bool addToRecordMap(const ValueDecl *value_decl);
+
     TraversedInfoBuffer();
     void clear();
 
@@ -261,8 +324,11 @@ class TraversedInfoBuffer {
     void dumpSpanIr();
     void dumpHeader();
     void dumpVariables();
+    void dumpAllObjects();
+    void dumpRecordTypes();
     void dumpFunctions();
     void dumpFooter();
+    QualType getCleanedQualType(QualType qt);
 
     // helper_functions for tib
     void printMainStack() const;
@@ -280,6 +346,14 @@ class TraversedInfoBuffer {
 
 } // namespace
 
+// Remove qualifiers
+QualType TraversedInfoBuffer::getCleanedQualType(QualType qt) {
+    qt.removeLocalConst();
+    qt.removeLocalRestrict();
+    qt.removeLocalVolatile();
+    return qt;
+}
+
 TraversedInfoBuffer::TraversedInfoBuffer()
     : id{1}, tmp_var_counter{}, main_stack{}, var_map{}, dirtyVars{}, bb_edges{}, bb_stmts{},
       edge_labels{3} {
@@ -288,6 +362,44 @@ TraversedInfoBuffer::TraversedInfoBuffer()
     edge_labels[TrueEdge] = "TrueEdge";
     edge_labels[UnCondEdge] = "UnCondEdge";
 }
+
+bool TraversedInfoBuffer::addToRecordMap(const ValueDecl *value_decl) {
+    QualType qt = (value_decl->getType()).getCanonicalType();
+    qt = getCleanedQualType(qt);
+
+    const Type *type_ptr = qt.getTypePtr();
+    const TagDecl *tag_decl = const_cast<TagDecl *>(type_ptr->getAsTagDecl());
+
+    uint64_t rec_id = (uint64_t)(tag_decl);
+    if (record_map.find(rec_id) != record_map.end()) {
+        llvm::errs() << "SEEN_RECORD: " << record_map[rec_id].getTypeString() << "\n";
+        return false;
+    }
+
+    std::vector<std::string> field_names_list;
+    std::vector<std::string> field_types_list;
+
+    // go through fields
+    llvm::errs() << "Getting fields...\n";
+    const RecordDecl *record_decl = cast<RecordDecl>(tag_decl);
+    for (auto field : record_decl->fields()) {
+        auto canonical_field_decl = field->getCanonicalDecl();
+        field_types_list.push_back(convertClangType(canonical_field_decl->getType()));
+        field_names_list.push_back(canonical_field_decl->getNameAsString());
+    }
+    llvm::errs() << "DONE.\n";
+
+    RecordKind rec_kind;
+    if (type_ptr->isStructureType())
+        rec_kind = StructRecord;
+    else if (type_ptr->isUnionType())
+        rec_kind = UnionRecord;
+
+    RecordInfo rec_info(rec_id, qt, rec_kind, field_names_list, field_types_list);
+    record_map[rec_id] = rec_info;
+    llvm::errs() << "NEW_RECORD: " << record_map[rec_id].getTypeString() << "\n";
+    return true;
+} // addToRecordMap()
 
 void TraversedInfoBuffer::clearMainStack() { main_stack.clear(); }
 
@@ -425,6 +537,9 @@ std::string TraversedInfoBuffer::convertVarExpr(uint64_t var_addr) {
 //   for `int*` it returns `types.Ptr(to=types.Int)`.
 // TODO: handle all possible types
 std::string TraversedInfoBuffer::convertClangType(QualType qt) {
+    qt = qt.getCanonicalType();
+    qt = getCleanedQualType(qt);
+
     std::stringstream ss;
     const Type *type = qt.getTypePtr();
     if (type->isBuiltinType()) {
@@ -446,6 +561,12 @@ std::string TraversedInfoBuffer::convertClangType(QualType qt) {
         QualType pqt = type->getPointeeType();
         ss << convertClangType(pqt);
         ss << ")";
+    } else if (type->isStructureType()) {
+        std::string type_str = qt.getAsString();
+        ss << "types.Struct(\"s:" << type_str.substr(7) << "\")";
+    } else if (type->isUnionType()) {
+        std::string type_str = qt.getAsString();
+        ss << "types.Struct(\"s:" << type_str.substr(6) << "\")";
     } else {
         ss << "UnknownType.";
     }
@@ -505,7 +626,7 @@ bool TraversedInfoBuffer::isMainStackEmpty() const {
 void TraversedInfoBuffer::dumpSpanIr() {
     dumpHeader();
     dumpVariables();
-    dumpFunctions();
+    dumpAllObjects();
     dumpFooter();
 } // dumpSpanIr()
 
@@ -553,13 +674,11 @@ void TraversedInfoBuffer::dumpFooter() {
     ss << "\n";
     ss << "# Always build the universe from a 'program module'.\n";
     ss << "# Initialize the universe with program in this module.\n";
-    ss << "universe.build(name, description, all_vars, all_func)\n";
+    ss << "universe.build(name, description, all_vars, all_obj)\n";
     llvm::errs() << ss.str();
 } // dumpFooter()
 
 void TraversedInfoBuffer::dumpFunctions() {
-    llvm::errs() << "all_func: Dict[types.FuncNameT, graph.FuncNode] = {\n";
-
     llvm::errs() << NBSP2; // indent
     llvm::errs() << "\"" << convertFuncName(func_name) << "\":\n";
     llvm::errs() << NBSP4 << "graph.FuncNode(\n";
@@ -600,16 +719,30 @@ void TraversedInfoBuffer::dumpFunctions() {
 
     // close this function data structure
     llvm::errs() << NBSP4 << "), # " << convertFuncName(func_name) << "() end. \n\n";
-
-    // close all_func
-    llvm::errs() << "} # end all_func dict.\n";
 } // dumpFunctions()
+
+void TraversedInfoBuffer::dumpRecordTypes() {
+    for (auto record : record_map) {
+        (record.second).dump();
+        llvm::errs() << "\n";
+    }
+} // dumpRecordTypes()
+
+void TraversedInfoBuffer::dumpAllObjects() {
+    llvm::errs() << "all_obj: Dict[types.FuncNameT, graph.FuncNode] = {\n";
+
+    dumpRecordTypes();
+    dumpFunctions();
+
+    llvm::errs() << "} # end all_obj dict.\n";
+} // dumpAllObjects()
 
 // BOUND END  : dumping_routines
 
 // // For Program state's purpose: not in use currently.
 // // Overload the == operator
-// bool TraversedInfoBuffer::operator==(const TraversedInfoBuffer &tib) const { return id == tib.id;
+// bool TraversedInfoBuffer::operator==(const TraversedInfoBuffer &tib) const { return id ==
+// tib.id;
 // }
 // // LLVMs equivalent of a hash function
 // void TraversedInfoBuffer::Profile(llvm::FoldingSetNodeID &ID) const { ID.AddInteger(1); }
@@ -889,10 +1022,17 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
 // record the variable name and type
 void SlangGenChecker::handleVariable(const ValueDecl *valueDecl) const {
     uint64_t var_id = (uint64_t)valueDecl;
+    QualType qt = valueDecl->getType();
+
+    // adding to record_map
+    tib.addToRecordMap(valueDecl);
+
+    // adding to var_map
     if (tib.var_map.find(var_id) == tib.var_map.end()) {
         // seeing the variable for the first time.
         VarInfo varInfo{};
         varInfo.id = var_id;
+
         const VarDecl *varDecl = dyn_cast<VarDecl>(valueDecl);
         if (varDecl) {
             if (varDecl->hasLocalStorage()) {
@@ -907,6 +1047,7 @@ void SlangGenChecker::handleVariable(const ValueDecl *valueDecl) const {
         } else {
             llvm::errs() << "SLANG: ERROR: ValueDecl not a VarDecl!\n";
         }
+
         varInfo.type_str = tib.convertClangType(valueDecl->getType());
         tib.var_map[var_id] = varInfo;
         llvm::errs() << "NEW_VAR: " << varInfo.convertToString() << "\n";
@@ -1024,8 +1165,8 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switch_stmt) const {
         for (int i = 0; i < successor_count; ++i) {
             if (i == successor_count - 2) {
                 // #successors = #new_blocks + 1 (the default / exit block)
-                // Hence if_block for last CaseStmt will have false edge to the default / exit block
-                // i.e the last successor
+                // Hence if_block for last CaseStmt will have false edge to the default / exit
+                // block i.e the last successor
                 tib.bb_edges.push_back(
                     std::make_pair(new_ids[i], std::make_pair(successor_ids[i], TrueEdge)));
                 tib.bb_edges.push_back(
@@ -1116,20 +1257,21 @@ void SlangGenChecker::handleCallExpr(const CallExpr *function_call) const {
         SpanExpr spanExpr = convertExpr(false); // top level is never compound
         addSpanStmtsToCurrBlock(spanExpr.spanStmts);
     }
-}
+} // handleCallExpr()
 
 void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
     tib.pushToMainStack(declRefExpr);
 
     const ValueDecl *valueDecl = declRefExpr->getDecl();
+
     if (isa<VarDecl>(valueDecl)) {
         handleVariable(valueDecl);
-
     } else if (isa<FunctionDecl>(valueDecl)) {
         llvm::errs() << "Found function\n";
         tib.popFromMainStack();
 
-        // Get details of the function and insert map it in function_map if it is not already mapped
+        // Get details of the function and insert map it in function_map if it is not already
+        // mapped
         FunctionInfo func_info = FunctionInfo(cast<FunctionDecl>(valueDecl));
         func_info.log();
 
@@ -1137,7 +1279,6 @@ void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
             llvm::errs() << "inserted key-val pair\n";
             tib.function_map.emplace(func_info.getId(), func_info);
         }
-
     } else {
         llvm::errs() << "SLANG: ERROR: handleDeclRefExpr: unhandled "
                      << declRefExpr->getStmtClassName() << "\n";
@@ -1251,7 +1392,7 @@ SpanExpr SlangGenChecker::convertAssignment(bool compound_receiver) const {
     }
 
     return spanExpr;
-}
+} // convertAssignment()
 
 void SlangGenChecker::adjustDirtyVar(SpanExpr &spanExpr) const {
     std::stringstream ss;
@@ -1266,7 +1407,7 @@ void SlangGenChecker::adjustDirtyVar(SpanExpr &spanExpr) const {
         spanExpr.expr = sp.expr;
         spanExpr.nonTmpVar = false;
     }
-}
+} // adjustDirtyVar()
 
 SpanExpr SlangGenChecker::convertBinaryOp(const BinaryOperator *binOp,
                                           bool compound_receiver) const {
@@ -1332,7 +1473,7 @@ SpanExpr SlangGenChecker::convertBinaryOp(const BinaryOperator *binOp,
     }
 
     return varExpr;
-}
+} // convertBinaryOp()
 
 SpanExpr SlangGenChecker::convertUnaryOp(const UnaryOperator *unOp, bool compound_receiver) const {
     std::stringstream ss;
@@ -1460,7 +1601,7 @@ SpanExpr SlangGenChecker::convertVarDecl(const VarDecl *varDecl) const {
     spanExpr.varId = (uint64_t)varDecl;
 
     return spanExpr;
-}
+} // convertVarDecl()
 
 SpanExpr SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
     std::stringstream ss;
@@ -1475,7 +1616,7 @@ SpanExpr SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
         llvm::errs() << "SLANG: ERROR: " << __func__ << ": Not a VarDecl.";
         return SpanExpr("ERROR:convertDeclRefExpr", false, QualType());
     }
-}
+} // convertDeclRefExpr()
 
 bool SlangGenChecker::isCallExprDirectlyAssignedToVariable(const CallExpr *function_call) const {
     const auto &parents = tib.D->getASTContext().getParents(*(cast<Stmt>(function_call)));
@@ -1537,7 +1678,7 @@ SpanExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr, bool compoun
         call_expr.addSpanStmt(call_expr.expr);
         return call_expr;
     }
-}
+} // convertCallExpr()
 
 // BOUND END  : conversion_routines to SpanExpr
 
