@@ -41,11 +41,12 @@ using namespace ento;
 // int span_add_nums(int a, int b);
 
 // non-breaking space
-#define NBSP2  "  "
-#define NBSP4  "    "
-#define NBSP6  "      "
-#define NBSP8  "        "
-#define NBSP10 "          "
+#define NBSP1  " "
+#define NBSP2  NBSP1 NBSP1
+#define NBSP4  NBSP2 NBSP2
+#define NBSP6  NBSP2 NBSP4
+#define NBSP8  NBSP4 NBSP4
+#define NBSP10 NBSP4 NBSP6
 
 #define VAR_NAME_PREFIX "v:"
 #define FUNC_NAME_PREFIX "f:"
@@ -101,41 +102,6 @@ namespace {
             return nonTmpVar;
         }
     };
-}
-
-//===----------------------------------------------------------------------===//
-// FIXME: Utility Class
-// Some useful static utility functions in a class.
-//===----------------------------------------------------------------------===//
-namespace {
-    class Utility {
-    public:
-        static void readFile1();
-        static bool LS; // Log Switch
-        // static void log(std::string msg, std::string func_name, uint32_t line);
-    };
-}
-
-bool Utility::LS = true;
-
-// void Utility::log(std::string msg, std::string func_name, uint32_t line) {
-//     llvm::errs() << "SLANG: " << func_name << ":" << line << " " << msg << "\n";
-// }
-
-// code to read file, just for reference
-void Utility::readFile1() {
-    std::ifstream inputTxtFile;
-    std::string line;
-    std::string fileName("/home/codeman/.itsoflife/local/tmp/checker-input.txt");
-    inputTxtFile.open(fileName);
-    if (inputTxtFile.is_open()) {
-      while(std::getline(inputTxtFile, line)) {
-          llvm::errs() << line << "\n";
-      }
-      inputTxtFile.close();
-    } else {
-        llvm::errs() << "SLANG: ERROR: Cannot open file '" << fileName << "'\n";
-    }
 }
 
 //===----------------------------------------------------------------------===//
@@ -605,7 +571,6 @@ TraversedInfoBuffer SlangGenChecker::tib = TraversedInfoBuffer();
 // It is invoked once for each source translation unit function.
 void SlangGenChecker::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
                                    BugReporter &BR) const {
-    Utility::readFile1();
     llvm::errs() << "\nBOUND START: SLANG_Generated_Output.\n";
 
     // llvm::errs() << "span_add_nums: " << span_add_nums(1,2) << "only\n";
