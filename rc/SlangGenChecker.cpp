@@ -771,6 +771,7 @@ class SlangGenChecker : public Checker<check::ASTCodeBody> {
     void handleVariable(const ValueDecl *valueDecl) const;
     void handleDeclStmt(const DeclStmt *declStmt) const;
     void handleDeclRefExpr(const DeclRefExpr *DRE) const;
+    void handleMemberExpr(const MemberExpr *memberExpr) const;
     void handleBinaryOperator(const BinaryOperator *binOp) const;
     void handleReturnStmt() const;
     void handleCallExpr(const CallExpr *function_call) const;
@@ -792,6 +793,7 @@ class SlangGenChecker : public Checker<check::ASTCodeBody> {
     // a function, if stmt, *y on lhs, arr[i] on lhs are examples of a compound_receiver.
     SpanExpr convertExpr(bool compound_receiver) const;
     SpanExpr convertDeclRefExpr(const DeclRefExpr *dre) const;
+    SpanExpr convertMemberExpr(const MemberExpr *me) const;
     SpanExpr convertVarDecl(const VarDecl *varDecl) const;
     SpanExpr convertUnaryOp(const UnaryOperator *unOp, bool compound_receiver) const;
     SpanExpr convertUnaryIncDec(const UnaryOperator *unOp, bool compound_receiver) const;
@@ -978,6 +980,11 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
 
     case Stmt::DeclRefExprClass: {
         handleDeclRefExpr(cast<DeclRefExpr>(stmt));
+        break;
+    }
+
+    case Stmt::MemberExprClass: {
+        handleMemberExpr(cast<MemberExpr>(stmt));
         break;
     }
 
@@ -1285,6 +1292,10 @@ void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
     }
 } // handleDeclRefExpr()
 
+void SlangGenChecker::handleMemberExpr(const MemberExpr *memberExpr) const {
+    tib.pushToMainStack(memberExpr);
+} // handleMemberExpr()
+
 void SlangGenChecker::handleBinaryOperator(const BinaryOperator *binOp) const {
     if (binOp->isAssignmentOp() && isTopLevel(binOp)) {
         SpanExpr spanExpr = convertAssignment(false); // top level is never compound
@@ -1314,6 +1325,11 @@ SpanExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
     case Stmt::DeclRefExprClass: {
         const DeclRefExpr *declRefExpr = cast<DeclRefExpr>(stmt);
         return convertDeclRefExpr(declRefExpr);
+    }
+
+    case Stmt::MemberExprClass: {
+        const MemberExpr *memExpr = cast<MemberExpr>(stmt);
+        return convertMemberExpr(memExpr);
     }
 
     case Stmt::BinaryOperatorClass: {
@@ -1617,6 +1633,35 @@ SpanExpr SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
         return SpanExpr("ERROR:convertDeclRefExpr", false, QualType());
     }
 } // convertDeclRefExpr()
+
+SpanExpr SlangGenChecker::convertMemberExpr(const MemberExpr *me) const {
+    Stmt *current_stmt = nullptr;
+    std::vector<std::string> member_names;
+    std::stringstream ss;
+
+    // Take all member accesses in one go
+    do {
+        current_stmt = const_cast<Stmt *>(cast<Stmt>(me));
+        const MemberExpr *mem_expr = cast<MemberExpr>(current_stmt);
+        const ValueDecl *mem_var_decl = mem_expr->getMemberDecl();
+
+        member_names.push_back(mem_var_decl->getNameAsString());
+        current_stmt = const_cast<Stmt *>(tib.popFromMainStack());
+    } while (current_stmt && !isa<DeclRefExpr>(current_stmt));
+
+    // finally get the DeclRefExpr for the struct/union
+    SpanExpr decl_ref_expr = convertDeclRefExpr(cast<DeclRefExpr>(current_stmt));
+
+    ss << "expr.MemberE(";
+    ss << "\"" << decl_ref_expr.expr << "\", ";
+    for (auto mem_name : member_names) {
+        ss << "\"" << mem_name << "\", ";
+    }
+    ss << ")";
+
+    // consider member access to be compound
+    return SpanExpr(ss.str(), true, me->getType());
+} // convertMemberExpr()
 
 bool SlangGenChecker::isCallExprDirectlyAssignedToVariable(const CallExpr *function_call) const {
     const auto &parents = tib.D->getASTContext().getParents(*(cast<Stmt>(function_call)));
