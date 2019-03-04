@@ -165,7 +165,6 @@ class FunctionInfo {
     bool variadic;
     std::vector<QualType> param_type_list;
     uint32_t min_param_count;
-    size_t passed_param_count;
 
   public:
     FunctionInfo(const FunctionDecl *func_decl) {
@@ -174,7 +173,6 @@ class FunctionInfo {
         return_type = func_decl->getReturnType();
         variadic = func_decl->isVariadic();
         min_param_count = func_decl->getNumParams();
-        passed_param_count = func_decl->param_size();
 
         for (auto param_ref_ref = func_decl->param_begin(); param_ref_ref != func_decl->param_end();
              ++param_ref_ref) {
@@ -189,18 +187,19 @@ class FunctionInfo {
         llvm::errs() << "Function name : " << name << "\n";
         // llvm::errs() << "Return type : " << current_buff.convertClangType(return_type) << "\n";
         llvm::errs() << "Variadic : " << (variadic ? "Yes" : "No") << "\n";
-        llvm::errs() << "Param count : " << passed_param_count << "\n\n";
+        llvm::errs() << "Param count (minimum count in case of variadic functions): "
+                     << min_param_count << "\n\n";
     }
 
-    std::string getName() { return name; }
+    std::string getName() const { return name; }
 
-    QualType getReturnType() { return return_type; }
+    QualType getReturnType() const { return return_type; }
 
-    std::vector<QualType> getParamTypeList() { return param_type_list; }
+    std::vector<QualType> getParamTypeList() const { return param_type_list; }
 
-    bool isVariadic() { return variadic; };
+    bool isVariadic() const { return variadic; };
 
-    size_t getParamCount() { return passed_param_count; };
+    size_t getMinParamCount() const { return min_param_count; };
 };
 
 class RecordInfo {
