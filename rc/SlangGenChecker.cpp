@@ -243,7 +243,13 @@ class RecordInfo {
 
     void dump() const {
         llvm::errs() << NBSP2 << "\"" << type_string << "\":\n";
-        llvm::errs() << NBSP4 << "obj.Struct(\n";
+
+        if (rec_kind == StructRecord) {
+            llvm::errs() << NBSP4 << "obj.Struct(\n";
+        } else {
+            llvm::errs() << NBSP4 << "obj.Union(\n";
+        }
+
         llvm::errs() << NBSP6 << "name = \"" << type_string << "\",\n";
 
         llvm::errs() << NBSP6 << "fieldNames = [";
@@ -566,7 +572,7 @@ std::string TraversedInfoBuffer::convertClangType(QualType qt) {
         ss << "types.Struct(\"s:" << type_str.substr(7) << "\")";
     } else if (type->isUnionType()) {
         std::string type_str = qt.getAsString();
-        ss << "types.Struct(\"s:" << type_str.substr(6) << "\")";
+        ss << "types.Union(\"s:" << type_str.substr(6) << "\")";
     } else {
         ss << "UnknownType.";
     }
@@ -1031,9 +1037,6 @@ void SlangGenChecker::handleVariable(const ValueDecl *valueDecl) const {
     uint64_t var_id = (uint64_t)valueDecl;
     QualType qt = valueDecl->getType();
 
-    // adding to record_map
-    tib.addToRecordMap(valueDecl);
-
     // adding to var_map
     if (tib.var_map.find(var_id) == tib.var_map.end()) {
         // seeing the variable for the first time.
@@ -1058,6 +1061,14 @@ void SlangGenChecker::handleVariable(const ValueDecl *valueDecl) const {
         varInfo.type_str = tib.convertClangType(valueDecl->getType());
         tib.var_map[var_id] = varInfo;
         llvm::errs() << "NEW_VAR: " << varInfo.convertToString() << "\n";
+
+        // add to record_map only when it is a struct or a union
+        // length of "types.Struct" is 12
+        if (varInfo.type_str.length() > 12 && varInfo.type_str.substr(0, 12) == "types.Struct" ||
+            varInfo.type_str.substr(0, 11) == "types.Union") {
+            tib.addToRecordMap(valueDecl);
+        }
+
     } else {
         llvm::errs() << "SEEN_VAR: " << tib.var_map[var_id].convertToString() << "\n";
     }
