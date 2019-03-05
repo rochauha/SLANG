@@ -552,6 +552,8 @@ std::string TraversedInfoBuffer::convertClangType(QualType qt) {
             ss << "types.UInt8";
         } else if (type->isIntegerType()) {
             ss << "types.Int";
+        } else if (type->isFloatingType()) {
+            ss << "types.Float";
         } else if (type->isVoidType()) {
             ss << "types.Void";
         } else {
@@ -792,6 +794,8 @@ class SlangGenChecker : public Checker<check::ASTCodeBody> {
     SpanExpr convertAssignment(bool compound_receiver) const;
     SpanExpr convertIntegerLiteral(const IntegerLiteral *IL) const;
     SpanExpr convertCharacterLiteral(const CharacterLiteral *IL) const;
+    SpanExpr convertFloatingLiteral(const FloatingLiteral *FL) const;
+
     // a function, if stmt, *y on lhs, arr[i] on lhs are examples of a compound_receiver.
     SpanExpr convertExpr(bool compound_receiver) const;
     SpanExpr convertDeclRefExpr(const DeclRefExpr *dre) const;
@@ -1334,6 +1338,11 @@ SpanExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
         return convertCharacterLiteral(cl);
     }
 
+    case Stmt::FloatingLiteralClass: {
+        const FloatingLiteral *fl = cast<FloatingLiteral>(stmt);
+        return convertFloatingLiteral(fl);
+    }
+
     case Stmt::DeclRefExprClass: {
         const DeclRefExpr *declRefExpr = cast<DeclRefExpr>(stmt);
         return convertDeclRefExpr(declRefExpr);
@@ -1388,7 +1397,16 @@ SpanExpr SlangGenChecker::convertCharacterLiteral(const CharacterLiteral *CL) co
     llvm::errs() << ss.str() << "\n";
 
     return SpanExpr(ss.str(), false, CL->getType());
-} // converCharacterLiteral
+} // converCharacterLiteral()
+
+SpanExpr SlangGenChecker::convertFloatingLiteral(const FloatingLiteral *FL) const {
+    std::stringstream ss;
+
+    ss << "expr.Lit(" << (FL->getValue()).convertToDouble() << ")";
+    llvm::errs() << ss.str() << "\n";
+
+    return SpanExpr(ss.str(), false, FL->getType());
+} // converFloatingLiteral()
 
 SpanExpr SlangGenChecker::convertAssignment(bool compound_receiver) const {
     std::stringstream ss;
