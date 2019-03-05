@@ -548,14 +548,10 @@ std::string TraversedInfoBuffer::convertClangType(QualType qt) {
     std::stringstream ss;
     const Type *type = qt.getTypePtr();
     if (type->isBuiltinType()) {
-        if (type->isIntegerType()) {
-            if (type->isCharType()) {
-                ss << "types.Char";
-            } else {
-                ss << "types.Int";
-            }
-        } else if (type->isFloatingType()) {
-            ss << "types.Float";
+        if (type->isCharType()) {
+            ss << "types.UInt8";
+        } else if (type->isIntegerType()) {
+            ss << "types.Int";
         } else if (type->isVoidType()) {
             ss << "types.Void";
         } else {
@@ -795,6 +791,7 @@ class SlangGenChecker : public Checker<check::ASTCodeBody> {
     // conversion_routines to SpanExpr
     SpanExpr convertAssignment(bool compound_receiver) const;
     SpanExpr convertIntegerLiteral(const IntegerLiteral *IL) const;
+    SpanExpr convertCharacterLiteral(const CharacterLiteral *IL) const;
     // a function, if stmt, *y on lhs, arr[i] on lhs are examples of a compound_receiver.
     SpanExpr convertExpr(bool compound_receiver) const;
     SpanExpr convertDeclRefExpr(const DeclRefExpr *dre) const;
@@ -1332,6 +1329,11 @@ SpanExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
         return convertIntegerLiteral(il);
     }
 
+    case Stmt::CharacterLiteralClass: {
+        const CharacterLiteral *cl = cast<CharacterLiteral>(stmt);
+        return convertCharacterLiteral(cl);
+    }
+
     case Stmt::DeclRefExprClass: {
         const DeclRefExpr *declRefExpr = cast<DeclRefExpr>(stmt);
         return convertDeclRefExpr(declRefExpr);
@@ -1377,6 +1379,16 @@ SpanExpr SlangGenChecker::convertIntegerLiteral(const IntegerLiteral *il) const 
 
     return SpanExpr(ss.str(), false, il->getType());
 } // convertIntegerLiteral()
+
+// convert to UInt8
+SpanExpr SlangGenChecker::convertCharacterLiteral(const CharacterLiteral *CL) const {
+    std::stringstream ss;
+
+    ss << "expr.Lit(" << CL->getValue() << ")";
+    llvm::errs() << ss.str() << "\n";
+
+    return SpanExpr(ss.str(), false, CL->getType());
+} // converCharacterLiteral
 
 SpanExpr SlangGenChecker::convertAssignment(bool compound_receiver) const {
     std::stringstream ss;
