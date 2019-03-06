@@ -570,6 +570,8 @@ std::string TraversedInfoBuffer::convertClangType(QualType qt) {
     } else if (type->isUnionType()) {
         std::string type_str = qt.getAsString();
         ss << "types.Union(\"s:" << type_str.substr(6) << "\")";
+    } else if (type->isEnumeralType()) {
+        ss << "types.Int";
     } else {
         ss << "UnknownType.";
     }
@@ -1668,6 +1670,11 @@ SpanExpr SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
         SpanExpr spanExpr = convertVarDecl(varDecl);
         spanExpr.locId = getLocationId(dre);
         return spanExpr;
+    } else if (isa<EnumConstantDecl>(valueDecl)) {
+        auto enum_const_decl = cast<EnumConstantDecl>(valueDecl);
+        std::string val = (enum_const_decl->getInitVal()).toString(10);
+        std::string final_val = "expr.Lit(" + val + ")";
+        return SpanExpr(final_val, false, QualType());
     } else {
         llvm::errs() << "SLANG: ERROR: " << __func__ << ": Not a VarDecl.";
         return SpanExpr("ERROR:convertDeclRefExpr", false, QualType());
