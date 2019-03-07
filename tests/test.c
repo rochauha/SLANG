@@ -3,7 +3,7 @@ enum my_type g = ANSHUMAN;
 int x = 10, y = 20;
 int main() {
 
-	while (x++) {
-		y++;
+	while (x++ * x++) {
+		5 + y++;
 	}
 }

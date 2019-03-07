@@ -1328,9 +1328,12 @@ void SlangGenChecker::handleBinaryOperator(const BinaryOperator *binOp) const {
     if (binOp->isAssignmentOp() && isTopLevel(binOp)) {
         SpanExpr spanExpr = convertAssignment(false); // top level is never compound
         addSpanStmtsToCurrBlock(spanExpr.spanStmts);
-    } else {
+    } else if (isTopLevel(binOp)) {
         tib.pushToMainStack(binOp);
+        SpanExpr spanExpr = convertExpr(true); // this time it is stored in a temp
+        addSpanStmtsToCurrBlock(spanExpr.spanStmts);
     }
+    { tib.pushToMainStack(binOp); }
 } // handleBinaryOperator()
 
 // BOUND END  : handling_routines
