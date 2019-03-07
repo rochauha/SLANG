@@ -1897,6 +1897,15 @@ bool SlangGenChecker::isTopLevel(const Stmt *stmt) const {
             case Stmt::CompoundStmtClass: {
                 return true; // top level
             }
+            case Stmt::WhileStmtClass: {
+                auto body = (cast<WhileStmt>(stmt1))->getBody();
+                return ((uint64_t)body == (uint64_t)stmt);
+            }
+            case Stmt::IfStmtClass: {
+                auto then_ = (cast<IfStmt>(stmt1))->getThen();
+                auto else_ = (cast<IfStmt>(stmt1))->getElse();
+                return ((uint64_t)then_ == (uint64_t)stmt || (uint64_t)else_ == (uint64_t)stmt);
+            }
             }
         } else {
             // llvm::errs() << "Parent: Cannot print.\n";

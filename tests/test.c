@@ -3,5 +3,12 @@ enum my_type g = ANSHUMAN;
 int x = 10, y = 20, *z = &x;
 int main() {
 
-	x = y * x + 3220 * *z;
+	if(x++)
+		y++;
+	else 
+		x++;
+
+	while (y)
+		(*z)++;
+
 }
