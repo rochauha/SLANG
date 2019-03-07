@@ -1665,8 +1665,10 @@ SpanExpr SlangGenChecker::convertUnaryOp(const UnaryOperator *unOp, bool compoun
     ss << "expr.UnaryE(" << op << ", " << exprArg.expr << ")";
 
     if (compound_receiver) {
+        std::string unary_expr = ss.str();
+        ss.str("");
         varExpr = tib.genTmpVariable(qualType);
-        ss << "instr.AssignI(" << varExpr.expr << ", ";
+        ss << "instr.AssignI(" << varExpr.expr << ", " << unary_expr;
     }
 
     // order_correction unary operator
