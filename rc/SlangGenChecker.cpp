@@ -1546,6 +1546,37 @@ SpanExpr SlangGenChecker::convertBinaryOp(const BinaryOperator *binOp,
         op = "op.ShiftRight";
         break;
     }
+
+    case BO_Comma: {
+        op = "op.Comma";
+        break;
+    }
+
+    // relational operators
+    case BO_LT: {
+        op = "op.LT";
+        break;
+    }
+    case BO_GT: {
+        op = "op.GT";
+        break;
+    }
+    case BO_LE: {
+        op = "op.LTE";
+        break;
+    }
+    case BO_GE: {
+        op = "op.GTE";
+        break;
+    }
+    case BO_EQ: {
+        op = "op.Eq";
+        break;
+    }
+    case BO_NE: {
+        op = "op.NEq";
+        break;
+    }
     }
 
     ss << "expr.BinaryE(" << exprL.expr << ", " << op << ", " << exprR.expr << ")";
