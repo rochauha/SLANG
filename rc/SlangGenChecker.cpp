@@ -777,6 +777,7 @@ class SlangGenChecker : public Checker<check::ASTCodeBody> {
     void handleDeclStmt(const DeclStmt *declStmt) const;
     void handleDeclRefExpr(const DeclRefExpr *DRE) const;
     void handleMemberExpr(const MemberExpr *memberExpr) const;
+    void handleUnaryOperator(const UnaryOperator *unOp) const;
     void handleBinaryOperator(const BinaryOperator *binOp) const;
     void handleReturnStmt() const;
     void handleCallExpr(const CallExpr *function_call) const;
@@ -998,6 +999,11 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
 
     case Stmt::DeclStmtClass: {
         handleDeclStmt(cast<DeclStmt>(stmt));
+        break;
+    }
+
+    case Stmt::UnaryOperatorClass: {
+        handleUnaryOperator(cast<UnaryOperator>(stmt));
         break;
     }
 
@@ -1308,6 +1314,15 @@ void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
 void SlangGenChecker::handleMemberExpr(const MemberExpr *memberExpr) const {
     tib.pushToMainStack(memberExpr);
 } // handleMemberExpr()
+
+void SlangGenChecker::handleUnaryOperator(const UnaryOperator *unOp) const {
+    if (isTopLevel(unOp)) {
+        SpanExpr expr = convertUnaryOp(unOp, true);
+        addSpanStmtsToCurrBlock(expr.spanStmts);
+    } else {
+        tib.pushToMainStack(unOp);
+    }
+} // handleUnaryOperator()
 
 void SlangGenChecker::handleBinaryOperator(const BinaryOperator *binOp) const {
     if (binOp->isAssignmentOp() && isTopLevel(binOp)) {
@@ -1871,6 +1886,7 @@ bool SlangGenChecker::isTopLevel(const Stmt *stmt) const {
                 return false;
                 break;
             }
+
             case Stmt::CaseStmtClass:
             case Stmt::DefaultStmtClass:
             case Stmt::CompoundStmtClass: {
