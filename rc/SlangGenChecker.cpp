@@ -1518,6 +1518,34 @@ SpanExpr SlangGenChecker::convertBinaryOp(const BinaryOperator *binOp,
         op = "op.Div";
         break;
     }
+    case BO_And: {
+        op = "op.BitwiseAnd";
+        break;
+    }
+    case BO_Xor: {
+        op = "op.BitwiseXor";
+        break;
+    }
+    case BO_Or: {
+        op = "op.BitwiseOr";
+        break;
+    }
+    // case BO_LAnd: {
+    //     op = "op.LAnd";
+    //     break;
+    // }
+    // case BO_LOr: {
+    //     op = "op.LOr";
+    //     break;
+    // }
+    case BO_Shl: {
+        op = "op.ShiftLeft";
+        break;
+    }
+    case BO_Shr: {
+        op = "op.ShiftRight";
+        break;
+    }
     }
 
     ss << "expr.BinaryE(" << exprL.expr << ", " << op << ", " << exprR.expr << ")";
