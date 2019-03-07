@@ -34,6 +34,8 @@
 #include <sstream>                    //AD
 #include <algorithm>                  //AD
 
+#include "SlangUtil.h"
+
 using namespace clang;
 using namespace ento;
 
@@ -48,11 +50,6 @@ using namespace ento;
 // BUG_MSG Value assigned is not used
 // ----------------------
 // Note that UNIQUE_ID should not be same for two bugs.
-
-
-//===----------------------------------------------------------------------===//
-// SlangGenChecker
-//===----------------------------------------------------------------------===//
 
 namespace {
     class Bug {
@@ -87,6 +84,12 @@ namespace {
             encoded |= col;
             return encoded;
         }
+
+        std::string getLocStr() {
+            std::stringstream ss;
+            ss << "(" << line << ", " << col << ")";
+            return ss.str();
+        }
     };
 
     class BugRepo {
@@ -108,7 +111,7 @@ namespace {
             inputTxtFile.open(bugFileName);
             if (inputTxtFile.is_open()) {
                 llvm::errs() << "SLANG: loaded_file " << bugFileName << "\n";
-                while (1) {
+                while (true) {
                     b = loadSingleBugReport(inputTxtFile);
                     if (b.getEncodedId() == 0) {
                         break; // error in loading bug report
@@ -294,7 +297,8 @@ void SlangBugReporterChecker::handleBBStmts(const CFGBlock *bb) const {
 
     // get terminator too
     const Stmt *terminator = nullptr;
-    if(terminator = (bb->getTerminator()).getStmt()) {
+    terminator = (bb->getTerminator()).getStmt();
+    if(terminator) {
         matchStmtToBug(terminator);
     }
 } // handleBBStmts()
@@ -307,6 +311,8 @@ void SlangBugReporterChecker::matchStmtToBug(const Stmt *stmt) const {
     if(bugRepo.locIdPresent(locId)) {
         for(Bug &bug: bugRepo.bugVectorMap[locId]) {
             bug.stmt = const_cast<Stmt*>(stmt);
+            SLANG_DEBUG("Matched Bug at location: " << bug.getLocStr() << "\nto Stmt/Expr: ")
+            SLANG_DEBUG((stmt->dump(), ""))
         }
     }
 }

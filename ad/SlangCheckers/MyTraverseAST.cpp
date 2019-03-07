@@ -34,10 +34,15 @@
 #include <sstream>                    //AD
 #include <stack>                      //AD
 
+#include "SlangUtil.h"
+
 using namespace clang;
 using namespace ento;
 
-// #define LOG_ME(X) if (Utility::debug_mode) Utility::log((X), __FUNCTION__, __LINE__)
+//int span_add_nums(int a, int b);
+
+// #define LOG_ME(X) if (Utility::debug_mode) Utility::log((X), __FILE__, __LINE__)
+#define LOG_ME(X) llvm::errs() <<  __FILE__ << __func__ <<  __LINE__ << X;
 
 //===----------------------------------------------------------------------===//
 // SlangGenChecker
@@ -61,12 +66,12 @@ namespace {
     public:
         static Decl *D;
 
+        // mainstart
         void checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
                               BugReporter &BR) const;
 
         // handling_routines
         void handleCfg(const CFG *cfg) const;
-
         void handleBBStmts(const CFGBlock *bb) const;
         void handleLocation(const Stmt *stmt) const;
         void printParent(const Stmt *stmt) const;
@@ -75,10 +80,13 @@ namespace {
 
 Decl* MyTraverseAST::D = nullptr;
 
-// Main Entry Point. Invokes top level Function and Cfg handlers.
+// mainstart, Main Entry Point. Invokes top level Function and Cfg handlers.
 // Invoked once for each source translation unit function.
 void MyTraverseAST::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
                                        BugReporter &BR) const {
+    SLANG_EVENT("Starting the AST Trace print.")
+    //SLANG_TRACE(span_add_nums(1,2));
+
     MyTraverseAST::D = const_cast<Decl*>(D); // the world is ending
 
     if (const CFG *cfg = mgr.getCFG(D)) {
@@ -119,8 +127,8 @@ void MyTraverseAST::handleBBStmts(const CFGBlock *bb) const {
     } // for (auto elem : *bb)
 
     // get terminator
-    const Stmt *terminator = nullptr;
-    if(terminator = (bb->getTerminator()).getStmt()) {
+    const Stmt *terminator = (bb->getTerminator()).getStmt();
+    if(terminator) {
         llvm::errs() << "Visiting Terminator: " << terminator->getStmtClassName() << "\n";
         terminator->dump();
         printParent(terminator);
@@ -158,4 +166,5 @@ void MyTraverseAST::handleLocation(const Stmt *stmt) const {
 void ento::registerMyTraverseAST(CheckerManager &mgr) {
     mgr.registerChecker<MyTraverseAST>();
 }
+
 
