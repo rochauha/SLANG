@@ -17,8 +17,8 @@ NAME_SEP = ":"
 
 # An custom Assertion Switch.
 # Note: Set to False once the system is production ready.
-AS = True
-#AS = False
+#AS = True
+AS = False
 
 def create_dir(dirpath, exist_ok=True):
   """Creates dir. Relative paths use current directory.

@@ -32,6 +32,7 @@ UNARY_EXPR_EC: ExprCodeT      = 20
 BINARY_EXPR_EC: ExprCodeT     = 30
 
 CALL_EXPR_EC: ExprCodeT       = 40
+MEMBER_EXPR_EC: ExprCodeT     = 45
 PHI_EXPR_EC: ExprCodeT        = 50
 
 ################################################
@@ -45,7 +46,7 @@ class ExprET(types.AnyT):
                loc: SourceLocationT = 0
   ) -> None:
     if self.__class__.__name__.endswith("T"): super().__init__()
-    self.type = types.Void
+    self.type: types.Type = types.Void
     self.exprCode = exprCode
     self.loc = loc
 
@@ -92,6 +93,8 @@ class VarE(UnitET):
       return False
     return True
 
+  def __hash__(self): return 10
+
   def __str__(self):
     name = self.name.split(":")[-1]
     return f"{name}"
@@ -101,7 +104,7 @@ class VarE(UnitET):
 class LitE(UnitET):
   """A single numeric literal. Bools are also numeric."""
   def __init__(self,
-               val,
+               val: types.NumericT,
                loc: SourceLocationT = 0
   ) -> None:
     super().__init__(LIT_EXPR_EC, loc)
@@ -135,7 +138,7 @@ class BinaryE(ExprET):
   ) -> None:
     super().__init__(BINARY_EXPR_EC, loc)
     self.arg1 = arg1
-    self.op = opr
+    self.opr = opr
     self.arg2 = arg2
 
   def __eq__(self,
@@ -158,7 +161,7 @@ class BinaryE(ExprET):
       return False
     return True
 
-  def __str__(self): return f"{self.arg1} {self.op} {self.arg2}"
+  def __str__(self): return f"{self.arg1} {self.opr} {self.arg2}"
 
   def __repr__(self): return self.__str__()
 
@@ -190,7 +193,7 @@ class UnaryE(ExprET):
       return False
     return True
 
-  def __str__(self): return f"{self.op}{self.arg}"
+  def __str__(self): return f"{self.opr}{self.arg}"
 
   def __repr__(self): return self.__str__()
 
@@ -229,6 +232,33 @@ class CallE(ExprET):
 
   def __repr__(self): return self.__str__()
 
+class MemberE(ExprET):
+  """A member access expression: e.g. x->f.c or x.f.c ..."""
+  def __init__(self,
+               args: List[types.VarNameT],
+               loc: SourceLocationT = 0
+  ) -> None:
+    super().__init__(MEMBER_EXPR_EC, loc)
+    self.args = args
+
+  def __eq__(self,
+             other: 'MemberE'
+  ) -> bool:
+    if not isinstance(other, MemberE):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.args == other.args:
+      if LS: _log.warning("Args Differ: %s, %s", self, other)
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __str__(self): return f"MemberE({self.args})"
+
+  def __repr__(self): return self.__str__()
+
 class PhiE(ExprET):
   """A phi expression. For a possible future SSA form."""
   def __init__(self,
@@ -258,3 +288,4 @@ class PhiE(ExprET):
   def __str__(self): return f"PhiE({self.args})"
 
   def __repr__(self): return self.__str__()
+

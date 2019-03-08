@@ -10,6 +10,7 @@ Every analysis unit should have the following call at its end,
 
   buildTUnit(name, description, all_vars, all_func)
 
+TODO: Add tunit validation check.
 """
 
 import logging
@@ -287,7 +288,7 @@ def inferExprType(e: expr.ExprET):
   elif exprCode == expr.LIT_EXPR_EC:
     eType = inferBasicType(e.val)
   elif exprCode == expr.UNARY_EXPR_EC:
-    opCode = e.op.opCode
+    opCode = e.opr.opCode
     if opCode == op.UO_ADDROF_OC:
       assert isinstance(e.arg, expr.VarE), f"Operand should be a var: {e}."
       eType = inferExprType(e.arg)
@@ -299,7 +300,7 @@ def inferExprType(e: expr.ExprET):
       assert isinstance(e.arg, expr.VarE), f"Operand should be a var: {e}."
       eType = inferExprType(e.arg)
       eType = eType.to  # the type it points to
-  elif isinstance(e, expr.BinaryE) and e.op.isArithmeticOp():
+  elif isinstance(e, expr.BinaryE) and e.opr.isArithmeticOp():
     itype1 = inferExprType(e.arg1)
     itype2 = inferExprType(e.arg2)
     if itype1.isNumeric() or itype2.isNumeric():

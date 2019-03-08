@@ -32,6 +32,7 @@ OpNameT = str
 
 NumericT = TypeVar('NumericT', int, float)
 
+CfgNodeId = int
 BasicBlockId = int
 EdgeLabelT = str
 
@@ -174,26 +175,30 @@ class Type(AnyT):
     ss = ""
     tc = self.typeCode
 
-    if   tc == VOID_TC:     ss = "VOID"
-    elif tc == INT1_TC:     ss = "INT1"
-    elif tc == INT8_TC:     ss = "INT8"
-    elif tc == INT16_TC:    ss = "INT16"
-    elif tc == INT32_TC:    ss = "INT32"
-    elif tc == INT64_TC:    ss = "INT64"
-    elif tc == INT128_TC:   ss = "INT128"
-    elif tc == UINT8_TC:    ss = "UINT8"
-    elif tc == UINT16_TC:   ss = "UINT16"
-    elif tc == UINT32_TC:   ss = "UINT32"
-    elif tc == UINT64_TC:   ss = "UINT64"
-    elif tc == UINT128_TC:  ss = "UINT128"
-    elif tc == FLOAT16_TC:  ss = "FLOAT16"
-    elif tc == FLOAT32_TC:  ss = "FLOAT32"
-    elif tc == FLOAT64_TC:  ss = "FLOAT64"
-    elif tc == FLOAT80_TC:  ss = "FLOAT80"
-    elif tc == FLOAT128_TC: ss = "FLOAT128"
-    elif tc == PTR_TC:      ss = "PTR"
-    elif tc == FUNC_TC:     ss = "FUNC"
-    elif tc == STRUCT_TC:   ss = "STRUCT"
+    if   tc == VOID_TC:       ss = "VOID"
+    elif tc == INT1_TC:       ss = "INT1"
+    elif tc == INT8_TC:       ss = "INT8"
+    elif tc == INT16_TC:      ss = "INT16"
+    elif tc == INT32_TC:      ss = "INT32"
+    elif tc == INT64_TC:      ss = "INT64"
+    elif tc == INT128_TC:     ss = "INT128"
+    elif tc == UINT8_TC:      ss = "UINT8"
+    elif tc == UINT16_TC:     ss = "UINT16"
+    elif tc == UINT32_TC:     ss = "UINT32"
+    elif tc == UINT64_TC:     ss = "UINT64"
+    elif tc == UINT128_TC:    ss = "UINT128"
+    elif tc == FLOAT16_TC:    ss = "FLOAT16"
+    elif tc == FLOAT32_TC:    ss = "FLOAT32"
+    elif tc == FLOAT64_TC:    ss = "FLOAT64"
+    elif tc == FLOAT80_TC:    ss = "FLOAT80"
+    elif tc == FLOAT128_TC:   ss = "FLOAT128"
+    elif tc == PTR_TC:        ss = "PTR"
+    elif tc == FUNC_TC:       ss = "FUNC"
+    elif tc == FUNC_SIG_TC:   ss = "FUNC_SIG"
+    elif tc == STRUCT_TC:     ss = "STRUCT"
+    elif tc == STRUCT_SIG_TC: ss = "STRUCT_SIG"
+    elif tc == UNION_TC:      ss = "UNION"
+    elif tc == UNION_SIG_TC:  ss = "UNION_SIG"
 
     return ss
 

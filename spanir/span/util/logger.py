@@ -37,8 +37,8 @@ _log: Optional[logging.Logger] = None
 # It benefits with ~20% speedup wrt to default logging disable mechanism.
 ON:  bool = True
 OFF: bool = False
-LS:  bool = ON
-#LS:  bool = OFF
+#LS:  bool = ON
+LS:  bool = OFF
 
 # Edit these configuration variables:
 

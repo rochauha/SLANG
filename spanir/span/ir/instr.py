@@ -5,7 +5,7 @@
 
 """All instructions of IR
 
-Note: use names in this module with module name: e.g. instr.ReadI...
+Note: use names in this module with module name: e.g. instr.UseI...
 TODO: complete the instruction type set.
 """
 import logging
@@ -182,7 +182,7 @@ class CallI(InstrIT):
 ################################################
 
 class UseI(InstrIT):
-  """Value of the variable is read."""
+  """Value of the variable is read (ReadI)."""
   def __init__(self,
                vars: Set[expr.VarE]
   ) -> None:
@@ -196,7 +196,7 @@ class UseI(InstrIT):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
     if not self.vars == other.vars:
-      if LS: _log.warning("Vars doesn't match: %s, %s", self, other)
+      if LS: _log.warning("Vars Differ: %s, %s", self, other)
       return False
     return True
 
@@ -222,7 +222,7 @@ class ExReadI(InstrIT):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
     if not self.vars == other.vars:
-      if LS: _log.warning("Vars doesn't match: %s, %s", self, other)
+      if LS: _log.warning("Vars Differ: %s, %s", self, other)
       return False
     return True
 
@@ -233,7 +233,8 @@ class ExReadI(InstrIT):
 class CondReadI(InstrIT):
   """Use of vars in rhs in lhs assignment.
 
-  It implicitly blocks all forward/backward information.
+  It implicitly blocks all forward/backward information,
+  if not implemented by an analysis.
   """
   def __init__(self,
                lhs: expr.VarE,
@@ -250,10 +251,10 @@ class CondReadI(InstrIT):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
     if not self.lhs == other.lhs:
-      if LS: _log.warning("Lhs doesn't match: %s, %s", self, other)
+      if LS: _log.warning("Lhs Differs: %s, %s", self, other)
       return False
     if not self.rhs == other.rhs:
-      if LS: _log.warning("Rhs doesn't match: %s, %s", self, other)
+      if LS: _log.warning("Rhs Differs: %s, %s", self, other)
       return False
     return True
 
@@ -276,7 +277,7 @@ class LiveI(InstrIT):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
     if not self.vars == other.vars:
-      if LS: _log.warning("Vars doesn't match: %s, %s", self, other)
+      if LS: _log.warning("Vars Differs: %s, %s", self, other)
       return False
     return True
 
@@ -285,7 +286,7 @@ class LiveI(InstrIT):
   def __repr__(self): return self.__str__()
 
 class UnDefValI(InstrIT):
-  """Variable takes an unknown/undefined value."""
+  """Variable takes a user input, i.e. an unknown/undefined value."""
   def __init__(self,
                lhs: expr.VarE # deliberately named lhs
   ) -> None:
@@ -299,11 +300,11 @@ class UnDefValI(InstrIT):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
     if not self.lhs == other.lhs:
-      if LS: _log.warning("Vars doesn't match: %s, %s", self, other)
+      if LS: _log.warning("Var Differs: %s, %s", self, other)
       return False
     return True
 
-  def __str__(self): return f"UnDefValI({self.lhs})"
+  def __str__(self): return f"InputI({self.lhs})"
 
   def __repr__(self): return self.__str__()
 
