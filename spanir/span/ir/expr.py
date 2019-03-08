@@ -9,7 +9,7 @@ All possible expressions used in an instruction.
 
 import logging
 _log = logging.getLogger(__name__)
-from typing import Optional, List
+from typing import Optional, List, Set
 
 from span.util.logger import LS
 import span.ir.types as types
@@ -25,13 +25,14 @@ ExprCodeT = int
 ################################################
 
 # the order and ascending sequence is important
-VAR_EXPR_EC: ExprCodeT       = 11
-LIT_EXPR_EC: ExprCodeT       = 12
+VAR_EXPR_EC: ExprCodeT        = 11
+LIT_EXPR_EC: ExprCodeT        = 12
 
-UNARY_EXPR_EC: ExprCodeT     = 20
-BINARY_EXPR_EC: ExprCodeT    = 30
+UNARY_EXPR_EC: ExprCodeT      = 20
+BINARY_EXPR_EC: ExprCodeT     = 30
 
-CALL_EXPR_EC: ExprCodeT      = 40
+CALL_EXPR_EC: ExprCodeT       = 40
+PHI_EXPR_EC: ExprCodeT        = 50
 
 ################################################
 #BOUND END  : expr_codes
@@ -228,3 +229,32 @@ class CallE(ExprET):
 
   def __repr__(self): return self.__str__()
 
+class PhiE(ExprET):
+  """A phi expression. For a possible future SSA form."""
+  def __init__(self,
+               args: Set[VarE],
+               loc: SourceLocationT = 0
+  ) -> None:
+    super().__init__(PHI_EXPR_EC, loc)
+    if not args:
+      self.args = None
+    else:
+      self.args = args
+
+  def __eq__(self,
+             other: 'PhiE'
+  ) -> bool:
+    if not isinstance(other, PhiE):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.args == other.args:
+      if LS: _log.warning("Args Differ: %s, %s", self, other)
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __str__(self): return f"PhiE({self.args})"
+
+  def __repr__(self): return self.__str__()

@@ -38,21 +38,37 @@ import span.util.util as util
 usage = """
 USAGE:
 
-  ./main.py file1 file2
+  ./main.py validate file
+  OR
+  ./main.py match file1 file2
 
-It successfully exits with 'SUCCESS,' if file1 and file2 match.
 In case of error it throws error and one can look up the log file,
 for more information on cause of the error.
 """
 
-if __name__ == "__main__":
-  print("RotatingLogFile:", logger.ABS_LOG_FILE_NAME)
-  if len(sys.argv) != 3:
+def checkArgs() -> str:
+  if not len(sys.argv) >= 3:
     print(usage)
     exit(1)
 
-  fileName1 = sys.argv[1]
-  fileName2 = sys.argv[2]
+  op = sys.argv[1]
+  if op == "match":
+    if len(sys.argv) != 4:
+      print(usage)
+      exit(3)
+  elif op == "validate":
+    if len(sys.argv) != 3:
+      print(usage)
+      exit(4)
+  else:
+    print(usage)
+    exit(5)
+
+  return op
+
+def match():
+  fileName1 = sys.argv[2]
+  fileName2 = sys.argv[3]
 
   fileContent1 = util.getFileContent(fileName1)
   fileContent2 = util.getFileContent(fileName2)
@@ -75,6 +91,18 @@ if __name__ == "__main__":
   else:
     print("A MATCH.")
   exit(exitCode)
+
+def validate():
+  print("TODO: Validation functionality.")
+
+if __name__ == "__main__":
+  print("RotatingLogFile:", logger.ABS_LOG_FILE_NAME)
+  op = checkArgs()
+
+  if op == "match":
+    match()
+  elif op == "validate":
+    validate()
 
   _log.error("SPAN_IR_FINISHED!")
 
