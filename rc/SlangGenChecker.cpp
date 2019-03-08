@@ -777,6 +777,7 @@ class SlangGenChecker : public Checker<check::ASTCodeBody> {
     void handleDeclStmt(const DeclStmt *declStmt) const;
     void handleDeclRefExpr(const DeclRefExpr *DRE) const;
     void handleMemberExpr(const MemberExpr *memberExpr) const;
+    void handleUnaryOperator(const UnaryOperator *unOp) const;
     void handleBinaryOperator(const BinaryOperator *binOp) const;
     void handleReturnStmt() const;
     void handleCallExpr(const CallExpr *function_call) const;
@@ -998,6 +999,11 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
 
     case Stmt::DeclStmtClass: {
         handleDeclStmt(cast<DeclStmt>(stmt));
+        break;
+    }
+
+    case Stmt::UnaryOperatorClass: {
+        handleUnaryOperator(cast<UnaryOperator>(stmt));
         break;
     }
 
@@ -1309,13 +1315,25 @@ void SlangGenChecker::handleMemberExpr(const MemberExpr *memberExpr) const {
     tib.pushToMainStack(memberExpr);
 } // handleMemberExpr()
 
+void SlangGenChecker::handleUnaryOperator(const UnaryOperator *unOp) const {
+    if (isTopLevel(unOp)) {
+        SpanExpr expr = convertUnaryOp(unOp, true);
+        addSpanStmtsToCurrBlock(expr.spanStmts);
+    } else {
+        tib.pushToMainStack(unOp);
+    }
+} // handleUnaryOperator()
+
 void SlangGenChecker::handleBinaryOperator(const BinaryOperator *binOp) const {
     if (binOp->isAssignmentOp() && isTopLevel(binOp)) {
         SpanExpr spanExpr = convertAssignment(false); // top level is never compound
         addSpanStmtsToCurrBlock(spanExpr.spanStmts);
-    } else {
+    } else if (isTopLevel(binOp)) {
         tib.pushToMainStack(binOp);
+        SpanExpr spanExpr = convertExpr(true); // this time it is stored in a temp
+        addSpanStmtsToCurrBlock(spanExpr.spanStmts);
     }
+    { tib.pushToMainStack(binOp); }
 } // handleBinaryOperator()
 
 // BOUND END  : handling_routines
@@ -1518,6 +1536,65 @@ SpanExpr SlangGenChecker::convertBinaryOp(const BinaryOperator *binOp,
         op = "op.Div";
         break;
     }
+    case BO_And: {
+        op = "op.BitwiseAnd";
+        break;
+    }
+    case BO_Xor: {
+        op = "op.BitwiseXor";
+        break;
+    }
+    case BO_Or: {
+        op = "op.BitwiseOr";
+        break;
+    }
+    // case BO_LAnd: {
+    //     op = "op.LAnd";
+    //     break;
+    // }
+    // case BO_LOr: {
+    //     op = "op.LOr";
+    //     break;
+    // }
+    case BO_Shl: {
+        op = "op.ShiftLeft";
+        break;
+    }
+    case BO_Shr: {
+        op = "op.ShiftRight";
+        break;
+    }
+
+    case BO_Comma: {
+        op = "op.Comma";
+        break;
+    }
+
+    // relational operators
+    case BO_LT: {
+        op = "op.LT";
+        break;
+    }
+    case BO_GT: {
+        op = "op.GT";
+        break;
+    }
+    case BO_LE: {
+        op = "op.LTE";
+        break;
+    }
+    case BO_GE: {
+        op = "op.GTE";
+        break;
+    }
+    case BO_EQ: {
+        op = "op.Eq";
+        break;
+    }
+    case BO_NE: {
+        op = "op.NEq";
+        break;
+    }
     }
 
     ss << "expr.BinaryE(" << exprL.expr << ", " << op << ", " << exprR.expr << ")";
@@ -1588,8 +1665,10 @@ SpanExpr SlangGenChecker::convertUnaryOp(const UnaryOperator *unOp, bool compoun
     ss << "expr.UnaryE(" << op << ", " << exprArg.expr << ")";
 
     if (compound_receiver) {
+        std::string unary_expr = ss.str();
+        ss.str("");
         varExpr = tib.genTmpVariable(qualType);
-        ss << "instr.AssignI(" << varExpr.expr << ", ";
+        ss << "instr.AssignI(" << varExpr.expr << ", " << unary_expr;
     }
 
     // order_correction unary operator
@@ -1812,10 +1891,20 @@ bool SlangGenChecker::isTopLevel(const Stmt *stmt) const {
                 return false;
                 break;
             }
+
             case Stmt::CaseStmtClass:
             case Stmt::DefaultStmtClass:
             case Stmt::CompoundStmtClass: {
                 return true; // top level
+            }
+            case Stmt::WhileStmtClass: {
+                auto body = (cast<WhileStmt>(stmt1))->getBody();
+                return ((uint64_t)body == (uint64_t)stmt);
+            }
+            case Stmt::IfStmtClass: {
+                auto then_ = (cast<IfStmt>(stmt1))->getThen();
+                auto else_ = (cast<IfStmt>(stmt1))->getElse();
+                return ((uint64_t)then_ == (uint64_t)stmt || (uint64_t)else_ == (uint64_t)stmt);
             }
             }
         } else {
