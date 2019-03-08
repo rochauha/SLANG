@@ -6,7 +6,6 @@
 # SlangCheckers/SlangBugReporterChecker.cpp  #AD
 # SlangCheckers/MyOwnChecker.cpp  #AD
 # SlangCheckers/MyTraverseAST.cpp  #AD
-# SlangCheckers/SupportScratchpad.cpp  #AD (from Ronak)
 # SlangCheckers/SlangTranslationUnit.cpp #AD
 # SlangCheckers/SlangExpr.cpp #AD
 # SlangCheckers/SlangUtil.cpp #AD

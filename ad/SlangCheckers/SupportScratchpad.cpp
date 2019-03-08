@@ -1,1 +1,0 @@
-/home/codeman/.itsoflife/git/research/code/SLANG-git/rc/SupportScratchpad.cpp
