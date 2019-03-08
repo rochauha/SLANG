@@ -94,6 +94,9 @@ class TUnit:
                               objName, selfObj.__class__)
           isEqual = False
 
+    if not isEqual:
+      if LS: _log.warning("TUnits differ: (TUnit: '%s')", self.name)
+
     return isEqual
 
 # analysis unit name and description
