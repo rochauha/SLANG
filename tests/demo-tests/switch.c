@@ -2,6 +2,7 @@
 #include <stdio.h>
 int main(int argc, char **argv) {
   int i = 10;
+  printf("Hello, World %d %d\n",  i , 10);
 
   i = 22 + 33;
   switch(i) {

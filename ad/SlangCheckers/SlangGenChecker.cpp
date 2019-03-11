@@ -71,6 +71,7 @@ namespace {
         void handleDeclStmt(const DeclStmt *declStmt) const;
         void handleDeclRefExpr(const DeclRefExpr *DRE) const;
         void handleBinaryOperator(const BinaryOperator *binOp) const;
+        void handleCallExpr(const CallExpr *callExpr) const;
         void handleReturnStmt() const;
         void handleIfStmt() const;
         void handleSwitchStmt(const SwitchStmt *switchStmt) const;
@@ -78,6 +79,8 @@ namespace {
         // conversion_routines
         SlangExpr convertAssignment(bool compound_receiver) const;
         SlangExpr convertIntegerLiteral(const IntegerLiteral *IL) const;
+        SlangExpr convertFloatingLiteral(const FloatingLiteral *fl) const;
+        SlangExpr convertStringLiteral(const StringLiteral *sl) const;
         // a function, if stmt, *y on lhs, arr[i] on lhs are examples of a compound_receiver.
         SlangExpr convertExpr(bool compound_receiver) const;
         SlangExpr convertDeclRefExpr(const DeclRefExpr *dre) const;
@@ -86,7 +89,8 @@ namespace {
         SlangExpr convertUnaryIncDec(const UnaryOperator *unOp, bool compound_receiver) const;
         SlangExpr convertBinaryOp(const BinaryOperator *binOp, bool compound_receiver) const;
         SlangExpr convertEnumConst(const EnumConstantDecl* ecd, uint64_t locId) const;
-        SlangExpr convertCaseExpr(const CaseStmt *caseStmt) const;
+        SlangExpr convertCallExpr(const CallExpr *callExpr,
+                bool compound_receiver) const;
         void adjustDirtyVar(SlangExpr& slangExpr) const;
         std::string convertClangType(QualType qt) const;
 
@@ -280,25 +284,25 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
             break;
 
         case Stmt::DeclRefExprClass:
-            handleDeclRefExpr(cast<DeclRefExpr>(stmt));
-            break;
+            handleDeclRefExpr(cast<DeclRefExpr>(stmt)); break;
 
         case Stmt::DeclStmtClass:
-            handleDeclStmt(cast<DeclStmt>(stmt));
-            break;
+            handleDeclStmt(cast<DeclStmt>(stmt)); break;
 
         case Stmt::BinaryOperatorClass:
-            handleBinaryOperator(cast<BinaryOperator>(stmt));
-            break;
+            handleBinaryOperator(cast<BinaryOperator>(stmt)); break;
 
-        case Stmt::ReturnStmtClass: handleReturnStmt(); break;
+        case Stmt::ReturnStmtClass:
+            handleReturnStmt(); break;
 
         case Stmt::WhileStmtClass: // same as Stmt::IfStmtClass
         case Stmt::IfStmtClass: handleIfStmt(); break;
 
         case Stmt::SwitchStmtClass:
-            handleSwitchStmt(cast<SwitchStmt>(stmt));
-            break;
+            handleSwitchStmt(cast<SwitchStmt>(stmt)); break;
+
+        case Stmt::CallExprClass:
+            handleCallExpr(cast<CallExpr>(stmt)); break;
 
         case Stmt::ImplicitCastExprClass:
             break; // do nothing
@@ -410,6 +414,17 @@ void SlangGenChecker::handleBinaryOperator(const BinaryOperator *binOp) const {
     }
 } // handleBinaryOperator()
 
+void SlangGenChecker::handleCallExpr(const CallExpr *callExpr) const {
+    stu.pushToMainStack(callExpr);
+    if (isTopLevel(callExpr)) {
+        SlangExpr slangExpr = convertExpr(false); // top level is never compound
+        stu.addBbStmts(slangExpr.slangStmts);
+        std::stringstream ss;
+        ss << "instr.CallI(" << slangExpr.expr << ")";
+        stu.addBbStmt(ss.str());
+    }
+} // handleCallExpr()
+
 // Convert switch to if-else ladder
 void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switchStmt) const {
     SlangExpr switchCondVar;
@@ -518,25 +533,27 @@ SlangExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
     const Stmt *stmt = stu.popFromMainStack();
 
     switch(stmt->getStmtClass()) {
-        case Stmt::IntegerLiteralClass: {
-            const IntegerLiteral *il = cast<IntegerLiteral>(stmt);
-            return convertIntegerLiteral(il);
-        }
+        case Stmt::IntegerLiteralClass:
+            return convertIntegerLiteral(cast<IntegerLiteral>(stmt));
 
-        case Stmt::DeclRefExprClass: {
-            const DeclRefExpr *declRefExpr = cast<DeclRefExpr>(stmt);
-            return convertDeclRefExpr(declRefExpr);
-        }
+        case Stmt::FloatingLiteralClass:
+            return convertFloatingLiteral(cast<FloatingLiteral>(stmt));
 
-        case Stmt::BinaryOperatorClass: {
-            const BinaryOperator *binOp = cast<BinaryOperator>(stmt);
-            return convertBinaryOp(binOp, compound_receiver);
-        }
+        case Stmt::StringLiteralClass:
+            return convertStringLiteral(cast<StringLiteral>(stmt));
 
-        case Stmt::UnaryOperatorClass: {
-            auto unOp = cast<UnaryOperator>(stmt);
-            return convertUnaryOp(unOp, compound_receiver);
-        }
+        case Stmt::DeclRefExprClass:
+            return convertDeclRefExpr(cast<DeclRefExpr>(stmt));
+
+        case Stmt::BinaryOperatorClass:
+            return convertBinaryOp(cast<BinaryOperator>(stmt),
+                    compound_receiver);
+
+        case Stmt::UnaryOperatorClass:
+            return convertUnaryOp(cast<UnaryOperator>(stmt), compound_receiver);
+
+        case Stmt::CallExprClass:
+            return convertCallExpr(cast<CallExpr>(stmt), compound_receiver);
 
         default: {
             // error state
@@ -548,7 +565,8 @@ SlangExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
     // return SlangExpr("ERROR:convertExpr", false, QualType());
 } // convertExpr()
 
-SlangExpr SlangGenChecker::convertIntegerLiteral(const IntegerLiteral *il) const {
+SlangExpr SlangGenChecker::convertIntegerLiteral(
+        const IntegerLiteral *il) const {
     std::stringstream ss;
 
     bool is_signed = il->getType()->isSignedIntegerType();
@@ -557,6 +575,77 @@ SlangExpr SlangGenChecker::convertIntegerLiteral(const IntegerLiteral *il) const
 
     return SlangExpr(ss.str(), false, il->getType());
 } // convertIntegerLiteral()
+
+SlangExpr SlangGenChecker::convertFloatingLiteral(
+        const FloatingLiteral *fl) const {
+    std::stringstream ss;
+
+    ss << "expr.LitE(" << fl->getValue().convertToDouble() << ")";
+    SLANG_TRACE(ss.str())
+
+    return SlangExpr(ss.str(), false, fl->getType());
+}
+
+SlangExpr SlangGenChecker::convertStringLiteral(
+        const StringLiteral *sl) const {
+    std::stringstream ss;
+
+    ss << "expr.LitE(\"\"\"" << sl->getBytes().data() << "\"\"\")";
+    SLANG_TRACE(ss.str())
+
+    return SlangExpr(ss.str(), false, sl->getType());
+}
+
+SlangExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr,
+        bool compound_receiver) const {
+    std::stringstream ss;
+    std::vector<SlangExpr> args;
+    SlangExpr slangExpr;
+    const FunctionDecl *callee;
+    std::string calleeName;
+
+    slangExpr.compound = true;
+
+    uint32_t numOfArgs = callExpr->getNumArgs();
+    slangExpr.qualType = callExpr->getType();
+    callee = callExpr->getDirectCallee();
+    calleeName = callee->getNameInfo().getAsString();
+
+    // convert each argument
+    for (uint32_t i = 0; i < numOfArgs; ++i) {
+        args.push_back(convertExpr(true));
+    }
+
+    ss.str("");
+    std::string prefix = "";
+    for (auto argIter = args.end() - 1;
+            argIter != args.begin() - 1;
+            --argIter) {
+        slangExpr.addSlangStmts(argIter->slangStmts);
+        ss << prefix << argIter->expr;
+        if (prefix.size() == 0) {
+            prefix = ", ";
+        }
+    }
+    std::string argString = ss.str();
+
+    ss.str("");
+    ss << "expr.CallE(\"" << stu.convertFuncName(calleeName) << "\"";
+    ss << ", [" << argString << "])";
+    slangExpr.expr = ss.str();
+
+    if (compound_receiver) {
+        ss.str("");
+        SlangExpr tmpVar = genTmpVariable(slangExpr.qualType);
+        ss << "instr.AssignI(" << tmpVar.expr << ", ";
+        ss << slangExpr.expr << ")";
+        tmpVar.addSlangStmts(slangExpr.slangStmts);
+        tmpVar.addSlangStmt(ss.str());
+        return tmpVar;
+    }
+
+    return slangExpr;
+} // convertCallExpr()
 
 SlangExpr SlangGenChecker::convertAssignment(bool compound_receiver) const {
     std::stringstream ss;
