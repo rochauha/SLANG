@@ -16,7 +16,8 @@
 #include <sstream>
 #include <vector>
 #include <unordered_map>
-#include "clang/AST/Stmt.h" //AD
+#include "clang/AST/Stmt.h"
+#include "clang/Analysis/CFG.h"
 
 // int span_add_nums(int a, int b);
 
@@ -69,6 +70,7 @@ namespace slang {
         std::string fullName; // e.g. 'f:main'
         SlangFuncSig sig;
         std::vector<std::string> paramNames;
+        bool variadic;
 
         uint32_t tmpVarCount;
         int32_t currBbId;
@@ -89,6 +91,8 @@ namespace slang {
 
         SlangFunc *currFunc;
         int32_t currBbId;
+        const CFGBlock *currBb; // the current bb being converted
+        int32_t nextBbId;
 
         // maps a unique variable id to its SlangVar.
         std::unordered_map<uint64_t, SlangVar> varMap;
@@ -130,13 +134,23 @@ namespace slang {
 
         void addBb(int32_t bbId);
         void addBbStmt(std::string stmt);
+        void addBbStmt(int32_t bbId, std::string stmt);
         void addBbStmts(std::vector<std::string>& slangStmts);
+        void addBbStmts(int32_t bbId, std::vector<std::string>& slangStmts);
         void addBbEdge(std::pair<int32_t, std::pair<int32_t, EdgeLabel>> bbEdge);
+        void setNextBbId(int32_t nextBbId);
+        int32_t genNextBbId();
         void addVar(uint64_t varId, SlangVar& slangVar);
         SlangVar& getVar(uint64_t varAddr);
 
         uint32_t nextTmpId();
         void setFuncReturnType(std::string& retType);
+        void setVariadicness(bool variadic);
+
+        void setCurrBbId(int32_t bbId);
+        int32_t getCurrBbId();
+        void setCurrBb(const CFGBlock *bb);
+        const CFGBlock* getCurrBb();
 
         // conversion_routines 1 to SPAN Strings
         std::string convertClangType(QualType qt);

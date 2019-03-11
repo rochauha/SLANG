@@ -72,7 +72,8 @@ namespace {
 
         // handling_routines
         void handleCfg(const CFG *cfg) const;
-        void handleBBStmts(const CFGBlock *bb) const;
+        void handleBb(const CFGBlock *bb, const CFG *cfg) const;
+        void handleBbStmts(const CFGBlock *bb) const;
         void handleLocation(const Stmt *stmt) const;
         void printParent(const Stmt *stmt) const;
     }; // class MyTraverseAST
@@ -102,12 +103,45 @@ void MyTraverseAST::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
 
 void MyTraverseAST::handleCfg(const CFG *cfg) const {
     for (const CFGBlock *bb : *cfg) {
-        llvm::errs() << "\n\nBB" << bb->getBlockID() << "\n";
-        handleBBStmts(bb);
+        handleBb(bb, cfg);
+        handleBbStmts(bb);
     }
 } // handleCfg()
 
-void MyTraverseAST::handleBBStmts(const CFGBlock *bb) const {
+// Print the successors in correct order...
+void MyTraverseAST::handleBb(const CFGBlock *bb, const CFG *cfg) const {
+    int32_t succId, bbId;
+
+    bbId = bb->getBlockID();
+    llvm::errs() << "BB" << bbId << ".\n";
+
+    if (bb == &cfg->getEntry()) {
+        llvm::errs() << "ENTRY BB\n";
+    } else if (bb == &cfg->getExit()) {
+        llvm::errs() << "EXIT BB\n";
+    }
+
+    // print predecessors
+    llvm::errs() << "Preds: ";
+    for (CFGBlock::const_pred_iterator I = bb->pred_begin();
+         I != bb->pred_end(); ++I) {
+        CFGBlock *pred = *I;
+        llvm::errs() << "BB" << pred->getBlockID() << ", ";
+    }
+    llvm::errs() << "\n";
+
+    // print successors
+    llvm::errs() << "Succs: ";
+    for (CFGBlock::const_succ_iterator I = bb->succ_begin();
+         I != bb->succ_end(); ++I) {
+        CFGBlock *succ = *I;
+        llvm::errs() << "BB" << succ->getBlockID() << ", ";
+    }
+    llvm::errs() << "\n";
+    llvm::errs() << "\n";
+} // handleBb()
+
+void MyTraverseAST::handleBbStmts(const CFGBlock *bb) const {
     for (auto elem : *bb) {
         // ref: https://clang.llvm.org/doxygen/CFG_8h_source.html#l00056
         // ref for printing block:
@@ -137,7 +171,7 @@ void MyTraverseAST::handleBBStmts(const CFGBlock *bb) const {
     }
 
     llvm::errs() << "\n\n";
-} // handleBBStmts()
+} // handleBbStmts()
 
 void MyTraverseAST::printParent(const Stmt *stmt) const {
     const auto &parents = D->getASTContext().getParents(*stmt);

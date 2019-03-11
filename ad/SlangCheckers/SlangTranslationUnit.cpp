@@ -11,6 +11,7 @@
 #include "SlangUtil.h"
 #include "SlangExpr.h"
 #include "SlangTranslationUnit.h"
+#include "clang/Analysis/CFG.h"
 
 using namespace slang;
 
@@ -32,6 +33,7 @@ void slang::SlangVar::setGlobalVarName(std::string varName) {
 
 slang::SlangTranslationUnit::SlangTranslationUnit(): currFunc{nullptr}, varMap{}, funcMap{},
                                          mainStack{}, dirtyVars{}, edgeLabels{3} {
+    nextBbId = 0;
     edgeLabels[FalseEdge] = "FalseEdge";
     edgeLabels[TrueEdge] = "TrueEdge";
     edgeLabels[UnCondEdge] = "UnCondEdge";
@@ -66,8 +68,34 @@ void slang::SlangTranslationUnit::setFuncReturnType(std::string& retType) {
     currFunc->sig.retType = retType;
 }
 
+void slang::SlangTranslationUnit::setVariadicness(bool variadic) {
+    currFunc->variadic = variadic;
+}
+
 std::string slang::SlangTranslationUnit::getCurrFuncName() {
     return currFunc->name; // not fullName
+}
+
+void slang::SlangTranslationUnit::setCurrBb(const CFGBlock *bb) {
+    currBbId = bb->getBlockID();
+    currBb = bb;
+}
+
+int32_t slang::SlangTranslationUnit::getCurrBbId() {
+    return currBbId;
+}
+
+void slang::SlangTranslationUnit::setNextBbId(int32_t nextBbId) {
+    this->nextBbId = nextBbId;
+}
+
+int32_t slang::SlangTranslationUnit::genNextBbId() {
+    nextBbId += 1;
+    return nextBbId;
+}
+
+const CFGBlock* slang::SlangTranslationUnit::getCurrBb() {
+    return currBb;
 }
 
 SlangVar& slang::SlangTranslationUnit::getVar(uint64_t varAddr) {
@@ -86,18 +114,35 @@ uint32_t slang::SlangTranslationUnit::nextTmpId() {
 
 /// Add a new basic block with bbId, and set currBbId
 void slang::SlangTranslationUnit::addBb(int32_t bbId) {
-    currBbId = bbId;
     std::vector<std::string> emptyVector;
     currFunc->bbStmts[bbId] = emptyVector;
 }
 
+void slang::SlangTranslationUnit::setCurrBbId(int32_t bbId) {
+    currBbId = bbId;
+}
+
+// bb must already be added
 void slang::SlangTranslationUnit::addBbStmt(std::string stmt) {
     currFunc->bbStmts[currBbId].push_back(stmt);
 }
 
+// bb must already be added
 void slang::SlangTranslationUnit::addBbStmts(std::vector<std::string>& slangStmts) {
     for (std::string slangStmt: slangStmts) {
         currFunc->bbStmts[currBbId].push_back(slangStmt);
+    }
+}
+
+// bb must already be added
+void slang::SlangTranslationUnit::addBbStmt(int32_t bbId, std::string slangStmt) {
+    currFunc->bbStmts[bbId].push_back(slangStmt);
+}
+
+// bb must already be added
+void slang::SlangTranslationUnit::addBbStmts(int32_t bbId, std::vector<std::string>& slangStmts) {
+    for (std::string slangStmt: slangStmts) {
+        currFunc->bbStmts[bbId].push_back(slangStmt);
     }
 }
 
@@ -212,7 +257,8 @@ void slang::SlangTranslationUnit::dumpSlangIr() {
 } // dumpSlangIr()
 
 void slang::SlangTranslationUnit::dumpHeader(std::stringstream& ss) {
-    ss << "# A SPAN translation unit.\n";
+    ss << "\n";
+    ss << "# START: A_SPAN_translation_unit.\n";
     ss << "\n";
     ss << "# eval() the contents of this file.\n";
     ss << "# Keep the following imports in effect when calling eval.\n";
@@ -231,7 +277,7 @@ void slang::SlangTranslationUnit::dumpHeader(std::stringstream& ss) {
 
 void slang::SlangTranslationUnit::dumpFooter(std::stringstream& ss) {
     ss << ") # irTUnit.TUnit() ends\n";
-    ss << "\n# THE END\n";
+    ss << "\n# END  : A_SPAN_translation_unit.\n";
 } // dumpFooter()
 
 void slang::SlangTranslationUnit::dumpVariables(std::stringstream& ss) {
@@ -241,7 +287,7 @@ void slang::SlangTranslationUnit::dumpVariables(std::stringstream& ss) {
         ss << "\"" << var.second.name << "\":"
                    << var.second.typeStr << ",\n";
     }
-    ss << "}, # end allVars dict\n\n";
+    ss << NBSP2 << "}, # end allVars dict\n\n";
 } // dumpVariables()
 
 void slang::SlangTranslationUnit::dumpObjs(std::stringstream& ss) {
@@ -254,11 +300,11 @@ void slang::SlangTranslationUnit::dumpFunctions(std::stringstream& ss) {
     std::string prefix = "";
     for (auto slangFunc: funcMap) {
         ss << NBSP4; // indent
-        ss << "\"" << convertFuncName(slangFunc.second.fullName) << "\":\n";
+        ss << "\"" << slangFunc.second.fullName << "\":\n";
         ss << NBSP6 << "obj.Func(\n";
 
         // fields
-        ss << NBSP8 << "name = " << "\"" << convertFuncName(slangFunc.second.fullName) << "\",\n";
+        ss << NBSP8 << "name = " << "\"" << slangFunc.second.fullName << "\",\n";
         ss << NBSP8 << "paramsNames = [";
         prefix = "";
         for (std::string& paramName: slangFunc.second.paramNames) {
@@ -284,7 +330,7 @@ void slang::SlangTranslationUnit::dumpFunctions(std::stringstream& ss) {
         // field: basicBlocks
         ss << "\n";
         ss << NBSP8 << "# Note: -1 is always start/entry BB. (REQUIRED)\n";
-        ss << NBSP8 << "# Note: 0 is always end/exit block (REQUIRED)\n";
+        ss << NBSP8 << "# Note: 0 is always end/exit BB (REQUIRED)\n";
         ss << NBSP8 << "basicBlocks = {\n";
         for (auto bb : slangFunc.second.bbStmts) {
             ss << NBSP10 << bb.first << ": [\n";
@@ -295,19 +341,19 @@ void slang::SlangTranslationUnit::dumpFunctions(std::stringstream& ss) {
             } else {
                 ss << NBSP12 << "instr.NopI()" << ",\n";
             }
-            ss << NBSP8 << "],\n";
+            ss << NBSP10 << "],\n";
             ss << "\n";
         }
-        ss << NBSP6 << "}, # basicBlocks end.\n";
+        ss << NBSP8 << "}, # basicBlocks end.\n";
 
         // fields: bbEdges
         ss << "\n";
-        ss << NBSP8 << "bbEdges= [\n";
+        ss << NBSP8 << "bbEdges= {\n";
         ss << convertBbEdges(slangFunc.second);
-        ss << NBSP8 << "], # bbEdges end\n";
+        ss << NBSP8 << "}, # bbEdges end\n";
 
         // close this function object
-        ss << NBSP6 << "), # " << convertFuncName(slangFunc.second.fullName)
+        ss << NBSP6 << "), # " << slangFunc.second.fullName
            << "() end. \n\n";
     }
 } // dumpFunctions()

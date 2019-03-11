@@ -12,6 +12,7 @@
 //
 
 #include "ClangSACheckers.h"
+#include "clang/Analysis/CFG.h"
 #include "clang/AST/Expr.h" //AD
 #include "clang/AST/Stmt.h" //AD
 #include "clang/AST/Type.h" //AD
@@ -36,6 +37,9 @@ using namespace clang;
 using namespace ento;
 using namespace slang;
 
+typedef std::vector<const Stmt *> StmtVector;
+
+// TODO: add location id to all expressions and object definitions.
 // int span_add_nums(int a, int b); // for testing linking with external lib (success)
 
 //===----------------------------------------------------------------------===//
@@ -69,6 +73,7 @@ namespace {
         void handleBinaryOperator(const BinaryOperator *binOp) const;
         void handleReturnStmt() const;
         void handleIfStmt() const;
+        void handleSwitchStmt(const SwitchStmt *switchStmt) const;
 
         // conversion_routines
         SlangExpr convertAssignment(bool compound_receiver) const;
@@ -80,6 +85,8 @@ namespace {
         SlangExpr convertUnaryOp(const UnaryOperator *unOp, bool compound_receiver) const;
         SlangExpr convertUnaryIncDec(const UnaryOperator *unOp, bool compound_receiver) const;
         SlangExpr convertBinaryOp(const BinaryOperator *binOp, bool compound_receiver) const;
+        SlangExpr convertEnumConst(const EnumConstantDecl* ecd, uint64_t locId) const;
+        SlangExpr convertCaseExpr(const CaseStmt *caseStmt) const;
         void adjustDirtyVar(SlangExpr& slangExpr) const;
         std::string convertClangType(QualType qt) const;
 
@@ -89,6 +96,8 @@ namespace {
                 QualType qualType, bool& newTmp) const;
         bool isTopLevel(const Stmt* stmt) const;
         uint64_t getLocationId(const Stmt *stmt) const;
+        StmtVector getCaseExprElements(const CaseStmt *caseStmt) const;
+        void getCaseExprElements(StmtVector& stmts, const Stmt *stmt) const;
 
     }; // class SlangGenChecker
 } // anonymous namespace
@@ -119,7 +128,7 @@ void SlangGenChecker::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
 
 void SlangGenChecker::checkEndOfTranslationUnit(const TranslationUnitDecl *TU,
                                AnalysisManager &Mgr, BugReporter &BR) const {
-    SLANG_EVENT("Translation Unit Converted.")
+    SLANG_EVENT("Translation Unit Ended.\n")
 }
 
 //BOUND START: handling_routines
@@ -141,6 +150,7 @@ void SlangGenChecker::handleFunctionDef(const FunctionDecl *funcDecl) const {
             stu.pushBackFuncParams(stu.getVar((uint64_t)paramVarDecl).name);
         }
     }
+    stu.setVariadicness(FD->isVariadic());
 
     // STEP 1.3: Get function return type.
     const QualType returnQType = funcDecl->getReturnType();
@@ -149,6 +159,7 @@ void SlangGenChecker::handleFunctionDef(const FunctionDecl *funcDecl) const {
 } // handleFunctionDef()
 
 void SlangGenChecker::handleCfg(const CFG *cfg) const {
+    stu.setNextBbId(cfg->size() - 1);
     for (const CFGBlock *bb : *cfg) {
         handleBbInfo(bb, cfg);
         handleBbStmts(bb);
@@ -157,12 +168,23 @@ void SlangGenChecker::handleCfg(const CFG *cfg) const {
 
 void SlangGenChecker::handleBbInfo(const CFGBlock *bb, const CFG *cfg) const {
     int32_t succId, bbId;
-    unsigned entryBbId = cfg->getEntry().getBlockID();
 
+    stu.setCurrBb(bb);
+
+    unsigned entryBbId = cfg->getEntry().getBlockID();
     if ((bbId = bb->getBlockID()) == (int32_t)entryBbId) {
         bbId = -1; //entry block is ided -1.
     }
     stu.addBb(bbId);
+    stu.setCurrBbId(bbId);
+
+    // Don't handle info in presence of SwitchStmt
+    const Stmt *terminatorStmt = (bb->getTerminator()).getStmt();
+    if (terminatorStmt && isa<SwitchStmt>(terminatorStmt)) {
+        // all is done when we finally see the switch stmt.
+        SLANG_DEBUG("BB" << bbId << ". Has switch terminator.");
+        return;
+    }
 
     SLANG_DEBUG("BB" << bbId)
 
@@ -250,39 +272,36 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
 
     // to handle each kind of statement/expression.
     switch (stmtClass) {
-        default: {
+        default:
             // push to stack by default.
             stu.pushToMainStack(stmt);
-
             SLANG_DEBUG("SLANG: DEFAULT: Pushed to stack: " << stmt->getStmtClassName())
             stmt->dump();
             break;
-        }
 
-        case Stmt::DeclRefExprClass: {
+        case Stmt::DeclRefExprClass:
             handleDeclRefExpr(cast<DeclRefExpr>(stmt));
             break;
-        }
 
-        case Stmt::DeclStmtClass: {
+        case Stmt::DeclStmtClass:
             handleDeclStmt(cast<DeclStmt>(stmt));
             break;
-        }
 
-        case Stmt::BinaryOperatorClass: {
+        case Stmt::BinaryOperatorClass:
             handleBinaryOperator(cast<BinaryOperator>(stmt));
             break;
-        }
 
-        case Stmt::ReturnStmtClass: { handleReturnStmt(); break; }
+        case Stmt::ReturnStmtClass: handleReturnStmt(); break;
 
         case Stmt::WhileStmtClass: // same as Stmt::IfStmtClass
-        case Stmt::IfStmtClass: { handleIfStmt(); break; }
+        case Stmt::IfStmtClass: handleIfStmt(); break;
 
-        case Stmt::ImplicitCastExprClass: {
-            // do nothing
+        case Stmt::SwitchStmtClass:
+            handleSwitchStmt(cast<SwitchStmt>(stmt));
             break;
-        }
+
+        case Stmt::ImplicitCastExprClass:
+            break; // do nothing
     }
 } // handleStmt()
 
@@ -391,6 +410,102 @@ void SlangGenChecker::handleBinaryOperator(const BinaryOperator *binOp) const {
     }
 } // handleBinaryOperator()
 
+// Convert switch to if-else ladder
+void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switchStmt) const {
+    SlangExpr switchCondVar;
+    SlangExpr caseCondVar;
+    SlangExpr newIfCondVar;
+
+    switchStmt->dump();
+
+    switchCondVar = convertExpr(true);
+    stu.addBbStmts(switchCondVar.slangStmts);
+
+    // Get all successor ids
+    std::vector<int32_t> succIds;
+    llvm::errs() << "successor ids : ";
+    for (CFGBlock::const_succ_iterator I = stu.getCurrBb()->succ_begin();
+         I != stu.getCurrBb()->succ_end(); ++I) {
+        succIds.push_back((*I)->getBlockID());
+    }
+    llvm::errs() << "\n";
+
+    if (succIds.size() == 1) {
+        // only default case present
+        stu.addBbEdge(std::make_pair(stu.getCurrBbId(),
+                                     std::make_pair(succIds[0], UnCondEdge)));
+        return;
+    }
+
+    // Get full expressions used in all case stmts in Clang-style order
+    std::vector<StmtVector> stmtVecVec;
+    const CompoundStmt *body = cast<CompoundStmt>(switchStmt->getBody());
+    for (auto it = body->body_begin(); it != body->body_end(); ++it) {
+        if (isa<CaseStmt>(*it)) {
+            StmtVector stmtVec = getCaseExprElements(cast<CaseStmt>(*it));
+            stmtVecVec.push_back(stmtVec);
+        }
+    }
+    llvm::errs() << "#new blocks = " << stmtVecVec.size() << "\n";
+
+    // start creating and adding if-condition blocks for each case stmt
+    int32_t ifBbId;
+    int32_t oldIfBbId = 0; // init with zero is necessary
+    std::stringstream ss;
+    uint32_t index = 0;
+    // reverse iterating to correct the order
+    for (auto stmtVecPtr = stmtVecVec.end() - 1;
+            stmtVecPtr != stmtVecVec.begin() - 1;
+            --stmtVecPtr, ++index) {
+        ss.str(""); // clear the stream
+
+        // convert case expression
+        // Push case expression stmts to the mainStack
+        for (const Stmt *stmt : *stmtVecPtr) {
+            stu.pushToMainStack(stmt);
+        }
+        caseCondVar = convertExpr(true);
+        newIfCondVar = genTmpVariable(switchCondVar.qualType); // FIXME: int type
+
+        ss << "instr.AssignI(" << newIfCondVar.expr << ", ";
+        ss << "expr.BinaryE(";
+        ss << switchCondVar.expr << ", op.Eq, " << caseCondVar.expr << "))";
+        newIfCondVar.addSlangStmt(ss.str());
+
+        ss.str("");
+        ss << "instr.CondI(" << newIfCondVar.expr << ")";
+
+        if (index == 0) {
+            // the first if-stmt can be put in the current block itself
+            ifBbId = stu.getCurrBbId(); // i.e. no new bb for if-stmt
+            stu.addBbStmts(newIfCondVar.slangStmts);
+            stu.addBbStmt(ss.str());
+        } else {
+            ifBbId = stu.genNextBbId(); // i.e. a new bb for if-stmt
+            stu.addBb(ifBbId);
+            stu.addBbStmts(ifBbId, newIfCondVar.slangStmts);
+            stu.addBbStmt(ifBbId, ss.str());
+        }
+
+        // add true edge to this case stmt
+        stu.addBbEdge(std::make_pair(ifBbId,
+                                     std::make_pair(succIds[index], TrueEdge)));
+
+        if (oldIfBbId != 0) {
+            // add false edge from previous if-stmt bb to this if-stmt bb
+            stu.addBbEdge(std::make_pair(oldIfBbId,
+                                         std::make_pair(ifBbId, FalseEdge)));
+        }
+
+        oldIfBbId = ifBbId;
+    } // for
+
+    // for the last ifBbId add the last successor as FalseEdge successor
+    int32_t lastSuccBbId = succIds[succIds.size()-1];
+    stu.addBbEdge(std::make_pair(ifBbId,
+                                 std::make_pair(lastSuccBbId, FalseEdge)));
+} // handleSwitchStmt()
+
 //BOUND END  : handling_routines
 
 //BOUND START: conversion_routines to SlangExpr
@@ -437,7 +552,7 @@ SlangExpr SlangGenChecker::convertIntegerLiteral(const IntegerLiteral *il) const
     std::stringstream ss;
 
     bool is_signed = il->getType()->isSignedIntegerType();
-    ss << "expr.Lit(" << il->getValue().toString(10, is_signed) << ")";
+    ss << "expr.LitE(" << il->getValue().toString(10, is_signed) << ")";
     SLANG_TRACE(ss.str())
 
     return SlangExpr(ss.str(), false, il->getType());
@@ -500,6 +615,13 @@ void SlangGenChecker::adjustDirtyVar(SlangExpr& slangExpr) const {
         slangExpr.expr = sp.expr;
         slangExpr.nonTmpVar = false;
     }
+}
+
+SlangExpr SlangGenChecker::convertEnumConst(const EnumConstantDecl* ecd, uint64_t locId) const {
+    std::stringstream ss;
+    ss << "expr.LitE(" << (ecd->getInitVal()).toString(10);
+    ss << ", " << locId << ")";
+    return SlangExpr(ss.str(), false, QualType());
 }
 
 SlangExpr SlangGenChecker::convertBinaryOp(const BinaryOperator *binOp,
@@ -686,6 +808,9 @@ SlangExpr SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
         SlangExpr slangExpr = convertVarDecl(varDecl);
         slangExpr.locId = getLocationId(dre);
         return slangExpr;
+    } else if (isa<EnumConstantDecl>(valueDecl)) {
+        auto ecd = cast<EnumConstantDecl>(valueDecl);
+        return convertEnumConst(ecd, getLocationId(dre));
     } else {
         SLANG_ERROR("Not_a_VarDecl.")
         return SlangExpr("ERROR:convertDeclRefExpr", false, QualType());
@@ -725,6 +850,48 @@ std::string SlangGenChecker::convertClangType(QualType qt) const {
 
 //BOUND START: helper_functions
 
+// Return vector of Stmts in clang's traversal order.
+StmtVector SlangGenChecker::getCaseExprElements(const CaseStmt *caseStmt) const {
+    const Expr *condition = cast<Expr>(*(caseStmt->child_begin()));
+    StmtVector stmts;
+    getCaseExprElements(stmts, condition);
+    return stmts;
+} // getCaseExprElements()
+
+// Store elements in stmts, to make a new basic block for CaseStmt
+void SlangGenChecker::getCaseExprElements(StmtVector& stmts, const Stmt *stmt) const {
+    switch (stmt->getStmtClass()) {
+        case Stmt::BinaryOperatorClass: {
+            const BinaryOperator *binOp = cast<BinaryOperator>(stmt);
+            getCaseExprElements(stmts, binOp->getLHS());
+            getCaseExprElements(stmts, binOp->getRHS());
+            break;
+        }
+
+        case Stmt::UnaryOperatorClass: {
+            const UnaryOperator *unOp = cast<UnaryOperator>(stmt);
+            getCaseExprElements(stmts, unOp->getSubExpr());
+            break;
+        }
+
+        case Stmt::ImplicitCastExprClass: {
+            const ImplicitCastExpr *impCast = cast<ImplicitCastExpr>(stmt);
+            getCaseExprElements(stmts, impCast->getSubExpr());
+            return;
+        }
+
+        case Stmt::ParenExprClass: {
+            const ParenExpr *parenExpr = cast<ParenExpr>(stmt);
+            getCaseExprElements(stmts, parenExpr->getSubExpr());
+            return;
+        }
+
+        default:
+            stmts.push_back(stmt);
+            SLANG_DEBUG("Added CaseExprElement: " << stmt->getStmtClassName())
+    }
+} // getCaseExprElements()
+
 // returns an empty SlangExpr if var is not dirty
 SlangExpr SlangGenChecker::getTmpVarForDirtyVar(uint64_t varId,
         QualType qualType,
@@ -756,7 +923,6 @@ SlangExpr SlangGenChecker::genTmpVariable(QualType qt) const {
     slangVar.id = stu.nextTmpId();
     ss << "t." << slangVar.id;
     slangVar.setLocalVarName(ss.str(), stu.getCurrFuncName());
-    slangVar.name = ss.str();
     slangVar.typeStr = convertClangType(qt);
 
     // STEP 2: Add to the var map.
