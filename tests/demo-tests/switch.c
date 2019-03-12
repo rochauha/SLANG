@@ -1,8 +1,19 @@
 
 #include <stdio.h>
+
+float printMe(const char* str) {
+  printf(str);
+  return 2;
+}
+
 int main(int argc, char **argv) {
+//int main() {
   int i = 10;
+  float f;
   printf("Hello, World %d %d\n",  i , 10);
+
+  f = printMe("Hello\n");
+  f = 2.3456;
 
   i = 22 + 33;
   switch(i) {
@@ -20,7 +31,7 @@ int main(int argc, char **argv) {
 
   switch(i) {
     default:
-      print("Hello default\n");
+      printf("Hello default\n");
   }
 
   return 0;

@@ -31,8 +31,14 @@ void slang::SlangVar::setGlobalVarName(std::string varName) {
     name += varName;
 }
 
+slang::SlangFunc::SlangFunc() {
+    paramNames = std::vector<std::string>{};
+    tmpVarCount = 0;
+}
+
 slang::SlangTranslationUnit::SlangTranslationUnit(): currFunc{nullptr}, varMap{}, funcMap{},
                                          mainStack{}, dirtyVars{}, edgeLabels{3} {
+    fileName = "";
     nextBbId = 0;
     edgeLabels[FalseEdge] = "FalseEdge";
     edgeLabels[TrueEdge] = "TrueEdge";
@@ -50,22 +56,13 @@ void slang::SlangTranslationUnit::clear() {
     clearMainStack();
 } // clear()
 
-void slang::SlangTranslationUnit::addFunction(std::string funcName) {
-    std::string fullName = convertFuncName(funcName);
-    funcMap[fullName] = slang::SlangFunc();
-    currFunc = &funcMap[fullName];
-
-    currFunc->name = funcName;
-    currFunc->fullName = fullName;
-}
-
 void slang::SlangTranslationUnit::pushBackFuncParams(std::string paramName) {
     SLANG_TRACE("AddingParam: " << paramName << " to func " << currFunc->name)
     currFunc->paramNames.push_back(paramName);
 }
 
 void slang::SlangTranslationUnit::setFuncReturnType(std::string& retType) {
-    currFunc->sig.retType = retType;
+    currFunc->retType = retType;
 }
 
 void slang::SlangTranslationUnit::setVariadicness(bool variadic) {
@@ -201,7 +198,7 @@ std::string slang::SlangTranslationUnit::convertBbEdges(SlangFunc& slangFunc) {
     std::stringstream ss;
 
     for (auto p: slangFunc.bbEdges) {
-        ss << NBSP8 << "(" << std::to_string(p.first);
+        ss << NBSP10 << "(" << std::to_string(p.first);
         ss << ", " << std::to_string(p.second.first) << ", ";
         ss << "types." << edgeLabels[p.second.second] << "),\n";
     }
@@ -297,7 +294,7 @@ void slang::SlangTranslationUnit::dumpObjs(std::stringstream& ss) {
 }
 
 void slang::SlangTranslationUnit::dumpFunctions(std::stringstream& ss) {
-    std::string prefix = "";
+    std::string prefix;
     for (auto slangFunc: funcMap) {
         ss << NBSP4; // indent
         ss << "\"" << slangFunc.second.fullName << "\":\n";
@@ -314,18 +311,20 @@ void slang::SlangTranslationUnit::dumpFunctions(std::stringstream& ss) {
             }
         }
         ss << "]\n";
+        ss << NBSP8 << "variadic = "
+           << (slangFunc.second.variadic? "True" : "False") << ",\n";
 
-        ss << NBSP8 << "paramTypes = [";
-        prefix = "";
-        for (std::string& paramType: slangFunc.second.sig.paramTypes) {
-            ss << prefix << paramType;
-            if (prefix.size() == 0) {
-                prefix = ", ";
-            }
-        }
-        ss << "]\n";
+        // ss << NBSP8 << "paramTypes = [";
+        // prefix = "";
+        // for (std::string& paramType: slangFunc.second.sig.paramTypes) {
+        //     ss << prefix << paramType;
+        //     if (prefix.size() == 0) {
+        //         prefix = ", ";
+        //     }
+        // }
+        // ss << "]\n";
 
-        ss << NBSP8 << "returnType = " << slangFunc.second.sig.retType << ",\n";
+        ss << NBSP8 << "returnType = " << slangFunc.second.retType << ",\n";
 
         // field: basicBlocks
         ss << "\n";

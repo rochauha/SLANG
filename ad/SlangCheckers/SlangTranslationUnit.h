@@ -68,7 +68,7 @@ namespace slang {
     public:
         std::string name; // e.g. 'main'
         std::string fullName; // e.g. 'f:main'
-        SlangFuncSig sig;
+        std::string retType;
         std::vector<std::string> paramNames;
         bool variadic;
 
@@ -79,6 +79,35 @@ namespace slang {
         std::vector<std::pair<int32_t, std::pair<int32_t, EdgeLabel>>> bbEdges;
         // stmts in bb; entry bb id is mapped to -1, others remain the same
         std::unordered_map<int32_t , std::vector<std::string>> bbStmts;
+
+        SlangFunc();
+    };
+
+    class SlangUnionSig {
+    public:
+        std::vector<std::string> fieldTypes;
+    };
+
+    class SlangUnion {
+    public:
+        std::string name;
+        std::string fullName;
+        SlangUnionSig sig;
+        std::vector<std::string> fieldNames;
+        std::vector<std::string> fieldTypes;
+    };
+
+    class SlangStructSig {
+    public:
+        std::vector<std::string> fieldTypes;
+    };
+
+    class SlangStruct {
+    public:
+        std::string name;
+        std::string fullName;
+        std::vector<std::string> fieldNames;
+        std::vector<std::string> fieldTypes;
     };
 
     class SlangTranslationUnit {
@@ -97,7 +126,11 @@ namespace slang {
         // maps a unique variable id to its SlangVar.
         std::unordered_map<uint64_t, SlangVar> varMap;
         // contains functions
-        std::unordered_map<std::string, SlangFunc> funcMap;
+        std::unordered_map<uint64_t, SlangFunc> funcMap;
+        // contains structs
+        std::unordered_map<uint64_t, SlangStruct> structMap;
+        // contains unions
+        std::unordered_map<uint64_t, SlangUnion> unionMap;
 
         // stack to help convert ast structure to 3-address code.
         std::vector<const Stmt*> mainStack;
@@ -114,7 +147,7 @@ namespace slang {
          * All instructions are added to the currFunc after this call.
          * @param funcName
          */
-        void addFunction(std::string funcName);
+        // void addFunction(std::string funcName);
 
         /**
          * @return name of the current function.
@@ -153,7 +186,6 @@ namespace slang {
         const CFGBlock* getCurrBb();
 
         // conversion_routines 1 to SPAN Strings
-        std::string convertClangType(QualType qt);
         std::string convertFuncName(std::string funcName);
         std::string convertVarExpr(uint64_t varAddr);
         std::string convertLocalVarName(std::string varName);

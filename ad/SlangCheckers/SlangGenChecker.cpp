@@ -28,6 +28,7 @@
 #include <unordered_map>              //AD
 #include <fstream>                    //AD
 #include <sstream>                    //AD
+#include <iomanip>                    //AD for std::fixed
 
 #include "SlangUtil.h"
 #include "SlangExpr.h"
@@ -63,11 +64,13 @@ namespace {
 
         // handling_routines
         void handleFunctionDef(const FunctionDecl *D) const;
+        void handleFunction(const FunctionDecl *funcDecl) const;
         void handleCfg(const CFG *cfg) const;
         void handleBbInfo(const CFGBlock *bb, const CFG *cfg) const;
         void handleBbStmts(const CFGBlock *bb) const;
         void handleStmt(const Stmt *stmt) const;
-        void handleVariable(const ValueDecl *valueDecl) const;
+        void handleVariable(const ValueDecl *valueDecl,
+                            std::string funcName) const;
         void handleDeclStmt(const DeclStmt *declStmt) const;
         void handleDeclRefExpr(const DeclRefExpr *DRE) const;
         void handleBinaryOperator(const BinaryOperator *binOp) const;
@@ -96,6 +99,7 @@ namespace {
 
         // helper_functions
         SlangExpr genTmpVariable(QualType qt) const;
+        SlangExpr genTmpVariable(std::string slangTypeStr) const;
         SlangExpr getTmpVarForDirtyVar(uint64_t varId,
                 QualType qualType, bool& newTmp) const;
         bool isTopLevel(const Stmt* stmt) const;
@@ -116,51 +120,62 @@ void SlangGenChecker::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
     SLANG_EVENT("BOUND START: SLANG_Generated_Output.\n")
 
     // SLANG_DEBUG("slang_add_nums: " << slang_add_nums(1,2) << "only\n"; // lib testing
+    if (stu.fileName.size() == 0) {
+        stu.fileName = D->getASTContext().getSourceManager()
+                       .getFilename(D->getLocStart()).str();
+    }
 
     const FunctionDecl *funcDecl = dyn_cast<FunctionDecl>(D);
     handleFunctionDef(funcDecl);
 
     if (const CFG *cfg = mgr.getCFG(D)) {
         handleCfg(cfg);
-        stu.dumpSlangIr();
     } else {
         SLANG_ERROR("No CFG for function.")
     }
-
-    SLANG_EVENT("BOUND END  : SLANG_Generated_Output.\n")
 } // checkASTCodeBody()
 
 void SlangGenChecker::checkEndOfTranslationUnit(const TranslationUnitDecl *TU,
                                AnalysisManager &Mgr, BugReporter &BR) const {
+    stu.dumpSlangIr();
     SLANG_EVENT("Translation Unit Ended.\n")
-}
+    SLANG_EVENT("BOUND END  : SLANG_Generated_Output.\n")
+} // checkEndOfTranslationUnit()
 
 //BOUND START: handling_routines
 
 // Gets the function name, parameters and return type.
 void SlangGenChecker::handleFunctionDef(const FunctionDecl *funcDecl) const {
-    // STEP 1.1: Get function name.
-    std::string funcName = funcDecl->getNameInfo().getAsString();
-    SLANG_DEBUG("AddingFunction: " << funcName)
-    stu.addFunction(funcName);
     FD = funcDecl;
+    handleFunction(funcDecl);
+    stu.currFunc = &stu.funcMap[(uint64_t)funcDecl];
+} // handleFunctionDef()
 
-    // STEP 1.2: Get function parameters.
-    std::stringstream ss;
-    if (funcDecl->doesThisDeclarationHaveABody()) { //& !funcDecl->hasPrototype())
+void SlangGenChecker::handleFunction(const FunctionDecl *funcDecl) const {
+    if (stu.funcMap.find((uint64_t)funcDecl) == stu.funcMap.end()) {
+        // if here, function not already present. Add its details.
+        SlangFunc slangFunc{};
+        slangFunc.name = funcDecl->getNameInfo().getAsString();
+        slangFunc.fullName = stu.convertFuncName(slangFunc.name);
+        SLANG_DEBUG("AddingFunction: " << slangFunc.name)
+
+        // STEP 1.2: Get function parameters.
+        // if (funcDecl->doesThisDeclarationHaveABody()) { //& !funcDecl->hasPrototype())
         for (unsigned i = 0, e = funcDecl->getNumParams(); i != e; ++i) {
             const ParmVarDecl *paramVarDecl = funcDecl->getParamDecl(i);
-            handleVariable(paramVarDecl); // adds the var too
-            stu.pushBackFuncParams(stu.getVar((uint64_t)paramVarDecl).name);
+            handleVariable(paramVarDecl, slangFunc.name); // adds the var too
+            slangFunc.paramNames.push_back(
+                    stu.getVar((uint64_t)paramVarDecl).name);
         }
-    }
-    stu.setVariadicness(FD->isVariadic());
+        slangFunc.variadic = funcDecl->isVariadic();
 
-    // STEP 1.3: Get function return type.
-    const QualType returnQType = funcDecl->getReturnType();
-    std::string retTypeStr = convertClangType(returnQType);
-    stu.setFuncReturnType(retTypeStr);
-} // handleFunctionDef()
+        // STEP 1.3: Get function return type.
+        slangFunc.retType = convertClangType(funcDecl->getReturnType());
+
+        // STEP 2: Copy the function to the map.
+        stu.funcMap[(uint64_t)funcDecl] = slangFunc;
+    }
+} // handleFunction()
 
 void SlangGenChecker::handleCfg(const CFG *cfg) const {
     stu.setNextBbId(cfg->size() - 1);
@@ -310,7 +325,8 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
 } // handleStmt()
 
 // record the variable name and type
-void SlangGenChecker::handleVariable(const ValueDecl *valueDecl) const {
+void SlangGenChecker::handleVariable(const ValueDecl *valueDecl,
+        std::string funcName) const {
     uint64_t varAddr = (uint64_t) valueDecl;
     std::string varName;
     if (stu.isNewVar(varAddr)) {
@@ -321,7 +337,7 @@ void SlangGenChecker::handleVariable(const ValueDecl *valueDecl) const {
         if (varDecl) {
             varName = valueDecl->getNameAsString();
             if (varDecl->hasLocalStorage()) {
-                slangVar.setLocalVarName(varName, stu.getCurrFuncName());
+                slangVar.setLocalVarName(varName, funcName);
             } else if(varDecl->hasGlobalStorage()) {
                 slangVar.setGlobalVarName(varName);
             } else if (varDecl->hasExternalStorage()) {
@@ -345,7 +361,7 @@ void SlangGenChecker::handleDeclStmt(const DeclStmt *declStmt) const {
     std::stringstream ss;
 
     const VarDecl *varDecl = cast<VarDecl>(declStmt->getSingleDecl());
-    handleVariable(varDecl);
+    handleVariable(varDecl, stu.getCurrFuncName());
 
     if (!stu.isMainStackEmpty()) {
         // there is smth on the stack, hence on the rhs.
@@ -399,7 +415,9 @@ void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
 
     const ValueDecl *valueDecl = declRefExpr->getDecl();
     if (isa<VarDecl>(valueDecl)) {
-        handleVariable(valueDecl);
+        handleVariable(valueDecl, stu.getCurrFuncName());
+    } else if (isa<FunctionDecl>(valueDecl)) {
+        handleFunction(cast<FunctionDecl>(valueDecl));
     } else {
         SLANG_DEBUG("handleDeclRefExpr: unhandled " << declRefExpr->getStmtClassName())
     }
@@ -480,11 +498,11 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switchStmt) const {
             stu.pushToMainStack(stmt);
         }
         caseCondVar = convertExpr(true);
-        newIfCondVar = genTmpVariable(switchCondVar.qualType); // FIXME: int type
+        newIfCondVar = genTmpVariable("types.Int");
 
         ss << "instr.AssignI(" << newIfCondVar.expr << ", ";
         ss << "expr.BinaryE(";
-        ss << switchCondVar.expr << ", op.Eq, " << caseCondVar.expr << "))";
+        ss << switchCondVar.expr << ", op.BO_EQ, " << caseCondVar.expr << "))";
         newIfCondVar.addSlangStmt(ss.str());
 
         ss.str("");
@@ -580,7 +598,7 @@ SlangExpr SlangGenChecker::convertFloatingLiteral(
         const FloatingLiteral *fl) const {
     std::stringstream ss;
 
-    ss << "expr.LitE(" << fl->getValue().convertToDouble() << ")";
+    ss << "expr.LitE(" << std::fixed << fl->getValue().convertToDouble() << ")";
     SLANG_TRACE(ss.str())
 
     return SlangExpr(ss.str(), false, fl->getType());
@@ -744,11 +762,11 @@ SlangExpr SlangGenChecker::convertBinaryOp(const BinaryOperator *binOp,
             return SlangExpr("ERROR:convertBinaryOp", false, QualType());
         }
 
-        case BO_Rem: { op = "op.Modulo"; break; }
-        case BO_Add: { op = "op.Add"; break; }
-        case BO_Sub: { op = "op.Sub"; break;}
-        case BO_Mul: { op = "op.Mul"; break;}
-        case BO_Div: { op = "op.Div"; break;}
+        case BO_Add: { op = "op.BO_ADD"; break; }
+        case BO_Sub: { op = "op.BO_SUB"; break;}
+        case BO_Mul: { op = "op.BO_MUL"; break;}
+        case BO_Div: { op = "op.BO_DIV"; break;}
+        case BO_Rem: { op = "op.BO_MOD"; break; }
     }
 
     ss << "expr.BinaryE(" << exprL.expr << ", " << op << ", " << exprR.expr << ")";
@@ -797,19 +815,19 @@ SlangExpr SlangGenChecker::convertUnaryOp(const UnaryOperator *unOp,
 
         case UO_AddrOf: {
             qualType = FD->getASTContext().getPointerType(exprArg.qualType);
-            op = "op.AddrOf";
+            op = "op.UO_ADDROF";
             break;
         }
 
         case UO_Deref: {
             auto ptr_type = cast<PointerType>(exprArg.qualType.getTypePtr());
             qualType = ptr_type->getPointeeType();
-            op = "op.Deref";
+            op = "op.UO_DEREF";
             break;
         }
 
-        case UO_Minus: { op = "op.Minus"; break;}
-        case UO_Plus: { op = "op.Plus"; break;}
+        case UO_Minus: { op = "op.UO_MINUS"; break;}
+        case UO_Plus: { op = "op.UO_MINUS"; break;}
     }
 
     ss << "expr.UnaryE(" << op << ", " << exprArg.expr << ")";
@@ -842,7 +860,7 @@ SlangExpr SlangGenChecker::convertUnaryIncDec(const UnaryOperator *unOp,
     switch(unOp->getOpcode()) {
         case UO_PreInc: {
             ss << "instr.AssignI(" << exprArg.expr << ", ";
-            ss << "expr.BinaryE(" << exprArg.expr << ", op.Add, expr.LitE(1)))";
+            ss << "expr.BinaryE(" << exprArg.expr << ", op.BO_ADD, expr.LitE(1)))";
             exprArg.addSlangStmt(ss.str());
 
             if (exprArg.nonTmpVar && stu.isDirtyVar(exprArg.varId)) {
@@ -854,7 +872,7 @@ SlangExpr SlangGenChecker::convertUnaryIncDec(const UnaryOperator *unOp,
 
         case UO_PostInc: {
             ss << "instr.AssignI(" << exprArg.expr << ", ";
-            ss << "expr.BinaryE(" << exprArg.expr << ", op.Add, expr.LitE(1)))";
+            ss << "expr.BinaryE(" << exprArg.expr << ", op.BO_ADD, expr.LitE(1)))";
 
             if (exprArg.nonTmpVar) {
                 stu.setDirtyVar(exprArg.varId, emptySlangExpr);
@@ -999,6 +1017,33 @@ SlangExpr SlangGenChecker::getTmpVarForDirtyVar(uint64_t varId,
         slangExpr = genTmpVariable(qualType);
         stu.setDirtyVar(varId, slangExpr);
     }
+
+    return slangExpr;
+}
+
+SlangExpr SlangGenChecker::genTmpVariable(std::string slangTypeStr) const {
+    std::stringstream ss;
+    SlangExpr slangExpr{};
+
+    // STEP 1: Populate a SlangVar object with unique name.
+    SlangVar slangVar{};
+    slangVar.id = stu.nextTmpId();
+    ss << "t." << slangVar.id;
+    slangVar.setLocalVarName(ss.str(), stu.getCurrFuncName());
+    slangVar.typeStr = slangTypeStr;
+
+    // STEP 2: Add to the var map.
+    // FIXME: The var's 'id' here should be small enough to not interfere with uint64_t addresses.
+    stu.addVar(slangVar.id, slangVar);
+
+    // STEP 3: generate var expression.
+    ss.str(""); // empty the stream
+    ss << "expr.VarE(\"" << slangVar.name << "\")";
+
+    slangExpr.expr = ss.str();
+    slangExpr.compound = false;
+    // slangExpr.qualType = qt;
+    slangExpr.nonTmpVar = false;
 
     return slangExpr;
 }
