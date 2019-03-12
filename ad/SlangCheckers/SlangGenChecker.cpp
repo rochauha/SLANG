@@ -80,30 +80,33 @@ namespace {
         void handleSwitchStmt(const SwitchStmt *switchStmt) const;
 
         // conversion_routines
-        SlangExpr convertAssignment(bool compound_receiver) const;
+        SlangExpr convertAssignment(bool compound_receiver,
+                std::string* locStr) const;
         SlangExpr convertIntegerLiteral(const IntegerLiteral *IL) const;
         SlangExpr convertFloatingLiteral(const FloatingLiteral *fl) const;
         SlangExpr convertStringLiteral(const StringLiteral *sl) const;
         // a function, if stmt, *y on lhs, arr[i] on lhs are examples of a compound_receiver.
         SlangExpr convertExpr(bool compound_receiver) const;
         SlangExpr convertDeclRefExpr(const DeclRefExpr *dre) const;
-        SlangExpr convertVarDecl(const VarDecl *varDecl) const;
+        SlangExpr convertVarDecl(const VarDecl *varDecl, std::string& locStr) const;
         SlangExpr convertUnaryOp(const UnaryOperator *unOp, bool compound_receiver) const;
         SlangExpr convertUnaryIncDec(const UnaryOperator *unOp, bool compound_receiver) const;
         SlangExpr convertBinaryOp(const BinaryOperator *binOp, bool compound_receiver) const;
         SlangExpr convertEnumConst(const EnumConstantDecl* ecd, uint64_t locId) const;
         SlangExpr convertCallExpr(const CallExpr *callExpr,
                 bool compound_receiver) const;
-        void adjustDirtyVar(SlangExpr& slangExpr) const;
+        void adjustDirtyVar(SlangExpr& slangExpr, std::string& locStr) const;
         std::string convertClangType(QualType qt) const;
 
         // helper_functions
-        SlangExpr genTmpVariable(QualType qt) const;
-        SlangExpr genTmpVariable(std::string slangTypeStr) const;
+        SlangExpr genTmpVariable(QualType qt, std::string& locStr) const;
+        SlangExpr genTmpVariable(std::string slangTypeStr,
+                std::string& locStr) const;
         SlangExpr getTmpVarForDirtyVar(uint64_t varId,
                 QualType qualType, bool& newTmp) const;
         bool isTopLevel(const Stmt* stmt) const;
         uint64_t getLocationId(const Stmt *stmt) const;
+        std::string getLocationString(const Stmt *stmt) const;
         StmtVector getCaseExprElements(const CaseStmt *caseStmt) const;
         void getCaseExprElements(StmtVector& stmts, const Stmt *stmt) const;
 
@@ -365,10 +368,12 @@ void SlangGenChecker::handleDeclStmt(const DeclStmt *declStmt) const {
     const VarDecl *varDecl = cast<VarDecl>(declStmt->getSingleDecl());
     handleVariable(varDecl, stu.getCurrFuncName());
 
+    std::string locStr = getLocationString(declStmt);
+
     if (!stu.isMainStackEmpty()) {
         // there is smth on the stack, hence on the rhs.
         SlangExpr slangExpr{};
-        auto exprLhs = convertVarDecl(varDecl);
+        auto exprLhs = convertVarDecl(varDecl, locStr);
         exprLhs.locId = getLocationId(declStmt);
         auto exprRhs = convertExpr(exprLhs.compound);
 
@@ -426,7 +431,8 @@ void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
 
 void SlangGenChecker::handleBinaryOperator(const BinaryOperator *binOp) const {
     if (binOp->isAssignmentOp() && isTopLevel(binOp)) {
-        SlangExpr slangExpr = convertAssignment(false); // top level is never compound
+        std::string locStr = getLocationString(binOp)
+        SlangExpr slangExpr = convertAssignment(false, locStr); // top level is never compound
         stu.addBbStmts(slangExpr.slangStmts);
     } else {
         stu.pushToMainStack(binOp);
@@ -473,11 +479,13 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switchStmt) const {
 
     // Get full expressions used in all case stmts in Clang-style order
     std::vector<StmtVector> stmtVecVec;
+    std::vector<std::string> locStrs;
     const CompoundStmt *body = cast<CompoundStmt>(switchStmt->getBody());
     for (auto it = body->body_begin(); it != body->body_end(); ++it) {
         if (isa<CaseStmt>(*it)) {
             StmtVector stmtVec = getCaseExprElements(cast<CaseStmt>(*it));
             stmtVecVec.push_back(stmtVec);
+            locStrs.push_back(getLocationString(*it));
         }
     }
     llvm::errs() << "#new blocks = " << stmtVecVec.size() << "\n";
@@ -487,6 +495,7 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switchStmt) const {
     int32_t oldIfBbId = 0; // init with zero is necessary
     std::stringstream ss;
     uint32_t index = 0;
+    std::string locStr;
     // reverse iterating to correct the order
     for (auto stmtVecPtr = stmtVecVec.end() - 1;
             stmtVecPtr != stmtVecVec.begin() - 1;
@@ -499,7 +508,7 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switchStmt) const {
             stu.pushToMainStack(stmt);
         }
         caseCondVar = convertExpr(true);
-        newIfCondVar = genTmpVariable("types.Int");
+        newIfCondVar = genTmpVariable("types.Int", locStrs[index]);
 
         ss << "instr.AssignI(" << newIfCondVar.expr << ", ";
         ss << "expr.BinaryE(";
@@ -677,7 +686,8 @@ SlangExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr,
 
     if (compound_receiver) {
         ss.str("");
-        SlangExpr tmpVar = genTmpVariable(slangExpr.qualType);
+        std::string locStr = getLocationString(callExpr);
+        SlangExpr tmpVar = genTmpVariable(slangExpr.qualType, locStr);
         ss << "instr.AssignI(" << tmpVar.expr << ", ";
         ss << slangExpr.expr << ")";
         tmpVar.addSlangStmts(slangExpr.slangStmts);
@@ -688,7 +698,8 @@ SlangExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr,
     return slangExpr;
 } // convertCallExpr()
 
-SlangExpr SlangGenChecker::convertAssignment(bool compound_receiver) const {
+SlangExpr SlangGenChecker::convertAssignment(bool compound_receiver,
+        std::string& locStr) const {
     std::stringstream ss;
     SlangExpr slangExpr{};
 
@@ -696,7 +707,7 @@ SlangExpr SlangGenChecker::convertAssignment(bool compound_receiver) const {
     auto exprRhs = convertExpr(exprLhs.compound);
 
     if (compound_receiver && exprLhs.compound) {
-        slangExpr = genTmpVariable(exprLhs.qualType);
+        slangExpr = genTmpVariable(exprLhs.qualType, locStr);
 
         // order_correction for assignment
         slangExpr.addSlangStmts(exprRhs.slangStmts);
@@ -731,12 +742,13 @@ SlangExpr SlangGenChecker::convertAssignment(bool compound_receiver) const {
     return slangExpr;
 }
 
-void SlangGenChecker::adjustDirtyVar(SlangExpr& slangExpr) const {
+void SlangGenChecker::adjustDirtyVar(SlangExpr& slangExpr,
+        std::string& locStr) const {
     std::stringstream ss;
     bool newTmp;
     if (slangExpr.isNonTmpVar() && stu.isDirtyVar(slangExpr.varId)) {
         SlangExpr sp = getTmpVarForDirtyVar(slangExpr.varId,
-                slangExpr.qualType, newTmp);
+                slangExpr.qualType, newTmp, locStr);
         if (newTmp) {
             // only add if a new temporary was generated
             ss << "instr.AssignI(" << sp.expr << ", " << slangExpr.expr << ")";
@@ -760,16 +772,18 @@ SlangExpr SlangGenChecker::convertBinaryOp(const BinaryOperator *binOp,
     std::string op;
     SlangExpr varExpr{};
 
+    std::string locStr = getLocationString(binOp);
+
     if (binOp->isAssignmentOp()) {
-        return convertAssignment(compound_receiver);
+        return convertAssignment(compound_receiver, locStr);
     }
 
     SlangExpr exprR = convertExpr(true);
     SlangExpr exprL = convertExpr(true);
-    adjustDirtyVar(exprL);
+    adjustDirtyVar(exprL, locStr);
 
     if (compound_receiver) {
-        varExpr = genTmpVariable(exprL.qualType);
+        varExpr = genTmpVariable(exprL.qualType, locStr);
         ss << "instr.AssignI(" << varExpr.expr << ", ";
     }
 
@@ -812,6 +826,8 @@ SlangExpr SlangGenChecker::convertUnaryOp(const UnaryOperator *unOp,
     SlangExpr varExpr{};
     QualType qualType;
 
+    std::string locStr = getLocationString(unOp);
+
     switch (unOp->getOpcode()) {
         // special handling
         case UO_PreInc:
@@ -827,7 +843,7 @@ SlangExpr SlangGenChecker::convertUnaryOp(const UnaryOperator *unOp,
     }
 
     SlangExpr exprArg = convertExpr(true);
-    adjustDirtyVar(exprArg);
+    adjustDirtyVar(exprArg, locStr);
     qualType = exprArg.qualType;
 
     switch(unOp->getOpcode()) {
@@ -853,12 +869,13 @@ SlangExpr SlangGenChecker::convertUnaryOp(const UnaryOperator *unOp,
         case UO_Plus: { op = "op.UO_MINUS"; break;}
     }
 
-    ss << "expr.UnaryE(" << op << ", " << exprArg.expr << ")";
-
     if (compound_receiver) {
-        varExpr = genTmpVariable(qualType);
+        varExpr = genTmpVariable(qualType, locStr);
         ss << "instr.AssignI(" << varExpr.expr << ", ";
     }
+
+    ss << "expr.UnaryE(" << op << ", " << exprArg.expr;
+    ss << ", " << locStr << ")";
 
     // order_correction unary operator
     varExpr.addSlangStmts(exprArg.slangStmts);
@@ -880,14 +897,17 @@ SlangExpr SlangGenChecker::convertUnaryIncDec(const UnaryOperator *unOp,
     SlangExpr exprArg = convertExpr(true);
     SlangExpr emptySlangExpr = SlangExpr{};
 
+    std::string locStr = getLocationString(unOp);
+
     switch(unOp->getOpcode()) {
         case UO_PreInc: {
             ss << "instr.AssignI(" << exprArg.expr << ", ";
-            ss << "expr.BinaryE(" << exprArg.expr << ", op.BO_ADD, expr.LitE(1)))";
+            ss << "expr.BinaryE(" << exprArg.expr << ", op.BO_ADD, expr.LitE(1)";
+            ss << ", " << locStr << "))";
             exprArg.addSlangStmt(ss.str());
 
             if (exprArg.nonTmpVar && stu.isDirtyVar(exprArg.varId)) {
-                adjustDirtyVar(exprArg);
+                adjustDirtyVar(exprArg, locStr);
             }
             stu.setDirtyVar(exprArg.varId, emptySlangExpr);
             break;
@@ -899,7 +919,7 @@ SlangExpr SlangGenChecker::convertUnaryIncDec(const UnaryOperator *unOp,
 
             if (exprArg.nonTmpVar) {
                 stu.setDirtyVar(exprArg.varId, emptySlangExpr);
-                adjustDirtyVar(exprArg);
+                adjustDirtyVar(exprArg, locStr);
             }
             // add increment after storing in temporary
             exprArg.addSlangStmt(ss.str());
@@ -915,11 +935,13 @@ SlangExpr SlangGenChecker::convertUnaryIncDec(const UnaryOperator *unOp,
     return exprArg;
 } // convertUnaryIncDec()
 
-SlangExpr SlangGenChecker::convertVarDecl(const VarDecl *varDecl) const {
+SlangExpr SlangGenChecker::convertVarDecl(const VarDecl *varDecl,
+        std::string& locStr) const {
     std::stringstream ss;
     SlangExpr slangExpr{};
 
-    ss << "expr.VarE(\"" << stu.convertVarExpr((uint64_t)varDecl) << "\")";
+    ss << "expr.VarE(\"" << stu.convertVarExpr((uint64_t)varDecl) << "\"";
+    ss << ", " << locStr << ")";
     slangExpr.expr = ss.str();
     slangExpr.compound = false;
     slangExpr.qualType = varDecl->getType();
@@ -932,10 +954,12 @@ SlangExpr SlangGenChecker::convertVarDecl(const VarDecl *varDecl) const {
 SlangExpr SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
     std::stringstream ss;
 
+    std::string locStr = getLocationString(dre);
+
     const ValueDecl *valueDecl = dre->getDecl();
     if (isa<VarDecl>(valueDecl)) {
         auto varDecl = cast<VarDecl>(valueDecl);
-        SlangExpr slangExpr = convertVarDecl(varDecl);
+        SlangExpr slangExpr = convertVarDecl(varDecl, locStr);
         slangExpr.locId = getLocationId(dre);
         return slangExpr;
     } else if (isa<EnumConstantDecl>(valueDecl)) {
@@ -1025,7 +1049,7 @@ void SlangGenChecker::getCaseExprElements(StmtVector& stmts, const Stmt *stmt) c
 // returns an empty SlangExpr if var is not dirty
 SlangExpr SlangGenChecker::getTmpVarForDirtyVar(uint64_t varId,
         QualType qualType,
-        bool& newTmp) const {
+        bool& newTmp, std::string& locStr) const {
     SlangExpr slangExpr;
     newTmp = false;
 
@@ -1037,14 +1061,15 @@ SlangExpr SlangGenChecker::getTmpVarForDirtyVar(uint64_t varId,
     if (slangExpr.expr.size() == 0) {
         newTmp = true;
         // allocate tmp var on demand
-        slangExpr = genTmpVariable(qualType);
+        slangExpr = genTmpVariable(qualType, locStr);
         stu.setDirtyVar(varId, slangExpr);
     }
 
     return slangExpr;
 }
 
-SlangExpr SlangGenChecker::genTmpVariable(std::string slangTypeStr) const {
+SlangExpr SlangGenChecker::genTmpVariable(std::string slangTypeStr,
+        std::string& locStr) const {
     std::stringstream ss;
     SlangExpr slangExpr{};
 
@@ -1061,7 +1086,8 @@ SlangExpr SlangGenChecker::genTmpVariable(std::string slangTypeStr) const {
 
     // STEP 3: generate var expression.
     ss.str(""); // empty the stream
-    ss << "expr.VarE(\"" << slangVar.name << "\")";
+    ss << "expr.VarE(\"" << slangVar.name << "\"";
+    ss << ", " << locStr << ")";
 
     slangExpr.expr = ss.str();
     slangExpr.compound = false;
@@ -1098,6 +1124,22 @@ SlangExpr SlangGenChecker::genTmpVariable(QualType qt) const {
     return slangExpr;
 } // genTmpVariable()
 
+std::string SlangGenChecker::getLocationString(const Stmt *stmt) const {
+    std::stringstream ss;
+    uint32_t line = 0;
+    uint32_t col = 0;
+
+    ss << "Loc(";
+    line = FD->getASTContext().getSourceManager()
+            .getExpansionLineNumber(stmt->getLocStart());
+    ss << line << ",";
+    col  = FD->getASTContext().getSourceManager()
+            .getExpansionColumnNumber(stmt->getLocStart());
+    ss << col << ")";
+
+    return ss.str();
+}
+
 // get and encode the location of a statement element
 uint64_t SlangGenChecker::getLocationId(const Stmt *stmt) const {
     uint64_t locId = 0;
@@ -1116,28 +1158,35 @@ uint64_t SlangGenChecker::getLocationId(const Stmt *stmt) const {
 
 // If an element is top level, return true.
 // e.g. in statement "x = y = z = 10;" the first "=" from left is top level.
-bool SlangGenChecker::isTopLevel(const Stmt* stmt) const {
-    // see MyTraverseAST.cpp for more details.
+bool SlangGenChecker::isTopLevel(const Stmt *stmt) const {
     const auto &parents = FD->getASTContext().getParents(*stmt);
     if (!parents.empty()) {
         const Stmt *stmt1 = parents[0].get<Stmt>();
         if (stmt1) {
-            // SLANG_DEBUG("Parent: " << stmt1->getStmtClassName())
+            // llvm::errs() << "Parent: " << stmt1->getStmtClassName() << "\n";
             switch (stmt1->getStmtClass()) {
                 default: {
                     return false;
                     break;
                 }
-                case Stmt::WhileStmtClass:
-                case Stmt::ForStmtClass:
+
                 case Stmt::CaseStmtClass:
                 case Stmt::DefaultStmtClass:
                 case Stmt::CompoundStmtClass: {
                     return true; // top level
                 }
+                case Stmt::WhileStmtClass: {
+                    auto body = (cast<WhileStmt>(stmt1))->getBody();
+                    return ((uint64_t)body == (uint64_t)stmt);
+                }
+                case Stmt::IfStmtClass: {
+                    auto then_ = (cast<IfStmt>(stmt1))->getThen();
+                    auto else_ = (cast<IfStmt>(stmt1))->getElse();
+                    return ((uint64_t)then_ == (uint64_t)stmt || (uint64_t)else_ == (uint64_t)stmt);
+                }
             }
         } else {
-            // SLANG_DEBUG("Parent: Cannot print")
+            // llvm::errs() << "Parent: Cannot print.\n";
             return false;
         }
     } else {
