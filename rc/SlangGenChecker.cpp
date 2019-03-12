@@ -351,8 +351,9 @@ class TraversedInfoBuffer {
 
 } // namespace
 
-// Remove qualifiers
+// Remove qualifiers and typedefs
 QualType TraversedInfoBuffer::getCleanedQualType(QualType qt) {
+    qt = qt.getCanonicalType();
     qt.removeLocalConst();
     qt.removeLocalRestrict();
     qt.removeLocalVolatile();
@@ -369,8 +370,7 @@ TraversedInfoBuffer::TraversedInfoBuffer()
 }
 
 bool TraversedInfoBuffer::addToRecordMap(const ValueDecl *value_decl) {
-    QualType qt = (value_decl->getType()).getCanonicalType();
-    qt = getCleanedQualType(qt);
+    QualType qt = getCleanedQualType(value_decl->getType());
 
     const Type *type_ptr = qt.getTypePtr();
     const TagDecl *tag_decl = const_cast<TagDecl *>(type_ptr->getAsTagDecl());
@@ -542,9 +542,7 @@ std::string TraversedInfoBuffer::convertVarExpr(uint64_t var_addr) {
 //   for `int*` it returns `types.Ptr(to=types.Int)`.
 // TODO: handle all possible types
 std::string TraversedInfoBuffer::convertClangType(QualType qt) {
-    qt = qt.getCanonicalType();
     qt = getCleanedQualType(qt);
-
     std::stringstream ss;
     const Type *type = qt.getTypePtr();
     if (type->isBuiltinType()) {
