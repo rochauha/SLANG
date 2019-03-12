@@ -5,7 +5,7 @@ main()
 	int *p;
 	int **pp;
 
-	x = 0;
+  x = 0;
 	p = &x;
 	pp = &p;
 

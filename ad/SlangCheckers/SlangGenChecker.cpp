@@ -53,7 +53,7 @@ namespace {
      */
     class SlangGenChecker : public Checker<check::ASTCodeBody, check::EndOfTranslationUnit> {
         static SlangTranslationUnit stu;
-        static const FunctionDecl *FD;  // funcDecl
+        static const FunctionDecl *FD; // funcDecl
 
     public:
         // mainentry
@@ -81,7 +81,7 @@ namespace {
 
         // conversion_routines
         SlangExpr convertAssignment(bool compound_receiver,
-                std::string* locStr) const;
+                std::string& locStr) const;
         SlangExpr convertIntegerLiteral(const IntegerLiteral *IL) const;
         SlangExpr convertFloatingLiteral(const FloatingLiteral *fl) const;
         SlangExpr convertStringLiteral(const StringLiteral *sl) const;
@@ -103,7 +103,7 @@ namespace {
         SlangExpr genTmpVariable(std::string slangTypeStr,
                 std::string& locStr) const;
         SlangExpr getTmpVarForDirtyVar(uint64_t varId,
-                QualType qualType, bool& newTmp) const;
+                QualType qualType, bool& newTmp, std::string& locStr) const;
         bool isTopLevel(const Stmt* stmt) const;
         uint64_t getLocationId(const Stmt *stmt) const;
         std::string getLocationString(const Stmt *stmt) const;
@@ -431,7 +431,7 @@ void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
 
 void SlangGenChecker::handleBinaryOperator(const BinaryOperator *binOp) const {
     if (binOp->isAssignmentOp() && isTopLevel(binOp)) {
-        std::string locStr = getLocationString(binOp)
+        std::string locStr = getLocationString(binOp);
         SlangExpr slangExpr = convertAssignment(false, locStr); // top level is never compound
         stu.addBbStmts(slangExpr.slangStmts);
     } else {
@@ -598,6 +598,8 @@ SlangExpr SlangGenChecker::convertIntegerLiteral(
     std::stringstream ss;
     std::string suffix = ""; // helps make int appear float
 
+    std::string locStr = getLocationString(il);
+
     // check if int is implicitly casted to floating
     const auto &parents = FD->getASTContext().getParents(*il);
     if (!parents.empty()) {
@@ -620,7 +622,8 @@ SlangExpr SlangGenChecker::convertIntegerLiteral(
 
     bool is_signed = il->getType()->isSignedIntegerType();
     ss << "expr.LitE(" << il->getValue().toString(10, is_signed);
-    ss << suffix << ")";
+    ss << suffix;
+    ss << ", " << locStr << ")";
     SLANG_TRACE(ss.str())
 
     return SlangExpr(ss.str(), false, il->getType());
@@ -630,7 +633,10 @@ SlangExpr SlangGenChecker::convertFloatingLiteral(
         const FloatingLiteral *fl) const {
     std::stringstream ss;
 
-    ss << "expr.LitE(" << std::fixed << fl->getValue().convertToDouble() << ")";
+    std::string locStr = getLocationString(fl);
+
+    ss << "expr.LitE(" << std::fixed << fl->getValue().convertToDouble();;
+    ss << ", " << locStr << ")";
     SLANG_TRACE(ss.str())
 
     return SlangExpr(ss.str(), false, fl->getType());
@@ -640,7 +646,10 @@ SlangExpr SlangGenChecker::convertStringLiteral(
         const StringLiteral *sl) const {
     std::stringstream ss;
 
-    ss << "expr.LitE(\"\"\"" << sl->getBytes().data() << "\"\"\")";
+    std::string locStr = getLocationString(sl);
+
+    ss << "expr.LitE(\"\"\"" << sl->getBytes().data() << "\"\"\"";
+    ss << ", " << locStr << ")";
     SLANG_TRACE(ss.str())
 
     return SlangExpr(ss.str(), false, sl->getType());
@@ -653,6 +662,8 @@ SlangExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr,
     SlangExpr slangExpr;
     const FunctionDecl *callee;
     std::string calleeName;
+
+    std::string locStr = getLocationString(callExpr);
 
     slangExpr.compound = true;
 
@@ -681,7 +692,8 @@ SlangExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr,
 
     ss.str("");
     ss << "expr.CallE(\"" << stu.convertFuncName(calleeName) << "\"";
-    ss << ", [" << argString << "])";
+    ss << ", [" << argString << "]";
+    ss << ", " << locStr << ")";
     slangExpr.expr = ss.str();
 
     if (compound_receiver) {
@@ -1097,7 +1109,8 @@ SlangExpr SlangGenChecker::genTmpVariable(std::string slangTypeStr,
     return slangExpr;
 }
 
-SlangExpr SlangGenChecker::genTmpVariable(QualType qt) const {
+SlangExpr SlangGenChecker::genTmpVariable(QualType qt,
+        std::string& locStr) const {
     std::stringstream ss;
     SlangExpr slangExpr{};
 
@@ -1114,7 +1127,8 @@ SlangExpr SlangGenChecker::genTmpVariable(QualType qt) const {
 
     // STEP 3: generate var expression.
     ss.str(""); // empty the stream
-    ss << "expr.VarE(\"" << slangVar.name << "\")";
+    ss << "expr.VarE(\"" << slangVar.name << "\"";
+    ss << ", " << locStr << ")";
 
     slangExpr.expr = ss.str();
     slangExpr.compound = false;

@@ -17,9 +17,9 @@ irTUnit.TUnit(
   allVars = {
     "v:main:t.4": types.Int,
     "v:main:pp": types.Ptr(to=types.Ptr(to=types.Int)),
-    "v:main:t.3": types.Int,
-    "v:main:x": types.Int,
     "v:main:t.1": types.Ptr(to=types.Int),
+    "v:main:x": types.Int,
+    "v:main:t.3": types.Int,
     "v:main:t.2": types.Ptr(to=types.Int),
     "v:main:p": types.Ptr(to=types.Int),
   }, # end allVars dict
@@ -36,25 +36,25 @@ irTUnit.TUnit(
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
           8: [
-            instr.AssignI(expr.VarE("v:main:x", Loc(8,2)), expr.LitE(0)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(8,3)), expr.LitE(0, Loc(8,7))),
             instr.AssignI(expr.VarE("v:main:p", Loc(9,2)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:main:x", Loc(9,7)), Loc(9,6))),
             instr.AssignI(expr.VarE("v:main:pp", Loc(10,2)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:main:p", Loc(10,8)), Loc(10,7))),
-            instr.AssignI(expr.VarE("v:main:t.4"), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:p", Loc(12,6)), Loc(12,5))),
-            instr.CondI(expr.VarE("v:main:t.4")),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(12,5)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:p", Loc(12,6)), Loc(12,5))),
+            instr.CondI(expr.VarE("v:main:t.4", Loc(12,5))),
           ],
 
           7: [
-            instr.ReturnI(expr.LitE(1)),
+            instr.ReturnI(expr.LitE(1, Loc(13,10))),
           ],
 
           6: [
-            instr.AssignI(expr.VarE("v:main:t.2"), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:pp", Loc(14,7)), Loc(14,6))),
-            instr.AssignI(expr.VarE("v:main:t.3"), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:t.2"), Loc(14,5))),
-            instr.CondI(expr.VarE("v:main:t.3")),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(14,6)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:pp", Loc(14,7)), Loc(14,6))),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(14,5)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:t.2", Loc(14,6)), Loc(14,5))),
+            instr.CondI(expr.VarE("v:main:t.3", Loc(14,5))),
           ],
 
           1: [
-            instr.ReturnI(expr.LitE(1)),
+            instr.ReturnI(expr.LitE(1, Loc(22,10))),
           ],
 
           -1: [
@@ -66,7 +66,7 @@ irTUnit.TUnit(
           ],
 
           2: [
-            instr.ReturnI(expr.LitE(0)),
+            instr.ReturnI(expr.LitE(0, Loc(20,10))),
           ],
 
           3: [
@@ -74,12 +74,12 @@ irTUnit.TUnit(
           ],
 
           4: [
-            instr.AssignI(expr.VarE("v:main:t.1"), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:pp", Loc(17,5)), Loc(17,4))),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:t.1"), Loc(17,3)), expr.LitE(1)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(17,4)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:pp", Loc(17,5)), Loc(17,4))),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:t.1", Loc(17,4)), Loc(17,3)), expr.LitE(1, Loc(17,10))),
           ],
 
           5: [
-            instr.ReturnI(expr.LitE(1)),
+            instr.ReturnI(expr.LitE(1, Loc(15,10))),
           ],
 
         }, # basicBlocks end.
