@@ -76,7 +76,7 @@ namespace {
         void handleBinaryOperator(const BinaryOperator *binOp) const;
         void handleCallExpr(const CallExpr *callExpr) const;
         void handleReturnStmt(std::string& locStr) const;
-        void handleIfStmt() const;
+        void handleIfStmt(std::string& locStr) const;
         void handleSwitchStmt(const SwitchStmt *switchStmt) const;
 
         // conversion_routines
@@ -316,7 +316,7 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
             handleReturnStmt(locStr); break;
 
         case Stmt::WhileStmtClass: // same as Stmt::IfStmtClass
-        case Stmt::IfStmtClass: handleIfStmt(); break;
+        case Stmt::IfStmtClass: handleIfStmt(locStr); break;
 
         case Stmt::SwitchStmtClass:
             handleSwitchStmt(cast<SwitchStmt>(stmt)); break;
@@ -391,11 +391,12 @@ void SlangGenChecker::handleDeclStmt(const DeclStmt *declStmt) const {
     }
 } // handleDeclStmt()
 
-void SlangGenChecker::handleIfStmt() const {
+void SlangGenChecker::handleIfStmt(std::string& locStr) const {
     std::stringstream ss;
 
     auto exprArg = convertExpr(true);
-    ss << "instr.CondI(" << exprArg.expr << ")";
+    ss << "instr.CondI(" << exprArg.expr;
+    ss << ", " << locStr << ")";
 
     // order_correction for if stmt
     exprArg.addSlangStmt(ss.str());
@@ -522,7 +523,8 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switchStmt) const {
         newIfCondVar.addSlangStmt(ss.str());
 
         ss.str("");
-        ss << "instr.CondI(" << newIfCondVar.expr << ")";
+        ss << "instr.CondI(" << newIfCondVar.expr;
+        ss << ", " << locStr << ")";
 
         if (index == 0) {
             // the first if-stmt can be put in the current block itself

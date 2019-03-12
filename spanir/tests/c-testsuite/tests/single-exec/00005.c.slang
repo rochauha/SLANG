@@ -17,8 +17,8 @@ irTUnit.TUnit(
   allVars = {
     "v:main:t.4": types.Int,
     "v:main:pp": types.Ptr(to=types.Ptr(to=types.Int)),
-    "v:main:x": types.Int,
     "v:main:t.1": types.Ptr(to=types.Int),
+    "v:main:x": types.Int,
     "v:main:t.2": types.Ptr(to=types.Int),
     "v:main:t.3": types.Int,
     "v:main:p": types.Ptr(to=types.Int),
@@ -40,7 +40,7 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:main:p", Loc(9,2)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:main:x", Loc(9,7)), Loc(9,6)), Loc(9,2)),
             instr.AssignI(expr.VarE("v:main:pp", Loc(10,2)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:main:p", Loc(10,8)), Loc(10,7)), Loc(10,2)),
             instr.AssignI(expr.VarE("v:main:t.4", Loc(12,5)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:p", Loc(12,6)), Loc(12,5)), Loc(12,5)),
-            instr.CondI(expr.VarE("v:main:t.4", Loc(12,5))),
+            instr.CondI(expr.VarE("v:main:t.4", Loc(12,5)), Loc(12,2)),
           ],
 
           7: [
@@ -50,7 +50,7 @@ irTUnit.TUnit(
           6: [
             instr.AssignI(expr.VarE("v:main:t.2", Loc(14,6)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:pp", Loc(14,7)), Loc(14,6)), Loc(14,6)),
             instr.AssignI(expr.VarE("v:main:t.3", Loc(14,5)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:t.2", Loc(14,6)), Loc(14,5)), Loc(14,5)),
-            instr.CondI(expr.VarE("v:main:t.3", Loc(14,5))),
+            instr.CondI(expr.VarE("v:main:t.3", Loc(14,5)), Loc(14,2)),
           ],
 
           1: [
@@ -70,7 +70,7 @@ irTUnit.TUnit(
           ],
 
           3: [
-            instr.CondI(expr.VarE("v:main:x", Loc(19,5))),
+            instr.CondI(expr.VarE("v:main:x", Loc(19,5)), Loc(19,2)),
           ],
 
           4: [
