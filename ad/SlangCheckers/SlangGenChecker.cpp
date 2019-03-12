@@ -75,7 +75,7 @@ namespace {
         void handleDeclRefExpr(const DeclRefExpr *DRE) const;
         void handleBinaryOperator(const BinaryOperator *binOp) const;
         void handleCallExpr(const CallExpr *callExpr) const;
-        void handleReturnStmt() const;
+        void handleReturnStmt(std::string& locStr) const;
         void handleIfStmt() const;
         void handleSwitchStmt(const SwitchStmt *switchStmt) const;
 
@@ -291,6 +291,7 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
     Stmt::StmtClass stmtClass = stmt->getStmtClass();
 
     stu.printMainStack();
+    std::string locStr = getLocationString(stmt);
     SLANG_DEBUG("Processing: " << stmt->getStmtClassName())
 
     // to handle each kind of statement/expression.
@@ -312,7 +313,7 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
             handleBinaryOperator(cast<BinaryOperator>(stmt)); break;
 
         case Stmt::ReturnStmtClass:
-            handleReturnStmt(); break;
+            handleReturnStmt(locStr); break;
 
         case Stmt::WhileStmtClass: // same as Stmt::IfStmtClass
         case Stmt::IfStmtClass: handleIfStmt(); break;
@@ -365,10 +366,10 @@ void SlangGenChecker::handleDeclStmt(const DeclStmt *declStmt) const {
     // assumes there is only single decl inside (the likely case).
     std::stringstream ss;
 
+    std::string locStr = getLocationString(declStmt);
+
     const VarDecl *varDecl = cast<VarDecl>(declStmt->getSingleDecl());
     handleVariable(varDecl, stu.getCurrFuncName());
-
-    std::string locStr = getLocationString(declStmt);
 
     if (!stu.isMainStackEmpty()) {
         // there is smth on the stack, hence on the rhs.
@@ -382,7 +383,8 @@ void SlangGenChecker::handleDeclStmt(const DeclStmt *declStmt) const {
         slangExpr.addSlangStmts(exprLhs.slangStmts);
 
         // slangExpr.qualType = exprLhs.qualType;
-        ss << "instr.AssignI(" << exprLhs.expr << ", " << exprRhs.expr << ")";
+        ss << "instr.AssignI(" << exprLhs.expr << ", " << exprRhs.expr;
+        ss << ", " << locStr << ")"; // close instr.AssignI(...
         slangExpr.addSlangStmt(ss.str());
 
         stu.addBbStmts(slangExpr.slangStmts);
@@ -400,19 +402,21 @@ void SlangGenChecker::handleIfStmt() const {
     stu.addBbStmts(exprArg.slangStmts);
 } // handleIfStmt()
 
-void SlangGenChecker::handleReturnStmt() const {
+void SlangGenChecker::handleReturnStmt(std::string& locStr) const {
     std::stringstream ss;
 
     if (!stu.isMainStackEmpty()) {
         // return has an argument
         auto exprArg = convertExpr(true);
-        ss << "instr.ReturnI(" << exprArg.expr << ")";
+        ss << "instr.ReturnI(" << exprArg.expr;
+        ss << ", " << locStr << ")";
 
         // order_correction for return stmt
         exprArg.addSlangStmt(ss.str());
         stu.addBbStmts(exprArg.slangStmts);
     } else {
-        ss << "instr.ReturnI()";
+        ss << "instr.ReturnI(";
+        ss << locStr << ")";
         stu.addBbStmt(ss.str()); //okay
     }
 } // handleReturnStmt()
@@ -512,7 +516,9 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switchStmt) const {
 
         ss << "instr.AssignI(" << newIfCondVar.expr << ", ";
         ss << "expr.BinaryE(";
-        ss << switchCondVar.expr << ", op.BO_EQ, " << caseCondVar.expr << "))";
+        ss << switchCondVar.expr << ", op.BO_EQ, " << caseCondVar.expr;
+        ss << ", " << locStr << ")"; // close expr.BinaryE(
+        ss << ", " << locStr << ")"; // close instr.AssignI(...
         newIfCondVar.addSlangStmt(ss.str());
 
         ss.str("");
@@ -701,7 +707,8 @@ SlangExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr,
         std::string locStr = getLocationString(callExpr);
         SlangExpr tmpVar = genTmpVariable(slangExpr.qualType, locStr);
         ss << "instr.AssignI(" << tmpVar.expr << ", ";
-        ss << slangExpr.expr << ")";
+        ss << slangExpr.expr;
+        ss << ", " << locStr << ")";
         tmpVar.addSlangStmts(slangExpr.slangStmts);
         tmpVar.addSlangStmt(ss.str());
         return tmpVar;
@@ -725,18 +732,21 @@ SlangExpr SlangGenChecker::convertAssignment(bool compound_receiver,
         slangExpr.addSlangStmts(exprRhs.slangStmts);
         slangExpr.addSlangStmts(exprLhs.slangStmts);
 
-        ss << "instr.AssignI(" << exprLhs.expr << ", " << exprRhs.expr << ")";
+        ss << "instr.AssignI(" << exprLhs.expr << ", " << exprRhs.expr;
+        ss << ", " << locStr << ")";
         slangExpr.addSlangStmt(ss.str());
 
         ss.str(""); // empty the stream
-        ss << "instr.AssignI(" << slangExpr.expr << ", " << exprLhs.expr << ")";
+        ss << "instr.AssignI(" << slangExpr.expr << ", " << exprLhs.expr;
+        ss << ", " << locStr << ")";
         slangExpr.addSlangStmt(ss.str());
     } else {
         // order_correction for assignment
         slangExpr.addSlangStmts(exprRhs.slangStmts);
         slangExpr.addSlangStmts(exprLhs.slangStmts);
 
-        ss << "instr.AssignI(" << exprLhs.expr << ", " << exprRhs.expr << ")";
+        ss << "instr.AssignI(" << exprLhs.expr << ", " << exprRhs.expr;
+        ss << ", " << locStr << ")";
         slangExpr.addSlangStmt(ss.str());
 
         slangExpr.expr = exprLhs.expr;
@@ -763,7 +773,8 @@ void SlangGenChecker::adjustDirtyVar(SlangExpr& slangExpr,
                 slangExpr.qualType, newTmp, locStr);
         if (newTmp) {
             // only add if a new temporary was generated
-            ss << "instr.AssignI(" << sp.expr << ", " << slangExpr.expr << ")";
+            ss << "instr.AssignI(" << sp.expr << ", " << slangExpr.expr;
+            ss << ", " << locStr << ")";
             slangExpr.addSlangStmt(ss.str());
         }
         slangExpr.expr = sp.expr;
@@ -821,7 +832,7 @@ SlangExpr SlangGenChecker::convertBinaryOp(const BinaryOperator *binOp,
     ss << "expr.BinaryE(" << exprL.expr << ", " << op << ", " << exprR.expr << ")";
 
     if (compound_receiver) {
-        ss << ")"; // close instr.AssignI(...
+        ss << ", " << locStr << ")"; // close instr.AssignI(...
         varExpr.addSlangStmt(ss.str());
     } else {
         varExpr.expr = ss.str();
@@ -893,7 +904,7 @@ SlangExpr SlangGenChecker::convertUnaryOp(const UnaryOperator *unOp,
     varExpr.addSlangStmts(exprArg.slangStmts);
 
     if (compound_receiver) {
-        ss << ")"; // close instr.AssignI(...
+        ss << ", " << locStr << ")"; // close instr.AssignI(...
         varExpr.addSlangStmt(ss.str());
     } else {
         varExpr.expr = ss.str();
@@ -915,7 +926,8 @@ SlangExpr SlangGenChecker::convertUnaryIncDec(const UnaryOperator *unOp,
         case UO_PreInc: {
             ss << "instr.AssignI(" << exprArg.expr << ", ";
             ss << "expr.BinaryE(" << exprArg.expr << ", op.BO_ADD, expr.LitE(1)";
-            ss << ", " << locStr << "))";
+            ss << ", " << locStr << ")"; // close expr.BinaryE(
+            ss << ", " << locStr << ")"; // close instr.AssignI(...
             exprArg.addSlangStmt(ss.str());
 
             if (exprArg.nonTmpVar && stu.isDirtyVar(exprArg.varId)) {
@@ -927,7 +939,10 @@ SlangExpr SlangGenChecker::convertUnaryIncDec(const UnaryOperator *unOp,
 
         case UO_PostInc: {
             ss << "instr.AssignI(" << exprArg.expr << ", ";
-            ss << "expr.BinaryE(" << exprArg.expr << ", op.BO_ADD, expr.LitE(1)))";
+            ss << "expr.BinaryE(" << exprArg.expr << ", op.BO_ADD, expr.LitE(1";
+            ss << ", " << locStr << ")"; // close expr.LitE(
+            ss << ", " << locStr << ")"; // close expr.BinaryE(
+            ss << ", " << locStr << ")"; // close instr.AssignI(...
 
             if (exprArg.nonTmpVar) {
                 stu.setDirtyVar(exprArg.varId, emptySlangExpr);
