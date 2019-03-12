@@ -181,6 +181,7 @@ void SlangGenChecker::handleCfg(const CFG *cfg) const {
     stu.setNextBbId(cfg->size() - 1);
     for (const CFGBlock *bb : *cfg) {
         handleBbInfo(bb, cfg);
+        // stu.clearMainStack(); // FIXME: a hack
         handleBbStmts(bb);
     }
 } // handleCfg()
@@ -322,6 +323,7 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
         case Stmt::ImplicitCastExprClass:
             break; // do nothing
     }
+    stu.printMainStack();
 } // handleStmt()
 
 // record the variable name and type
@@ -411,10 +413,9 @@ void SlangGenChecker::handleReturnStmt() const {
 } // handleReturnStmt()
 
 void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
-    stu.pushToMainStack(declRefExpr);
-
     const ValueDecl *valueDecl = declRefExpr->getDecl();
     if (isa<VarDecl>(valueDecl)) {
+        stu.pushToMainStack(declRefExpr);
         handleVariable(valueDecl, stu.getCurrFuncName());
     } else if (isa<FunctionDecl>(valueDecl)) {
         handleFunction(cast<FunctionDecl>(valueDecl));
@@ -586,9 +587,31 @@ SlangExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
 SlangExpr SlangGenChecker::convertIntegerLiteral(
         const IntegerLiteral *il) const {
     std::stringstream ss;
+    std::string suffix = ""; // helps make int appear float
+
+    // check if int is implicitly casted to floating
+    const auto &parents = FD->getASTContext().getParents(*il);
+    if (!parents.empty()) {
+        const Stmt *stmt1 = parents[0].get<Stmt>();
+        if (stmt1) {
+            switch (stmt1->getStmtClass()) {
+                default: break;
+                case Stmt::ImplicitCastExprClass: {
+                    const ImplicitCastExpr *ice = cast<ImplicitCastExpr>(stmt1);
+                    switch(ice->getCastKind()) {
+                        default: break;
+                        case CastKind::CK_IntegralToFloating:
+                            suffix = ".0";
+                            break;
+                    }
+                }
+            }
+        }
+    }
 
     bool is_signed = il->getType()->isSignedIntegerType();
-    ss << "expr.LitE(" << il->getValue().toString(10, is_signed) << ")";
+    ss << "expr.LitE(" << il->getValue().toString(10, is_signed);
+    ss << suffix << ")";
     SLANG_TRACE(ss.str())
 
     return SlangExpr(ss.str(), false, il->getType());

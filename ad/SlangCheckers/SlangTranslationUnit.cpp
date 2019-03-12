@@ -212,11 +212,13 @@ std::string slang::SlangTranslationUnit::convertBbEdges(SlangFunc& slangFunc) {
 
 // used only for debugging purposes
 void slang::SlangTranslationUnit::printMainStack() const {
-    SLANG_DEBUG("MAIN_STACK: [");
+    std::stringstream ss;
+    ss << "MAIN_STACK: [";
     for (const Stmt* stmt: mainStack) {
-        SLANG_DEBUG(stmt->getStmtClassName() << ", ");
+        ss << stmt->getStmtClassName() << ", ";
     }
-    SLANG_DEBUG("]\n");
+    ss << "]\n";
+    SLANG_DEBUG(ss.str());
 } // printMainStack()
 
 void slang::SlangTranslationUnit::pushToMainStack(const Stmt *stmt) {
@@ -250,6 +252,8 @@ void slang::SlangTranslationUnit::dumpSlangIr() {
     dumpFooter(ss);
 
     //TODO: print the content to a file.
+    std::string fileName = this->fileName + ".slang";
+    Util::writeToFile(fileName, ss.str());
     llvm::errs() << ss.str();
 } // dumpSlangIr()
 
@@ -281,7 +285,7 @@ void slang::SlangTranslationUnit::dumpVariables(std::stringstream& ss) {
     ss << NBSP2 << "allVars = {\n";
     for (const auto& var: varMap) {
         ss << NBSP4;
-        ss << "\"" << var.second.name << "\":"
+        ss << "\"" << var.second.name << "\": "
                    << var.second.typeStr << ",\n";
     }
     ss << NBSP2 << "}, # end allVars dict\n\n";
@@ -290,7 +294,7 @@ void slang::SlangTranslationUnit::dumpVariables(std::stringstream& ss) {
 void slang::SlangTranslationUnit::dumpObjs(std::stringstream& ss) {
     ss << NBSP2 << "allObjs = {\n";
     dumpFunctions(ss);
-    ss << "}, # end allObjs dict\n";
+    ss << NBSP2 << "}, # end allObjs dict\n";
 }
 
 void slang::SlangTranslationUnit::dumpFunctions(std::stringstream& ss) {
@@ -305,7 +309,7 @@ void slang::SlangTranslationUnit::dumpFunctions(std::stringstream& ss) {
         ss << NBSP8 << "paramsNames = [";
         prefix = "";
         for (std::string& paramName: slangFunc.second.paramNames) {
-            ss << prefix << paramName;
+            ss << prefix << "\"" << paramName << "\"";
             if (prefix.size() == 0) {
                 prefix = ", ";
             }
