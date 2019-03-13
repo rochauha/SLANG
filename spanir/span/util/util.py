@@ -12,13 +12,13 @@ from io import StringIO
 import logging
 _log = logging.getLogger(__name__)
 
-global_counter: int = 0
+globalCounter: int = 0
 NAME_SEP = ":"
 
 # An custom Assertion Switch.
 # Note: Set to False once the system is production ready.
-#AS = True
-AS = False
+AS = True
+#AS = False
 
 def create_dir(dirpath, exist_ok=True):
   """Creates dir. Relative paths use current directory.
@@ -47,17 +47,17 @@ def create_dir(dirpath, exist_ok=True):
 
 def simplifyName(name: str):
   """Given a name 'v:main:b' it returns just 'b'"""
-  names = name.split(NAME_SEP)
-  return names[-1]
+  return name.split(NAME_SEP)[-1]
 
 def getUniqueId() -> int:
   """Returns a unique integer id (increments by 1)."""
   # use of simple function and a global var is runtime efficient.
-  global global_counter
-  global_counter += 1
-  return global_counter
+  global globalCounter
+  globalCounter += 1
+  return globalCounter
 
 def getFileContent(fileName: str) -> str:
+  """Returns the complete content of the given file."""
   sio = StringIO()
   with open(fileName) as f:
     return f.read()

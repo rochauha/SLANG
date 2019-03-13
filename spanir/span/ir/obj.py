@@ -7,12 +7,12 @@
 
 import logging
 _log = logging.getLogger(__name__)
-from typing import List, Dict, Tuple, Optional
+from typing import List, Dict, Tuple, Optional, Set
 
 from span.util.logger import LS
 from span.ir.types import StructNameT, UnionNameT, FieldNameT, FuncNameT, VarNameT,\
   EdgeLabelT, BasicBlockId, Void,\
-  Type, FuncSig, StructSig, UnionSig
+  Type, FuncSig, StructSig, UnionSig, Loc
 from span.ir.instr import InstrIT
 
 # object names: var name, func name, struct name, union name.
@@ -55,17 +55,20 @@ class Func (ObjT):
                paramNames: Optional[List[VarNameT]] = None,
                returnType: Type = Void,
                paramTypes: Optional[List[Type]] = None,
+               variadic: bool = False,
                basicBlocks: Optional[Dict[BasicBlockId, List[InstrIT]]] = None,
-               bbEdges: Optional[List[Tuple[BasicBlockId, BasicBlockId, EdgeLabelT]]] =
+               bbEdges: Optional[Set[Tuple[BasicBlockId, BasicBlockId, EdgeLabelT]]] =
                None,
-               loc: int = 0, # location
+               loc: Optional[Loc] = None
   ) -> None:
     self.name = name
     self.paramNames = paramNames
-    self.sig = FuncSig(returnType, paramTypes)
+    self.sig = FuncSig(returnType, paramTypes, variadic)
     self.basicBlocks = basicBlocks if basicBlocks else dict()
     self.bbEdges = bbEdges if bbEdges else []
     self.loc = loc
+
+  def hasBody(self) -> bool: return bool(self.basicBlocks)
 
   def __eq__(self,
              other: 'Func'

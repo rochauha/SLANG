@@ -17,11 +17,11 @@ irTUnit.TUnit(
   allVars = {
     "v:main:t.3": types.Int,
     "v:main:t.2": types.Int,
-    "v:main:t.1": types.Int,
     "v:printf:__format": types.Ptr(to=types.Char),
     "v:main:argv": types.Ptr(to=types.Ptr(to=types.Char)),
     "v:main:argc": types.Int,
     "v:main:i": types.Int,
+    "v:main:t.1": types.Int,
     "v:printMe:str": types.Ptr(to=types.Char),
     "v:main:f": types.Float,
   }, # end allVars dict
@@ -46,8 +46,8 @@ irTUnit.TUnit(
           ],
 
           1: [
-            instr.CallI(expr.CallE("f:printf", [expr.VarE("v:printMe:str")])),
-            instr.ReturnI(expr.LitE(2.0)),
+            instr.CallI(expr.CallE("f:printf", [expr.VarE("v:printMe:str", Loc(5,10))], Loc(5,3))),
+            instr.ReturnI(expr.LitE(2.0, Loc(6,10)), Loc(6,3)),
           ],
 
         }, # basicBlocks end.
@@ -69,28 +69,28 @@ irTUnit.TUnit(
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
           8: [
-            instr.AssignI(expr.VarE("v:main:i"), expr.LitE(20)),
+            instr.AssignI(expr.VarE("v:main:i", Loc(21,7)), expr.LitE(20, Loc(21,11)), Loc(21,7)),
           ],
 
           7: [
-            instr.AssignI(expr.VarE("v:main:i"), expr.BinaryE(expr.VarE("v:main:i"), op.BO_ADD, expr.LitE(21))),
+            instr.AssignI(expr.VarE("v:main:i", Loc(24,7)), expr.BinaryE(expr.VarE("v:main:i", Loc(24,11)), op.BO_ADD, expr.LitE(21, Loc(24,15))), Loc(24,7)),
           ],
 
           6: [
-            instr.AssignI(expr.VarE("v:main:i"), expr.BinaryE(expr.VarE("v:main:i"), op.BO_MUL, expr.LitE(3))),
+            instr.AssignI(expr.VarE("v:main:i", Loc(26,7)), expr.BinaryE(expr.VarE("v:main:i", Loc(26,11)), op.BO_MUL, expr.LitE(3, Loc(26,15))), Loc(26,7)),
           ],
 
           5: [
-            instr.AssignI(expr.VarE("v:main:i"), expr.VarE("v:main:i")),
+            instr.AssignI(expr.VarE("v:main:i", Loc(28,7)), expr.VarE("v:main:i", Loc(28,11)), Loc(28,7)),
           ],
 
           11: [
-            instr.AssignI(expr.VarE("v:main:t.3"), expr.BinaryE(expr.VarE("v:main:i"), op.BO_EQ, expr.LitE(10))),
-            instr.CondI(expr.VarE("v:main:t.3")),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(27,5)), expr.BinaryE(expr.VarE("v:main:i", Loc(19,10)), op.BO_EQ, expr.LitE(10, Loc(20,10)), ), ),
+            instr.CondI(expr.VarE("v:main:t.3", Loc(27,5)), ),
           ],
 
           1: [
-            instr.ReturnI(expr.LitE(0)),
+            instr.ReturnI(expr.LitE(0, Loc(37,10)), Loc(37,3)),
           ],
 
           -1: [
@@ -107,24 +107,24 @@ irTUnit.TUnit(
 
           3: [
             instr.CallI(expr.CallE("f:printf", [expr.LitE("""Hello default
-""")])),
+""", Loc(34,14))], Loc(34,7))),
           ],
 
           10: [
-            instr.AssignI(expr.VarE("v:main:t.2"), expr.BinaryE(expr.VarE("v:main:i"), op.BO_EQ, expr.LitE(20))),
-            instr.CondI(expr.VarE("v:main:t.2")),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(25,5)), expr.BinaryE(expr.VarE("v:main:i", Loc(19,10)), op.BO_EQ, expr.LitE(20, Loc(25,10)), ), ),
+            instr.CondI(expr.VarE("v:main:t.2", Loc(25,5)), ),
           ],
 
           4: [
-            instr.AssignI(expr.VarE("v:main:i"), expr.LitE(10)),
+            instr.AssignI(expr.VarE("v:main:i", Loc(11,3)), expr.LitE(10, Loc(11,11)), Loc(11,3)),
             instr.CallI(expr.CallE("f:printf", [expr.LitE("""Hello, World %d %d
-"""), expr.VarE("v:main:i"), expr.LitE(10)])),
-            instr.AssignI(expr.VarE("v:main:f"), expr.CallE("f:printMe", [expr.LitE("""Hello
-""")])),
-            instr.AssignI(expr.VarE("v:main:f"), expr.LitE(2.345600)),
-            instr.AssignI(expr.VarE("v:main:i"), expr.BinaryE(expr.LitE(22), op.BO_ADD, expr.LitE(33))),
-            instr.AssignI(expr.VarE("v:main:t.1"), expr.BinaryE(expr.VarE("v:main:i"), op.BO_EQ, expr.LitE(30))),
-            instr.CondI(expr.VarE("v:main:t.1")),
+""", Loc(13,10)), expr.VarE("v:main:i", Loc(13,35)), expr.LitE(10, Loc(13,39))], Loc(13,3))),
+            instr.AssignI(expr.VarE("v:main:f", Loc(15,3)), expr.CallE("f:printMe", [expr.LitE("""Hello
+""", Loc(15,15))], Loc(15,7)), Loc(15,3)),
+            instr.AssignI(expr.VarE("v:main:f", Loc(16,3)), expr.LitE(2.345600, Loc(16,7)), Loc(16,3)),
+            instr.AssignI(expr.VarE("v:main:i", Loc(18,3)), expr.BinaryE(expr.LitE(22, Loc(18,7)), op.BO_ADD, expr.LitE(33, Loc(18,12))), Loc(18,3)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(20,5)), expr.BinaryE(expr.VarE("v:main:i", Loc(19,10)), op.BO_EQ, expr.LitE(30, Loc(27,10)), ), ),
+            instr.CondI(expr.VarE("v:main:t.1", Loc(20,5)), ),
           ],
 
         }, # basicBlocks end.
