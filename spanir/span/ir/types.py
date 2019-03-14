@@ -444,9 +444,7 @@ class UnionSig(Type):
     return hsh
 
 class Loc(AnyT):
-  """
-  Location type : line, col.
-  """
+  """ Location type : line, col. """
   def __init__(self,
                line: int = 0,
                col: int = 0

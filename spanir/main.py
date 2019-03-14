@@ -30,6 +30,7 @@ if __name__ == "__main__":
 
 import span.ir.op as op
 import span.ir.types as types
+from span.ir.types import Loc
 import span.ir.expr as expr
 import span.ir.instr as instr
 import span.ir.obj as obj
