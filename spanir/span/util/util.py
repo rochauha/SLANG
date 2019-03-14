@@ -56,10 +56,21 @@ def getUniqueId() -> int:
   globalCounter += 1
   return globalCounter
 
-def getFileContent(fileName: str) -> str:
+def readFromFile(fileName: str) -> str:
   """Returns the complete content of the given file."""
   sio = StringIO()
   with open(fileName) as f:
     return f.read()
+
+def writeToFile(fileName: str, content: str):
+  """Writes content to the given file."""
+  with open(fileName, "w") as f:
+    f.write(content)
+  return None
+
+def appendToFile(fileName: str, content: str):
+  """Writes content to the given file."""
+  with open(fileName, "a") as f:
+    f.write(content)
   return None
 
