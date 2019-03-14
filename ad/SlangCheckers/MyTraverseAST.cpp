@@ -126,7 +126,10 @@ void MyTraverseAST::handleBb(const CFGBlock *bb, const CFG *cfg) const {
     for (CFGBlock::const_pred_iterator I = bb->pred_begin();
          I != bb->pred_end(); ++I) {
         CFGBlock *pred = *I;
-        llvm::errs() << "BB" << pred->getBlockID() << ", ";
+        llvm::errs() << "|";
+        if (pred) {
+            llvm::errs() << "BB" << pred->getBlockID() << ", ";
+        }
     }
     llvm::errs() << "\n";
 
@@ -135,7 +138,10 @@ void MyTraverseAST::handleBb(const CFGBlock *bb, const CFG *cfg) const {
     for (CFGBlock::const_succ_iterator I = bb->succ_begin();
          I != bb->succ_end(); ++I) {
         CFGBlock *succ = *I;
-        llvm::errs() << "BB" << succ->getBlockID() << ", ";
+        llvm::errs() << "|";
+        if (succ) {
+            llvm::errs() << "BB" << succ->getBlockID() << ", ";
+        }
     }
     llvm::errs() << "\n";
     llvm::errs() << "\n";

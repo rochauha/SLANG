@@ -85,14 +85,16 @@ namespace {
         SlangExpr convertIntegerLiteral(const IntegerLiteral *IL) const;
         SlangExpr convertFloatingLiteral(const FloatingLiteral *fl) const;
         SlangExpr convertStringLiteral(const StringLiteral *sl) const;
-        // a function, if stmt, *y on lhs, arr[i] on lhs are examples of a compound_receiver.
+        // a function, if stmt, *y on lhs, arr[i] on lhs
+        // are examples of a compound_receiver.
         SlangExpr convertExpr(bool compound_receiver) const;
         SlangExpr convertDeclRefExpr(const DeclRefExpr *dre) const;
         SlangExpr convertVarDecl(const VarDecl *varDecl, std::string& locStr) const;
         SlangExpr convertUnaryOp(const UnaryOperator *unOp, bool compound_receiver) const;
         SlangExpr convertUnaryIncDec(const UnaryOperator *unOp, bool compound_receiver) const;
         SlangExpr convertBinaryOp(const BinaryOperator *binOp, bool compound_receiver) const;
-        SlangExpr convertEnumConst(const EnumConstantDecl* ecd, uint64_t locId) const;
+        SlangExpr convertEnumConst(const EnumConstantDecl* ecd,
+                std::string& locStr) const;
         SlangExpr convertCallExpr(const CallExpr *callExpr,
                 bool compound_receiver) const;
         void adjustDirtyVar(SlangExpr& slangExpr, std::string& locStr) const;
@@ -107,8 +109,10 @@ namespace {
         bool isTopLevel(const Stmt* stmt) const;
         uint64_t getLocationId(const Stmt *stmt) const;
         std::string getLocationString(const Stmt *stmt) const;
-        StmtVector getCaseExprElements(const CaseStmt *caseStmt) const;
         void getCaseExprElements(StmtVector& stmts, const Stmt *stmt) const;
+        void getCaseExpr(std::vector<StmtVector>& stmtVecVec,
+                         std::vector<std::string>& locStrs,
+                         const CaseStmt *caseStmt) const;
 
     }; // class SlangGenChecker
 } // anonymous namespace
@@ -471,7 +475,12 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switchStmt) const {
     llvm::errs() << "successor ids : ";
     for (CFGBlock::const_succ_iterator I = stu.getCurrBb()->succ_begin();
          I != stu.getCurrBb()->succ_end(); ++I) {
-        succIds.push_back((*I)->getBlockID());
+        CFGBlock *succ = *I;
+        if (succ) {
+            succIds.push_back(succ->getBlockID());
+        } else {
+            succIds.push_back(0); // succ is nullptr sometimes (weird)
+        }
     }
     llvm::errs() << "\n";
 
@@ -482,15 +491,15 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switchStmt) const {
         return;
     }
 
-    // Get full expressions used in all case stmts in Clang-style order
+    // Get full expressions used in all case stmts in Clang-style order.
     std::vector<StmtVector> stmtVecVec;
     std::vector<std::string> locStrs;
+
+    // Get all case statements inside switch.
     const CompoundStmt *body = cast<CompoundStmt>(switchStmt->getBody());
     for (auto it = body->body_begin(); it != body->body_end(); ++it) {
         if (isa<CaseStmt>(*it)) {
-            StmtVector stmtVec = getCaseExprElements(cast<CaseStmt>(*it));
-            stmtVecVec.push_back(stmtVec);
-            locStrs.push_back(getLocationString(*it));
+            getCaseExpr(stmtVecVec, locStrs, cast<CaseStmt>(*it));
         }
     }
     llvm::errs() << "#new blocks = " << stmtVecVec.size() << "\n";
@@ -502,9 +511,12 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switchStmt) const {
     uint32_t index = 0;
     std::string locStr;
     // reverse iterating to correct the order
-    for (auto stmtVecPtr = stmtVecVec.end() - 1;
-            stmtVecPtr != stmtVecVec.begin() - 1;
-            --stmtVecPtr, ++index) {
+    //for (auto stmtVecPtr = stmtVecVec.end() - 1;
+    //        stmtVecPtr != stmtVecVec.begin() - 1;
+    //        --stmtVecPtr, ++index) {
+    for (auto stmtVecPtr = stmtVecVec.begin();
+            stmtVecPtr != stmtVecVec.end();
+            ++stmtVecPtr, ++index) {
         ss.str(""); // clear the stream
 
         // convert case expression
@@ -784,10 +796,11 @@ void SlangGenChecker::adjustDirtyVar(SlangExpr& slangExpr,
     }
 }
 
-SlangExpr SlangGenChecker::convertEnumConst(const EnumConstantDecl* ecd, uint64_t locId) const {
+SlangExpr SlangGenChecker::convertEnumConst(const EnumConstantDecl* ecd,
+        std::string& locStr) const {
     std::stringstream ss;
     ss << "expr.LitE(" << (ecd->getInitVal()).toString(10);
-    ss << ", " << locId << ")";
+    ss << ", " << locStr << ")";
     return SlangExpr(ss.str(), false, QualType());
 }
 
@@ -993,7 +1006,7 @@ SlangExpr SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
         return slangExpr;
     } else if (isa<EnumConstantDecl>(valueDecl)) {
         auto ecd = cast<EnumConstantDecl>(valueDecl);
-        return convertEnumConst(ecd, getLocationId(dre));
+        return convertEnumConst(ecd, locStr);
     } else {
         SLANG_ERROR("Not_a_VarDecl.")
         return SlangExpr("ERROR:convertDeclRefExpr", false, QualType());
@@ -1022,6 +1035,27 @@ std::string SlangGenChecker::convertClangType(QualType qt) const {
         QualType pqt = type->getPointeeType();
         ss << convertClangType(pqt);
         ss << ")";
+    } else if(type->isStructureType()) {
+        const RecordType *recordType = type->getAsStructureType();
+        const RecordDecl *recordDecl = recordType->getDecl();
+        if (recordDecl->isAnonymousStructOrUnion()) {
+            // generate a types.SturctSig object
+            ss << "anonymous";
+        }
+        ss << "types.Struct(" << recordDecl->getNameAsString();
+        for (auto it = recordDecl->field_begin();
+                it != recordDecl->field_end(); ++it) {
+            ss << "Field: " << (*it)->getNameAsString() << ", ";
+            ss << convertClangType((*it)->getType());
+        }
+    } else if(type->isUnionType()) {
+        // const RecordType *recordType = type->getAsUnionType();
+        // const RecordDecl *recordDecl = recordType->getDecl();
+        ss << "UnionType";
+    } else if(type->isFunctionPointerType()) {
+        ss << "FuncPointer";
+    } else if(type->isArrayType()) {
+        ss << "ArrayType";
     } else {
         ss << "UnknownType.";
     }
@@ -1033,13 +1067,25 @@ std::string SlangGenChecker::convertClangType(QualType qt) const {
 
 //BOUND START: helper_functions
 
-// Return vector of Stmts in clang's traversal order.
-StmtVector SlangGenChecker::getCaseExprElements(const CaseStmt *caseStmt) const {
-    const Expr *condition = cast<Expr>(*(caseStmt->child_begin()));
+// get all case statements recursively (case stmts can be hierarchical)
+void SlangGenChecker::getCaseExpr(
+        std::vector<StmtVector>& stmtVecVec,
+        std::vector<std::string>& locStrs,
+        const CaseStmt *caseStmt) const {
     StmtVector stmts;
+    std::string locStr = getLocationString(caseStmt);
+    const Expr *condition = cast<Expr>(*(caseStmt->child_begin()));
+
     getCaseExprElements(stmts, condition);
-    return stmts;
-} // getCaseExprElements()
+    stmtVecVec.push_back(stmts);
+    locStrs.push_back(locStr);
+
+    for (auto it = caseStmt->child_begin(); it != caseStmt->child_end(); ++it) {
+        if ((*it) && isa<CaseStmt>(*it)) {
+            getCaseExpr(stmtVecVec, locStrs, cast<CaseStmt>(*it));
+        }
+    }
+}
 
 // Store elements in stmts, to make a new basic block for CaseStmt
 void SlangGenChecker::getCaseExprElements(StmtVector& stmts, const Stmt *stmt) const {
