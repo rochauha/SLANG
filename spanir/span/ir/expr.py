@@ -155,7 +155,11 @@ class LitE(UnitET):
       return False
     return True
 
-  def __str__(self): return f"{self.val}"
+  def __str__(self):
+    if isinstance(self.val, str):
+      escaped = self.val.encode('unicode_escape')
+      return f"{escaped}"
+    return f"{self.val}"
 
   def __repr__(self): return self.__str__()
 
@@ -260,8 +264,8 @@ class CallE(ExprET):
     return True
 
   def __str__(self):
-    args = [arg.split(":")[-1] for arg in self.args]
-    expr = args.join(".")
+    args = [str(arg) for arg in self.args]
+    expr = ",".join(args)
     return f"{self.callee}({expr})]"
 
   def __repr__(self): return self.__str__()
