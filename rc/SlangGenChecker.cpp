@@ -557,6 +557,15 @@ std::string TraversedInfoBuffer::convertClangType(QualType qt) {
         } else {
             ss << "UnknownBuiltinType.";
         }
+    } else if (type->isFunctionPointerType()) {
+        ss << "types.Ptr(to=funcSig(";
+        QualType func_ptr_qt = type->getPointeeType();
+        const FunctionProtoType *func_proto = cast<FunctionProtoType>(func_ptr_qt.getTypePtr());
+        ss << convertClangType(func_proto->getReturnType()) << ", ";
+        for (const QualType param_qual_type : func_proto->param_types()) {
+            ss << convertClangType(param_qual_type) << ", ";
+        }
+        ss << ")";
     } else if (type->isPointerType()) {
         ss << "types.Ptr(to=";
         QualType pqt = type->getPointeeType();
