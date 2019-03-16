@@ -1667,8 +1667,19 @@ SpanExpr SlangGenChecker::convertUnaryOp(const UnaryOperator *unOp, bool compoun
         op = "op.Minus";
         break;
     }
+
     case UO_Plus: {
         op = "op.Plus";
+        break;
+    }
+
+    case UO_Not: {
+        op = "op.Not";
+        break;
+    }
+
+    case UO_LNot: {
+        op = "op.LNot";
         break;
     }
     }
