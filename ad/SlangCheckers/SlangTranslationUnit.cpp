@@ -252,7 +252,7 @@ void slang::SlangTranslationUnit::dumpSlangIr() {
     dumpFooter(ss);
 
     //TODO: print the content to a file.
-    std::string fileName = this->fileName + ".slang";
+    std::string fileName = this->fileName + ".spanir";
     Util::writeToFile(fileName, ss.str());
     llvm::errs() << ss.str();
 } // dumpSlangIr()
@@ -306,7 +306,7 @@ void slang::SlangTranslationUnit::dumpFunctions(std::stringstream& ss) {
 
         // fields
         ss << NBSP8 << "name = " << "\"" << slangFunc.second.fullName << "\",\n";
-        ss << NBSP8 << "paramsNames = [";
+        ss << NBSP8 << "paramNames = [";
         prefix = "";
         for (std::string& paramName: slangFunc.second.paramNames) {
             ss << prefix << "\"" << paramName << "\"";
@@ -314,7 +314,7 @@ void slang::SlangTranslationUnit::dumpFunctions(std::stringstream& ss) {
                 prefix = ", ";
             }
         }
-        ss << "]\n";
+        ss << "],\n";
         ss << NBSP8 << "variadic = "
            << (slangFunc.second.variadic? "True" : "False") << ",\n";
 

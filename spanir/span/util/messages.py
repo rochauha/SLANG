@@ -6,10 +6,13 @@
 """Project wide messages.."""
 
 CONTROL_HERE_ERROR = "Control should not reach here."
-START_BB_ID_NOT_1 = "Start BB id is not 1 in the given input Dict[BasicBlockId, BB]."
-END_BB_ID_NOT_MINUS_1 = (
-  "End BB id is not -1 in the given input Dict[BasicBlockId, BB]."
-  " This is required if BB count is greater than one."
+START_BB_ID_NOT_MINUS_ONE = (
+  "Start BB id is not -1 in the given input Dict["
+  "BasicBlockId, BB]."
+)
+END_BB_ID_NOT_ZERO = (
+  "End BB id is not 0 in the given input Dict[BasicBlockId, BB]."
+  "\nThis is required if BB count is greater than one."
 )
 
 PTR_INDLEV_INVALID = "Indirection level of pointer is less than 1!"

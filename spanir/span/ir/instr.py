@@ -10,7 +10,7 @@ TODO: complete the instruction type set.
 """
 import logging
 _log = logging.getLogger(__name__)
-from typing import List, Set
+from typing import Set, Optional
 
 from span.util.logger import LS
 import span.ir.expr as expr
@@ -49,11 +49,12 @@ class InstrIT(types.AnyT):
   """Base type for all instructions."""
   def __init__(self,
                instrCode: InstrCodeT,
+               loc: Optional[types.Loc] = None
   ) -> None:
     if self.__class__.__name__.endswith("T"): super().__init__()
     self.type = types.Void  #default
     self.instrCode = instrCode
-    self.loc: SourceLocationT = 0  # set in universe module
+    self.loc = loc # set in universe module
 
   def isNopInstr(self): return self.instrCode == NOP_INSTR_IC
 
@@ -72,9 +73,10 @@ class AssignI(InstrIT):
   """Assignment statement."""
   def __init__(self,
                lhs: expr.ExprET,
-               rhs: expr.ExprET
+               rhs: expr.ExprET,
+               loc: Optional[types.Loc] = None
   ) -> None:
-    super().__init__(ASSIGN_INSTR_IC)
+    super().__init__(ASSIGN_INSTR_IC, loc)
     self.lhs = lhs
     self.rhs = rhs
 
@@ -100,8 +102,9 @@ class CondI(InstrIT):
   """A conditional instruction."""
   def __init__(self,
                arg: expr.UnitET,
+               loc: Optional[types.Loc] = None
   ) -> None:
-    super().__init__(COND_INSTR_IC)
+    super().__init__(COND_INSTR_IC, loc)
     self.arg = arg
 
   def __eq__(self,
@@ -116,14 +119,16 @@ class CondI(InstrIT):
     return True
 
   def __str__(self):
-    return f"if {self.arg}"
+    return f"if ({self.arg})"
 
   def __repr__(self): return self.__str__()
 
 class GotoI(InstrIT):
   """An unconditional jump (goto) instruction."""
-  def __init__(self) -> None:
-    super().__init__(GOTO_INSTR_IC)
+  def __init__(self,
+               loc: Optional[types.Loc] = None
+  ) -> None:
+    super().__init__(GOTO_INSTR_IC, loc)
 
   def __eq__(self, other: 'GotoI'):
     if not isinstance(other, GotoI):
@@ -136,9 +141,10 @@ class GotoI(InstrIT):
 class ReturnI(InstrIT):
   """Return statement."""
   def __init__(self,
-               arg: expr.UnitET
+               arg: expr.UnitET,
+               loc: Optional[types.Loc] = None
   ) -> None:
-    super().__init__(RETURN_INSTR_IC)
+    super().__init__(RETURN_INSTR_IC, loc)
     self.arg = arg
 
   def __eq__(self,
@@ -157,9 +163,10 @@ class ReturnI(InstrIT):
 class CallI(InstrIT):
   """Call statement."""
   def __init__(self,
-               arg: expr.CallE
+               arg: expr.CallE,
+               loc: Optional[types.Loc] = None
   ) -> None:
-    super().__init__(CALL_INSTR_IC)
+    super().__init__(CALL_INSTR_IC, loc)
     self.arg = arg
 
   def __eq__(self,
@@ -173,7 +180,7 @@ class CallI(InstrIT):
       return False
     return True
 
-  def __str__(self): return f"return {self.arg}"
+  def __str__(self): return f"{self.arg}"
 
 ################################################
 #BOUND START: Special_Instructions
@@ -184,9 +191,10 @@ class CallI(InstrIT):
 class UseI(InstrIT):
   """Value of the variable is read (ReadI)."""
   def __init__(self,
-               vars: Set[expr.VarE]
+               vars: Set[expr.VarE],
+               loc: Optional[types.Loc] = None
   ) -> None:
-    super().__init__(USE_INSTR_IC)
+    super().__init__(USE_INSTR_IC, loc)
     self.vars: Set[expr.VarE] = vars
 
   def __eq__(self,
@@ -200,7 +208,7 @@ class UseI(InstrIT):
       return False
     return True
 
-  def __str__(self): return f"UseI({self.vars})"
+  def __str__(self): return f"use({self.vars})"
 
   def __repr__(self): return self.__str__()
 
@@ -210,9 +218,10 @@ class ExReadI(InstrIT):
   All other vars are considered unread before this instruction.
   """
   def __init__(self,
-               vars: Set[expr.VarE]
+               vars: Set[expr.VarE],
+               loc: Optional[types.Loc] = None
   ) -> None:
-    super().__init__(EX_READ_INSTR_IC)
+    super().__init__(EX_READ_INSTR_IC, loc)
     self.vars: Set[expr.VarE] = vars
 
   def __eq__(self,
@@ -226,7 +235,7 @@ class ExReadI(InstrIT):
       return False
     return True
 
-  def __str__(self): return f"ExReadI({self.vars})"
+  def __str__(self): return f"exRead({self.vars})"
 
   def __repr__(self): return self.__str__()
 
@@ -238,9 +247,10 @@ class CondReadI(InstrIT):
   """
   def __init__(self,
                lhs: expr.VarE,
-               rhs: Set[expr.VarE]
+               rhs: Set[expr.VarE],
+               loc: Optional[types.Loc] = None
   ) -> None:
-    super().__init__(COND_READ_INSTR_IC)
+    super().__init__(COND_READ_INSTR_IC, loc)
     self.lhs = lhs
     self.rhs = rhs
 
@@ -258,7 +268,7 @@ class CondReadI(InstrIT):
       return False
     return True
 
-  def __str__(self): return f"CondReadI({self.lhs}, {self.rhs})"
+  def __str__(self): return f"condRead({self.lhs}, {self.rhs})"
 
   def __repr__(self): return self.__str__()
 
@@ -266,8 +276,9 @@ class LiveI(InstrIT):
   """Set of vars live at this program point."""
   def __init__(self,
                vars: Set[expr.VarE] = None,
+               loc: Optional[types.Loc] = None
   ) -> None:
-    super().__init__(FILTER_INSTR_IC)
+    super().__init__(FILTER_INSTR_IC, loc)
     self.vars = vars if vars is not None else set()
 
   def __eq__(self,
@@ -281,16 +292,17 @@ class LiveI(InstrIT):
       return False
     return True
 
-  def __str__(self): return f"LiveI({self.vars})"
+  def __str__(self): return f"live({self.vars})"
 
   def __repr__(self): return self.__str__()
 
 class UnDefValI(InstrIT):
   """Variable takes a user input, i.e. an unknown/undefined value."""
   def __init__(self,
-               lhs: expr.VarE # deliberately named lhs
+               lhs: expr.VarE, # deliberately named lhs
+               loc: Optional[types.Loc] = None
   ) -> None:
-    super().__init__(UNDEF_VAL_INSTR_IC)
+    super().__init__(UNDEF_VAL_INSTR_IC, loc)
     self.lhs: expr.VarE = lhs # deliberately named lhs
 
   def __eq__(self,
@@ -304,7 +316,7 @@ class UnDefValI(InstrIT):
       return False
     return True
 
-  def __str__(self): return f"InputI({self.lhs})"
+  def __str__(self): return f"input({self.lhs})"
 
   def __repr__(self): return self.__str__()
 
@@ -324,7 +336,7 @@ class BlockInfoI(InstrIT):
       return False
     return True
 
-  def __str__(self): return f"BlockInfoI()"
+  def __str__(self): return f"block()"
 
   def __repr__(self): return self.__str__()
 
@@ -333,7 +345,10 @@ class NopI(InstrIT):
 
   For EmptyI, Host calls the identity transfer function of an analysis.
   """
-  def __init__(self) -> None: super().__init__(NOP_INSTR_IC)
+  def __init__(self,
+               loc: Optional[types.Loc] = None
+  ) -> None:
+    super().__init__(NOP_INSTR_IC, loc)
 
   def __eq__(self,
              other: 'NopI'
@@ -343,7 +358,7 @@ class NopI(InstrIT):
       return False
     return True
 
-  def __str__(self): return "NopI()"
+  def __str__(self): return "nop()"
 
   def __repr__(self): return self.__str__()
 

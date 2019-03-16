@@ -5,3 +5,7 @@ a.out
 *.swp
 *.bc
 *.ll
+
+*.spanir
+*.node.dot
+*.bb.dot

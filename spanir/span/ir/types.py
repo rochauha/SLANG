@@ -31,6 +31,7 @@ OpSymbolT = str
 OpNameT = str
 
 NumericT = TypeVar('NumericT', int, float)
+LitT = TypeVar('LitT', int, float, str)
 
 CfgNodeId = int
 BasicBlockId = int
@@ -296,11 +297,13 @@ class FuncSig(Type):
   """A function signature."""
   def __init__(self,
                returnType: Type,
-               paramTypes: List[Type]
+               paramTypes: List[Type],
+               variadic: bool = False
   ) -> None:
     super().__init__(FUNC_SIG_TC)
     self.returnType = returnType
     self.paramTypes = paramTypes
+    self.variadic = variadic
 
   def __eq__(self,
              other: 'FuncSig'
@@ -316,6 +319,9 @@ class FuncSig(Type):
       return False
     if not self.paramTypes == other.paramTypes:
       if LS: _log.warning("ParamTypes Differ: %s, %s", self, other)
+      return False
+    if not self.variadic == other.variadic:
+      if LS: _log.warning("Variadicness Differs: %s, %s", self, other)
       return False
     return True
 
@@ -437,3 +443,29 @@ class UnionSig(Type):
       increment += 19
     return hsh
 
+class Loc(AnyT):
+  """ Location type : line, col. """
+  def __init__(self,
+               line: int = 0,
+               col: int = 0
+  ) -> None:
+    self.line = line
+    self.col = col
+
+  def __eq__(self,
+             other: 'Loc'
+  ) -> bool:
+    if not isinstance(other, Loc):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.line == other.line:
+      if LS: _log.warning("LineNum Differs: %s, %s", self, other)
+      return False
+    if not self.col == other.col:
+      if LS: _log.warning("ColNum Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __str__(self): return f"Loc({self.line},{self.col})"
+
+  def __repr__(self): return self.__str__()

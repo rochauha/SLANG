@@ -1,0 +1,984 @@
+
+  14-03-2019 18:46:42: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:checkASTCodeBody():128:
+BOUND START: SLANG_Generated_Output.
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleFunction():168:
+AddingFunction: printMe
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():369:
+NEW_VAR: "v:printMe:str": types.Ptr(to=types.Char),
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleBbInfo():217:
+BB0
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleBbInfo():222:
+EXIT BB
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleBbInfo():217:
+BB1
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclRefExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleFunction():168:
+AddingFunction: printf
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():369:
+NEW_VAR: "v:printf:__format": types.Ptr(to=types.Char),
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclRefExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():371:
+SEEN_VAR: "v:printMe:str": types.Ptr(to=types.Char),
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: CallExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: IntegerLiteral
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():307:
+SLANG: DEFAULT: Pushed to stack: IntegerLiteralIntegerLiteral 0x5602fd6b6228 'int' 2
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ReturnStmt
+  14-03-2019 18:46:42: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:convertIntegerLiteral():674:
+expr.LitE(2.0, Loc(6,10))
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleBbInfo():217:
+BB-1
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleBbInfo():220:
+ENTRY BB
+  14-03-2019 18:46:42: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:checkASTCodeBody():128:
+BOUND START: SLANG_Generated_Output.
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleFunction():168:
+AddingFunction: main
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():369:
+NEW_VAR: "v:main:argc": types.Int,
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():369:
+NEW_VAR: "v:main:argv": types.Ptr(to=types.Ptr(to=types.Char)),
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleBbInfo():217:
+BB0
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleBbInfo():222:
+EXIT BB
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleBbInfo():217:
+BB1
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: IntegerLiteral
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():307:
+SLANG: DEFAULT: Pushed to stack: IntegerLiteralIntegerLiteral 0x5602fd6b8270 'int' 0
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ReturnStmt
+  14-03-2019 18:46:42: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:convertIntegerLiteral():674:
+expr.LitE(0, Loc(37,10))
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleBbInfo():213:
+BB2. Has switch terminator.
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclRefExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():369:
+NEW_VAR: "v:main:i": types.Int,
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: SwitchStmtSwitchStmt 0x5602fd6b8130
+|-<<<NULL>>>
+|-<<<NULL>>>
+|-ImplicitCastExpr 0x5602fd6b8118 'int' <LValueToRValue>
+| `-DeclRefExpr 0x5602fd6b80f0 'int' lvalue Var 0x5602fd6b64d0 'i' 'int'
+`-CompoundStmt 0x5602fd6b8258
+  `-DefaultStmt 0x5602fd6b8238
+    `-CallExpr 0x5602fd6b81d8 'int'
+      |-ImplicitCastExpr 0x5602fd6b81c0 'int (*)(const char *, ...)' <FunctionToPointerDecay>
+      | `-DeclRefExpr 0x5602fd6b8160 'int (const char *, ...)' Function 0x5602fd6a70c8 'printf' 'int (const char *, ...)'
+      `-ImplicitCastExpr 0x5602fd6b8220 'const char *' <BitCast>
+        `-ImplicitCastExpr 0x5602fd6b8208 'char *' <ArrayToPointerDecay>
+          `-StringLiteral 0x5602fd6b8188 'char [15]' lvalue "Hello default\n"
+successor ids : 
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleBbInfo():217:
+BB3
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclRefExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: StringLiteral
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():307:
+SLANG: DEFAULT: Pushed to stack: StringLiteralStringLiteral 0x5602fd6b8188 'char [15]' lvalue "Hello default\n"
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: CallExpr
+  14-03-2019 18:46:42: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:convertStringLiteral():700:
+expr.LitE("""Hello default
+""", Loc(34,14))
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleBbInfo():213:
+BB4. Has switch terminator.
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: IntegerLiteral
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():307:
+SLANG: DEFAULT: Pushed to stack: IntegerLiteralIntegerLiteral 0x5602fd6b7770 'int' 10
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclStmt
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():371:
+SEEN_VAR: "v:main:i": types.Int,
+  14-03-2019 18:46:42: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:convertIntegerLiteral():674:
+expr.LitE(10, Loc(11,11))
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclStmt
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():369:
+NEW_VAR: "v:main:f": types.Float,
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclRefExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: StringLiteral
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():307:
+SLANG: DEFAULT: Pushed to stack: StringLiteralStringLiteral 0x5602fd6b7860 'char [20]' lvalue "Hello, World %d %d\n"
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclRefExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():371:
+SEEN_VAR: "v:main:i": types.Int,
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: IntegerLiteral
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():307:
+SLANG: DEFAULT: Pushed to stack: IntegerLiteralIntegerLiteral 0x5602fd6b78c8 'int' 10
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, DeclRefExpr, IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, DeclRefExpr, IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: CallExpr
+  14-03-2019 18:46:42: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:convertIntegerLiteral():674:
+expr.LitE(10, Loc(13,39))
+  14-03-2019 18:46:42: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:convertStringLiteral():700:
+expr.LitE("""Hello, World %d %d
+""", Loc(13,10))
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclRefExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: StringLiteral
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():307:
+SLANG: DEFAULT: Pushed to stack: StringLiteralStringLiteral 0x5602fd6b7a18 'char [7]' lvalue "Hello\n"
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: CallExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, CallExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, CallExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclRefExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():371:
+SEEN_VAR: "v:main:f": types.Float,
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, CallExpr, DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [StringLiteral, CallExpr, DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: BinaryOperator
+  14-03-2019 18:46:42: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:convertStringLiteral():700:
+expr.LitE("""Hello
+""", Loc(15,15))
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: FloatingLiteral
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():307:
+SLANG: DEFAULT: Pushed to stack: FloatingLiteralFloatingLiteral 0x5602fd6b7b40 'double' 2.345600e+00
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [FloatingLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [FloatingLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [FloatingLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [FloatingLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclRefExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():371:
+SEEN_VAR: "v:main:f": types.Float,
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [FloatingLiteral, DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [FloatingLiteral, DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: BinaryOperator
+  14-03-2019 18:46:42: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:convertFloatingLiteral():687:
+expr.LitE(2.345600, Loc(16,7))
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: IntegerLiteral
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():307:
+SLANG: DEFAULT: Pushed to stack: IntegerLiteralIntegerLiteral 0x5602fd6b7bc8 'int' 22
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: IntegerLiteral
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():307:
+SLANG: DEFAULT: Pushed to stack: IntegerLiteralIntegerLiteral 0x5602fd6b7be8 'int' 33
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: BinaryOperator
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, IntegerLiteral, BinaryOperator, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, IntegerLiteral, BinaryOperator, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclRefExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():371:
+SEEN_VAR: "v:main:i": types.Int,
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, IntegerLiteral, BinaryOperator, DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, IntegerLiteral, BinaryOperator, DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: BinaryOperator
+  14-03-2019 18:46:42: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:convertIntegerLiteral():674:
+expr.LitE(33, Loc(18,12))
+  14-03-2019 18:46:42: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:convertIntegerLiteral():674:
+expr.LitE(22, Loc(18,7))
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclRefExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():371:
+SEEN_VAR: "v:main:i": types.Int,
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: SwitchStmtSwitchStmt 0x5602fd6b7c98
+|-<<<NULL>>>
+|-<<<NULL>>>
+|-ImplicitCastExpr 0x5602fd6b7c80 'int' <LValueToRValue>
+| `-DeclRefExpr 0x5602fd6b7c58 'int' lvalue Var 0x5602fd6b64d0 'i' 'int'
+`-CompoundStmt 0x5602fd6b80b0
+  |-CaseStmt 0x5602fd6b7ce8
+  | |-IntegerLiteral 0x5602fd6b7cc8 'int' 10
+  | |-<<<NULL>>>
+  | `-BinaryOperator 0x5602fd6b7d68 'int' '='
+  |   |-DeclRefExpr 0x5602fd6b7d20 'int' lvalue Var 0x5602fd6b64d0 'i' 'int'
+  |   `-IntegerLiteral 0x5602fd6b7d48 'int' 20
+  |-BreakStmt 0x5602fd6b7d90
+  |-DefaultStmt 0x5602fd6b7e70
+  | `-BinaryOperator 0x5602fd6b7e48 'int' '='
+  |   |-DeclRefExpr 0x5602fd6b7d98 'int' lvalue Var 0x5602fd6b64d0 'i' 'int'
+  |   `-BinaryOperator 0x5602fd6b7e20 'int' '+'
+  |     |-ImplicitCastExpr 0x5602fd6b7e08 'int' <LValueToRValue>
+  |     | `-DeclRefExpr 0x5602fd6b7dc0 'int' lvalue Var 0x5602fd6b64d0 'i' 'int'
+  |     `-IntegerLiteral 0x5602fd6b7de8 'int' 21
+  |-CaseStmt 0x5602fd6b7eb0
+  | |-IntegerLiteral 0x5602fd6b7e90 'int' 20
+  | |-<<<NULL>>>
+  | `-BinaryOperator 0x5602fd6b7f98 'int' '='
+  |   |-DeclRefExpr 0x5602fd6b7ee8 'int' lvalue Var 0x5602fd6b64d0 'i' 'int'
+  |   `-BinaryOperator 0x5602fd6b7f70 'int' '*'
+  |     |-ImplicitCastExpr 0x5602fd6b7f58 'int' <LValueToRValue>
+  |     | `-DeclRefExpr 0x5602fd6b7f10 'int' lvalue Var 0x5602fd6b64d0 'i' 'int'
+  |     `-IntegerLiteral 0x5602fd6b7f38 'int' 3
+  |-CaseStmt 0x5602fd6b7fe0
+  | |-IntegerLiteral 0x5602fd6b7fc0 'int' 30
+  | |-<<<NULL>>>
+  | `-BinaryOperator 0x5602fd6b8080 'int' '='
+  |   |-DeclRefExpr 0x5602fd6b8018 'int' lvalue Var 0x5602fd6b64d0 'i' 'int'
+  |   `-ImplicitCastExpr 0x5602fd6b8068 'int' <LValueToRValue>
+  |     `-DeclRefExpr 0x5602fd6b8040 'int' lvalue Var 0x5602fd6b64d0 'i' 'int'
+  `-BreakStmt 0x5602fd6b80a8
+successor ids : 
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:getCaseExprElements():1157:
+Added CaseExprElement: IntegerLiteral
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:getCaseExprElements():1157:
+Added CaseExprElement: IntegerLiteral
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:getCaseExprElements():1157:
+Added CaseExprElement: IntegerLiteral#new blocks = 3
+
+  14-03-2019 18:46:42: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:convertIntegerLiteral():674:
+expr.LitE(10, Loc(20,10))
+  14-03-2019 18:46:42: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:convertIntegerLiteral():674:
+expr.LitE(20, Loc(25,10))
+  14-03-2019 18:46:42: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:convertIntegerLiteral():674:
+expr.LitE(30, Loc(27,10))
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleBbInfo():217:
+BB5
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclRefExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():371:
+SEEN_VAR: "v:main:i": types.Int,
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclRefExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():371:
+SEEN_VAR: "v:main:i": types.Int,
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: BinaryOperator
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: BreakStmt
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():307:
+SLANG: DEFAULT: Pushed to stack: BreakStmtBreakStmt 0x5602fd6b80a8
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [BreakStmt, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleBbInfo():217:
+BB6
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclRefExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():371:
+SEEN_VAR: "v:main:i": types.Int,
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: IntegerLiteral
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():307:
+SLANG: DEFAULT: Pushed to stack: IntegerLiteralIntegerLiteral 0x5602fd6b7f38 'int' 3
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: BinaryOperator
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, IntegerLiteral, BinaryOperator, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, IntegerLiteral, BinaryOperator, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclRefExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():371:
+SEEN_VAR: "v:main:i": types.Int,
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, IntegerLiteral, BinaryOperator, DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, IntegerLiteral, BinaryOperator, DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: BinaryOperator
+  14-03-2019 18:46:42: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:convertIntegerLiteral():674:
+expr.LitE(3, Loc(26,15))
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleBbInfo():217:
+BB7
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclRefExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():371:
+SEEN_VAR: "v:main:i": types.Int,
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: ImplicitCastExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: IntegerLiteral
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():307:
+SLANG: DEFAULT: Pushed to stack: IntegerLiteralIntegerLiteral 0x5602fd6b7de8 'int' 21
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: BinaryOperator
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, IntegerLiteral, BinaryOperator, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, IntegerLiteral, BinaryOperator, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclRefExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():371:
+SEEN_VAR: "v:main:i": types.Int,
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, IntegerLiteral, BinaryOperator, DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [DeclRefExpr, IntegerLiteral, BinaryOperator, DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: BinaryOperator
+  14-03-2019 18:46:42: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:convertIntegerLiteral():674:
+expr.LitE(21, Loc(24,15))
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleBbInfo():217:
+BB8
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: IntegerLiteral
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():307:
+SLANG: DEFAULT: Pushed to stack: IntegerLiteralIntegerLiteral 0x5602fd6b7d48 'int' 20
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: DeclRefExpr
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleVariable():371:
+SEEN_VAR: "v:main:i": types.Int,
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [IntegerLiteral, DeclRefExpr, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: BinaryOperator
+  14-03-2019 18:46:42: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:convertIntegerLiteral():674:
+expr.LitE(20, Loc(21,11))
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: []
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():300:
+Processing: BreakStmt
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleStmt():307:
+SLANG: DEFAULT: Pushed to stack: BreakStmtBreakStmt 0x5602fd6b7d90
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangTranslationUnit.cpp:printMainStack():221:
+MAIN_STACK: [BreakStmt, ]
+
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleBbInfo():217:
+BB-1
+  14-03-2019 18:46:42: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:handleBbInfo():220:
+ENTRY BB
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "switch.c",
+  description = "Auto-Translated from Clang AST.",
+  allVars = {
+    "v:main:t.3": types.Int,
+    "v:main:t.2": types.Int,
+    "v:main:t.1": types.Int,
+    "v:printf:__format": types.Ptr(to=types.Char),
+    "v:main:argv": types.Ptr(to=types.Ptr(to=types.Char)),
+    "v:main:argc": types.Int,
+    "v:main:i": types.Int,
+    "v:printMe:str": types.Ptr(to=types.Char),
+    "v:main:f": types.Float,
+  }, # end allVars dict
+
+  allObjs = {
+    "f:printMe":
+      obj.Func(
+        name = "f:printMe",
+        paramNames = ["v:printMe:str"],
+        variadic = False,
+        returnType = types.Float,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(5,3)), [expr.VarE("v:printMe:str", Loc(5,10))], Loc(5,3))),
+            instr.ReturnI(expr.LitE(2.0, Loc(6,10)), Loc(6,3)),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:printMe() end. 
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = ["v:main:argc", "v:main:argv"],
+        variadic = False,
+        returnType = types.Int,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          8: [
+            instr.AssignI(expr.VarE("v:main:i", Loc(21,7)), expr.LitE(20, Loc(21,11)), Loc(21,7)),
+          ],
+
+          7: [
+            instr.AssignI(expr.VarE("v:main:i", Loc(24,7)), expr.BinaryE(expr.VarE("v:main:i", Loc(24,11)), op.BO_ADD, expr.LitE(21, Loc(24,15))), Loc(24,7)),
+          ],
+
+          6: [
+            instr.AssignI(expr.VarE("v:main:i", Loc(26,7)), expr.BinaryE(expr.VarE("v:main:i", Loc(26,11)), op.BO_MUL, expr.LitE(3, Loc(26,15))), Loc(26,7)),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:main:i", Loc(28,7)), expr.VarE("v:main:i", Loc(28,11)), Loc(28,7)),
+          ],
+
+          11: [
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(27,5)), expr.BinaryE(expr.VarE("v:main:i", Loc(19,10)), op.BO_EQ, expr.LitE(30, Loc(27,10)), ), ),
+            instr.CondI(expr.VarE("v:main:t.3", Loc(27,5)), ),
+          ],
+
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(37,10)), Loc(37,3)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          2: [
+            instr.NopI(),
+          ],
+
+          3: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(34,7)), [expr.LitE("""Hello default
+""", Loc(34,14))], Loc(34,7))),
+          ],
+
+          10: [
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(25,5)), expr.BinaryE(expr.VarE("v:main:i", Loc(19,10)), op.BO_EQ, expr.LitE(20, Loc(25,10)), ), ),
+            instr.CondI(expr.VarE("v:main:t.2", Loc(25,5)), ),
+          ],
+
+          4: [
+            instr.AssignI(expr.VarE("v:main:i", Loc(11,3)), expr.LitE(10, Loc(11,11)), Loc(11,3)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(13,3)), [expr.LitE("""Hello, World %d %d
+""", Loc(13,10)), expr.VarE("v:main:i", Loc(13,35)), expr.LitE(10, Loc(13,39))], Loc(13,3))),
+            instr.AssignI(expr.VarE("v:main:f", Loc(15,3)), expr.CallE(expr.FuncE("f:printMe", Loc(15,7)), [expr.LitE("""Hello
+""", Loc(15,15))], Loc(15,7)), Loc(15,3)),
+            instr.AssignI(expr.VarE("v:main:f", Loc(16,3)), expr.LitE(2.345600, Loc(16,7)), Loc(16,3)),
+            instr.AssignI(expr.VarE("v:main:i", Loc(18,3)), expr.BinaryE(expr.LitE(22, Loc(18,7)), op.BO_ADD, expr.LitE(33, Loc(18,12))), Loc(18,3)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(20,5)), expr.BinaryE(expr.VarE("v:main:i", Loc(19,10)), op.BO_EQ, expr.LitE(10, Loc(20,10)), ), ),
+            instr.CondI(expr.VarE("v:main:t.1", Loc(20,5)), ),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (2, 3, types.UnCondEdge),
+          (3, 1, types.UnCondEdge),
+          (4, 5, types.TrueEdge),
+          (10, 6, types.TrueEdge),
+          (4, 10, types.FalseEdge),
+          (11, 8, types.TrueEdge),
+          (10, 11, types.FalseEdge),
+          (11, 7, types.FalseEdge),
+          (5, 2, types.UnCondEdge),
+          (6, 5, types.UnCondEdge),
+          (7, 6, types.UnCondEdge),
+          (8, 2, types.UnCondEdge),
+          (-1, 4, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+    "f:printf":
+      obj.Func(
+        name = "f:printf",
+        paramNames = ["v:printf:__format"],
+        variadic = True,
+        returnType = types.Int,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:printf() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.
+
+  14-03-2019 18:46:42: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:checkEndOfTranslationUnit():149:
+Translation Unit Ended.
+
+  14-03-2019 18:46:42: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenChecker.cpp:checkEndOfTranslationUnit():150:
+BOUND END  : SLANG_Generated_Output.
+switch.c:15:3: warning: Anshuman: Value stored to 'f' is never read
+  f = printMe("Hello\n");
+  ^   ~~~~~~~~~~~~~~~~~~
+switch.c:16:3: warning: Anshuman: Value stored to 'f' is never read
+  f = 2.3456;
+  ^   ~~~~~~
+2 warnings generated.

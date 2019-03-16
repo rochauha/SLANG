@@ -13,7 +13,6 @@ from typing import Optional, List, Set
 
 from span.util.logger import LS
 import span.ir.types as types
-from span.ir.types import SourceLocationT
 import span.ir.op as op
 import span.util.util as util
 
@@ -27,6 +26,7 @@ ExprCodeT = int
 # the order and ascending sequence is important
 VAR_EXPR_EC: ExprCodeT        = 11
 LIT_EXPR_EC: ExprCodeT        = 12
+FUNC_EXPR_EC: ExprCodeT       = 13
 
 UNARY_EXPR_EC: ExprCodeT      = 20
 BINARY_EXPR_EC: ExprCodeT     = 30
@@ -43,7 +43,7 @@ class ExprET(types.AnyT):
   """Base class for all expressions."""
   def __init__(self,
                exprCode: ExprCodeT,
-               loc: SourceLocationT = 0
+               loc: Optional[types.Loc] = None
   ) -> None:
     if self.__class__.__name__.endswith("T"): super().__init__()
     self.type: types.Type = types.Void
@@ -66,15 +66,15 @@ class UnitET(ExprET):
   """Unit exprs like a var 'x', a value '12.3'."""
   def __init__(self,
                exprCode: ExprCodeT,
-               loc: SourceLocationT = 0
+               loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(exprCode, loc)
 
 class VarE(UnitET):
-  """A single numeric literal. Bools are also numeric."""
+  """Holds a single variable name."""
   def __init__(self,
                name: types.VarNameT,
-               loc: SourceLocationT = 0
+               loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(VAR_EXPR_EC, loc)
     self.name: types.VarNameT = name
@@ -101,11 +101,42 @@ class VarE(UnitET):
 
   def __repr__(self): return self.name
 
+class FuncE(VarE):
+  """A function name that is called. Used in CallE class."""
+  def __init__(self,
+               name: types.FuncNameT,
+               loc: Optional[types.Loc] = None
+  ) -> None:
+    super().__init__(FUNC_EXPR_EC, loc)
+    self.name: types.VarNameT = name
+
+  def __eq__(self,
+             other: 'FuncE'
+  ) -> bool:
+    if not isinstance(other, FuncE):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.name == other.name:
+      if LS: _log.warning("FuncName Differs: %s, %s", repr(self), repr(other))
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __hash__(self): return 10
+
+  def __str__(self):
+    name = self.name.split(":")[-1]
+    return f"{name}"
+
+  def __repr__(self): return self.name
+
 class LitE(UnitET):
   """A single numeric literal. Bools are also numeric."""
   def __init__(self,
-               val: types.NumericT,
-               loc: SourceLocationT = 0
+               val: types.LitT,
+               loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(LIT_EXPR_EC, loc)
     self.val = val
@@ -124,7 +155,11 @@ class LitE(UnitET):
       return False
     return True
 
-  def __str__(self): return f"{self.val}"
+  def __str__(self):
+    if isinstance(self.val, str):
+      escaped = self.val.encode('unicode_escape')
+      return f"{escaped}"
+    return f"{self.val}"
 
   def __repr__(self): return self.__str__()
 
@@ -134,7 +169,7 @@ class BinaryE(ExprET):
                arg1: UnitET,
                opr: op.BinaryOp,
                arg2: UnitET,
-               loc: SourceLocationT = 0
+               loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(BINARY_EXPR_EC, loc)
     self.arg1 = arg1
@@ -170,7 +205,7 @@ class UnaryE(ExprET):
   def __init__(self,
                opr: op.UnaryOp,
                arg: UnitET,
-               loc: SourceLocationT = 0
+               loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(UNARY_EXPR_EC, loc)
     self.opr = opr
@@ -200,12 +235,12 @@ class UnaryE(ExprET):
 class CallE(ExprET):
   """A function call expression."""
   def __init__(self,
-               funcName: types.FuncNameT,
+               callee: VarE,  # i.e. VarE or FuncE
                args: Optional[List[UnitET]],
-               loc: SourceLocationT = 0
+               loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(CALL_EXPR_EC, loc)
-    self.funcName = funcName
+    self.callee = callee
     if not args:
       self.args = None
     else:
@@ -217,7 +252,7 @@ class CallE(ExprET):
     if not isinstance(other, CallE):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
-    if not self.funcName == other.funcName:
+    if not self.callee == other.callee:
       if LS: _log.warning("FuncName Differs: %s, %s", self, other)
       return False
     if not self.args == other.args:
@@ -228,7 +263,10 @@ class CallE(ExprET):
       return False
     return True
 
-  def __str__(self): return f"CallE[{self.funcName}({self.args})]"
+  def __str__(self):
+    args = [str(arg) for arg in self.args]
+    expr = ",".join(args)
+    return f"{self.callee}({expr})]"
 
   def __repr__(self): return self.__str__()
 
@@ -236,7 +274,7 @@ class MemberE(ExprET):
   """A member access expression: e.g. x->f.c or x.f.c ..."""
   def __init__(self,
                args: List[types.VarNameT],
-               loc: SourceLocationT = 0
+               loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(MEMBER_EXPR_EC, loc)
     self.args = args
@@ -255,7 +293,10 @@ class MemberE(ExprET):
       return False
     return True
 
-  def __str__(self): return f"MemberE({self.args})"
+  def __str__(self):
+    args = [arg.split(":")[-1] for arg in self.args]
+    expr = args.join(".")
+    return expr
 
   def __repr__(self): return self.__str__()
 
@@ -263,7 +304,7 @@ class PhiE(ExprET):
   """A phi expression. For a possible future SSA form."""
   def __init__(self,
                args: Set[VarE],
-               loc: SourceLocationT = 0
+               loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(PHI_EXPR_EC, loc)
     if not args:
@@ -285,7 +326,7 @@ class PhiE(ExprET):
       return False
     return True
 
-  def __str__(self): return f"PhiE({self.args})"
+  def __str__(self): return f"phi({self.args})"
 
   def __repr__(self): return self.__str__()
 

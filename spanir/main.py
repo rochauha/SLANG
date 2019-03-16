@@ -28,22 +28,29 @@ if __name__ == "__main__":
 
 # EDIT------AFTER-------THIS-------LINE
 
+import span.ir.op as op
 import span.ir.types as types
+from span.ir.types import Loc
 import span.ir.expr as expr
 import span.ir.instr as instr
 import span.ir.obj as obj
 import span.ir.tunit as irTUnit
 import span.util.util as util
+import span.api.graph as graph
 
 usage = """
 USAGE:
 
   ./main.py validate file
-  OR
   ./main.py match file1 file2
+  ./main.py dot file
+  ./main.py dotnode file
 
 In case of error it throws error and one can look up the log file,
 for more information on cause of the error.
+
+'dot' generates the dot file with CFG (of bb) for each function present.
+'dotnode' generates the dot file with CFG (of nodes) for each function present.
 """
 
 def checkArgs() -> str:
@@ -51,27 +58,34 @@ def checkArgs() -> str:
     print(usage)
     exit(1)
 
-  op = sys.argv[1]
-  if op == "match":
+  operation = sys.argv[1]
+  if operation == "match":
     if len(sys.argv) != 4:
       print(usage)
       exit(3)
-  elif op == "validate":
+  elif operation == "validate":
     if len(sys.argv) != 3:
       print(usage)
       exit(4)
+  elif operation == "dot":
+    if len(sys.argv) != 3:
+      print(usage)
+      exit(5)
+  elif operation == "dotnode":
+    if len(sys.argv) != 3:
+      print(usage)
+      exit(5)
   else:
     print(usage)
-    exit(5)
+    exit(6)
 
-  return op
+  return operation
 
 def match():
   fileName1 = sys.argv[2]
   fileName2 = sys.argv[3]
-
-  fileContent1 = util.getFileContent(fileName1)
-  fileContent2 = util.getFileContent(fileName2)
+  fileContent1 = util.readFromFile(fileName1)
+  fileContent2 = util.readFromFile(fileName2)
 
   start = time.time()
 
@@ -95,14 +109,44 @@ def match():
 def validate():
   print("TODO: Validation functionality.")
 
+def genNodeDotGraph():
+  """Dot graph of CFG 1 node per instruction."""
+  fileName = sys.argv[2]
+  fileContent = util.readFromFile(fileName)
+  tUnit = eval(fileContent)
+
+  for objName, obj in tUnit.allObjs.items():
+    if objName.startswith("f:"):
+      cfg = graph.Cfg(obj.name, obj.basicBlocks, obj.bbEdges)
+      dotGraph = cfg.genDotGraph()
+      fileName = objName.split(":")[-1] + ".node.dot"
+      util.writeToFile(fileName, dotGraph)
+
+def genBbDotGraph():
+  """Dot graph of basic blocks."""
+  fileName = sys.argv[2]
+  fileContent = util.readFromFile(fileName)
+  tUnit = eval(fileContent)
+
+  for objName, object in tUnit.allObjs.items():
+    if objName.startswith("f:"):
+      func: obj.Func = object # to explicate types
+      dotGraph = func.genDotGraph()
+      fileName = objName.split(":")[-1] + ".bb.dot"
+      util.writeToFile(fileName, dotGraph)
+
 if __name__ == "__main__":
   print("RotatingLogFile:", logger.ABS_LOG_FILE_NAME)
-  op = checkArgs()
+  operation = checkArgs()
 
-  if op == "match":
+  if operation == "match":
     match()
-  elif op == "validate":
+  elif operation == "validate":
     validate()
+  elif operation == "dot":
+    genBbDotGraph()
+  elif operation == "dotnode":
+    genNodeDotGraph()
 
   _log.error("SPAN_IR_FINISHED!")
 
