@@ -164,6 +164,7 @@ class FunctionInfo {
     QualType return_type;
     bool variadic;
     std::vector<QualType> param_type_list;
+    QualType function_sig_type;
     uint32_t min_param_count;
 
   public:
@@ -173,6 +174,7 @@ class FunctionInfo {
         return_type = func_decl->getReturnType();
         variadic = func_decl->isVariadic();
         min_param_count = func_decl->getNumParams();
+        function_sig_type = func_decl->getCallResultType();
 
         for (auto param_ref_ref = func_decl->param_begin(); param_ref_ref != func_decl->param_end();
              ++param_ref_ref) {
@@ -197,9 +199,11 @@ class FunctionInfo {
 
     std::vector<QualType> getParamTypeList() const { return param_type_list; }
 
-    bool isVariadic() const { return variadic; };
+    bool isVariadic() const { return variadic; }
 
-    size_t getMinParamCount() const { return min_param_count; };
+    size_t getMinParamCount() const { return min_param_count; }
+
+    QualType getFunctionSignatureType() const { return function_sig_type; }
 };
 
 class RecordInfo {
@@ -351,8 +355,9 @@ class TraversedInfoBuffer {
 
 } // namespace
 
-// Remove qualifiers
+// Remove qualifiers and typedefs
 QualType TraversedInfoBuffer::getCleanedQualType(QualType qt) {
+    qt = qt.getCanonicalType();
     qt.removeLocalConst();
     qt.removeLocalRestrict();
     qt.removeLocalVolatile();
@@ -369,8 +374,7 @@ TraversedInfoBuffer::TraversedInfoBuffer()
 }
 
 bool TraversedInfoBuffer::addToRecordMap(const ValueDecl *value_decl) {
-    QualType qt = (value_decl->getType()).getCanonicalType();
-    qt = getCleanedQualType(qt);
+    QualType qt = getCleanedQualType(value_decl->getType());
 
     const Type *type_ptr = qt.getTypePtr();
     const TagDecl *tag_decl = const_cast<TagDecl *>(type_ptr->getAsTagDecl());
@@ -542,9 +546,7 @@ std::string TraversedInfoBuffer::convertVarExpr(uint64_t var_addr) {
 //   for `int*` it returns `types.Ptr(to=types.Int)`.
 // TODO: handle all possible types
 std::string TraversedInfoBuffer::convertClangType(QualType qt) {
-    qt = qt.getCanonicalType();
     qt = getCleanedQualType(qt);
-
     std::stringstream ss;
     const Type *type = qt.getTypePtr();
     if (type->isBuiltinType()) {
@@ -559,6 +561,15 @@ std::string TraversedInfoBuffer::convertClangType(QualType qt) {
         } else {
             ss << "UnknownBuiltinType.";
         }
+    } else if (type->isFunctionPointerType()) {
+        ss << "types.Ptr(to=funcSig(";
+        QualType func_ptr_qt = type->getPointeeType();
+        const FunctionProtoType *func_proto = cast<FunctionProtoType>(func_ptr_qt.getTypePtr());
+        ss << convertClangType(func_proto->getReturnType()) << ", ";
+        for (const QualType param_qual_type : func_proto->param_types()) {
+            ss << convertClangType(param_qual_type) << ", ";
+        }
+        ss << ")";
     } else if (type->isPointerType()) {
         ss << "types.Ptr(to=";
         QualType pqt = type->getPointeeType();
@@ -1294,12 +1305,12 @@ void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
         handleVariable(valueDecl);
     } else if (isa<FunctionDecl>(valueDecl)) {
         llvm::errs() << "Found function\n";
-        tib.popFromMainStack();
-
         // Get details of the function and insert map it in function_map if it is not already
         // mapped
-        FunctionInfo func_info = FunctionInfo(cast<FunctionDecl>(valueDecl));
+        FunctionInfo func_info = cast<FunctionDecl>(valueDecl);
         func_info.log();
+        llvm::errs() << "Signature : " << tib.convertClangType(func_info.getFunctionSignatureType())
+                     << "\n";
 
         if (tib.function_map.find(func_info.getId()) == tib.function_map.end()) {
             llvm::errs() << "inserted key-val pair\n";
@@ -1656,8 +1667,19 @@ SpanExpr SlangGenChecker::convertUnaryOp(const UnaryOperator *unOp, bool compoun
         op = "op.Minus";
         break;
     }
+
     case UO_Plus: {
         op = "op.Plus";
+        break;
+    }
+
+    case UO_Not: {
+        op = "op.Not";
+        break;
+    }
+
+    case UO_LNot: {
+        op = "op.LNot";
         break;
     }
     }
@@ -1749,6 +1771,16 @@ SpanExpr SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
         SpanExpr spanExpr = convertVarDecl(varDecl);
         spanExpr.locId = getLocationId(dre);
         return spanExpr;
+    } else if (isa<FunctionDecl>(valueDecl)) {
+        // get it from function map :)
+        llvm::errs() << "converting declRefExpr for function...\n";
+        auto func_decl = cast<FunctionDecl>(valueDecl);
+        SpanExpr spanExpr{};
+        // spanExpr.locId = getLocationId(dre);
+        spanExpr.expr = (tib.function_map.find((uint64_t)valueDecl)->second).getName();
+        spanExpr.qualType = func_decl->getCallResultType();
+        spanExpr.compound = false;
+        return spanExpr;
     } else if (isa<EnumConstantDecl>(valueDecl)) {
         auto enum_const_decl = cast<EnumConstantDecl>(valueDecl);
         std::string val = (enum_const_decl->getInitVal()).toString(10);
@@ -1766,22 +1798,20 @@ SpanExpr SlangGenChecker::convertMemberExpr(const MemberExpr *me) const {
     std::stringstream ss;
 
     // Take all member accesses in one go
-    do {
-        current_stmt = const_cast<Stmt *>(cast<Stmt>(me));
+    current_stmt = const_cast<Stmt *>(cast<Stmt>(me));
+    while (current_stmt && !isa<DeclRefExpr>(current_stmt)) {
         const MemberExpr *mem_expr = cast<MemberExpr>(current_stmt);
-        const ValueDecl *mem_var_decl = mem_expr->getMemberDecl();
-
-        member_names.push_back(mem_var_decl->getNameAsString());
+        member_names.push_back(mem_expr->getMemberNameInfo().getAsString());
         current_stmt = const_cast<Stmt *>(tib.popFromMainStack());
-    } while (current_stmt && !isa<DeclRefExpr>(current_stmt));
+    }
 
     // finally get the DeclRefExpr for the struct/union
     SpanExpr decl_ref_expr = convertDeclRefExpr(cast<DeclRefExpr>(current_stmt));
 
     ss << "expr.MemberE(";
     ss << "\"" << decl_ref_expr.expr << "\", ";
-    for (auto mem_name : member_names) {
-        ss << "\"" << mem_name << "\", ";
+    for (auto it = member_names.end() - 1; it != member_names.begin() - 1; --it) {
+        ss << "\"" << *it << "\", ";
     }
     ss << ")";
 
@@ -1806,14 +1836,6 @@ bool SlangGenChecker::isCallExprDirectlyAssignedToVariable(const CallExpr *funct
 SpanExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr, bool compound_receiver) const {
     std::stringstream ss;
     std::vector<SpanExpr> params;
-    const FunctionDecl *callee_func = callExpr->getDirectCallee();
-    auto elem_iterator = tib.function_map.find((uint64_t)callee_func);
-    FunctionInfo func_info = elem_iterator->second;
-
-    SpanExpr call_expr{};
-    call_expr.compound = true;
-    call_expr.qualType = func_info.getReturnType();
-
     llvm::errs() << "Converting arguements...\n";
     uint32_t arg_count = callExpr->getNumArgs();
     for (uint32_t i = 0; i < arg_count; ++i) {
@@ -1822,21 +1844,32 @@ SpanExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr, bool compoun
 
     std::vector<std::string> statements;
 
-    ss << "expr.CallE(f:\"" << func_info.getName() << "\", [";
-
+    SpanExpr call_expr{};
+    call_expr.compound = true;
     for (auto param_ref = params.end() - 1; param_ref != params.begin() - 1; --param_ref) {
         call_expr.addSpanStmts(param_ref->spanStmts);
-        if (param_ref == params.begin()) {
-            ss << param_ref->expr << "])";
-        } else {
-            ss << param_ref->expr << ", ";
-        }
+        ss << param_ref->expr << ", ";
     }
-    call_expr.expr = ss.str();
+    ss << "])";
+
+    const ValueDecl *val_decl = (cast<DeclRefExpr>(tib.popFromMainStack()))->getDecl();
+    if (isa<FunctionDecl>(val_decl)) {
+        const FunctionDecl *callee_func = cast<FunctionDecl>(val_decl);
+        call_expr.qualType = callee_func->getReturnType();
+        call_expr.expr = "expr.CallE(f:\"" + callee_func->getNameAsString() + "\", [" + ss.str();
+    } else if (isa<VarDecl>(val_decl)) {
+        // function pointer
+        const VarDecl *var_decl = cast<VarDecl>(val_decl);
+        call_expr.qualType = callExpr->getType();
+        call_expr.expr = "expr.CallE(v:\"" + var_decl->getNameAsString() + "\", [" + ss.str();
+    } else {
+        llvm::errs() << "ERROR: convertCallExpr : Unkown Decl\n";
+        return SpanExpr{};
+    }
 
     if (compound_receiver) {
         ss.str("");
-        SpanExpr tmpVar = tib.genTmpVariable(func_info.getReturnType());
+        SpanExpr tmpVar = tib.genTmpVariable(call_expr.qualType);
         ss << "instr.AssignI(" << tmpVar.expr << ", " << call_expr.expr << ")";
         tmpVar.addSpanStmts(call_expr.spanStmts);
         tmpVar.addSpanStmt(ss.str());

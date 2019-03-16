@@ -111,35 +111,33 @@ void MyCFGDumper::handleBBStmts(const CFGBlock *bb) const {
         case Stmt::DeclRefExprClass: {
             const ValueDecl *value_decl = (cast<DeclRefExpr>(stmt))->getDecl();
             QualType qt = value_decl->getType();
-            
-            if (isa<TagDecl>(value_decl)) {
-                // ignore typedefs
-                auto tag_decl = cast<TagDecl>(value_decl)->getCanonicalDecl();
-                if (tag_decl->isStruct()) {
-                    // insert the struct into all_vars
-                } else if (tag_decl->isUnion()) {
-                    // insert the union into all_vars
-                } else if (tag_decl->isEnum()) {
-                   // insert the enum into all_vars
-                }
-             }
-
+            qt = qt.getCanonicalType();
+            qt.removeLocalConst();
+            qt.removeLocalRestrict();
+            qt.removeLocalVolatile();
             llvm::errs() << qt.getAsString() << "\n";
-        //     const Type *type_ptr = qt.getTypePtrOrNull();
-        //     if (type_ptr) {
-        //         const TagDecl *tag_decl = type_ptr->getAsTagDecl();
-        //         llvm::errs() << "Found a " << type_ptr->getTypeClassName() << "\n";
-        //         if (tag_decl->isStruct()) {
-        //             llvm::errs() << "struct of " << tag_decl->getKindName() << " type\n";
-        //         } else if (tag_decl->isUnion()) {
-        //             llvm::errs() << "union of " << tag_decl->getKindName() << " type\n";
-        //         } else if (tag_decl->isEnum()) {
-        //             llvm::errs() << "enum of " << tag_decl->getKindName() << " type\n";
-        //         }
-        //     }
 
-        //     break;
-         }
+            const Type *type_ptr = qt.getTypePtr();
+            if (type_ptr->isFunctionPointerType()) {
+                type_ptr->dump();
+                llvm::errs() << (type_ptr->getPointeeType()).getAsString() << "\n";
+
+                // canonical qualtype strips ParenType
+                // QualType paren_qt = type_ptr->getPointeeType();
+                // const ParenType *pt = cast<ParenType>(paren_qt.getTypePtr());
+
+                QualType fpqt = type_ptr->getPointeeType();
+                const FunctionProtoType *fp = cast<FunctionProtoType>(fpqt.getTypePtr());
+
+                llvm::errs() << fp->getNumParams() << "\n";
+                for (const QualType param_qual_type : fp->param_types()) {
+                    param_qual_type.dump();
+                }
+                llvm::errs() << "Function pointer!"
+                             << "\n";
+            }
+            llvm::errs() << "DRE_end\n";
+        }
         }
 
         llvm::errs() << "Visiting: " << stmt->getStmtClassName() << "\n";

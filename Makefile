@@ -7,7 +7,7 @@ replace:
 format:
 	clang-format --style="{BasedOnStyle: llvm, IndentWidth: 4, ColumnLimit: 100}" -i rc/SlangGenChecker.cpp
 	clang-format --style="{BasedOnStyle: llvm, IndentWidth: 4, ColumnLimit: 100}" -i CFG-plugin/SlangGenChecker.cpp
-	# clang-format --style="{BasedOnStyle: llvm, IndentWidth: 4, ColumnLimit: 100}" -i CFG-plugin/MyDebugCheckers.cpp
+	clang-format --style="{BasedOnStyle: llvm, IndentWidth: 4, ColumnLimit: 100}" -i CFG-plugin/MyDebugCheckers.cpp
 test:
 	clang -cc1 -analyze -analyzer-checker=debug.MyDumpCFG -std=c99 tests/test.c
 
