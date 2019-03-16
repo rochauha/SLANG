@@ -1301,8 +1301,6 @@ void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
         handleVariable(valueDecl);
     } else if (isa<FunctionDecl>(valueDecl)) {
         llvm::errs() << "Found function\n";
-        tib.popFromMainStack();
-
         // Get details of the function and insert map it in function_map if it is not already
         // mapped
         FunctionInfo func_info = FunctionInfo(cast<FunctionDecl>(valueDecl));
@@ -1813,13 +1811,6 @@ bool SlangGenChecker::isCallExprDirectlyAssignedToVariable(const CallExpr *funct
 SpanExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr, bool compound_receiver) const {
     std::stringstream ss;
     std::vector<SpanExpr> params;
-    const FunctionDecl *callee_func = callExpr->getDirectCallee();
-    auto elem_iterator = tib.function_map.find((uint64_t)callee_func);
-    FunctionInfo func_info = elem_iterator->second;
-
-    SpanExpr call_expr{};
-    call_expr.compound = true;
-    call_expr.qualType = func_info.getReturnType();
 
     llvm::errs() << "Converting arguements...\n";
     uint32_t arg_count = callExpr->getNumArgs();
@@ -1829,8 +1820,8 @@ SpanExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr, bool compoun
 
     std::vector<std::string> statements;
 
-    ss << "expr.CallE(f:\"" << func_info.getName() << "\", [";
-
+    SpanExpr call_expr{};
+    call_expr.compound = true;
     for (auto param_ref = params.end() - 1; param_ref != params.begin() - 1; --param_ref) {
         call_expr.addSpanStmts(param_ref->spanStmts);
         if (param_ref == params.begin()) {
@@ -1839,11 +1830,17 @@ SpanExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr, bool compoun
             ss << param_ref->expr << ", ";
         }
     }
-    call_expr.expr = ss.str();
+
+    const ValueDecl *val_decl = (cast<DeclRefExpr>(tib.popFromMainStack()))->getDecl();
+    const FunctionDecl *callee_func = cast<FunctionDecl>(val_decl);
+
+    call_expr.qualType = tib.getCleanedQualType(callee_func->getReturnType());
+
+    call_expr.expr = "expr.CallE(f:\"" + callee_func->getNameAsString() + "\", [" + ss.str();
 
     if (compound_receiver) {
         ss.str("");
-        SpanExpr tmpVar = tib.genTmpVariable(func_info.getReturnType());
+        SpanExpr tmpVar = tib.genTmpVariable(call_expr.qualType);
         ss << "instr.AssignI(" << tmpVar.expr << ", " << call_expr.expr << ")";
         tmpVar.addSpanStmts(call_expr.spanStmts);
         tmpVar.addSpanStmt(ss.str());
