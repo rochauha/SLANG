@@ -164,6 +164,7 @@ class FunctionInfo {
     QualType return_type;
     bool variadic;
     std::vector<QualType> param_type_list;
+    QualType function_sig_type;
     uint32_t min_param_count;
 
   public:
@@ -173,6 +174,7 @@ class FunctionInfo {
         return_type = func_decl->getReturnType();
         variadic = func_decl->isVariadic();
         min_param_count = func_decl->getNumParams();
+        function_sig_type = func_decl->getCallResultType();
 
         for (auto param_ref_ref = func_decl->param_begin(); param_ref_ref != func_decl->param_end();
              ++param_ref_ref) {
@@ -197,9 +199,11 @@ class FunctionInfo {
 
     std::vector<QualType> getParamTypeList() const { return param_type_list; }
 
-    bool isVariadic() const { return variadic; };
+    bool isVariadic() const { return variadic; }
 
-    size_t getMinParamCount() const { return min_param_count; };
+    size_t getMinParamCount() const { return min_param_count; }
+
+    QualType getFunctionSignatureType() const { return function_sig_type; }
 };
 
 class RecordInfo {
@@ -1303,8 +1307,10 @@ void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
         llvm::errs() << "Found function\n";
         // Get details of the function and insert map it in function_map if it is not already
         // mapped
-        FunctionInfo func_info = FunctionInfo(cast<FunctionDecl>(valueDecl));
+        FunctionInfo func_info = cast<FunctionDecl>(valueDecl);
         func_info.log();
+        llvm::errs() << "Signature : " << tib.convertClangType(func_info.getFunctionSignatureType())
+                     << "\n";
 
         if (tib.function_map.find(func_info.getId()) == tib.function_map.end()) {
             llvm::errs() << "inserted key-val pair\n";
@@ -1754,6 +1760,16 @@ SpanExpr SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
         SpanExpr spanExpr = convertVarDecl(varDecl);
         spanExpr.locId = getLocationId(dre);
         return spanExpr;
+    } else if (isa<FunctionDecl>(valueDecl)) {
+        // get it from function map :)
+        llvm::errs() << "converting declRefExpr for function...\n";
+        auto func_decl = cast<FunctionDecl>(valueDecl);
+        SpanExpr spanExpr{};
+        // spanExpr.locId = getLocationId(dre);
+        spanExpr.expr = (tib.function_map.find((uint64_t)valueDecl)->second).getName();
+        spanExpr.qualType = func_decl->getCallResultType();
+        spanExpr.compound = false;
+        return spanExpr;
     } else if (isa<EnumConstantDecl>(valueDecl)) {
         auto enum_const_decl = cast<EnumConstantDecl>(valueDecl);
         std::string val = (enum_const_decl->getInitVal()).toString(10);
@@ -1811,7 +1827,6 @@ bool SlangGenChecker::isCallExprDirectlyAssignedToVariable(const CallExpr *funct
 SpanExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr, bool compound_receiver) const {
     std::stringstream ss;
     std::vector<SpanExpr> params;
-
     llvm::errs() << "Converting arguements...\n";
     uint32_t arg_count = callExpr->getNumArgs();
     for (uint32_t i = 0; i < arg_count; ++i) {
@@ -1832,11 +1847,19 @@ SpanExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr, bool compoun
     }
 
     const ValueDecl *val_decl = (cast<DeclRefExpr>(tib.popFromMainStack()))->getDecl();
-    const FunctionDecl *callee_func = cast<FunctionDecl>(val_decl);
-
-    call_expr.qualType = tib.getCleanedQualType(callee_func->getReturnType());
-
-    call_expr.expr = "expr.CallE(f:\"" + callee_func->getNameAsString() + "\", [" + ss.str();
+    if (isa<FunctionDecl>(val_decl)) {
+        const FunctionDecl *callee_func = cast<FunctionDecl>(val_decl);
+        call_expr.qualType = callee_func->getReturnType();
+        call_expr.expr = "expr.CallE(f:\"" + callee_func->getNameAsString() + "\", [" + ss.str();
+    } else if (isa<VarDecl>(val_decl)) {
+        // function pointer
+        const VarDecl *var_decl = cast<VarDecl>(val_decl);
+        call_expr.qualType = callExpr->getType();
+        call_expr.expr = "expr.CallE(v:\"" + var_decl->getNameAsString() + "\", [" + ss.str();
+    } else {
+        llvm::errs() << "ERROR: convertCallExpr : Unkown Decl\n";
+        return SpanExpr{};
+    }
 
     if (compound_receiver) {
         ss.str("");
