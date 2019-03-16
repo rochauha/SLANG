@@ -269,6 +269,7 @@ void slang::SlangTranslationUnit::dumpHeader(std::stringstream& ss) {
     ss << "# import span.ir.instr as instr\n";
     ss << "# import span.ir.obj as obj\n";
     ss << "# import span.ir.tunit as irTUnit\n";
+    ss << "# from span.ir.types import Loc\n";
     ss << "\n";
     ss << "# An instance of span.ir.tunit.TUnit class.\n";
     ss << "irTUnit.TUnit(\n";
@@ -326,7 +327,7 @@ void slang::SlangTranslationUnit::dumpFunctions(std::stringstream& ss) {
         //         prefix = ", ";
         //     }
         // }
-        // ss << "]\n";
+        // ss << "],\n";
 
         ss << NBSP8 << "returnType = " << slangFunc.second.retType << ",\n";
 

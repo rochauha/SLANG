@@ -30,6 +30,7 @@ FUNC_EXPR_EC: ExprCodeT       = 13
 
 UNARY_EXPR_EC: ExprCodeT      = 20
 BINARY_EXPR_EC: ExprCodeT     = 30
+ARR_EXPR_EC: ExprCodeT        = 31
 
 CALL_EXPR_EC: ExprCodeT       = 40
 MEMBER_EXPR_EC: ExprCodeT     = 45
@@ -157,8 +158,11 @@ class LitE(UnitET):
 
   def __str__(self):
     if isinstance(self.val, str):
-      escaped = self.val.encode('unicode_escape')
-      return f"{escaped}"
+      #escaped = self.val.encode('unicode_escape')
+      newVal = repr(self.val)
+      newVal = newVal[1:-1]
+      newVal = "'" + newVal + "'"
+      return f"{newVal}"
     return f"{self.val}"
 
   def __repr__(self): return self.__str__()
@@ -200,6 +204,42 @@ class BinaryE(ExprET):
 
   def __repr__(self): return self.__str__()
 
+class ArrE(BinaryE):
+  """A binary array expression."""
+  def __init__(self,
+               arg1: UnitET,
+               arg2: UnitET,
+               loc: Optional[types.Loc] = None
+  ) -> None:
+    super().__init__(arg1, op.BO_ARR_OC, arg2, loc)
+    self.arg1 = arg1
+    self.opr = op.BO_ARR_OC
+    self.arg2 = arg2
+
+  def __eq__(self,
+             other: 'BinaryE'
+  ) -> bool:
+    if not isinstance(other, BinaryE):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.opr == other.opr:
+      if LS: _log.warning("Operator Differs: %s, %s", self, other)
+      return False
+    if not self.arg1 == other.arg1:
+      if LS: _log.warning("Arg1 Differs: %s, %s", self, other)
+      return False
+    if not self.arg2 == other.arg2:
+      if LS: _log.warning("Arg2 Differs: %s, %s", self, other)
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __str__(self): return f"{self.arg1}[{self.arg2}]"
+
+  def __repr__(self): return self.__str__()
+
 class UnaryE(ExprET):
   """A unary arithmetic expression."""
   def __init__(self,
@@ -232,11 +272,48 @@ class UnaryE(ExprET):
 
   def __repr__(self): return self.__str__()
 
+class AllocE(ExprET):
+  """A stack allocator instruction.
+
+  It allocates size * sizeof(self.type) on the stack,
+  and returns the pointer to it.
+  """
+  def __init__(self,
+               sizeExpr: UnitET,
+               dataType: types.Type,
+               loc: types.Loc,
+  ) -> None:
+    self.sizeExpr = sizeExpr
+    self.type = dataType
+    self.loc = loc
+
+  def __eq__(self,
+             other: 'AllocE'
+  ) -> bool:
+    if not isinstance(other, AllocE):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.sizeExpr == other.sizeExpr:
+      if LS: _log.warning("AllocaSize Differs: %s, %s", self, other)
+      return False
+    if not self.type == other.type:
+      if LS: _log.warning("AllocaType Differs: %s, %s", self, other)
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __str__(self):
+    return f"[{self.sizeExpr} x {self.type}]"
+
+  def __repr__(self): return self.__str__()
+
 class CallE(ExprET):
   """A function call expression."""
   def __init__(self,
                callee: VarE,  # i.e. VarE or FuncE
-               args: Optional[List[UnitET]],
+               args: Optional[List[UnitET]] = None,
                loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(CALL_EXPR_EC, loc)
@@ -264,9 +341,12 @@ class CallE(ExprET):
     return True
 
   def __str__(self):
-    args = [str(arg) for arg in self.args]
-    expr = ",".join(args)
-    return f"{self.callee}({expr})]"
+    if self.args:
+      args = [str(arg) for arg in self.args]
+      expr = ",".join(args)
+    else:
+      expr = ""
+    return f"{self.callee}({expr})"
 
   def __repr__(self): return self.__str__()
 

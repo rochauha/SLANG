@@ -9,7 +9,7 @@
 
 import logging
 _log = logging.getLogger(__name__)
-from typing import TypeVar, List
+from typing import TypeVar, List, Optional
 
 from span.util.logger import LS
 from span.util.messages import PTR_INDLEV_INVALID
@@ -77,6 +77,9 @@ FLOAT80_TC: TypeCodeT     = 53  # ??
 FLOAT128_TC: TypeCodeT    = 54  # ??
 
 PTR_TC: TypeCodeT         = 100  # pointer type code
+ARR_TC: TypeCodeT         = 101  # array type code
+VAR_ARR_TC: TypeCodeT     = 102  # variable array type code
+INCPL_ARR_TC: TypeCodeT   = 103  # array type code
 FUNC_TC: TypeCodeT        = 200  # function type code
 FUNC_SIG_TC: TypeCodeT    = 201
 STRUCT_TC: TypeCodeT      = 300  # structure type code
@@ -292,6 +295,106 @@ class Ptr(Type):
 
   def __repr__(self):
     return f"types.Ptr({self.to}, {self.indir})"
+
+class Array(Type):
+  """Concrete array type.
+
+  Instantiate this class to denote array types.
+  E.g. types.Array(types.Char, [2,2]) is a 2x2 array of chars
+  """
+  def __init__(self,
+               of: Type,
+               dim: Optional[int] = None,
+               typeCode: TypeCodeT = ARR_TC,
+  ) -> None:
+    super().__init__(typeCode)
+    self.dim = dim
+    self.of = of
+
+  def __eq__(self,
+             other: 'Array'
+  ) -> bool:
+    if not isinstance(other, Array):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.typeCode == other.typeCode:
+      if LS: _log.warning("Types Differ: %s, %s", self, other)
+      return False
+    if not self.dim == other.dim:
+      if LS: _log.warning("Dimensions Differ: %s, %s", self, other)
+      return False
+    if not self.of == other.of:
+      if LS: _log.warning("DestType Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __hash__(self): return hash(self.of) * len(self.dim)
+
+  def __str__(self): return self.__repr__()
+
+  def __repr__(self): return f"types.Array({self.of}, {self.dim})"
+
+class VarArray(Array):
+  """an array with variable size: e.g. int arr[x*20+y];"""
+  def __init__(self,
+               of: Type,
+  ) -> None:
+    super().__init__(of=of, dim=None, typeCode=VAR_ARR_TC)
+    self.of = of
+
+  def __eq__(self,
+             other: 'VarArray'
+  ) -> bool:
+    if not isinstance(other, VarArray):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.typeCode == other.typeCode:
+      if LS: _log.warning("Types Differ: %s, %s", self, other)
+      return False
+    if not self.dim == other.dim:
+      if LS: _log.warning("Dimensions Differ: %s, %s", self, other)
+      return False
+    if not self.of == other.of:
+      if LS: _log.warning("DestType Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __hash__(self): return hash(self.of)
+
+  def __str__(self): return self.__repr__()
+
+  def __repr__(self): return f"types.VarArray({self.of})"
+
+class IncompleteArray(Array):
+  """An array with no size: e.g. int arr[];"""
+  def __init__(self,
+               of: Type,
+  ) -> None:
+    super().__init__(of=of, dim=None, typeCode=INCPL_ARR_TC)
+    self.of = of
+
+  def __eq__(self,
+             other: 'IncompleteArray'
+  ) -> bool:
+    if not isinstance(other, IncompleteArray):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.typeCode == other.typeCode:
+      if LS: _log.warning("Types Differ: %s, %s", self, other)
+      return False
+    if not self.dim == other.dim:
+      if LS: _log.warning("Dimensions Differ: %s, %s", self, other)
+      return False
+    if not self.of == other.of:
+      if LS: _log.warning("DestType Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __hash__(self): return hash(self.of)
+
+  def __str__(self): return self.__repr__()
+
+  def __repr__(self): return f"types.IncompleteArray({self.of})"
 
 class FuncSig(Type):
   """A function signature."""

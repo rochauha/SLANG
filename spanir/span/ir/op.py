@@ -68,7 +68,7 @@ BO_RSHIFT_OC: OpCodeT   = 401 # >>
 BO_RRSHIFT_OC: OpCodeT  = 402 # >>>
 
 # array_index
-BO_INDEX_OC: OpCodeT    = 500 # [] e.g. arr[3]
+BO_ARR_OC: OpCodeT      = 500 # [] e.g. arr[3]
 
 ################################################
 #BOUND END  : op_codes
@@ -147,7 +147,7 @@ class Op(types.AnyT):
     elif opCode == BO_LSHIFT_OC: ss = "<<"
     elif opCode == BO_RSHIFT_OC: ss = ">>"
     elif opCode == BO_RRSHIFT_OC: ss = ">>>"
-    elif opCode == BO_INDEX_OC: ss = "[]"
+    elif opCode == BO_ARR_OC: ss = "[]"
 
     return ss
 
@@ -196,7 +196,7 @@ BO_LSHIFT: BinaryOp = BinaryOp(BO_LSHIFT_OC)
 BO_RSHIFT: BinaryOp = BinaryOp(BO_RSHIFT_OC)
 BO_RRSHIFT: BinaryOp = BinaryOp(BO_RRSHIFT_OC)
 
-BO_INDEX: UnaryOp = BinaryOp(BO_INDEX_OC)
+BO_INDEX: UnaryOp = BinaryOp(BO_ARR_OC)
 
 ################################################
 #BOUND END  : operator_objects
