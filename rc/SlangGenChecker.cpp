@@ -1837,12 +1837,9 @@ SpanExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr, bool compoun
     call_expr.compound = true;
     for (auto param_ref = params.end() - 1; param_ref != params.begin() - 1; --param_ref) {
         call_expr.addSpanStmts(param_ref->spanStmts);
-        if (param_ref == params.begin()) {
-            ss << param_ref->expr << "])";
-        } else {
-            ss << param_ref->expr << ", ";
-        }
+        ss << param_ref->expr << ", ";
     }
+    ss << "])";
 
     const ValueDecl *val_decl = (cast<DeclRefExpr>(tib.popFromMainStack()))->getDecl();
     if (isa<FunctionDecl>(val_decl)) {
