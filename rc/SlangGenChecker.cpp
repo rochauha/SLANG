@@ -1787,22 +1787,20 @@ SpanExpr SlangGenChecker::convertMemberExpr(const MemberExpr *me) const {
     std::stringstream ss;
 
     // Take all member accesses in one go
-    do {
-        current_stmt = const_cast<Stmt *>(cast<Stmt>(me));
+    current_stmt = const_cast<Stmt *>(cast<Stmt>(me));
+    while (current_stmt && !isa<DeclRefExpr>(current_stmt)) {
         const MemberExpr *mem_expr = cast<MemberExpr>(current_stmt);
-        const ValueDecl *mem_var_decl = mem_expr->getMemberDecl();
-
-        member_names.push_back(mem_var_decl->getNameAsString());
+        member_names.push_back(mem_expr->getMemberNameInfo().getAsString());
         current_stmt = const_cast<Stmt *>(tib.popFromMainStack());
-    } while (current_stmt && !isa<DeclRefExpr>(current_stmt));
+    }
 
     // finally get the DeclRefExpr for the struct/union
     SpanExpr decl_ref_expr = convertDeclRefExpr(cast<DeclRefExpr>(current_stmt));
 
     ss << "expr.MemberE(";
     ss << "\"" << decl_ref_expr.expr << "\", ";
-    for (auto mem_name : member_names) {
-        ss << "\"" << mem_name << "\", ";
+    for (auto it = member_names.end() - 1; it != member_names.begin() - 1; --it) {
+        ss << "\"" << *it << "\", ";
     }
     ss << ")";
 
