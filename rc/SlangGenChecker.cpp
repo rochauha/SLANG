@@ -209,10 +209,10 @@ class FunctionInfo {
 class RecordInfo {
   private:
     uint64_t id;
-    std::string type_string;
+    std::string type_str;
     RecordKind rec_kind;
     std::vector<std::string> field_names;
-    std::vector<std::string> field_type_strings;
+    std::vector<std::string> field_type_strs;
 
   public:
     RecordInfo() { id = 0; }
@@ -223,29 +223,37 @@ class RecordInfo {
         id = id__;
         rec_kind = rec_kind__;
 
-        int start = 0;
-        if (rec_kind == StructRecord)
-            start = 7;
-        else if (rec_kind == UnionRecord)
-            start = 6;
+        std::string prefix = (rec_kind == StructRecord) ? "s:" : "u:";
+        type_str = qt.getAsString();
 
-        // s:<TypeName> => ignore 'struct ' or 'union ' and only consider the type name
-        type_string = "s:" + (qt.getAsString()).substr(start);
+        if (type_str.substr(0, 7) == "struct ") {
+            type_str = type_str.substr(7);
+        } else if (type_str.substr(0, 6) == "union ") {
+            type_str = type_str.substr(6);
+        }
+
+        if (type_str.substr(0, 10) == "(anonymous") {
+            size_t start_loc = type_str.find(".c:") + 3;
+            size_t diff = type_str.length() - start_loc - 1;
+            type_str = "anonymous." + type_str.substr(start_loc, diff);
+        }
+
+        type_str = prefix + type_str;
 
         for (auto field_name : field_names_list) {
             field_names.push_back(field_name);
         }
         for (auto field_type_str : field_types_string_list) {
-            field_type_strings.push_back(field_type_str);
+            field_type_strs.push_back(field_type_str);
         }
     }
 
-    std::string getTypeString() const { return type_string; }
+    std::string getTypeString() const { return type_str; }
 
     bool isEmpty() const { return id == 0; }
 
     void dump() const {
-        llvm::errs() << NBSP2 << "\"" << type_string << "\":\n";
+        llvm::errs() << NBSP2 << "\"" << type_str << "\":\n";
 
         if (rec_kind == StructRecord) {
             llvm::errs() << NBSP4 << "obj.Struct(\n";
@@ -253,7 +261,7 @@ class RecordInfo {
             llvm::errs() << NBSP4 << "obj.Union(\n";
         }
 
-        llvm::errs() << NBSP6 << "name = \"" << type_string << "\",\n";
+        llvm::errs() << NBSP6 << "name = \"" << type_str << "\",\n";
 
         llvm::errs() << NBSP6 << "fieldNames = [";
         for (auto field_name : field_names) {
@@ -262,7 +270,7 @@ class RecordInfo {
         llvm::errs() << "],\n";
 
         llvm::errs() << NBSP6 << "fieldTypes = [";
-        for (auto field_type_str : field_type_strings) {
+        for (auto field_type_str : field_type_strs) {
             llvm::errs() << field_type_str << ", ";
         }
         llvm::errs() << "]\n";
@@ -577,10 +585,30 @@ std::string TraversedInfoBuffer::convertClangType(QualType qt) {
         ss << ")";
     } else if (type->isStructureType()) {
         std::string type_str = qt.getAsString();
-        ss << "types.Struct(\"s:" << type_str.substr(7) << "\")";
+        ss << "types.Struct(\"s:";
+        if (type_str.substr(0, 7) == "struct ") {
+            type_str = type_str.substr(7);
+        }
+
+        if (type_str.substr(0, 10) == "(anonymous") {
+            size_t start_loc = type_str.find(".c:") + 3;
+            size_t diff = type_str.length() - start_loc - 1;
+            type_str = "anonymous." + type_str.substr(start_loc, diff);
+        }
+        ss << type_str << "\")";
     } else if (type->isUnionType()) {
         std::string type_str = qt.getAsString();
-        ss << "types.Union(\"s:" << type_str.substr(6) << "\")";
+        ss << "types.Union(\"u:";
+        if (type_str.substr(0, 6) == "union") {
+            type_str = type_str.substr(6);
+        }
+
+        if (type_str.substr(0, 10) == "(anonymous") {
+            size_t start_loc = type_str.find(".c:") + 3;
+            size_t diff = type_str.length() - start_loc - 1;
+            type_str = "anonymous." + type_str.substr(start_loc, diff);
+        }
+        ss << type_str << "\")";
     } else if (type->isEnumeralType()) {
         ss << "types.Int";
     } else {
@@ -1083,7 +1111,7 @@ void SlangGenChecker::handleVariable(const ValueDecl *valueDecl) const {
 
         // add to record_map only when it is a struct or a union
         // length of "types.Struct" is 12
-        if (varInfo.type_str.length() > 12 && varInfo.type_str.substr(0, 12) == "types.Struct" ||
+        if (varInfo.type_str.substr(0, 12) == "types.Struct" ||
             varInfo.type_str.substr(0, 11) == "types.Union") {
             tib.addToRecordMap(valueDecl);
         }
