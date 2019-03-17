@@ -81,7 +81,7 @@ namespace {
         void handleSwitchStmt(const SwitchStmt *switchStmt) const;
 
         // conversion_routines
-        SlangExpr convertAssignment(bool compound_receiver,
+        SlangExpr convertAssignment(bool compound_receiver, std::string& compoundAssignOp,
                 std::string& locStr) const;
         SlangExpr convertIntegerLiteral(const IntegerLiteral *IL) const;
         SlangExpr convertFloatingLiteral(const FloatingLiteral *fl) const;
@@ -115,6 +115,7 @@ namespace {
         void getCaseExpr(std::vector<StmtVector>& stmtVecVec,
                          std::vector<std::string>& locStrs,
                          const CaseStmt *caseStmt) const;
+        std::string getCompoundAssignOpString(const BinaryOperator *binOp) const;
 
     }; // class SlangGenChecker
 } // anonymous namespace
@@ -225,7 +226,8 @@ void SlangGenChecker::handleBbInfo(const CFGBlock *bb, const CFG *cfg) const {
 
     // access and record successor blocks
     const Stmt *stmt = (bb->getTerminator()).getStmt();
-    if (stmt && (isa<IfStmt>(stmt) || isa<WhileStmt>(stmt) || isa<ForStmt>(stmt) || isa<DoStmt>(stmt))) {
+    if (stmt && (isa<IfStmt>(stmt) || isa<WhileStmt>(stmt) || isa<ForStmt>(stmt) || isa<DoStmt>(stmt)
+            || (isa<BinaryOperator>(stmt) && cast<BinaryOperator>(stmt)->isLogicalOp()))) {
         // if here, then only conditional edges are present
         bool trueEdge = true;
         if (bb->succ_size() > 2) {
@@ -236,8 +238,13 @@ void SlangGenChecker::handleBbInfo(const CFGBlock *bb, const CFG *cfg) const {
              I != bb->succ_end(); ++I) {
 
             CFGBlock *succ = *I;
-            if ((succId = succ->getBlockID()) == (int32_t)entryBbId) {
-                succId = -1;
+            if (succ) {
+                succId = succ->getBlockID();
+                if (succId == (int32_t)entryBbId) {
+                    succId = -1;
+                }
+            } else {
+                succId = 0;
             }
 
             if (trueEdge) {
@@ -321,6 +328,8 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
             SLANG_DEBUG("AAAAAAAAAAAAAAAAAAAAAAA")
             stu.printMainStack();
             break;
+
+        case Stmt::CompoundAssignOperatorClass:
         case Stmt::BinaryOperatorClass:
             handleBinaryOperator(cast<BinaryOperator>(stmt)); break;
 
@@ -338,6 +347,8 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
         case Stmt::CallExprClass:
             handleCallExpr(cast<CallExpr>(stmt)); break;
 
+        case Stmt::BreakStmtClass:
+        case Stmt::ContinueStmtClass:
         case Stmt::ImplicitCastExprClass:
             break; // do nothing
     }
@@ -409,7 +420,13 @@ void SlangGenChecker::handleIfStmt(std::string& locStr) const {
     std::stringstream ss;
 
     auto exprArg = convertExpr(true);
-    ss << "instr.CondI(" << exprArg.expr;
+    ss << "instr.CondI(";
+    if (exprArg.expr == "NullStmt") {
+        // only for for(;;) stmt
+        ss << "expr.LitE(1)";
+    } else {
+        ss << exprArg.expr;
+    }
     ss << ", " << locStr << ")";
 
     // order_correction for if stmt
@@ -449,10 +466,19 @@ void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
 } // handleDeclRefExpr()
 
 void SlangGenChecker::handleBinaryOperator(const BinaryOperator *binOp) const {
-    if (binOp->isAssignmentOp() && isTopLevel(binOp)) {
+    if ((binOp->isAssignmentOp() || binOp->isCompoundAssignmentOp())
+            && isTopLevel(binOp)) {
         std::string locStr = getLocationString(binOp);
-        SlangExpr slangExpr = convertAssignment(false, locStr); // top level is never compound
+        std::string compoundAssignOp = "";
+        if (binOp->isCompoundAssignmentOp()) {
+            compoundAssignOp = getCompoundAssignOpString(binOp);
+        }
+        SlangExpr slangExpr = convertAssignment(false, compoundAssignOp, locStr);
         stu.addBbStmts(slangExpr.slangStmts);
+    } else if (binOp->isLogicalOp()){
+        // for logical ops: && and ||, do the same as done with a if stmt
+        std::string locStr = getLocationString(binOp);
+        handleIfStmt(locStr);
     } else {
         stu.pushToMainStack(binOp);
     }
@@ -610,6 +636,7 @@ SlangExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
     std::stringstream ss;
 
     const Stmt *stmt = stu.popFromMainStack();
+    if (!stmt) return SlangExpr("NullStmt", false, QualType());
 
     switch(stmt->getStmtClass()) {
         case Stmt::IntegerLiteralClass:
@@ -624,9 +651,9 @@ SlangExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
         case Stmt::DeclRefExprClass:
             return convertDeclRefExpr(cast<DeclRefExpr>(stmt));
 
+        case Stmt::CompoundAssignOperatorClass:
         case Stmt::BinaryOperatorClass:
-            return convertBinaryOp(cast<BinaryOperator>(stmt),
-                    compound_receiver);
+            return convertBinaryOp(cast<BinaryOperator>(stmt), compound_receiver);
 
         case Stmt::UnaryOperatorClass:
             return convertUnaryOp(cast<UnaryOperator>(stmt), compound_receiver);
@@ -766,23 +793,69 @@ SlangExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr,
     return slangExpr;
 } // convertCallExpr()
 
-SlangExpr SlangGenChecker::convertAssignment(bool compound_receiver,
+SlangExpr SlangGenChecker::convertAssignment(bool compound_receiver, std::string& compoundAssignOp,
         std::string& locStr) const {
     std::stringstream ss;
     SlangExpr slangExpr{};
+    SlangExpr lhsRvalueTmp;
+    SlangExpr newRhsExpr;
+    SlangExpr exprLhs, exprRhs;
 
-    auto exprLhs = convertExpr(false); // unconditionally false
-    auto exprRhs = convertExpr(exprLhs.compound);
+    if (!compoundAssignOp.empty()) {
+        exprRhs = convertExpr(true); // unconditionally true
+        exprLhs = convertExpr(false);
+    } else {
+        exprLhs = convertExpr(false); // unconditionally false
+        exprRhs = convertExpr(exprLhs.compound);
+    }
+    newRhsExpr.expr = exprRhs.expr;
+
+    if (!compoundAssignOp.empty()) {
+        newRhsExpr.expr = exprLhs.expr;
+        if (exprLhs.compound) {
+            // e.g.: if stmt is: *x += 1
+            // gen stmt: t.1 = *x;
+            lhsRvalueTmp = genTmpVariable(exprLhs.qualType, locStr);
+            ss << "instr.AssignI(" << lhsRvalueTmp.expr << ", " << exprLhs.expr;
+            ss << ", " << locStr << ")";
+            newRhsExpr.expr = lhsRvalueTmp.expr;
+            newRhsExpr.addSlangStmt(ss.str());
+        }
+
+        // for: x += 1, gen (x + 1)
+        // for: *x += 1, gen (t.1 + 1) -- we get t.1 from above
+        ss.str("");
+        ss << "expr.BinaryE(" << newRhsExpr.expr;
+        ss << ", " << compoundAssignOp << ", " << exprRhs.expr;
+        ss << ", " << locStr << ")";
+        newRhsExpr.expr = ss.str();
+
+        if (exprLhs.compound) {
+            lhsRvalueTmp = genTmpVariable(exprLhs.qualType, locStr);
+            ss.str("");
+            ss << "instr.AssignI(" << lhsRvalueTmp.expr;
+            ss << ", " << newRhsExpr.expr;
+            ss << ", " << locStr << ")";
+            newRhsExpr.expr = lhsRvalueTmp.expr;
+            newRhsExpr.addSlangStmt(ss.str());
+        }
+    } // if
+
+    ss.str("");
+    ss << "instr.AssignI(" << exprLhs.expr << ", " << newRhsExpr.expr;
+    ss << ", " << locStr << ")";
+    SLANG_DEBUG(ss.str())
 
     if (compound_receiver && exprLhs.compound) {
+        // i.e. lhs is compound, and receiver is compound,
+        // store lhs in temporary
         slangExpr = genTmpVariable(exprLhs.qualType, locStr);
 
         // order_correction for assignment
         slangExpr.addSlangStmts(exprRhs.slangStmts);
+        slangExpr.addSlangStmts(newRhsExpr.slangStmts);
         slangExpr.addSlangStmts(exprLhs.slangStmts);
 
-        ss << "instr.AssignI(" << exprLhs.expr << ", " << exprRhs.expr;
-        ss << ", " << locStr << ")";
         slangExpr.addSlangStmt(ss.str());
 
         ss.str(""); // empty the stream
@@ -792,10 +865,9 @@ SlangExpr SlangGenChecker::convertAssignment(bool compound_receiver,
     } else {
         // order_correction for assignment
         slangExpr.addSlangStmts(exprRhs.slangStmts);
+        slangExpr.addSlangStmts(newRhsExpr.slangStmts);
         slangExpr.addSlangStmts(exprLhs.slangStmts);
 
-        ss << "instr.AssignI(" << exprLhs.expr << ", " << exprRhs.expr;
-        ss << ", " << locStr << ")";
         slangExpr.addSlangStmt(ss.str());
 
         slangExpr.expr = exprLhs.expr;
@@ -811,7 +883,7 @@ SlangExpr SlangGenChecker::convertAssignment(bool compound_receiver,
     }
 
     return slangExpr;
-}
+} // convertAssignment()
 
 void SlangGenChecker::adjustDirtyVar(SlangExpr& slangExpr,
         std::string& locStr) const {
@@ -847,8 +919,12 @@ SlangExpr SlangGenChecker::convertBinaryOp(const BinaryOperator *binOp,
 
     std::string locStr = getLocationString(binOp);
 
-    if (binOp->isAssignmentOp()) {
-        return convertAssignment(compound_receiver, locStr);
+    if (binOp->isAssignmentOp() || binOp->isCompoundAssignmentOp()) {
+        std::string compoundAssignOp = "";
+        if (binOp->isCompoundAssignmentOp()) {
+            compoundAssignOp = getCompoundAssignOpString(binOp);
+        }
+        return convertAssignment(compound_receiver, compoundAssignOp, locStr);
     }
 
     SlangExpr exprR = convertExpr(true);
@@ -1002,6 +1078,7 @@ SlangExpr SlangGenChecker::convertUnaryOp(const UnaryOperator *unOp,
 
         case UO_Minus: { op = "op.UO_MINUS"; break;}
         case UO_Plus: { op = "op.UO_MINUS"; break;}
+        case UO_LNot: { op = "op.UO_NOT"; break;}
     }
 
     if (compound_receiver) {
@@ -1146,6 +1223,10 @@ SlangExpr SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
 
 std::string SlangGenChecker::convertClangType(QualType qt) const {
     std::stringstream ss;
+    if (qt.isNull()) {
+        return "types.Int"; // always the default type
+    }
+
     const Type *type = qt.getTypePtr();
     if (type->isBuiltinType()) {
         if(type->isIntegerType()) {
@@ -1422,6 +1503,30 @@ bool SlangGenChecker::isTopLevel(const Stmt *stmt) const {
         return true; // top level
     }
 } // isTopLevel()
+
+std::string SlangGenChecker::getCompoundAssignOpString(const BinaryOperator *binOp) const {
+    std::string op;
+
+    switch(binOp->getOpcode()) {
+        case BO_AddAssign: {op = "op.BO_ADD"; break;}
+        case BO_SubAssign: {op = "op.BO_SUB"; break;}
+        case BO_MulAssign: {op = "op.BO_MUL"; break;}
+        case BO_DivAssign: {op = "op.BO_DIV"; break;}
+        case BO_RemAssign: {op = "op.BO_MOD"; break;}
+
+        case BO_AndAssign: {op = "op.BO_BIT_AND"; break;}
+        case BO_OrAssign: {op = "op.BO_BIT_OR"; break;}
+        case BO_XorAssign: {op = "op.BO_BIT_XOR"; break;}
+
+        case BO_ShlAssign: {op = "op.BO_SHL"; break;}
+        case BO_ShrAssign: {op = "op.BO_SHR"; break;}
+
+        default: {op = "ErrorAssignOp"; break;}
+    }
+
+    return op;
+
+} // getCompoundAssignOpString()
 
 //BOUND END  : helper_functions
 
