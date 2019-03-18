@@ -67,6 +67,7 @@ namespace {
         void handleFunction(const FunctionDecl *funcDecl) const;
         void handleCfg(const CFG *cfg) const;
         void handleBbInfo(const CFGBlock *bb, const CFG *cfg) const;
+        void handleAstStmts(const Stmt *stmt) const;
         void handleBbStmts(const CFGBlock *bb) const;
         void handleStmt(const Stmt *stmt) const;
         void handleVariable(const ValueDecl *valueDecl,
@@ -99,8 +100,10 @@ namespace {
                 std::string& locStr) const;
         SlangExpr convertCallExpr(const CallExpr *callExpr,
                 bool compound_receiver) const;
-        void adjustDirtyVar(SlangExpr& slangExpr, std::string& locStr) const;
+        SlangExpr convertUnaryExprOrTypeTraitExpr(const UnaryExprOrTypeTraitExpr *stmt,
+                bool compound_receiver) const;
         std::string convertClangType(QualType qt) const;
+        SlangExpr convertAstExpr(const Stmt *stmt, bool compound_receiver) const;
 
         // helper_functions
         SlangExpr genTmpVariable(QualType qt, std::string& locStr) const;
@@ -116,6 +119,9 @@ namespace {
                          std::vector<std::string>& locStrs,
                          const CaseStmt *caseStmt) const;
         std::string getCompoundAssignOpString(const BinaryOperator *binOp) const;
+        void adjustDirtyVar(SlangExpr& slangExpr, std::string& locStr) const;
+        bool isIncompleteType(const Type *type) const;
+        void genStmtVectorFromAST(const Stmt *stmt, StmtVector& stmtVec) const;
 
     }; // class SlangGenChecker
 } // anonymous namespace
@@ -295,10 +301,36 @@ void SlangGenChecker::handleBbStmts(const CFGBlock *bb) const {
     } // for (auto elem : *bb)
 
     // get terminator
-    const Stmt *stmt = (bb->getTerminator()).getStmt();
-    if (stmt) { handleStmt(stmt); }
+    const Stmt *terminator = (bb->getTerminator()).getStmt();
+    if (terminator) { handleStmt(terminator); }
 
 } // handleBbStmts()
+
+void SlangGenChecker::handleAstStmts(const Stmt *stmt) const {
+    auto firstChild = stmt->child_begin();
+    auto lastChild = stmt->child_end();
+    const Stmt *st;
+
+    if (firstChild != lastChild) {
+        // there are children
+        if (isa<BinaryOperator>(stmt) && cast<BinaryOperator>(stmt)->isAssignmentOp()) {
+            // iterate children in from right-to-left order
+            auto lhs = *firstChild;
+            auto rhs = *(++firstChild);
+            handleAstStmts(rhs);
+            handleAstStmts(lhs);
+        } else {
+            // usual order: left-to-right
+            for (auto iter = firstChild; iter != lastChild; ++iter) {
+                st = *iter;
+                if (st) {
+                    handleAstStmts(st);
+                }
+            }
+        }
+    }
+    handleStmt(stmt);
+} // handleAstStmts()
 
 void SlangGenChecker::handleStmt(const Stmt *stmt) const {
     Stmt::StmtClass stmtClass = stmt->getStmtClass();
@@ -347,6 +379,7 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
         case Stmt::CallExprClass:
             handleCallExpr(cast<CallExpr>(stmt)); break;
 
+        case Stmt::ParenExprClass:
         case Stmt::BreakStmtClass:
         case Stmt::ContinueStmtClass:
         case Stmt::ImplicitCastExprClass:
@@ -664,6 +697,12 @@ SlangExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
         case Stmt::CallExprClass:
             return convertCallExpr(cast<CallExpr>(stmt), compound_receiver);
 
+        case Stmt::UnaryExprOrTypeTraitExprClass:
+            return convertUnaryExprOrTypeTraitExpr(cast<UnaryExprOrTypeTraitExpr>(stmt), compound_receiver);
+
+        case Stmt::ParenExprClass:
+            return convertExpr(compound_receiver);
+
         default: {
             // error state
             SLANG_ERROR("UnknownStmt: " << stmt->getStmtClassName())
@@ -801,7 +840,9 @@ SlangExpr SlangGenChecker::convertAssignment(bool compound_receiver, std::string
     SlangExpr newRhsExpr;
     SlangExpr exprLhs, exprRhs;
 
+    //AD FIXME: separate out compound assignment logic into another function.
     if (!compoundAssignOp.empty()) {
+        // compound assignments: +=, -=, %=, &=, ...
         exprRhs = convertExpr(true); // unconditionally true
         exprLhs = convertExpr(false);
     } else {
@@ -984,20 +1025,36 @@ SlangExpr SlangGenChecker::convertArraySubscript(const ArraySubscriptExpr *array
     std::stringstream ss;
     SlangExpr varExpr;
     QualType qualType;
+    std::vector<std::string> indexExprs;
+    SlangExpr subScriptExpr;
+    SlangExpr tmpSlangExpr;
+    const Stmt *stmt;
 
     std::string locStr = getLocationString(arrayExpr);
 
-    // e.g. if expr is : arr[y]
-    SlangExpr subScriptExpr = convertExpr(true); // extracts the `[y]` part
+    // e.g. if expr is : arr[y][x]
+    do {
+        // extract subscripts first x, then y...
+        tmpSlangExpr = convertExpr(true);
+        indexExprs.push_back(tmpSlangExpr.expr);
+        subScriptExpr.addSlangStmts(tmpSlangExpr.slangStmts);
+        stmt = stu.popFromMainStack();
+    } while(isa<ArraySubscriptExpr>(stmt));
+    stu.pushToMainStack(stmt); // put the last one back
+
     SlangExpr arrExpr = convertExpr(true); // extracts the `arr` part
 
-    auto type = arrExpr.qualType.getTypePtr();
-    if (type->isArrayType()) {
-        auto arrType = cast<ArrayType>(type);
-        qualType = arrType->getElementType();
-    } else if(type->isPointerType()) {
-        auto ptrType = cast<PointerType>(type);
-        qualType = ptrType->getPointeeType();
+    // get the type (depends on the number of indexes)
+    qualType = arrExpr.qualType;
+    for (auto _ : indexExprs) {
+        auto type = qualType.getTypePtr();
+        if (type->isArrayType()) {
+            auto arrType = cast<ArrayType>(type);
+            qualType = arrType->getElementType();
+        } else if (type->isPointerType()) {
+            auto ptrType = cast<PointerType>(type);
+            qualType = ptrType->getPointeeType();
+        }
     }
 
     varExpr.qualType = qualType;
@@ -1010,8 +1067,18 @@ SlangExpr SlangGenChecker::convertArraySubscript(const ArraySubscriptExpr *array
     varExpr.addSlangStmts(arrExpr.slangStmts);
     varExpr.addSlangStmts(subScriptExpr.slangStmts);
 
-    ss << "expr.ArrE(" << arrExpr.expr << ", " << subScriptExpr.expr;
-    ss << ", " << locStr << ")"; // close expr.ArrE(...
+    ss << "expr.ArrayE(" << arrExpr.expr << ", ";
+    ss << "[";
+    std::string prefix = "";
+    std::reverse(indexExprs.begin(), indexExprs.end()); // x, y ---> y, x
+    for (auto indexExpr : indexExprs) {
+        ss << prefix << indexExpr;
+        if (prefix == "") {
+            prefix = ", ";
+        }
+    }
+    ss << "]";
+    ss << ", " << locStr << ")"; // close expr.ArrayE(...
 
     if (compound_receiver) {
         ss << ", " << locStr << ")"; // close instr.AssignI(...
@@ -1049,6 +1116,7 @@ SlangExpr SlangGenChecker::convertUnaryOp(const UnaryOperator *unOp,
 
     SlangExpr exprArg;
     if (unOp->getOpcode() == UO_AddrOf) {
+        // special case: e.g. &arr[7][5], ...
         exprArg = convertExpr(false);
     } else {
         exprArg = convertExpr(true);
@@ -1295,9 +1363,107 @@ std::string SlangGenChecker::convertClangType(QualType qt) const {
     return ss.str();
 } // convertClangType()
 
+SlangExpr SlangGenChecker::convertUnaryExprOrTypeTraitExpr(
+        const UnaryExprOrTypeTraitExpr *stmt, bool compound_receiver) const {
+    SlangExpr slangExpr;
+    SlangExpr innerExpr;
+    std::stringstream ss;
+    uint64_t size = 0;
+
+    std::string locStr = getLocationString(stmt);
+
+    UnaryExprOrTypeTrait kind = stmt->getKind();
+    switch(kind) {
+        // the sizeof operator
+        case UETT_SizeOf: {
+            auto iterator = stmt->child_begin();
+            if (iterator != stmt->child_end()) {
+                // then child is an expression
+                innerExpr = convertAstExpr(stmt, true);
+                slangExpr.addSlangStmts(innerExpr.slangStmts);
+
+                const Stmt *firstChild = *iterator;
+                const Expr *expr = cast<Expr>(firstChild);
+                slangExpr.qualType = FD->getASTContext().getTypeOfExprType(const_cast<Expr*>(expr));
+                const Type *type = slangExpr.qualType.getTypePtr();
+                if (type && !isIncompleteType(type)) {
+                    TypeInfo typeInfo = FD->getASTContext().getTypeInfo(slangExpr.qualType);
+                    size = typeInfo.Width/8;
+                } else {
+                    // FIXME: handle runtime sizeof support too
+                    SLANG_ERROR("SizeOf_Expr_is_incomplete. Loc:" << locStr)
+                }
+            } else {
+                // child is a type
+                slangExpr.qualType = stmt->getArgumentType();
+                TypeInfo typeInfo = FD->getASTContext().getTypeInfo(slangExpr.qualType);
+                size = typeInfo.Width/8;
+            }
+
+            ss << "expr.LitE(";
+            if (size == 0) {
+                ss << "ERROR:sizeof()";
+            } else {
+                ss << size;
+            }
+            ss << ", " << locStr << ")";
+            slangExpr.expr = ss.str();
+            break;
+        }
+
+        default:
+            SLANG_ERROR("UnaryExprOrTypeTrait not handled. Kind: " << kind)
+            break;
+    }
+    return slangExpr;
+} // convertUnaryExprOrTypeTraitExpr()
+
+SlangExpr SlangGenChecker::convertAstExpr(const Stmt *stmt, bool compound_receiver) const {
+    StmtVector stmtVec;
+    bool stmtsPresent = false;
+
+    // don't add the current stmt
+    auto firstChild = stmt->child_begin();
+    auto lastChild = stmt->child_end();
+
+    if (firstChild != lastChild) {
+        // there are children
+        for (auto iter = firstChild; iter != lastChild; ++iter) {
+            const Stmt *stmt = *iter;
+            if (stmt) {
+                stmtsPresent = true;
+                handleAstStmts(stmt);
+            }
+        }
+    }
+
+    if (stmtsPresent) {
+        return convertExpr(compound_receiver);
+    } else {
+        return SlangExpr("", false, QualType());
+    }
+} // convertAstExpr()
+
 //BOUND END  : conversion_routines to SlangExpr
 
 //BOUND START: helper_functions
+
+// manually generate a sequence of stmts from a given AST root
+void SlangGenChecker::genStmtVectorFromAST(const Stmt *stmt, StmtVector& stmtVec) const {
+    auto firstChild = stmt->child_begin();
+    auto lastChild = stmt->child_end();
+
+    if (firstChild != lastChild) {
+        // there are children
+        for (auto iter = firstChild; iter != lastChild; ++iter) {
+            const Stmt *stmt = *iter;
+            if (stmt) {
+                genStmtVectorFromAST(stmt, stmtVec);
+            }
+        }
+    }
+    stmtVec.push_back(stmt);
+} // genStmtVectorFromAST()
 
 // get all case statements recursively (case stmts can be hierarchical)
 void SlangGenChecker::getCaseExpr(
@@ -1527,6 +1693,18 @@ std::string SlangGenChecker::getCompoundAssignOpString(const BinaryOperator *bin
     return op;
 
 } // getCompoundAssignOpString()
+
+// Returns true if the type is not complete enough to give away a constant size
+bool SlangGenChecker::isIncompleteType(const Type *type) const {
+    bool retVal = false;
+
+    if (type->isIncompleteArrayType()
+            || type->isVariableArrayType() ) {
+        retVal = true;
+    }
+
+    return retVal;
+}
 
 //BOUND END  : helper_functions
 

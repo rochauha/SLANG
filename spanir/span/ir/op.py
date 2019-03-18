@@ -33,6 +33,7 @@ UO_MINUS_OC: OpCodeT    = 102 # -
 # unary pointer_ops
 UO_ADDROF_OC: OpCodeT   = 103 # &
 UO_DEREF_OC: OpCodeT    = 104 # *
+UO_SIZEOF_OC: OpCodeT   = 105 # sizeof()
 
 # bitwise_ops
 UO_BIT_NOT_OC: OpCodeT  = 110 # ~
@@ -171,6 +172,8 @@ UO_PLUS: UnaryOp = UnaryOp(UO_PLUS_OC)
 UO_MINUS: UnaryOp = UnaryOp(UO_MINUS_OC)
 UO_ADDROF: UnaryOp = UnaryOp(UO_ADDROF_OC)
 UO_DEREF: UnaryOp = UnaryOp(UO_DEREF_OC)
+
+UO_SIZEOF: UnaryOp = UnaryOp(UO_SIZEOF_OC)
 
 UO_BIT_NOT: UnaryOp = UnaryOp(UO_BIT_NOT_OC)
 UO_NOT: UnaryOp = UnaryOp(UO_NOT_OC)
