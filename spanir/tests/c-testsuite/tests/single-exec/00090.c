@@ -1,14 +1,11 @@
-int a[3] = {0, 1, 2};
-
 int
 main()
 {
-	if (a[0] != 0)
-		return 1;
-	if (a[1] != 1)
-		return 2;
-	if (a[2] != 2)
-		return 3;
+	int x;
 	
-	return 0;
+	x = 1;
+	x = x * 10;
+	x = x / 2;
+	x = x % 3;
+	return x - 2;
 }

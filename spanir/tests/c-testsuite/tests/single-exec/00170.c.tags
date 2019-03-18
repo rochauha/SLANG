@@ -1,4 +1,2 @@
 portable
 c89
-needs-libc
-needs-cpp

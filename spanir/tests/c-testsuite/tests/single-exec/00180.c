@@ -1,13 +1,13 @@
-#include <stdio.h>
-#include <string.h>
-
-int main()
+int
+main()
 {
-   char a[10];
-   strcpy(a, "abcdef");
-   printf("%s\n", &a[1]);
 
-   return 0;
+	struct S { int x; int y; } s;
+	struct S *p;
+
+	p = &s;	
+	s.x = 1;
+	p->y = 2;
+	return p->y + p->x - 3; 
 }
 
-/* vim: set expandtab ts=4 sw=3 sts=3 tw=80 :*/

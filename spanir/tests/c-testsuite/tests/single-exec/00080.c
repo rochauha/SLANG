@@ -1,12 +1,11 @@
-void
-voidfn()
-{
-    return;
-}
-
 int
 main()
 {
-    voidfn();
-    return 0;
+	int x;
+
+	x = 50;
+	do 
+		x = x - 1;
+	while(x);
+	return x;
 }
