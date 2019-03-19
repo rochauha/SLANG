@@ -488,8 +488,8 @@ void SlangGenChecker::handleReturnStmt(std::string& locStr) const {
 
 void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
     const ValueDecl *valueDecl = declRefExpr->getDecl();
+    stu.pushToMainStack(declRefExpr);
     if (isa<VarDecl>(valueDecl)) {
-        stu.pushToMainStack(declRefExpr);
         handleVariable(valueDecl, stu.getCurrFuncName());
     } else if (isa<FunctionDecl>(valueDecl)) {
         handleFunction(cast<FunctionDecl>(valueDecl));
@@ -789,14 +789,24 @@ SlangExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr,
 
     uint32_t numOfArgs = callExpr->getNumArgs();
     slangExpr.qualType = callExpr->getType();
-    callee = callExpr->getDirectCallee();
-    calleeName = callee->getNameInfo().getAsString();
+    // callee = callExpr->getDirectCallee();
+    // if (callee) {
+    //     calleeName = callee->getNameInfo().getAsString();
+    // } else {
+    //     const Expr *calleeExpr = callExpr->getCallee();
+    //     calleeExpr->dump();
+    //     llvm::errs() << "AAAAAAAAAAAAAAAAZZZZZZ";
+    // }
 
     // convert each argument
     for (uint32_t i = 0; i < numOfArgs; ++i) {
         args.push_back(convertExpr(true));
     }
 
+    // convert callee name/expr argument
+    SlangExpr calleeExpr = convertExpr(true);
+
+    slangExpr.addSlangStmts(calleeExpr.slangStmts);
     ss.str("");
     std::string prefix = "";
     for (auto argIter = args.end() - 1;
@@ -811,8 +821,7 @@ SlangExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr,
     std::string argString = ss.str();
 
     ss.str("");
-    ss << "expr.CallE(" << "expr.FuncE(\"" << stu.convertFuncName(calleeName) << "\"";
-    ss << ", " << locStr << ")"; // end expr.FuncE
+    ss << "expr.CallE(" << calleeExpr.expr;
     ss << ", [" << argString << "]";
     ss << ", " << locStr << ")"; // end expr.CallE
     slangExpr.expr = ss.str();
@@ -1283,6 +1292,12 @@ SlangExpr SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
     } else if (isa<EnumConstantDecl>(valueDecl)) {
         auto ecd = cast<EnumConstantDecl>(valueDecl);
         return convertEnumConst(ecd, locStr);
+    } else if(isa<FunctionDecl>(valueDecl)) {
+        auto funcDecl = cast<FunctionDecl>(valueDecl);
+        std::string funcName = funcDecl->getNameInfo().getAsString();
+        ss << "expr.FuncE(\"" << stu.convertFuncName(funcName) << "\"";
+        ss << ", " << locStr << ")";
+        return SlangExpr(ss.str(), false, funcDecl->getType());
     } else {
         SLANG_ERROR("Not_a_VarDecl.")
         return SlangExpr("ERROR:convertDeclRefExpr", false, QualType());
@@ -1297,18 +1312,67 @@ std::string SlangGenChecker::convertClangType(QualType qt) const {
 
     const Type *type = qt.getTypePtr();
     if (type->isBuiltinType()) {
-        if(type->isIntegerType()) {
-            if(type->isCharType()) {
-                ss << "types.Char";
+        if(type->isSignedIntegerType()) {
+            if (type->isCharType()) {
+                ss << "types.Int8";
+            } else if (type->isChar16Type()){
+                ss << "types.Int16";
+            } else if (type->isIntegerType()) {
+                ss << "types.Int32";
             } else {
-                ss << "types.Int";
+                ss << "UnknownSignedIntType.";
             }
+
+        } else if (type->isUnsignedIntegerType()) {
+            if (type->isCharType()) {
+                ss << "types.UInt8";
+            } else if (type->isChar16Type()){
+                ss << "types.UInt16";
+            } else if (type->isIntegerType()) {
+                ss << "types.UInt32";
+            } else {
+                ss << "UnknownUnsignedIntType.";
+            }
+
         } else if(type->isFloatingType()) {
-            ss << "types.Float";
+            ss << "types.Float32";
+        } else if(type->isRealFloatingType()) {
+            ss << "types.Float64"; // FIXME: is realfloat a double?
+
         } else if(type->isVoidType()) {
             ss << "types.Void";
         } else {
             ss << "UnknownBuiltinType.";
+        }
+
+    } else if(type->isFunctionPointerType()) {
+        // should be before ->isPointerType() check below
+        ss << "types.Ptr(to=";
+        const Type *funcType = type->getPointeeType().getTypePtr();
+        funcType = funcType->getUnqualifiedDesugaredType();
+        if (isa<FunctionProtoType>(funcType)) {
+            auto funcProtoType = cast<FunctionProtoType>(funcType);
+            ss << "types.FuncSig(returnType=";
+            ss << convertClangType(funcProtoType->getReturnType());
+            ss << ", " << "paramTypes=[";
+            std::string prefix = "";
+            for (auto qType : funcProtoType->getParamTypes()) {
+                ss << prefix << convertClangType(qType);
+                if (prefix == "") prefix = ",";
+            }
+            ss << "]";
+            if (funcProtoType->isVariadic()) {
+                ss << ", variadic=True";
+            }
+            ss << ")"; // close types.FuncSig(...
+            ss << ")"; // close types.Ptr(...
+        } else if (isa<FunctionNoProtoType>(funcType)) {
+            ss << "types.FuncSig(returnType=types.Int32)";
+            ss << ")"; // close types.Ptr(...
+        } else if (isa<FunctionType>(funcType)) {
+            ss << "FuncType";
+        } else {
+            ss << "UnknownFunctionPtrType";
         }
     } else if(type->isPointerType()) {
         ss << "types.Ptr(to=";
@@ -1328,16 +1392,16 @@ std::string SlangGenChecker::convertClangType(QualType qt) const {
             ss << "Field: " << (*it)->getNameAsString() << ", ";
             ss << convertClangType((*it)->getType());
         }
+
     } else if(type->isUnionType()) {
         // const RecordType *recordType = type->getAsUnionType();
         // const RecordDecl *recordDecl = recordType->getDecl();
         ss << "UnionType";
-    } else if(type->isFunctionPointerType()) {
-        ss << "FuncPointer";
+
     } else if(type->isArrayType()) {
         const ArrayType *arrayType = type->getAsArrayTypeUnsafe();
         if (isa<ConstantArrayType>(arrayType)) {
-            ss << "types.Array(of=";
+            ss << "types.ConstSizeArray(of=";
             ss << convertClangType(arrayType->getElementType());
             ss << ", ";
             auto constArrType = cast<ConstantArrayType>(arrayType);
