@@ -213,6 +213,7 @@ class RecordInfo {
     RecordKind rec_kind;
     std::vector<std::string> field_names;
     std::vector<std::string> field_type_strs;
+    size_t field_count;
 
   public:
     RecordInfo() { id = 0; }
@@ -246,11 +247,17 @@ class RecordInfo {
         for (auto field_type_str : field_types_string_list) {
             field_type_strs.push_back(field_type_str);
         }
+
+        field_count = field_names_list.size();
     }
 
     std::string getTypeString() const { return type_str; }
 
     bool isEmpty() const { return id == 0; }
+
+    size_t getFieldCount() const { return field_count; }
+
+    std::vector<std::string> getFieldNames() const { return field_names; }
 
     void dump() const {
         llvm::errs() << NBSP2 << "\"" << type_str << "\":\n";
@@ -351,6 +358,7 @@ class TraversedInfoBuffer {
     void printMainStack() const;
     void pushToMainStack(const Stmt *stmt);
     const Stmt *popFromMainStack();
+    const Stmt *topOfMainStack();
     bool isMainStackEmpty() const;
     uint32_t nxtBlockId();
 
@@ -689,6 +697,14 @@ const Stmt *TraversedInfoBuffer::popFromMainStack() {
     return nullptr;
 } // popFromMainStack()
 
+const Stmt *TraversedInfoBuffer::topOfMainStack() {
+    if (main_stack.size()) {
+        auto stmt = main_stack[main_stack.size() - 1];
+        return stmt;
+    }
+    return nullptr;
+} // topOfMainStack()
+
 bool TraversedInfoBuffer::isMainStackEmpty() const {
     return main_stack.empty();
 } // isMainStackEmpty()
@@ -853,6 +869,7 @@ class SlangGenChecker : public Checker<check::ASTCodeBody> {
     void handleCallExpr(const CallExpr *function_call) const;
     bool isCallExprDirectlyAssignedToVariable(const CallExpr *function_call) const;
     void handleIfStmt() const;
+    void handleInitListExpr(const InitListExpr *init_list_expr) const;
     void handleSwitchStmt(const SwitchStmt *switch_stmt) const;
     ElementListTy getElementsFromCaseStmt(const CaseStmt *case_stmt) const;
     void getElementsIn(ElementListTy &elem_list, const Stmt *expression_top) const;
@@ -872,6 +889,7 @@ class SlangGenChecker : public Checker<check::ASTCodeBody> {
     // a function, if stmt, *y on lhs, arr[i] on lhs are examples of a compound_receiver.
     SpanExpr convertExpr(bool compound_receiver) const;
     SpanExpr convertDeclRefExpr(const DeclRefExpr *dre) const;
+    SpanExpr convertInitListExpr(const InitListExpr *init_list_expr) const;
     SpanExpr convertMemberExpr(const MemberExpr *me) const;
     SpanExpr convertVarDecl(const VarDecl *varDecl) const;
     SpanExpr convertUnaryOp(const UnaryOperator *unOp, bool compound_receiver) const;
@@ -1100,6 +1118,11 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
 
     case Stmt::SwitchStmtClass: {
         handleSwitchStmt(cast<SwitchStmt>(stmt));
+        break;
+    }
+
+    case Stmt::InitListExprClass: {
+        handleInitListExpr(cast<InitListExpr>(stmt));
         break;
     }
 
@@ -1378,6 +1401,10 @@ void SlangGenChecker::handleMemberExpr(const MemberExpr *memberExpr) const {
     tib.pushToMainStack(memberExpr);
 } // handleMemberExpr()
 
+void SlangGenChecker::handleInitListExpr(const InitListExpr *init_list_expr) const {
+    tib.pushToMainStack(init_list_expr);
+} // handleInitListExpr()
+
 void SlangGenChecker::handleUnaryOperator(const UnaryOperator *unOp) const {
     if (isTopLevel(unOp)) {
         SpanExpr expr = convertUnaryOp(unOp, true);
@@ -1446,6 +1473,11 @@ SpanExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
         return convertUnaryOp(unOp, compound_receiver);
     }
 
+    case Stmt::InitListExprClass: {
+        const InitListExpr *init_list_expr = cast<InitListExpr>(stmt);
+        return convertInitListExpr(init_list_expr);
+    }
+
     case Stmt::CallExprClass: {
         llvm::errs() << "function conversion\n";
         const CallExpr *function_call = cast<CallExpr>(stmt);
@@ -1461,6 +1493,42 @@ SpanExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
     }
     // return SpanExpr("ERROR:convertExpr", false, QualType());
 } // convertExpr()
+
+SpanExpr SlangGenChecker::convertInitListExpr(const InitListExpr *init_list_expr) const {
+    QualType qt = tib.getCleanedQualType(init_list_expr->getType());
+
+    const Type *type_ptr = qt.getTypePtr();
+    SpanExpr tmp = tib.genTmpVariable(qt); // store it into temp
+
+    RecordDecl *record_decl = nullptr;
+    if (type_ptr->isStructureType())
+        record_decl = type_ptr->getAsStructureType()->getDecl();
+    else if (type_ptr->isUnionType())
+        record_decl = type_ptr->getAsUnionType()->getDecl();
+
+    // get info from map
+    RecordInfo record_info = tib.record_map[(uint64_t)record_decl];
+    size_t field_count = record_info.getFieldCount();
+
+    std::stack<SpanExpr> span_stmt_stack;
+    for (int i = 0; i < field_count; ++i) {
+        SpanExpr current_expr = convertExpr(true);
+        span_stmt_stack.push(current_expr);
+    }
+
+    std::stringstream ss;
+    std::vector<std::string> field_names = record_info.getFieldNames();
+    for (int i = 0; i < field_count; ++i) {
+        SpanExpr current_stmt = span_stmt_stack.top();
+        tmp.addSpanStmts(current_stmt.spanStmts);
+        ss << "instr.AssignI("
+           << "expr.MemberE(" << tmp.expr << ", " << field_names[i] << "), " << current_stmt.expr;
+        span_stmt_stack.pop();
+        tmp.addSpanStmt(ss.str());
+        ss.str("");
+    }
+    return tmp;
+} // convertInitListExpr()
 
 SpanExpr SlangGenChecker::convertIntegerLiteral(const IntegerLiteral *il) const {
     std::stringstream ss;
