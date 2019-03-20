@@ -1,18 +1,13 @@
-struct inner_t {
+struct inner_type {
 	int b1, b2;
-};
-typedef struct {
-	int a1;
-	struct inner_t a2;
-} my_type;
+	struct inner_type* next;
+};	
 
+struct my_type {
+	int attr_1;
+	struct inner_type attr_2;
+};
 
 int main() {
-	// struct {int attr} x;
-	// x.attr = 230;
-	my_type p;
-	p.a1 = 200;
-	// p.a2.b1 = 30;
-	// p.a2.b2 = 40;
-	// // p.a1 = 200;
+	struct my_type p = {2, {5 + 4, 6, 0}};
 }
