@@ -16,6 +16,8 @@ import span.ir.types as types
 import span.ir.op as op
 import span.util.util as util
 
+import io
+
 ExprId = int
 ExprCodeT = int
 
@@ -29,6 +31,7 @@ LIT_EXPR_EC: ExprCodeT        = 12
 FUNC_EXPR_EC: ExprCodeT       = 13
 
 UNARY_EXPR_EC: ExprCodeT      = 20
+CAST_EXPR_EC: ExprCodeT       = 21
 BINARY_EXPR_EC: ExprCodeT     = 30
 ARR_EXPR_EC: ExprCodeT        = 31
 
@@ -52,7 +55,7 @@ class ExprET(types.AnyT):
     self.loc = loc
 
   def isUnaryExpr(self):
-    return self.exprCode == UNARY_EXPR_EC
+    return self.exprCode == UNARY_EXPR_EC or self.exprCode == CAST_EXPR_EC
 
   def isBinaryExpr(self):
     return self.exprCode == BINARY_EXPR_EC
@@ -204,17 +207,16 @@ class BinaryE(ExprET):
 
   def __repr__(self): return self.__str__()
 
-class ArrE(BinaryE):
+class ArrayE(UnitET):
   """A binary array expression."""
   def __init__(self,
-               arg1: UnitET,
-               arg2: UnitET,
+               var: VarE,
+               indexSeq: List[UnitET],
                loc: Optional[types.Loc] = None
   ) -> None:
-    super().__init__(arg1, op.BO_ARR_OC, arg2, loc)
-    self.arg1 = arg1
-    self.opr = op.BO_ARR_OC
-    self.arg2 = arg2
+    super().__init__(ARR_EXPR_EC, loc)
+    self.var = var
+    self.indexSeq = indexSeq
 
   def __eq__(self,
              other: 'BinaryE'
@@ -222,21 +224,25 @@ class ArrE(BinaryE):
     if not isinstance(other, BinaryE):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
-    if not self.opr == other.opr:
-      if LS: _log.warning("Operator Differs: %s, %s", self, other)
+    if not self.var == other.var:
+      if LS: _log.warning("ArrayName Differs: %s, %s", self, other)
       return False
-    if not self.arg1 == other.arg1:
-      if LS: _log.warning("Arg1 Differs: %s, %s", self, other)
-      return False
-    if not self.arg2 == other.arg2:
-      if LS: _log.warning("Arg2 Differs: %s, %s", self, other)
+    if not self.indexSeq == other.indexSeq:
+      if LS: _log.warning("IndexSeq Differs: %s, %s", self, other)
       return False
     if not self.loc == other.loc:
       if LS: _log.warning("Loc Differs: %s, %s", self, other)
       return False
     return True
 
-  def __str__(self): return f"{self.arg1}[{self.arg2}]"
+  def __str__(self):
+    indexStr = ""
+    with io.StringIO() as sio:
+      for index in self.indexSeq:
+        sio.write(f"[{index}]")
+      indexStr = sio.getvalue()
+
+    return f"{self.var}{indexStr}"
 
   def __repr__(self): return self.__str__()
 
@@ -269,6 +275,38 @@ class UnaryE(ExprET):
     return True
 
   def __str__(self): return f"{self.opr}{self.arg}"
+
+  def __repr__(self): return self.__str__()
+
+class CastE(UnaryE):
+  """A unary type cast expression."""
+  def __init__(self,
+               cast: types.Type,
+               arg: UnitET,
+               loc: Optional[types.Loc] = None
+  ) -> None:
+    super().__init__(CAST_EXPR_EC, loc)
+    self.cast = cast
+    self.arg = arg
+
+  def __eq__(self,
+             other: 'CastE'
+  ) -> bool:
+    if not isinstance(other, CastE):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.cast == other.cast:
+      if LS: _log.warning("CastType Differs: %s, %s", self, other)
+      return False
+    if not self.arg == other.arg:
+      if LS: _log.warning("Arg Differs: %s, %s", self, other)
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __str__(self): return f"{self.cast}{self.arg}"
 
   def __repr__(self): return self.__str__()
 

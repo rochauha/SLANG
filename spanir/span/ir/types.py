@@ -296,7 +296,19 @@ class Ptr(Type):
   def __repr__(self):
     return f"types.Ptr({self.to}, {self.indir})"
 
-class Array(Type):
+class ArrayT(Type):
+  """A superclass for all arrays.
+
+  Not to be instantiated (note the suffix `T`)
+  """
+  def __init__(self,
+               of: Type,
+               typeCode: TypeCodeT = ARR_TC,
+  ) -> None:
+    super().__init__(typeCode)
+    self.of = of
+
+class ConstSizeArray(ArrayT):
   """Concrete array type.
 
   Instantiate this class to denote array types.
@@ -307,14 +319,13 @@ class Array(Type):
                dim: Optional[int] = None,
                typeCode: TypeCodeT = ARR_TC,
   ) -> None:
-    super().__init__(typeCode)
+    super().__init__(of, typeCode)
     self.dim = dim
-    self.of = of
 
   def __eq__(self,
-             other: 'Array'
+             other: 'ConstSizeArray'
   ) -> bool:
-    if not isinstance(other, Array):
+    if not isinstance(other, ConstSizeArray):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
     if not self.typeCode == other.typeCode:
@@ -334,13 +345,12 @@ class Array(Type):
 
   def __repr__(self): return f"types.Array({self.of}, {self.dim})"
 
-class VarArray(Array):
+class VarArray(ArrayT):
   """an array with variable size: e.g. int arr[x*20+y];"""
   def __init__(self,
                of: Type,
   ) -> None:
-    super().__init__(of=of, dim=None, typeCode=VAR_ARR_TC)
-    self.of = of
+    super().__init__(of=of, typeCode=VAR_ARR_TC)
 
   def __eq__(self,
              other: 'VarArray'
@@ -365,12 +375,12 @@ class VarArray(Array):
 
   def __repr__(self): return f"types.VarArray({self.of})"
 
-class IncompleteArray(Array):
+class IncompleteArray(ArrayT):
   """An array with no size: e.g. int arr[];"""
   def __init__(self,
                of: Type,
   ) -> None:
-    super().__init__(of=of, dim=None, typeCode=INCPL_ARR_TC)
+    super().__init__(of=of, typeCode=INCPL_ARR_TC)
     self.of = of
 
   def __eq__(self,
