@@ -9,7 +9,7 @@
 
 import logging
 _log = logging.getLogger(__name__)
-from typing import TypeVar, List, Optional
+from typing import TypeVar, List, Optional, Tuple
 
 from span.util.logger import LS
 from span.util.messages import PTR_INDLEV_INVALID
@@ -410,12 +410,12 @@ class FuncSig(Type):
   """A function signature."""
   def __init__(self,
                returnType: Type,
-               paramTypes: List[Type],
+               paramTypes: Optional[List[Type]] = None,
                variadic: bool = False
   ) -> None:
     super().__init__(FUNC_SIG_TC)
     self.returnType = returnType
-    self.paramTypes = paramTypes
+    self.paramTypes = paramTypes if paramTypes else []
     self.variadic = variadic
 
   def __eq__(self,
@@ -449,10 +449,12 @@ class FuncSig(Type):
 class Struct(Type):
   """A structure type."""
   def __init__(self,
-               structName: StructNameT
+               name: StructNameT,
+               fields: List[Tuple[str, Type]],
   ) -> None:
     super().__init__(STRUCT_TC)
-    self.structName = structName
+    self.name = name
+    self.fields = fields
 
   def __eq__(self,
              other: 'Struct'
@@ -463,8 +465,11 @@ class Struct(Type):
     if not self.typeCode == other.typeCode:
       if LS: _log.warning("Types Differ: %s, %s", self, other)
       return False
-    if not self.structName == other.structName:
+    if not self.name == other.name:
       if LS: _log.warning("StructName Differs: %s, %s", self, other)
+      return False
+    if not self.fields == other.fields:
+      if LS: _log.warning("Fields Differs: %s, %s", self, other)
       return False
     return True
 

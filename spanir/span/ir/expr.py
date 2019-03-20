@@ -391,11 +391,13 @@ class CallE(ExprET):
 class MemberE(ExprET):
   """A member access expression: e.g. x->f.c or x.f.c ..."""
   def __init__(self,
-               args: List[types.VarNameT],
+               var: VarE,
+               fields: List[types.FieldNameT],
                loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(MEMBER_EXPR_EC, loc)
-    self.args = args
+    self.var = var
+    self.fields = fields
 
   def __eq__(self,
              other: 'MemberE'
@@ -403,8 +405,11 @@ class MemberE(ExprET):
     if not isinstance(other, MemberE):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
-    if not self.args == other.args:
+    if not self.var == other.var:
       if LS: _log.warning("Args Differ: %s, %s", self, other)
+      return False
+    if not self.fields == other.fields:
+      if LS: _log.warning("Fields Differ: %s, %s", self, other)
       return False
     if not self.loc == other.loc:
       if LS: _log.warning("Loc Differs: %s, %s", self, other)
@@ -412,9 +417,8 @@ class MemberE(ExprET):
     return True
 
   def __str__(self):
-    args = [arg.split(":")[-1] for arg in self.args]
-    expr = args.join(".")
-    return expr
+    members = ".".join(self.fields)
+    return f"{self.var}.{members}"
 
   def __repr__(self): return self.__str__()
 
