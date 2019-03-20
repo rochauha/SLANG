@@ -1,33 +1,18 @@
-// #include <stdio.h>
+struct inner_t {
+	int b1, b2;
+};
+typedef struct {
+	int a1;
+	struct inner_t a2;
+} my_type;
 
-int sum(int a, int b);
-// {
-// 	return a + b;
-// }
-
-int mul(int a, int b);
-// {
-// 	return a * b;
-// }
-
-typedef int INT;
-
-int a = 0, *p;
 
 int main() {
-	// int b = 0;
-	INT (*fptr)(int, int);
-
-	fptr = &sum;	
-	// a = 340;
-	 a = fptr(5, 45) + sum(55, 540);
-	// printf("%d\n", a);
-
-	// p = &a;
-
-	// p = &a;
-
-	// fptr = &mul;
-	// a = fptr(5, 45);
-	// printf("%d\n", a);
+	// struct {int attr} x;
+	// x.attr = 230;
+	my_type p;
+	p.a1 = 200;
+	// p.a2.b1 = 30;
+	// p.a2.b2 = 40;
+	// // p.a1 = 200;
 }
