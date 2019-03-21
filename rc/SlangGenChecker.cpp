@@ -864,6 +864,7 @@ class SlangGenChecker : public Checker<check::ASTCodeBody> {
     void handleDeclRefExpr(const DeclRefExpr *DRE) const;
     void handleMemberExpr(const MemberExpr *memberExpr) const;
     void handleUnaryOperator(const UnaryOperator *unOp) const;
+    void handleCStyleCastExpr(const CStyleCastExpr *cast_expr) const;
     void handleBinaryOperator(const BinaryOperator *binOp) const;
     void handleReturnStmt() const;
     void handleCallExpr(const CallExpr *function_call) const;
@@ -892,6 +893,7 @@ class SlangGenChecker : public Checker<check::ASTCodeBody> {
     SpanExpr convertInitListExpr(const InitListExpr *init_list_expr) const;
     SpanExpr convertMemberExpr(const MemberExpr *me) const;
     SpanExpr convertVarDecl(const VarDecl *varDecl) const;
+    SpanExpr convertCStyleCastExpr(const CStyleCastExpr *cast_expr, bool compound_receiver) const;
     SpanExpr convertUnaryOp(const UnaryOperator *unOp, bool compound_receiver) const;
     SpanExpr convertUnaryIncDec(const UnaryOperator *unOp, bool compound_receiver) const;
     SpanExpr convertBinaryOp(const BinaryOperator *binOp, bool compound_receiver) const;
@@ -1092,6 +1094,11 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
 
     case Stmt::UnaryOperatorClass: {
         handleUnaryOperator(cast<UnaryOperator>(stmt));
+        break;
+    }
+
+    case Stmt::CStyleCastExprClass: {
+        handleCStyleCastExpr(cast<CStyleCastExpr>(stmt));
         break;
     }
 
@@ -1414,6 +1421,15 @@ void SlangGenChecker::handleUnaryOperator(const UnaryOperator *unOp) const {
     }
 } // handleUnaryOperator()
 
+void SlangGenChecker::handleCStyleCastExpr(const CStyleCastExpr *cast_expr) const {
+    if (isTopLevel(cast_expr)) {
+        SpanExpr expr = convertCStyleCastExpr(cast_expr, true);
+        addSpanStmtsToCurrBlock(expr.spanStmts);
+    } else {
+        tib.pushToMainStack(cast_expr);
+    }
+} // handleCStyleCastExpr()
+
 void SlangGenChecker::handleBinaryOperator(const BinaryOperator *binOp) const {
     if (binOp->isAssignmentOp() && isTopLevel(binOp)) {
         SpanExpr spanExpr = convertAssignment(false); // top level is never compound
@@ -1471,6 +1487,11 @@ SpanExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
     case Stmt::UnaryOperatorClass: {
         auto unOp = cast<UnaryOperator>(stmt);
         return convertUnaryOp(unOp, compound_receiver);
+    }
+
+    case Stmt::CStyleCastExprClass: {
+        auto cast_expr = cast<CStyleCastExpr>(stmt);
+        return convertCStyleCastExpr(cast_expr, compound_receiver);
     }
 
     case Stmt::InitListExprClass: {
@@ -1740,6 +1761,40 @@ SpanExpr SlangGenChecker::convertBinaryOp(const BinaryOperator *binOp,
 
     return varExpr;
 } // convertBinaryOp()
+
+SpanExpr SlangGenChecker::convertCStyleCastExpr(const CStyleCastExpr *cast_expr,
+                                                bool compound_receiver) const {
+    std::stringstream ss;
+    std::string op;
+    SpanExpr varExpr{};
+    QualType qualType;
+
+    SpanExpr exprArg = convertExpr(true);
+    adjustDirtyVar(exprArg);
+    qualType = tib.getCleanedQualType(cast_expr->getType());
+
+    ss << "expr.CastE(to=" << tib.convertClangType(qualType) << ", " << exprArg.expr << ")";
+
+    if (compound_receiver) {
+        std::string current_cast_expr = ss.str();
+        ss.str("");
+        varExpr = tib.genTmpVariable(qualType);
+        ss << "instr.AssignI(" << varExpr.expr << ", " << current_cast_expr;
+    }
+
+    // order_correction cast expressions
+    varExpr.addSpanStmts(exprArg.spanStmts);
+
+    if (compound_receiver) {
+        ss << ")"; // close instr.AssignI(...
+        varExpr.addSpanStmt(ss.str());
+    } else {
+        varExpr.expr = ss.str();
+        varExpr.compound = true;
+        varExpr.qualType = qualType;
+    }
+    return varExpr;
+} // convertCStyleCastExpr()
 
 SpanExpr SlangGenChecker::convertUnaryOp(const UnaryOperator *unOp, bool compound_receiver) const {
     std::stringstream ss;
