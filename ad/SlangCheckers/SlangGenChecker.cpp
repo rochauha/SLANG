@@ -586,9 +586,12 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switchStmt) const {
     std::vector<std::string> locStrs;
 
     // Get all case statements inside switch.
-    const CompoundStmt *body = cast<CompoundStmt>(switchStmt->getBody());
-    for (auto it = body->body_begin(); it != body->body_end(); ++it) {
-        if (isa<CaseStmt>(*it)) {
+    const Stmt *body = switchStmt->getBody();
+    if (!isa<CompoundStmt>(body)) {
+        body = switchStmt;
+    }
+    for (auto it = body->child_begin(); it != body->child_end(); ++it) {
+        if (*it && isa<CaseStmt>(*it)) {
             getCaseExpr(stmtVecVec, locStrs, cast<CaseStmt>(*it));
         }
     }
