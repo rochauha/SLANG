@@ -70,7 +70,12 @@ class InstrIT(types.AnyT):
   def isGotoInstr(self): return self.instrCode == GOTO_INSTR_IC
 
 class AssignI(InstrIT):
-  """Assignment statement."""
+  """Assignment statement.
+  Two forms only:
+    VarE = ExprET
+      or
+    DerefE/ArrayE/MemberE = UnitET
+  """
   def __init__(self,
                lhs: expr.ExprET,
                rhs: expr.ExprET,
@@ -122,21 +127,6 @@ class CondI(InstrIT):
     return f"if ({self.arg})"
 
   def __repr__(self): return self.__str__()
-
-class GotoI(InstrIT):
-  """An unconditional jump (goto) instruction."""
-  def __init__(self,
-               loc: Optional[types.Loc] = None
-  ) -> None:
-    super().__init__(GOTO_INSTR_IC, loc)
-
-  def __eq__(self, other: 'GotoI'):
-    if not isinstance(other, GotoI):
-      if LS: _log.warning("%s, %s are incomparable.", self, other)
-      return False
-    return True
-
-  def __str__(self): return f"goto"
 
 class ReturnI(InstrIT):
   """Return statement."""

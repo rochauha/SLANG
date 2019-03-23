@@ -32,10 +32,14 @@ FUNC_EXPR_EC: ExprCodeT       = 13
 
 UNARY_EXPR_EC: ExprCodeT      = 20
 CAST_EXPR_EC: ExprCodeT       = 21
+BASIC_EXPR_EC: ExprCodeT      = 22
+ADDROF_EXPR_EC: ExprCodeT     = 23
+SIZEOF_EXPR_EC: ExprCodeT     = 24
 BINARY_EXPR_EC: ExprCodeT     = 30
 ARR_EXPR_EC: ExprCodeT        = 31
 
 CALL_EXPR_EC: ExprCodeT       = 40
+PTRCALL_EXPR_EC: ExprCodeT    = 41
 MEMBER_EXPR_EC: ExprCodeT     = 45
 PHI_EXPR_EC: ExprCodeT        = 50
 
@@ -66,75 +70,21 @@ class ExprET(types.AnyT):
   def isCallExpr(self):
     return self.exprCode == CALL_EXPR_EC
 
-class UnitET(ExprET):
-  """Unit exprs like a var 'x', a value '12.3'."""
+class BasicET(ExprET):
+  """Basic exprs like a var 'x', a value '12.3', a[10], x.y."""
   def __init__(self,
                exprCode: ExprCodeT,
                loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(exprCode, loc)
 
-class VarE(UnitET):
-  """Holds a single variable name."""
+class UnitET(BasicET):
+  """Unit exprs like a var 'x', a value '12.3'."""
   def __init__(self,
-               name: types.VarNameT,
+               exprCode: ExprCodeT,
                loc: Optional[types.Loc] = None
   ) -> None:
-    super().__init__(VAR_EXPR_EC, loc)
-    self.name: types.VarNameT = name
-
-  def __eq__(self,
-             other: 'VarE'
-  ) -> bool:
-    if not isinstance(other, VarE):
-      if LS: _log.warning("%s, %s are incomparable.", self, other)
-      return False
-    if not self.name == other.name:
-      if LS: _log.warning("VarName Differs: %s, %s", repr(self), repr(other))
-      return False
-    if not self.loc == other.loc:
-      if LS: _log.warning("Loc Differs: %s, %s", self, other)
-      return False
-    return True
-
-  def __hash__(self): return 10
-
-  def __str__(self):
-    name = self.name.split(":")[-1]
-    return f"{name}"
-
-  def __repr__(self): return self.name
-
-class FuncE(VarE):
-  """A function name that is called. Used in CallE class."""
-  def __init__(self,
-               name: types.FuncNameT,
-               loc: Optional[types.Loc] = None
-  ) -> None:
-    super().__init__(FUNC_EXPR_EC, loc)
-    self.name: types.VarNameT = name
-
-  def __eq__(self,
-             other: 'FuncE'
-  ) -> bool:
-    if not isinstance(other, FuncE):
-      if LS: _log.warning("%s, %s are incomparable.", self, other)
-      return False
-    if not self.name == other.name:
-      if LS: _log.warning("FuncName Differs: %s, %s", repr(self), repr(other))
-      return False
-    if not self.loc == other.loc:
-      if LS: _log.warning("Loc Differs: %s, %s", self, other)
-      return False
-    return True
-
-  def __hash__(self): return 10
-
-  def __str__(self):
-    name = self.name.split(":")[-1]
-    return f"{name}"
-
-  def __repr__(self): return self.name
+    super().__init__(exprCode, loc)
 
 class LitE(UnitET):
   """A single numeric literal. Bools are also numeric."""
@@ -167,6 +117,114 @@ class LitE(UnitET):
       newVal = "'" + newVal + "'"
       return f"{newVal}"
     return f"{self.val}"
+
+  def __repr__(self): return self.__str__()
+
+class VarE(UnitET):
+  """Holds a single variable name."""
+  def __init__(self,
+               name: types.VarNameT,
+               loc: Optional[types.Loc] = None
+  ) -> None:
+    super().__init__(VAR_EXPR_EC, loc)
+    self.name: types.VarNameT = name
+
+  def __eq__(self,
+             other: 'VarE'
+  ) -> bool:
+    if not isinstance(other, VarE):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.name == other.name:
+      if LS: _log.warning("VarName Differs: %s, %s", repr(self), repr(other))
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __hash__(self): return 10
+
+  def __str__(self):
+    name = self.name.split(":")[-1]
+    return f"{name}"
+
+  def __repr__(self): return self.name
+
+class ArrayE(BasicET):
+  """An array expression.
+  TODO: allow one subscript only.
+  """
+  def __init__(self,
+               var: VarE,
+               indexSeq: List[UnitET],
+               loc: Optional[types.Loc] = None
+  ) -> None:
+    super().__init__(ARR_EXPR_EC, loc)
+    self.var = var
+    self.indexSeq = indexSeq
+
+  def __eq__(self,
+             other: 'BinaryE'
+  ) -> bool:
+    if not isinstance(other, BinaryE):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.var == other.var:
+      if LS: _log.warning("ArrayName Differs: %s, %s", self, other)
+      return False
+    if not self.indexSeq == other.indexSeq:
+      if LS: _log.warning("IndexSeq Differs: %s, %s", self, other)
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __str__(self):
+    indexStr = ""
+    with io.StringIO() as sio:
+      for index in self.indexSeq:
+        sio.write(f"[{index}]")
+      indexStr = sio.getvalue()
+
+    return f"{self.var}{indexStr}"
+
+  def __repr__(self): return self.__str__()
+
+class MemberE(BasicET):
+  """A member access expression: e.g. x->f.c or x.f.c ...
+  TODO: max one member access, x.y or u->y.
+  """
+  def __init__(self,
+               var: VarE,
+               fields: List[types.FieldNameT],
+               loc: Optional[types.Loc] = None
+  ) -> None:
+    super().__init__(MEMBER_EXPR_EC, loc)
+    self.var = var
+    self.fields = fields
+
+  def __eq__(self,
+             other: 'MemberE'
+  ) -> bool:
+    if not isinstance(other, MemberE):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.var == other.var:
+      if LS: _log.warning("Args Differ: %s, %s", self, other)
+      return False
+    if not self.fields == other.fields:
+      if LS: _log.warning("Fields Differ: %s, %s", self, other)
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __str__(self):
+    members = ".".join(self.fields)
+    return f"{self.var}.{members}"
 
   def __repr__(self): return self.__str__()
 
@@ -207,45 +265,6 @@ class BinaryE(ExprET):
 
   def __repr__(self): return self.__str__()
 
-class ArrayE(UnitET):
-  """A binary array expression."""
-  def __init__(self,
-               var: VarE,
-               indexSeq: List[UnitET],
-               loc: Optional[types.Loc] = None
-  ) -> None:
-    super().__init__(ARR_EXPR_EC, loc)
-    self.var = var
-    self.indexSeq = indexSeq
-
-  def __eq__(self,
-             other: 'BinaryE'
-  ) -> bool:
-    if not isinstance(other, BinaryE):
-      if LS: _log.warning("%s, %s are incomparable.", self, other)
-      return False
-    if not self.var == other.var:
-      if LS: _log.warning("ArrayName Differs: %s, %s", self, other)
-      return False
-    if not self.indexSeq == other.indexSeq:
-      if LS: _log.warning("IndexSeq Differs: %s, %s", self, other)
-      return False
-    if not self.loc == other.loc:
-      if LS: _log.warning("Loc Differs: %s, %s", self, other)
-      return False
-    return True
-
-  def __str__(self):
-    indexStr = ""
-    with io.StringIO() as sio:
-      for index in self.indexSeq:
-        sio.write(f"[{index}]")
-      indexStr = sio.getvalue()
-
-    return f"{self.var}{indexStr}"
-
-  def __repr__(self): return self.__str__()
-
 class UnaryE(ExprET):
   """A unary arithmetic expression."""
   def __init__(self,
@@ -278,15 +297,72 @@ class UnaryE(ExprET):
 
   def __repr__(self): return self.__str__()
 
+class AddrOfE(UnaryE):
+  """A unary arithmetic expression."""
+  def __init__(self,
+               arg: BasicET,
+               loc: Optional[types.Loc] = None
+  ) -> None:
+    super().__init__(ADDROF_EXPR_EC, loc)
+    self.arg = arg
+
+  def __eq__(self,
+             other: 'UnaryE'
+  ) -> bool:
+    if not isinstance(other, UnaryE):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.opr == other.opr:
+      if LS: _log.warning("Operator Differs: %s, %s", self, other)
+      return False
+    if not self.arg == other.arg:
+      if LS: _log.warning("Arg Differs: %s, %s", self, other)
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __str__(self): return f"{self.opr}{self.arg}"
+
+  def __repr__(self): return self.__str__()
+
+class SizeOfE(UnaryE):
+  """Calculates size of the argument type in bytes at runtime."""
+  def __init__(self,
+               arg: types.ArrayT,
+               loc: Optional[types.Loc] = None
+  ) -> None:
+    super().__init__(SIZEOF_EXPR_EC, loc)
+    self.arg = arg
+
+  def __eq__(self,
+             other: 'SizeOfE'
+  ) -> bool:
+    if not isinstance(other, SizeOfE):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.arg == other.arg:
+      if LS: _log.warning("Arg Differs: %s, %s", self, other)
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __str__(self): return f"{self.opr}{self.arg}"
+
+  def __repr__(self): return self.__str__()
+
 class CastE(UnaryE):
   """A unary type cast expression."""
   def __init__(self,
-               cast: types.Type,
+               castType: types.Type,
                arg: UnitET,
                loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(CAST_EXPR_EC, loc)
-    self.cast = cast
+    self.castType = castType
     self.arg = arg
 
   def __eq__(self,
@@ -295,7 +371,7 @@ class CastE(UnaryE):
     if not isinstance(other, CastE):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
-    if not self.cast == other.cast:
+    if not self.castType == other.castType:
       if LS: _log.warning("CastType Differs: %s, %s", self, other)
       return False
     if not self.arg == other.arg:
@@ -306,7 +382,7 @@ class CastE(UnaryE):
       return False
     return True
 
-  def __str__(self): return f"{self.cast}{self.arg}"
+  def __str__(self): return f"{self.castType}{self.arg}"
 
   def __repr__(self): return self.__str__()
 
@@ -317,12 +393,10 @@ class AllocE(ExprET):
   and returns the pointer to it.
   """
   def __init__(self,
-               sizeExpr: UnitET,
-               dataType: types.Type,
+               size: UnitET,
                loc: types.Loc,
   ) -> None:
-    self.sizeExpr = sizeExpr
-    self.type = dataType
+    self.size = size
     self.loc = loc
 
   def __eq__(self,
@@ -331,11 +405,8 @@ class AllocE(ExprET):
     if not isinstance(other, AllocE):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
-    if not self.sizeExpr == other.sizeExpr:
+    if not self.size == other.size:
       if LS: _log.warning("AllocaSize Differs: %s, %s", self, other)
-      return False
-    if not self.type == other.type:
-      if LS: _log.warning("AllocaType Differs: %s, %s", self, other)
       return False
     if not self.loc == other.loc:
       if LS: _log.warning("Loc Differs: %s, %s", self, other)
@@ -343,19 +414,19 @@ class AllocE(ExprET):
     return True
 
   def __str__(self):
-    return f"[{self.sizeExpr} x {self.type}]"
+    return f"alloca {self.size}"
 
   def __repr__(self): return self.__str__()
 
 class CallE(ExprET):
   """A function call expression."""
   def __init__(self,
-               callee: VarE,  # i.e. VarE or FuncE
+               funcName: types.FuncNameT,
                args: Optional[List[UnitET]] = None,
                loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(CALL_EXPR_EC, loc)
-    self.callee = callee
+    self.funcName = funcName
     if not args:
       self.args = None
     else:
@@ -367,7 +438,7 @@ class CallE(ExprET):
     if not isinstance(other, CallE):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
-    if not self.callee == other.callee:
+    if not self.funcName == other.funcName:
       if LS: _log.warning("FuncName Differs: %s, %s", self, other)
       return False
     if not self.args == other.args:
@@ -384,32 +455,35 @@ class CallE(ExprET):
       expr = ",".join(args)
     else:
       expr = ""
-    return f"{self.callee}({expr})"
+    return f"{self.funcName}({expr})"
 
   def __repr__(self): return self.__str__()
 
-class MemberE(ExprET):
-  """A member access expression: e.g. x->f.c or x.f.c ..."""
+class PtrCallE(CallE):
+  """A function pointer based function call expression."""
   def __init__(self,
                var: VarE,
-               fields: List[types.FieldNameT],
+               args: Optional[List[UnitET]] = None,
                loc: Optional[types.Loc] = None
   ) -> None:
-    super().__init__(MEMBER_EXPR_EC, loc)
+    super().__init__(PTRCALL_EXPR_EC, loc)
     self.var = var
-    self.fields = fields
+    if not args:
+      self.args = None
+    else:
+      self.args = args
 
   def __eq__(self,
-             other: 'MemberE'
+             other: 'CallE'
   ) -> bool:
-    if not isinstance(other, MemberE):
+    if not isinstance(other, CallE):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
     if not self.var == other.var:
-      if LS: _log.warning("Args Differ: %s, %s", self, other)
+      if LS: _log.warning("Variable Differs: %s, %s", self, other)
       return False
-    if not self.fields == other.fields:
-      if LS: _log.warning("Fields Differ: %s, %s", self, other)
+    if not self.args == other.args:
+      if LS: _log.warning("Args Differ: %s, %s", self, other)
       return False
     if not self.loc == other.loc:
       if LS: _log.warning("Loc Differs: %s, %s", self, other)
@@ -417,8 +491,12 @@ class MemberE(ExprET):
     return True
 
   def __str__(self):
-    members = ".".join(self.fields)
-    return f"{self.var}.{members}"
+    if self.args:
+      args = [str(arg) for arg in self.args]
+      expr = ",".join(args)
+    else:
+      expr = ""
+    return f"{self.var}({expr})"
 
   def __repr__(self): return self.__str__()
 

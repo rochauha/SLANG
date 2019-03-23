@@ -55,14 +55,14 @@ SourceLocationT = int
 ################################################
 
 # the order and ascending sequence is important
-VOID_TC:TypeCodeT      = 0
+VOID_TC: TypeCodeT        = 0
 
-INT1_TC:TypeCodeT      = 10  # bool
-INT8_TC:TypeCodeT      = 11  # char
-INT16_TC:TypeCodeT     = 12  # short
-INT32_TC:TypeCodeT     = 13  # int
-INT64_TC:TypeCodeT     = 14  # long long
-INT128_TC:TypeCodeT    = 15  # ??
+INT1_TC: TypeCodeT        = 10  # bool
+INT8_TC: TypeCodeT        = 11  # char
+INT16_TC: TypeCodeT       = 12  # short
+INT32_TC: TypeCodeT       = 13  # int
+INT64_TC: TypeCodeT       = 14  # long long
+INT128_TC: TypeCodeT      = 15  # ??
 
 UINT8_TC: TypeCodeT       = 20  # unsigned char
 UINT16_TC: TypeCodeT      = 21  # unsigned short
@@ -83,9 +83,7 @@ INCPL_ARR_TC: TypeCodeT   = 103  # array type code
 FUNC_TC: TypeCodeT        = 200  # function type code
 FUNC_SIG_TC: TypeCodeT    = 201
 STRUCT_TC: TypeCodeT      = 300  # structure type code
-STRUCT_SIG_TC: TypeCodeT  = 301  # structure type code
 UNION_TC: TypeCodeT       = 400  # union type code
-UNION_SIG_TC: TypeCodeT   = 401  # union type code
 
 
 ################################################
@@ -130,6 +128,33 @@ class _Nil(NilT):
     return True # all objects are equal
 
 Nil = _Nil()
+
+class Loc(AnyT):
+  """Location type : line, col."""
+  def __init__(self,
+               line: int = 0,
+               col: int = 0
+               ) -> None:
+    self.line = line
+    self.col = col
+
+  def __eq__(self,
+             other: 'Loc'
+  ) -> bool:
+    if not isinstance(other, Loc):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.line == other.line:
+      if LS: _log.warning("LineNum Differs: %s, %s", self, other)
+      return False
+    if not self.col == other.col:
+      if LS: _log.warning("ColNum Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __str__(self): return f"Loc({self.line},{self.col})"
+
+  def __repr__(self): return self.__str__()
 
 class Type(AnyT):
   """Class to represent types and super class for all compound types."""
@@ -200,9 +225,7 @@ class Type(AnyT):
     elif tc == FUNC_TC:       ss = "FUNC"
     elif tc == FUNC_SIG_TC:   ss = "FUNC_SIG"
     elif tc == STRUCT_TC:     ss = "STRUCT"
-    elif tc == STRUCT_SIG_TC: ss = "STRUCT_SIG"
     elif tc == UNION_TC:      ss = "UNION"
-    elif tc == UNION_SIG_TC:  ss = "UNION_SIG"
 
     return ss
 
@@ -298,7 +321,6 @@ class Ptr(Type):
 
 class ArrayT(Type):
   """A superclass for all arrays.
-
   Not to be instantiated (note the suffix `T`)
   """
   def __init__(self,
@@ -316,7 +338,7 @@ class ConstSizeArray(ArrayT):
   """
   def __init__(self,
                of: Type,
-               dim: Optional[int] = None,
+               dim: Optional[List[int]] = None,
                typeCode: TypeCodeT = ARR_TC,
   ) -> None:
     super().__init__(of, typeCode)
@@ -407,7 +429,7 @@ class IncompleteArray(ArrayT):
   def __repr__(self): return f"types.IncompleteArray({self.of})"
 
 class FuncSig(Type):
-  """A function signature."""
+  """A function signature (useful for function pointer types)."""
   def __init__(self,
                returnType: Type,
                paramTypes: Optional[List[Type]] = None,
@@ -451,10 +473,12 @@ class Struct(Type):
   def __init__(self,
                name: StructNameT,
                fields: List[Tuple[str, Type]],
+               loc: Optional[Loc] = None,
   ) -> None:
     super().__init__(STRUCT_TC)
     self.name = name
     self.fields = fields
+    self.loc = loc
 
   def __eq__(self,
              other: 'Struct'
@@ -476,43 +500,17 @@ class Struct(Type):
   def __hash__(self):
     return hash(self.structName) + STRUCT_TC
 
-class StructSig(Type):
-  """A structure type signature."""
-  def __init__(self,
-               fieldTypes: List[Type]
-  ) -> None:
-    super().__init__(STRUCT_SIG_TC)
-    self.fieldTypes = fieldTypes
-
-  def __eq__(self,
-             other: 'StructSig'
-  ) -> bool:
-    if not isinstance(other, StructSig):
-      if LS: _log.warning("%s, %s are incomparable.", self, other)
-      return False
-    if not self.typeCode == other.typeCode:
-      if LS: _log.warning("Types Differ: %s, %s", self, other)
-      return False
-    if not self.fieldTypes == other.fieldTypes:
-      if LS: _log.warning("FieldTypes Differ: %s, %s", self, other)
-      return False
-    return True
-
-  def __hash__(self):
-    hsh = 13
-    increment = 130
-    for ftp in self.fieldTypes:
-      hsh = hsh ^ (hash(ftp) + increment)
-      increment += 13
-    return hsh
-
 class Union(Type):
   """A union type."""
   def __init__(self,
-               unionName: UnionNameT
+               name: UnionNameT,
+               fields: List[Tuple[str, Type]],
+               loc: Optional[Loc] = None,
   ) -> None:
-    super().__init__(STRUCT_TC)
-    self.unionName = unionName
+    super().__init__(UNION_TC)
+    self.name = name
+    self.fields = fields
+    self.loc = loc
 
   def __eq__(self,
              other: 'Union'
@@ -523,67 +521,14 @@ class Union(Type):
     if not self.typeCode == other.typeCode:
       if LS: _log.warning("Types Differ: %s, %s", self, other)
       return False
-    if not self.unionName == other.unionName:
+    if not self.fields == other.fields:
+      if LS: _log.warning("Fields Differ: %s, %s", self, other)
+      return False
+    if not self.name == other.name:
       if LS: _log.warning("UnionName Differs: %s, %s", self, other)
       return False
     return True
 
   def __hash__(self):
-    return hash(self.unionName) + STRUCT_TC
+    return hash(self.name) + STRUCT_TC
 
-class UnionSig(Type):
-  """A union type signature."""
-  def __init__(self,
-               fieldTypes: List[Type]
-  ) -> None:
-    super().__init__(UNION_SIG_TC)
-    self.fieldTypes = fieldTypes
-
-  def __eq__(self,
-             other: 'UnionSig'
-  ) -> bool:
-    if not isinstance(other, UnionSig):
-      if LS: _log.warning("%s, %s are incomparable.", self, other)
-      return False
-    if not self.typeCode == other.typeCode:
-      if LS: _log.warning("Type Differs: %s, %s", self, other)
-      return False
-    if not self.fieldTypes == other.fieldTypes:
-      if LS: _log.warning("FieldTypes Differ: %s, %s", self, other)
-      return False
-    return True
-
-  def __hash__(self):
-    hsh = 19
-    increment = 190
-    for ftp in self.fieldTypes:
-      hsh = hsh ^ (hash(ftp) + increment)
-      increment += 19
-    return hsh
-
-class Loc(AnyT):
-  """ Location type : line, col. """
-  def __init__(self,
-               line: int = 0,
-               col: int = 0
-  ) -> None:
-    self.line = line
-    self.col = col
-
-  def __eq__(self,
-             other: 'Loc'
-  ) -> bool:
-    if not isinstance(other, Loc):
-      if LS: _log.warning("%s, %s are incomparable.", self, other)
-      return False
-    if not self.line == other.line:
-      if LS: _log.warning("LineNum Differs: %s, %s", self, other)
-      return False
-    if not self.col == other.col:
-      if LS: _log.warning("ColNum Differs: %s, %s", self, other)
-      return False
-    return True
-
-  def __str__(self): return f"Loc({self.line},{self.col})"
-
-  def __repr__(self): return self.__str__()
