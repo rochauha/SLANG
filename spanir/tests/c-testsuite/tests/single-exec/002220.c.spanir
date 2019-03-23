@@ -15,9 +15,11 @@
 irTUnit.TUnit(
   name = "002220.c",
   description = "Auto-Translated from Clang AST.",
+
   allVars = {
-    "v:main:x": types.Ptr(to=types.Int32),
+    "v:main:t.1": types.Ptr(to=types.Void),
     "v:dummy_malloc:size": types.UInt32,
+    "v:main:x": types.Ptr(to=types.Int32),
   }, # end allVars dict
 
   allObjs = {
@@ -57,7 +59,8 @@ irTUnit.TUnit(
           ],
 
           1: [
-            instr.AssignI(expr.VarE("v:main:x", Loc(5,2)), ERROR:convertExpr, Loc(5,2)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(5,19)), expr.CallE(expr.FuncE("f:dummy_malloc", Loc(5,19)), [expr.LitE(5, Loc(5,32))], Loc(5,19)), Loc(5,19)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(5,2)), expr.CastE(expr.VarE("v:main:t.1", Loc(5,19)), types.Ptr(to=types.Int32), Loc(5,11)), Loc(5,2)),
             instr.AssignI(expr.VarE("v:main:x", Loc(6,2)), expr.BinaryE(expr.VarE("v:main:x", Loc(6,6)), op.BO_ADD, expr.LitE(5, Loc(6,10))), Loc(6,2)),
           ],
 

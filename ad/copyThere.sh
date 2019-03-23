@@ -10,4 +10,4 @@
 # SlangCheckers/SlangExpr.cpp #AD
 # SlangCheckers/SlangUtil.cpp #AD
 
-cp -R SlangCheckers /home/codeman/itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers
+cp -R SlangCheckers /home/codeman/itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers

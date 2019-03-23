@@ -385,13 +385,13 @@ class SizeOfE(UnaryE):
 class CastE(UnaryE):
   """A unary type cast expression."""
   def __init__(self,
-               castType: types.Type,
                arg: UnitET,
+               to: types.Type,
                loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(CAST_EXPR_EC, loc)
-    self.castType = castType
     self.arg = arg
+    self.to = to
 
   def __eq__(self,
              other: 'CastE'
@@ -399,7 +399,7 @@ class CastE(UnaryE):
     if not isinstance(other, CastE):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
-    if not self.castType == other.castType:
+    if not self.to == other.to:
       if LS: _log.warning("CastType Differs: %s, %s", self, other)
       return False
     if not self.arg == other.arg:
@@ -410,7 +410,7 @@ class CastE(UnaryE):
       return False
     return True
 
-  def __str__(self): return f"{self.castType}{self.arg}"
+  def __str__(self): return f"({self.to}){self.arg}"
 
   def __repr__(self): return self.__str__()
 
@@ -451,7 +451,7 @@ class CallE(ExprET):
   If callee is a types.VarE then its a function pointer.
   """
   def __init__(self,
-               callee: types.VarE, # i.e. VarE or FuncE
+               callee: VarE, # i.e. VarE or FuncE
                args: Optional[List[UnitET]] = None,
                loc: Optional[types.Loc] = None,
   ) -> None:

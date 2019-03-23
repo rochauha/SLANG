@@ -179,6 +179,8 @@ class Cfg(object):
                         inputBbEdges: List[Tuple[BasicBlockId, BasicBlockId, EdgeLabelT]]
   ) -> None:
     """Builds the complete Cfg structure."""
+    if not inputBbMap: return
+
     # STEP 1: Create BBs in their dict.
     for bbId, instrSeq in inputBbMap.items():
       self.bbMap[bbId] = BB(id=bbId, instrSeq=instrSeq)
@@ -263,8 +265,9 @@ class Cfg(object):
     worklist.sort(key=lambda x: x[0])
     return self.genRevPostOrderSeq(seq, done, worklist)
 
-  def genDotGraph(self):
+  def genDotGraph(self) -> str:
     """ Generates Dot graph of itself. """
+    if not self.inputBbMap: return "digraph{}"
     ret = None
     with io.StringIO() as sio:
       sio.write("digraph {\n  node [shape=box]\n")

@@ -13,7 +13,7 @@ import io
 from span.util.logger import LS
 from span.ir.types import StructNameT, UnionNameT, FieldNameT, FuncNameT, VarNameT,\
   EdgeLabelT, BasicBlockId, Void,\
-  Type, FuncSig, StructSig, UnionSig, Loc
+  Type, FuncSig, Loc
 from span.ir.instr import InstrIT
 from span.ir.types import BasicBlockId, FalseEdge, TrueEdge, UnCondEdge
 
@@ -163,66 +163,3 @@ class Func (ObjT):
       ret = sio.getvalue()
     return ret
 
-class Struct (ObjT):
-  """A structure."""
-  def __init__(self,
-               name: StructNameT,
-               fieldNames: List[FieldNameT],
-               fieldTypes: List[Type],
-               loc: int = 0  # definition location if available
-  ) -> None:
-    self.name = name
-    self.fieldNames = fieldNames
-    self.sig: StructSig = StructSig(fieldTypes)
-    self.loc = loc
-
-  def __eq__(self,
-             other: 'Struct'
-  ) -> bool:
-    if not isinstance(other, Struct):
-      if LS: _log.warning("%s, %s are incomparable.", self, other)
-      return False
-    if not self.fieldNames == other.fieldNames:
-      if LS: _log.warning("FieldNames Differ: %s, %s", self, other)
-      return False
-    if not self.fieldTypes == other.fieldTypes:
-      if LS: _log.warning("FieldTypes Differ: %s, %s", self, other)
-      return False
-    if not self.loc == other.loc:
-      if LS: _log.warning("Loc Differs: (Struct: '%s') %s, %s",
-                          self.name, self.loc, other.loc)
-      return False
-    return True
-
-class Union (ObjT):
-  """A union."""
-  def __init__(self,
-               name: UnionNameT,
-               fieldNames: List[FieldNameT],
-               fieldTypes: List[Type],
-               loc: int = 0
-  ) -> None:
-    self.name = name
-    self.fieldNames = fieldNames
-    self.sig: UnionSig = UnionSig(fieldTypes)
-    self.loc = loc
-
-  def __eq__(self,
-             other: 'Union'
-  ) -> bool:
-    if not isinstance(other, Union):
-      if LS: _log.warning("%s, %s are incomparable.", self, other)
-      return False
-    if not self.fieldNames == other.fieldNames:
-      if LS: _log.warning("FieldNames Differ: (Struct: '%s') %s, %s",
-                          self.name, self, other)
-      return False
-    if not self.fieldTypes == other.fieldTypes:
-      if LS: _log.warning("FieldTypes Differ: (Struct: '%s') %s, %s",
-                          self.name, self, other)
-      return False
-    if not self.loc == other.loc:
-      if LS: _log.warning("Loc Differs: (Struct: '%s') %s, %s",
-                          self.name, self.loc, other.loc)
-      return False
-    return True
