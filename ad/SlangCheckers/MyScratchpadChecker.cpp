@@ -33,7 +33,8 @@
 using namespace clang;
 using namespace ento;
 
-//static llvm::cl::opt<bool> SlangReport ("slang-report", llvm::cl::Required, llvm::cl::desc("Generates slang report from file."));
+// static llvm::cl::opt<bool> SlangReport ("slang-report", llvm::cl::Required,
+// llvm::cl::desc("Generates slang report from file."));
 
 //===----------------------------------------------------------------------===//
 // MyScratchpadChecker
@@ -41,16 +42,15 @@ using namespace ento;
 
 namespace {
 class MyScratchpadChecker : public Checker<check::ASTCodeBody> {
-public:
-  void checkASTCodeBody(const Decl *D, AnalysisManager& mgr,
-                        BugReporter &BR) const {
+  public:
+    void checkASTCodeBody(const Decl *D, AnalysisManager &mgr, BugReporter &BR) const {
 
-    llvm::errs() << "Slang: Hello, World!\n";
-  }
+        llvm::errs() << "Slang: Hello, World!\n";
+    }
 };
-}
+} // namespace
 
 void ento::registerMyScratchpadChecker(CheckerManager &mgr) {
-  //llvm::errs() << "A scratchpad to learn.\n";
-  mgr.registerChecker<MyScratchpadChecker>();
+    // llvm::errs() << "A scratchpad to learn.\n";
+    mgr.registerChecker<MyScratchpadChecker>();
 }

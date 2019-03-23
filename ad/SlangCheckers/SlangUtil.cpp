@@ -32,7 +32,7 @@ std::string slang::Util::getDateTimeString() {
     return str;
 }
 
-//std::string fileName("/home/codeman/.itsoflife/local/tmp/checker-input.txt");
+// std::string fileName("/home/codeman/.itsoflife/local/tmp/checker-input.txt");
 std::string slang::Util::readFromFile(std::string fileName) {
     std::stringstream ss;
     std::ifstream inputTxtFile;
@@ -40,7 +40,7 @@ std::string slang::Util::readFromFile(std::string fileName) {
 
     inputTxtFile.open(fileName);
     if (inputTxtFile.is_open()) {
-        while(std::getline(inputTxtFile, line)) {
+        while (std::getline(inputTxtFile, line)) {
             ss << line << "\n";
         }
         inputTxtFile.close();
@@ -80,4 +80,3 @@ int slang::Util::appendToFile(std::string fileName, std::string content) {
 
     return 1;
 }
-

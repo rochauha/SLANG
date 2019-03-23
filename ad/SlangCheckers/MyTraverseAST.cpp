@@ -4,8 +4,8 @@
 //
 //  Author: Anshuman Dhuliya (dhuliya@cse.iitb.ac.in)
 //
-//AD If MyTraverseAST class name is added or changed, then also edit,
-//AD ../../../include/clang/StaticAnalyzer/Checkers/Checkers.td
+// AD If MyTraverseAST class name is added or changed, then also edit,
+// AD ../../../include/clang/StaticAnalyzer/Checkers/Checkers.td
 //
 //===----------------------------------------------------------------------===//
 //
@@ -18,7 +18,7 @@
 #include "clang/Analysis/Analyses/LiveVariables.h"
 #include "clang/Analysis/CallGraph.h"
 #include "clang/StaticAnalyzer/Core/BugReporter/BugType.h"
-#include "clang/StaticAnalyzer/Core/BugReporter/BugReporter.h"  //AD
+#include "clang/StaticAnalyzer/Core/BugReporter/BugReporter.h" //AD
 #include "clang/StaticAnalyzer/Core/Checker.h"
 #include "clang/StaticAnalyzer/Core/PathSensitive/AnalysisManager.h"
 #include "clang/StaticAnalyzer/Core/PathSensitive/CheckerContext.h"
@@ -39,56 +39,54 @@
 using namespace clang;
 using namespace ento;
 
-//int span_add_nums(int a, int b);
+// int span_add_nums(int a, int b);
 
 // #define LOG_ME(X) if (Utility::debug_mode) Utility::log((X), __FILE__, __LINE__)
-#define LOG_ME(X) llvm::errs() <<  __FILE__ << __func__ <<  __LINE__ << X;
+#define LOG_ME(X) llvm::errs() << __FILE__ << __func__ << __LINE__ << X;
 
 //===----------------------------------------------------------------------===//
 // SlangGenChecker
 //===----------------------------------------------------------------------===//
 
 namespace {
-    class Location {
-    public:
-        uint32_t col;
-        uint32_t line;
-        std::string fileName;
+class Location {
+  public:
+    uint32_t col;
+    uint32_t line;
+    std::string fileName;
 
-        void printLocation() {
-            llvm::errs() << "Loc(" << fileName << ":" << line << ":" << col << ")\n";
-        }
-    };
-}
+    void printLocation() {
+        llvm::errs() << "Loc(" << fileName << ":" << line << ":" << col << ")\n";
+    }
+};
+} // namespace
 
 namespace {
-    class MyTraverseAST : public Checker<check::ASTCodeBody> {
-    public:
-        static Decl *D;
+class MyTraverseAST : public Checker<check::ASTCodeBody> {
+  public:
+    static Decl *D;
 
-        // mainstart
-        void checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
-                              BugReporter &BR) const;
+    // mainstart
+    void checkASTCodeBody(const Decl *D, AnalysisManager &mgr, BugReporter &BR) const;
 
-        // handling_routines
-        void handleCfg(const CFG *cfg) const;
-        void handleBb(const CFGBlock *bb, const CFG *cfg) const;
-        void handleBbStmts(const CFGBlock *bb) const;
-        void handleLocation(const Stmt *stmt) const;
-        void printParent(const Stmt *stmt) const;
-    }; // class MyTraverseAST
+    // handling_routines
+    void handleCfg(const CFG *cfg) const;
+    void handleBb(const CFGBlock *bb, const CFG *cfg) const;
+    void handleBbStmts(const CFGBlock *bb) const;
+    void handleLocation(const Stmt *stmt) const;
+    void printParent(const Stmt *stmt) const;
+}; // class MyTraverseAST
 } // anonymous namespace
 
-Decl* MyTraverseAST::D = nullptr;
+Decl *MyTraverseAST::D = nullptr;
 
 // mainstart, Main Entry Point. Invokes top level Function and Cfg handlers.
 // Invoked once for each source translation unit function.
-void MyTraverseAST::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
-                                       BugReporter &BR) const {
+void MyTraverseAST::checkASTCodeBody(const Decl *D, AnalysisManager &mgr, BugReporter &BR) const {
     SLANG_EVENT("Starting the AST Trace print.")
-    //SLANG_TRACE(span_add_nums(1,2));
+    // SLANG_TRACE(span_add_nums(1,2));
 
-    MyTraverseAST::D = const_cast<Decl*>(D); // the world is ending
+    MyTraverseAST::D = const_cast<Decl *>(D); // the world is ending
 
     if (const CFG *cfg = mgr.getCFG(D)) {
         handleCfg(cfg);
@@ -99,7 +97,7 @@ void MyTraverseAST::checkASTCodeBody(const Decl *D, AnalysisManager &mgr,
     llvm::errs() << "\nBOUND END  : SLANG_Generated_Output.\n";
 } // checkASTCodeBody()
 
-//BOUND START: handling_routines
+// BOUND START: handling_routines
 
 void MyTraverseAST::handleCfg(const CFG *cfg) const {
     for (const CFGBlock *bb : *cfg) {
@@ -123,8 +121,7 @@ void MyTraverseAST::handleBb(const CFGBlock *bb, const CFG *cfg) const {
 
     // print predecessors
     llvm::errs() << "Preds: ";
-    for (CFGBlock::const_pred_iterator I = bb->pred_begin();
-         I != bb->pred_end(); ++I) {
+    for (CFGBlock::const_pred_iterator I = bb->pred_begin(); I != bb->pred_end(); ++I) {
         CFGBlock *pred = *I;
         llvm::errs() << "|";
         if (pred) {
@@ -135,8 +132,7 @@ void MyTraverseAST::handleBb(const CFGBlock *bb, const CFG *cfg) const {
 
     // print successors
     llvm::errs() << "Succs: ";
-    for (CFGBlock::const_succ_iterator I = bb->succ_begin();
-         I != bb->succ_end(); ++I) {
+    for (CFGBlock::const_succ_iterator I = bb->succ_begin(); I != bb->succ_end(); ++I) {
         CFGBlock *succ = *I;
         llvm::errs() << "|";
         if (succ) {
@@ -168,7 +164,7 @@ void MyTraverseAST::handleBbStmts(const CFGBlock *bb) const {
 
     // get terminator
     const Stmt *terminator = (bb->getTerminator()).getStmt();
-    if(terminator) {
+    if (terminator) {
         llvm::errs() << "Visiting Terminator: " << terminator->getStmtClassName() << "\n";
         terminator->dump();
         printParent(terminator);
@@ -203,8 +199,4 @@ void MyTraverseAST::handleLocation(const Stmt *stmt) const {
     loc.printLocation();
 }
 // Register the Checker
-void ento::registerMyTraverseAST(CheckerManager &mgr) {
-    mgr.registerChecker<MyTraverseAST>();
-}
-
-
+void ento::registerMyTraverseAST(CheckerManager &mgr) { mgr.registerChecker<MyTraverseAST>(); }
