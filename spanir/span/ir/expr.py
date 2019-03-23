@@ -149,6 +149,34 @@ class VarE(UnitET):
     name = self.name.split(":")[-1]
     return f"{name}"
 
+class FuncE(VarE):
+  """Holds a single function name."""
+  def __init__(self,
+               name: types.FuncNameT,
+               loc: Optional[types.Loc] = None
+  ) -> None:
+    super().__init__(FUNC_EXPR_EC, loc)
+    self.name: types.VarNameT = name
+
+  def __eq__(self,
+             other: 'VarE'
+  ) -> bool:
+    if not isinstance(other, VarE):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.name == other.name:
+      if LS: _log.warning("Function Differs: %s, %s", repr(self), repr(other))
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __hash__(self): return 10
+
+  def __str__(self):
+    name = self.name.split(":")[-1]
+    return f"{name}"
   def __repr__(self): return self.name
 
 class ArrayE(BasicET):
@@ -419,14 +447,16 @@ class AllocE(ExprET):
   def __repr__(self): return self.__str__()
 
 class CallE(ExprET):
-  """A function call expression."""
+  """A function call expression.
+  If callee is a types.VarE then its a function pointer.
+  """
   def __init__(self,
-               funcName: types.FuncNameT,
+               callee: types.VarE, # i.e. VarE or FuncE
                args: Optional[List[UnitET]] = None,
-               loc: Optional[types.Loc] = None
+               loc: Optional[types.Loc] = None,
   ) -> None:
     super().__init__(CALL_EXPR_EC, loc)
-    self.funcName = funcName
+    self.callee = callee
     if not args:
       self.args = None
     else:
@@ -438,7 +468,7 @@ class CallE(ExprET):
     if not isinstance(other, CallE):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
-    if not self.funcName == other.funcName:
+    if not self.callee == other.callee:
       if LS: _log.warning("FuncName Differs: %s, %s", self, other)
       return False
     if not self.args == other.args:
@@ -455,48 +485,7 @@ class CallE(ExprET):
       expr = ",".join(args)
     else:
       expr = ""
-    return f"{self.funcName}({expr})"
-
-  def __repr__(self): return self.__str__()
-
-class PtrCallE(CallE):
-  """A function pointer based function call expression."""
-  def __init__(self,
-               var: VarE,
-               args: Optional[List[UnitET]] = None,
-               loc: Optional[types.Loc] = None
-  ) -> None:
-    super().__init__(PTRCALL_EXPR_EC, loc)
-    self.var = var
-    if not args:
-      self.args = None
-    else:
-      self.args = args
-
-  def __eq__(self,
-             other: 'CallE'
-  ) -> bool:
-    if not isinstance(other, CallE):
-      if LS: _log.warning("%s, %s are incomparable.", self, other)
-      return False
-    if not self.var == other.var:
-      if LS: _log.warning("Variable Differs: %s, %s", self, other)
-      return False
-    if not self.args == other.args:
-      if LS: _log.warning("Args Differ: %s, %s", self, other)
-      return False
-    if not self.loc == other.loc:
-      if LS: _log.warning("Loc Differs: %s, %s", self, other)
-      return False
-    return True
-
-  def __str__(self):
-    if self.args:
-      args = [str(arg) for arg in self.args]
-      expr = ",".join(args)
-    else:
-      expr = ""
-    return f"{self.var}({expr})"
+    return f"{self.callee}({expr})"
 
   def __repr__(self): return self.__str__()
 

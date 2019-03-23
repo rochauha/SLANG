@@ -119,8 +119,8 @@ def genNodeDotGraph():
     if objName.startswith("f:"):
       cfg = graph.Cfg(obj.name, obj.basicBlocks, obj.bbEdges)
       dotGraph = cfg.genDotGraph()
-      fileName = objName.split(":")[-1] + ".node.dot"
-      util.writeToFile(fileName, dotGraph)
+      dotFileName = fileName + "." + objName.split(":")[-1] + ".node.dot"
+      util.writeToFile(dotFileName, dotGraph)
 
 def genBbDotGraph():
   """Dot graph of basic blocks."""
@@ -132,8 +132,8 @@ def genBbDotGraph():
     if objName.startswith("f:"):
       func: obj.Func = object # to explicate types
       dotGraph = func.genDotGraph()
-      fileName = objName.split(":")[-1] + ".bb.dot"
-      util.writeToFile(fileName, dotGraph)
+      dotFileName = fileName + "." + objName.split(":")[-1] + ".bb.dot"
+      util.writeToFile(dotFileName, dotGraph)
 
 if __name__ == "__main__":
   print("RotatingLogFile:", logger.ABS_LOG_FILE_NAME)
