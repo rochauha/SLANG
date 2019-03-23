@@ -11,6 +11,7 @@ struct A {
       int a;
     };
   };
+  int zz;
 };
 
 int main() {

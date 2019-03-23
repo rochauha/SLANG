@@ -9,5 +9,6 @@ struct my_type {
 };
 
 int main() {
-	struct my_type p = {2, {5 + 4, 6, 0}};
+  int x = 20;
+	struct my_type p = {x, {5 + 4, 6, 0}};
 }
