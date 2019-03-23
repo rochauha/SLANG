@@ -1,0 +1,114 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "001670.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:a": types.Int32,
+    "v:main:b": types.Int32,
+    "v:printf:__format": types.Ptr(to=types.Int8),
+  }, # end allVars dict
+
+  allObjs = {
+
+    "f:printf":
+      obj.Func(
+        name = "f:printf",
+        paramNames = ["v:printf:__format"],
+        variadic = True,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:printf() end. 
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          7: [
+            instr.AssignI(expr.VarE("v:main:a", Loc(5,4)), expr.LitE(1, Loc(5,12)), Loc(5,4)),
+            instr.CondI(expr.VarE("v:main:a", Loc(7,8)), Loc(7,4)),
+          ],
+
+          6: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(8,7)), [expr.LitE("""a is true
+""", Loc(8,14))], Loc(8,7))),
+          ],
+
+          5: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(10,7)), [expr.LitE("""a is false
+""", Loc(10,14))], Loc(10,7))),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          4: [
+            instr.AssignI(expr.VarE("v:main:b", Loc(12,4)), expr.LitE(0, Loc(12,12)), Loc(12,4)),
+            instr.CondI(expr.VarE("v:main:b", Loc(13,8)), Loc(13,4)),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(18,11)), Loc(18,4)),
+          ],
+
+          2: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(16,7)), [expr.LitE("""b is false
+""", Loc(16,14))], Loc(16,7))),
+          ],
+
+          3: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(14,7)), [expr.LitE("""b is true
+""", Loc(14,14))], Loc(14,7))),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (2, 1, types.UnCondEdge),
+          (3, 1, types.UnCondEdge),
+          (4, 3, types.TrueEdge),
+          (4, 2, types.FalseEdge),
+          (5, 4, types.UnCondEdge),
+          (6, 4, types.UnCondEdge),
+          (7, 6, types.TrueEdge),
+          (7, 5, types.FalseEdge),
+          (-1, 7, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

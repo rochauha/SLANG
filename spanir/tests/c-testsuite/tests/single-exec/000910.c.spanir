@@ -1,0 +1,123 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "000910.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:t.11": types.Int32,
+    "v:main:t.10": types.Int32,
+    "v:main:t.2": types.ConstSizeArray(of=types.Int32, dim=2),
+    "v:main:t.1": types.Struct("s:1"),
+    "v:main:t.3": types.Int32,
+    "v:a": types.ConstSizeArray(of=types.Struct("s:1"), dim=1),
+    "v:main:t.4": types.Int32,
+    "v:main:t.5": types.Struct("s:1"),
+    "v:main:t.6": types.ConstSizeArray(of=types.Int32, dim=2),
+    "v:main:t.7": types.Int32,
+    "v:main:t.8": types.Int32,
+    "v:main:t.9": types.Struct("s:1"),
+  }, # end allVars dict
+
+  allObjs = {
+    "s:1":
+      types.Struct(
+        name = "s:1",
+        fields = [
+          ("v", types.Int32),
+          ("sub", types.ConstSizeArray(of=types.Int32, dim=2)),
+        ],
+        loc = Loc(1,9),
+      ),
+
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          7: [
+            instr.AssignI(expr.VarE("v:main:t.9", Loc(11,6)), expr.ArrayE(expr.VarE("v:a", Loc(11,6)), [expr.LitE(0, Loc(11,8))], Loc(11,6)), Loc(11,6)),
+            instr.AssignI(expr.VarE("v:main:t.10", Loc(11,6)), expr.MemberE(expr.VarE("v:main:t.9", Loc(11,6)), ["v"], Loc(11,6)), Loc(11,6)),
+            instr.AssignI(expr.VarE("v:main:t.11", Loc(11,6)), expr.BinaryE(expr.VarE("v:main:t.10", Loc(11,6)), op.BO_NE, expr.LitE(1, Loc(11,16))), Loc(11,6)),
+            instr.CondI(expr.VarE("v:main:t.11", Loc(11,6)), Loc(11,2)),
+          ],
+
+          6: [
+            instr.ReturnI(expr.LitE(1, Loc(12,10)), Loc(12,3)),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:main:t.5", Loc(13,6)), expr.ArrayE(expr.VarE("v:a", Loc(13,6)), [expr.LitE(0, Loc(13,8))], Loc(13,6)), Loc(13,6)),
+            instr.AssignI(expr.VarE("v:main:t.6", Loc(13,6)), expr.MemberE(expr.VarE("v:main:t.5", Loc(13,6)), ["sub"], Loc(13,6)), Loc(13,6)),
+            instr.AssignI(expr.VarE("v:main:t.7", Loc(13,6)), expr.ArrayE(expr.VarE("v:main:t.6", Loc(13,6)), [expr.LitE(0, Loc(13,15))], Loc(13,6)), Loc(13,6)),
+            instr.AssignI(expr.VarE("v:main:t.8", Loc(13,6)), expr.BinaryE(expr.VarE("v:main:t.7", Loc(13,6)), op.BO_NE, expr.LitE(2, Loc(13,21))), Loc(13,6)),
+            instr.CondI(expr.VarE("v:main:t.8", Loc(13,6)), Loc(13,2)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          4: [
+            instr.ReturnI(expr.LitE(2, Loc(14,10)), Loc(14,3)),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(18,9)), Loc(18,2)),
+          ],
+
+          2: [
+            instr.ReturnI(expr.LitE(3, Loc(16,10)), Loc(16,3)),
+          ],
+
+          3: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(15,6)), expr.ArrayE(expr.VarE("v:a", Loc(15,6)), [expr.LitE(0, Loc(15,8))], Loc(15,6)), Loc(15,6)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(15,6)), expr.MemberE(expr.VarE("v:main:t.1", Loc(15,6)), ["sub"], Loc(15,6)), Loc(15,6)),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(15,6)), expr.ArrayE(expr.VarE("v:main:t.2", Loc(15,6)), [expr.LitE(1, Loc(15,15))], Loc(15,6)), Loc(15,6)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(15,6)), expr.BinaryE(expr.VarE("v:main:t.3", Loc(15,6)), op.BO_NE, expr.LitE(3, Loc(15,21))), Loc(15,6)),
+            instr.CondI(expr.VarE("v:main:t.4", Loc(15,6)), Loc(15,2)),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (2, 0, types.UnCondEdge),
+          (3, 2, types.TrueEdge),
+          (3, 1, types.FalseEdge),
+          (4, 0, types.UnCondEdge),
+          (5, 4, types.TrueEdge),
+          (5, 3, types.FalseEdge),
+          (6, 0, types.UnCondEdge),
+          (7, 6, types.TrueEdge),
+          (7, 5, types.FalseEdge),
+          (-1, 7, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

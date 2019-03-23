@@ -15,36 +15,38 @@
 irTUnit.TUnit(
   name = "000161.c",
   description = "Auto-Translated from Clang AST.",
+
   allVars = {
-    "v:main:t.1": types.Array(of=types.Int, dim=4),
-    "v:main:arr": types.Array(of=types.Array(of=types.Int, dim=4), dim=2),
-    "v:main:p": types.Ptr(to=types.Int),
+    "v:main:t.1": types.Int32,
+    "v:main:p": types.Ptr(to=types.Int32),
+    "v:main:arr": types.ConstSizeArray(of=types.ConstSizeArray(of=types.Int32, dim=4), dim=2),
   }, # end allVars dict
 
   allObjs = {
+
     "f:main":
       obj.Func(
         name = "f:main",
         paramNames = [],
         variadic = False,
-        returnType = types.Int,
+        returnType = types.Int32,
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          0: [
-            instr.NopI(),
+          1: [
+            instr.AssignI(expr.VarE("v:main:p", Loc(7,2)), expr.UnaryE(op.UO_ADDROF, expr.ArrayE(expr.VarE("v:main:arr", Loc(7,7)), [expr.LitE(1, Loc(7,11)), expr.LitE(3, Loc(7,14))], Loc(7,7)), Loc(7,6)), Loc(7,2)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:p", Loc(8,3)), Loc(8,2)), expr.LitE(0, Loc(8,7)), Loc(8,2)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(9,9)), expr.ArrayE(expr.VarE("v:main:arr", Loc(9,9)), [expr.LitE(1, Loc(9,13)), expr.LitE(3, Loc(9,16))], Loc(9,9)), Loc(9,9)),
+            instr.ReturnI(expr.VarE("v:main:t.1", Loc(9,9)), Loc(9,2)),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          1: [
-            instr.AssignI(expr.VarE("v:main:p", Loc(7,2)), expr.UnaryE(op.UO_ADDROF, expr.ArrayE(expr.VarE("v:main:arr", Loc(7,7)), [expr.LitE(1, Loc(7,11)), expr.LitE(3, Loc(7,14))], Loc(7,7)), Loc(7,6)), Loc(7,2)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:p", Loc(8,3)), Loc(8,2)), expr.LitE(0, Loc(8,7)), Loc(8,2)),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(9,9)), expr.ArrayE(expr.VarE("v:main:arr", Loc(9,9)), [expr.LitE(1, Loc(9,13)), expr.LitE(3, Loc(9,16))], Loc(9,9)), Loc(9,9)),
-            instr.ReturnI(expr.VarE("v:main:t.1", Loc(9,9)), Loc(9,2)),
+          0: [
+            instr.NopI(),
           ],
 
         }, # basicBlocks end.

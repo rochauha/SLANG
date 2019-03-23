@@ -1,0 +1,86 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "002020.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:t.1": types.Int32,
+    "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:main:jim": types.Int32,
+    "v:main:bob": types.Int32,
+  }, # end allVars dict
+
+  allObjs = {
+
+    "f:printf":
+      obj.Func(
+        name = "f:printf",
+        paramNames = ["v:printf:__format"],
+        variadic = True,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:printf() end. 
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          1: [
+            instr.AssignI(expr.VarE("v:main:jim", Loc(8,14)), expr.LitE(21, Loc(8,20)), Loc(8,14)),
+            instr.AssignI(expr.VarE("v:main:bob", Loc(9,5)), expr.VarE("v:main:jim", Loc(9,11)), Loc(9,5)),
+            instr.AssignI(expr.VarE("v:main:bob", Loc(9,11)), expr.BinaryE(expr.VarE("v:main:bob", Loc(9,11)), op.BO_MUL, expr.LitE(2, Loc(9,22)), Loc(9,11)), Loc(9,11)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(10,5)), [expr.LitE("""jim: %d, bob: %d
+""", Loc(10,12)), expr.VarE("v:main:jim", Loc(10,34)), expr.VarE("v:main:bob", Loc(10,39))], Loc(10,5))),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(11,14)), expr.UnaryE(op.UO_MINUS, expr.LitE(3, Loc(11,19)), Loc(11,14)), Loc(11,14)),
+            instr.AssignI(expr.VarE("v:main:jim", Loc(11,5)), expr.BinaryE(expr.LitE(60, Loc(11,11)), op.BO_ADD, expr.VarE("v:main:t.1", Loc(11,14))), Loc(11,5)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(12,5)), [expr.LitE("""jim: %d
+""", Loc(12,12)), expr.VarE("v:main:jim", Loc(12,25))], Loc(12,5))),
+            instr.ReturnI(expr.LitE(0, Loc(13,12)), Loc(13,5)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

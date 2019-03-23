@@ -1,0 +1,93 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "001980.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:d": types.Int32,
+    "v:printf:__format": types.Ptr(to=types.Int8),
+  }, # end allVars dict
+
+  allObjs = {
+
+    "f:printf":
+      obj.Func(
+        name = "f:printf",
+        paramNames = ["v:printf:__format"],
+        variadic = True,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:printf() end. 
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(7,4)), [expr.LitE("""a=%d
+""", Loc(7,11)), expr.LitE(0, Loc(7,21))], Loc(7,4))),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(8,4)), [expr.LitE("""b=%d
+""", Loc(8,11)), expr.LitE(1, Loc(8,21))], Loc(8,4))),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(9,4)), [expr.LitE("""c=%d
+""", Loc(9,11)), expr.LitE(2, Loc(9,21))], Loc(9,4))),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(16,4)), [expr.LitE("""e=%d
+""", Loc(16,11)), expr.LitE(0, Loc(16,21))], Loc(16,4))),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(17,4)), [expr.LitE("""f=%d
+""", Loc(17,11)), expr.LitE(1, Loc(17,21))], Loc(17,4))),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(18,4)), [expr.LitE("""g=%d
+""", Loc(18,11)), expr.LitE(2, Loc(18,21))], Loc(18,4))),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(20,4)), [expr.LitE("""i=%d
+""", Loc(20,11)), expr.LitE(0, Loc(20,21))], Loc(20,4))),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(21,4)), [expr.LitE("""j=%d
+""", Loc(21,11)), expr.LitE(1, Loc(21,21))], Loc(21,4))),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(22,4)), [expr.LitE("""k=%d
+""", Loc(22,11)), expr.LitE(2, Loc(22,21))], Loc(22,4))),
+            instr.ReturnI(expr.LitE(0, Loc(24,11)), Loc(24,4)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

@@ -1,0 +1,78 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "000240.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:t.4": types.Int32,
+    "v:main:t.2": types.Int32,
+    "v:main:t.1": types.Int32,
+    "v:v": types.Struct("s:1"),
+    "v:main:t.3": types.Int32,
+  }, # end allVars dict
+
+  allObjs = {
+    "s:1":
+      types.Struct(
+        name = "s:1",
+        fields = [
+          ("x", types.Int32),
+          ("y", types.Int32),
+        ],
+        loc = Loc(1,9),
+      ),
+
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          1: [
+            instr.AssignI(expr.MemberE(expr.VarE("v:v", Loc(8,2)), ["x"], Loc(8,2)), expr.LitE(1, Loc(8,8)), Loc(8,2)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:v", Loc(9,2)), ["y"], Loc(9,2)), expr.LitE(2, Loc(9,8)), Loc(9,2)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(10,13)), expr.MemberE(expr.VarE("v:v", Loc(10,13)), ["x"], Loc(10,13)), Loc(10,13)),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(10,9)), expr.BinaryE(expr.LitE(3, Loc(10,9)), op.BO_SUB, expr.VarE("v:main:t.2", Loc(10,13))), Loc(10,9)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(10,19)), expr.MemberE(expr.VarE("v:v", Loc(10,19)), ["y"], Loc(10,19)), Loc(10,19)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(10,9)), expr.BinaryE(expr.VarE("v:main:t.3", Loc(10,9)), op.BO_SUB, expr.VarE("v:main:t.1", Loc(10,19))), Loc(10,9)),
+            instr.ReturnI(expr.VarE("v:main:t.4", Loc(10,9)), Loc(10,2)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

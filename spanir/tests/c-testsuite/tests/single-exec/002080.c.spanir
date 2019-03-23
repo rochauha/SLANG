@@ -1,0 +1,221 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "002080.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:t.6": types.ConstSizeArray(of=types.Int8, dim=1),
+    "v:main:t.5": types.Struct("s:wchar"),
+    "v:q": types.Struct("s:wchar"),
+    "v:main:t.2": types.Int8,
+    "v:main:t.1": types.Int8,
+    "v:f1char:s": types.ConstSizeArray(of=types.Int8, dim=9),
+    "v:main:t.3": types.Int32,
+    "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:f1int:s": types.ConstSizeArray(of=types.Int8, dim=9),
+    "v:f1char:q": types.Struct("s:wchar"),
+    "v:main:t.4": types.Int32,
+    "v:f1int:q": types.Struct("s:wint"),
+    "v:main:s": types.ConstSizeArray(of=types.Int8, dim=9),
+  }, # end allVars dict
+
+  allObjs = {
+    "s:wint":
+      types.Struct(
+        name = "s:wint",
+        fields = [
+          ("data", types.Ptr(to=types.Int8)),
+          ("mem", types.IncompleteArray(of=types.Int32)),
+        ],
+        loc = Loc(5,1),
+      ),
+
+    "":
+      types.Struct(
+        name = "",
+        fields = [
+        ],
+        loc = ,
+      ),
+
+    "s:wchar":
+      types.Struct(
+        name = "s:wchar",
+        fields = [
+          ("data", types.Ptr(to=types.Int8)),
+          ("mem", types.IncompleteArray(of=types.Int8)),
+        ],
+        loc = Loc(2,1),
+      ),
+
+
+    "f:printf":
+      obj.Func(
+        name = "f:printf",
+        paramNames = ["v:printf:__format"],
+        variadic = True,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:printf() end. 
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          6: [
+            instr.AssignI(expr.VarE("v:main:s", Loc(19,4)), expr.LitE("""nonono""", Loc(19,14)), Loc(19,4)),
+          ],
+
+          5: [
+            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.5", Loc(20,28)), ["data"], Loc(20,28)), ERROR:convertExpr,
+            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.5", Loc(20,28)), ["mem"], Loc(20,28)), expr.VarE("v:main:t.6", Loc(20,37)),
+            instr.AssignI(expr.VarE("v:q", Loc(20,4)), expr.VarE("v:main:t.5", Loc(20,28)), Loc(20,4)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          4: [
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(22,8)), expr.CallE(expr.FuncE("f:f1char", Loc(22,8)), [], Loc(22,8)), Loc(22,8)),
+            instr.CondI(expr.VarE("v:main:t.4", Loc(22,8)), Loc(22,8)),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(24,12)), expr.ArrayE(expr.VarE("v:main:s", Loc(24,12)), [expr.LitE(0, Loc(24,14))], Loc(24,12)), Loc(24,12)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(24,11)), expr.UnaryE(op.UO_NOT, expr.VarE("v:main:t.1", Loc(24,12)), Loc(24,11)), Loc(24,11)),
+            instr.ReturnI(expr.VarE("v:main:t.2", Loc(24,11)), Loc(24,4)),
+          ],
+
+          2: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(23,6)), [expr.LitE("""bla
+""", Loc(23,14))], Loc(23,6))),
+          ],
+
+          3: [
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(22,20)), expr.CallE(expr.FuncE("f:f1int", Loc(22,20)), [], Loc(22,20)), Loc(22,20)),
+            instr.CondI(expr.VarE("v:main:t.3", Loc(22,20)), Loc(22,4)),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (2, 1, types.UnCondEdge),
+          (3, 2, types.TrueEdge),
+          (3, 1, types.FalseEdge),
+          (4, 2, types.TrueEdge),
+          (4, 3, types.FalseEdge),
+          (5, 4, types.UnCondEdge),
+          (6, 4, types.UnCondEdge),
+          (6, 5, types.UnCondEdge),
+          (-1, 6, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+    "f:f1int":
+      obj.Func(
+        name = "f:f1int",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          1: [
+            instr.AssignI(expr.VarE("v:f1int:s", Loc(14,5)), expr.LitE("""nonono""", Loc(14,15)), Loc(14,5)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:f1int:t.1", Loc(15,21)), ["data"], Loc(15,21)), expr.LitE("""bugs""", Loc(15,22)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:f1int:t.1", Loc(15,21)), ["mem"], Loc(15,21)), ERROR:convertExpr,
+            instr.AssignI(expr.VarE("v:f1int:q", Loc(15,5)), expr.VarE("v:f1int:t.1", Loc(15,21)), Loc(15,5)),
+            instr.AssignI(expr.VarE("v:f1int:t.2", Loc(16,13)), expr.ArrayE(expr.VarE("v:f1int:s", Loc(16,13)), [expr.LitE(0, Loc(16,15))], Loc(16,13)), Loc(16,13)),
+            instr.AssignI(expr.VarE("v:f1int:t.3", Loc(16,12)), expr.UnaryE(op.UO_NOT, expr.VarE("v:f1int:t.2", Loc(16,13)), Loc(16,12)), Loc(16,12)),
+            instr.ReturnI(expr.VarE("v:f1int:t.3", Loc(16,12)), Loc(16,5)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:f1int() end. 
+
+    "f:f1char":
+      obj.Func(
+        name = "f:f1char",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          1: [
+            instr.AssignI(expr.VarE("v:f1char:s", Loc(9,5)), expr.LitE("""nonono""", Loc(9,15)), Loc(9,5)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:f1char:t.1", Loc(10,22)), ["data"], Loc(10,22)), expr.LitE("""bugs""", Loc(10,23)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:f1char:t.1", Loc(10,22)), ["mem"], Loc(10,22)), ERROR:convertExpr,
+            instr.AssignI(expr.VarE("v:f1char:q", Loc(10,5)), expr.VarE("v:f1char:t.1", Loc(10,22)), Loc(10,5)),
+            instr.AssignI(expr.VarE("v:f1char:t.2", Loc(11,13)), expr.ArrayE(expr.VarE("v:f1char:s", Loc(11,13)), [expr.LitE(0, Loc(11,15))], Loc(11,13)), Loc(11,13)),
+            instr.AssignI(expr.VarE("v:f1char:t.3", Loc(11,12)), expr.UnaryE(op.UO_NOT, expr.VarE("v:f1char:t.2", Loc(11,13)), Loc(11,12)), Loc(11,12)),
+            instr.ReturnI(expr.VarE("v:f1char:t.3", Loc(11,12)), Loc(11,5)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:f1char() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

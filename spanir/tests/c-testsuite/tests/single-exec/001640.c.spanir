@@ -1,0 +1,241 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "001640.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:t.17": types.Int32,
+    "v:main:y": types.Int32,
+    "v:main:x": types.Int32,
+    "v:main:e": types.Int32,
+    "v:main:t.5": types.Int32,
+    "v:main:t.1": types.Int32,
+    "v:main:f": types.Int32,
+    "v:main:t.8": types.Int32,
+    "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:main:t.3": types.Int32,
+    "v:main:t.7": types.Int32,
+    "v:main:t.2": types.Int32,
+    "v:main:t.4": types.Int32,
+    "v:main:t.15": types.Int32,
+    "v:main:c": types.Int32,
+    "v:main:t.13": types.Int32,
+    "v:main:t.6": types.Int32,
+    "v:main:d": types.Int32,
+    "v:main:a": types.Int32,
+    "v:main:t.9": types.Int32,
+    "v:main:t.10": types.Int32,
+    "v:main:t.11": types.Int32,
+    "v:main:b": types.Int32,
+    "v:main:t.12": types.Int32,
+    "v:main:t.14": types.Int32,
+    "v:main:t.16": types.Int32,
+  }, # end allVars dict
+
+  allObjs = {
+
+    "f:printf":
+      obj.Func(
+        name = "f:printf",
+        paramNames = ["v:printf:__format"],
+        variadic = True,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:printf() end. 
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          17: [
+            instr.AssignI(expr.VarE("v:main:a", Loc(14,4)), expr.LitE(12, Loc(14,8)), Loc(14,4)),
+            instr.AssignI(expr.VarE("v:main:b", Loc(15,4)), expr.LitE(34, Loc(15,8)), Loc(15,4)),
+            instr.AssignI(expr.VarE("v:main:c", Loc(16,4)), expr.LitE(56, Loc(16,8)), Loc(16,4)),
+            instr.AssignI(expr.VarE("v:main:d", Loc(17,4)), expr.LitE(78, Loc(17,8)), Loc(17,4)),
+            instr.AssignI(expr.VarE("v:main:e", Loc(18,4)), expr.LitE(0, Loc(18,8)), Loc(18,4)),
+            instr.AssignI(expr.VarE("v:main:f", Loc(19,4)), expr.LitE(1, Loc(19,8)), Loc(19,4)),
+            instr.AssignI(expr.VarE("v:main:t.17", Loc(21,19)), expr.BinaryE(expr.VarE("v:main:c", Loc(21,19)), op.BO_ADD, expr.VarE("v:main:d", Loc(21,23))), Loc(21,19)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(21,4)), [expr.LitE("""%d
+""", Loc(21,11)), expr.VarE("v:main:t.17", Loc(21,19))], Loc(21,4))),
+            instr.AssignI(expr.VarE("v:main:y", Loc(22,20)), expr.BinaryE(expr.VarE("v:main:c", Loc(22,24)), op.BO_ADD, expr.VarE("v:main:d", Loc(22,28))), Loc(22,20)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(22,4)), [expr.LitE("""%d
+""", Loc(22,11)), expr.VarE("v:main:y", Loc(22,20))], Loc(22,4))),
+            instr.CondI(expr.VarE("v:main:e", Loc(23,19)), Loc(23,19)),
+          ],
+
+          16: [
+            instr.CondI(expr.VarE("v:main:e", Loc(23,24)), Loc(23,24)),
+          ],
+
+          15: [
+            instr.NopI(),
+          ],
+
+          14: [
+            instr.CondI(expr.LitE(1), Loc(23,19)),
+            instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(23,4))),
+            instr.CondI(expr.VarE("v:main:e", Loc(24,19)), Loc(24,19)),
+          ],
+
+          13: [
+            instr.CondI(expr.VarE("v:main:f", Loc(24,24)), Loc(24,24)),
+          ],
+
+          12: [
+            instr.NopI(),
+          ],
+
+          11: [
+            instr.CondI(expr.LitE(1), Loc(24,19)),
+            instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(24,4))),
+            instr.CondI(expr.VarE("v:main:e", Loc(25,19)), Loc(25,19)),
+          ],
+
+          10: [
+            instr.CondI(expr.VarE("v:main:e", Loc(25,24)), Loc(25,19)),
+          ],
+
+          3: [
+            instr.CondI(expr.LitE(1), Loc(27,19)),
+            instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(27,4))),
+            instr.AssignI(expr.VarE("v:main:t.9", Loc(28,27)), expr.BinaryE(expr.VarE("v:main:c", Loc(28,27)), op.BO_BIT_AND, expr.VarE("v:main:d", Loc(28,31))), Loc(28,27)),
+            instr.AssignI(expr.VarE("v:main:t.10", Loc(28,23)), expr.BinaryE(expr.VarE("v:main:b", Loc(28,23)), op.BO_BIT_XOR, expr.VarE("v:main:t.9", Loc(28,27))), Loc(28,23)),
+            instr.AssignI(expr.VarE("v:main:t.11", Loc(28,19)), expr.BinaryE(expr.VarE("v:main:a", Loc(28,19)), op.BO_BIT_OR, expr.VarE("v:main:t.10", Loc(28,23))), Loc(28,19)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(28,4)), [expr.LitE("""%d
+""", Loc(28,11)), expr.VarE("v:main:t.11", Loc(28,19))], Loc(28,4))),
+            instr.AssignI(expr.VarE("v:main:t.13", Loc(29,23)), expr.BinaryE(expr.VarE("v:main:a", Loc(29,23)), op.BO_EQ, expr.VarE("v:main:a", Loc(29,28))), Loc(29,23)),
+            instr.AssignI(expr.VarE("v:main:t.12", Loc(29,31)), expr.BinaryE(expr.VarE("v:main:a", Loc(29,31)), op.BO_EQ, expr.VarE("v:main:b", Loc(29,36))), Loc(29,31)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(29,4)), [expr.LitE("""%d, %d
+""", Loc(29,11)), expr.VarE("v:main:t.13", Loc(29,23)), expr.VarE("v:main:t.12", Loc(29,31))], Loc(29,4))),
+            instr.AssignI(expr.VarE("v:main:t.15", Loc(30,23)), expr.BinaryE(expr.VarE("v:main:a", Loc(30,23)), op.BO_NE, expr.VarE("v:main:a", Loc(30,28))), Loc(30,23)),
+            instr.AssignI(expr.VarE("v:main:t.14", Loc(30,31)), expr.BinaryE(expr.VarE("v:main:a", Loc(30,31)), op.BO_NE, expr.VarE("v:main:b", Loc(30,36))), Loc(30,31)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(30,4)), [expr.LitE("""%d, %d
+""", Loc(30,11)), expr.VarE("v:main:t.15", Loc(30,23)), expr.VarE("v:main:t.14", Loc(30,31))], Loc(30,4))),
+            instr.AssignI(expr.VarE("v:main:t.16", Loc(31,19)), expr.BinaryE(expr.VarE("v:main:a", Loc(31,19)), op.BO_NE, expr.VarE("v:main:b", Loc(31,24))), Loc(31,19)),
+            instr.CondI(expr.VarE("v:main:t.16", Loc(31,19)), Loc(31,19)),
+          ],
+
+          2: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.CondI(expr.LitE(1), Loc(31,19)),
+            instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(31,4))),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(32,23)), expr.BinaryE(expr.VarE("v:main:b", Loc(32,23)), op.BO_MUL, expr.VarE("v:main:c", Loc(32,27))), Loc(32,23)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(32,23)), expr.BinaryE(expr.VarE("v:main:t.1", Loc(32,23)), op.BO_DIV, expr.VarE("v:main:f", Loc(32,31))), Loc(32,23)),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(32,19)), expr.BinaryE(expr.VarE("v:main:a", Loc(32,19)), op.BO_ADD, expr.VarE("v:main:t.2", Loc(32,23))), Loc(32,19)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(32,4)), [expr.LitE("""%d
+""", Loc(32,11)), expr.VarE("v:main:t.3", Loc(32,19))], Loc(32,4))),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(33,23)), expr.BinaryE(expr.VarE("v:main:b", Loc(33,23)), op.BO_MUL, expr.VarE("v:main:c", Loc(33,27))), Loc(33,23)),
+            instr.AssignI(expr.VarE("v:main:t.5", Loc(33,23)), expr.BinaryE(expr.VarE("v:main:t.4", Loc(33,23)), op.BO_DIV, expr.VarE("v:main:f", Loc(33,31))), Loc(33,23)),
+            instr.AssignI(expr.VarE("v:main:t.6", Loc(33,19)), expr.BinaryE(expr.VarE("v:main:a", Loc(33,19)), op.BO_ADD, expr.VarE("v:main:t.5", Loc(33,23))), Loc(33,19)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(33,4)), [expr.LitE("""%d
+""", Loc(33,11)), expr.VarE("v:main:t.6", Loc(33,19))], Loc(33,4))),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(34,4)), [expr.LitE("""%d
+""", Loc(34,11)), ERROR:convertBinaryOp], Loc(34,4))),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(35,4)), [expr.LitE("""%d
+""", Loc(35,11)), ERROR:convertBinaryOp], Loc(35,4))),
+            instr.ReturnI(expr.LitE(0, Loc(37,11)), Loc(37,4)),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          4: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          5: [
+            instr.CondI(expr.LitE(1), Loc(26,19)),
+            instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(26,4))),
+            instr.CondI(expr.VarE("v:main:a", Loc(27,19)), Loc(27,19)),
+          ],
+
+          6: [
+            instr.NopI(),
+          ],
+
+          7: [
+            instr.CondI(expr.VarE("v:main:f", Loc(26,24)), Loc(26,19)),
+          ],
+
+          8: [
+            instr.CondI(expr.LitE(1), Loc(25,19)),
+            instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(25,4))),
+            instr.CondI(expr.VarE("v:main:e", Loc(26,19)), Loc(26,19)),
+          ],
+
+          9: [
+            instr.NopI(),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (2, 1, types.UnCondEdge),
+          (3, 2, types.TrueEdge),
+          (3, 1, types.FalseEdge),
+          (4, 3, types.UnCondEdge),
+          (5, 4, types.TrueEdge),
+          (5, 3, types.FalseEdge),
+          (6, 5, types.UnCondEdge),
+          (7, 5, types.TrueEdge),
+          (7, 6, types.FalseEdge),
+          (8, 7, types.TrueEdge),
+          (8, 6, types.FalseEdge),
+          (9, 8, types.UnCondEdge),
+          (10, 8, types.TrueEdge),
+          (10, 9, types.FalseEdge),
+          (11, 10, types.TrueEdge),
+          (11, 9, types.FalseEdge),
+          (12, 11, types.UnCondEdge),
+          (13, 12, types.TrueEdge),
+          (13, 11, types.FalseEdge),
+          (14, 11, types.TrueEdge),
+          (14, 13, types.FalseEdge),
+          (15, 14, types.UnCondEdge),
+          (16, 15, types.TrueEdge),
+          (16, 14, types.FalseEdge),
+          (17, 14, types.TrueEdge),
+          (17, 16, types.FalseEdge),
+          (-1, 17, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

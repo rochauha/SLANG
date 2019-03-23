@@ -1,0 +1,149 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "001680.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:Count": types.Int32,
+    "v:factorial:t.4": types.Int32,
+    "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:factorial:i": types.Int32,
+    "v:main:t.1": types.Int32,
+    "v:main:t.2": types.Int32,
+    "v:factorial:t.3": types.Int32,
+  }, # end allVars dict
+
+  allObjs = {
+
+    "f:printf":
+      obj.Func(
+        name = "f:printf",
+        paramNames = ["v:printf:__format"],
+        variadic = True,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:printf() end. 
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          5: [
+            instr.AssignI(expr.VarE("v:main:Count", Loc(15,9)), expr.LitE(1, Loc(15,17)), Loc(15,9)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          4: [
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(15,20)), expr.BinaryE(expr.VarE("v:main:Count", Loc(15,20)), op.BO_LE, expr.LitE(10, Loc(15,29))), Loc(15,20)),
+            instr.CondI(expr.VarE("v:main:t.2", Loc(15,20)), Loc(15,4)),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(18,11)), Loc(18,4)),
+          ],
+
+          2: [
+            instr.AssignI(expr.VarE("v:main:Count", Loc(15,33)), expr.BinaryE(expr.VarE("v:main:Count", Loc(15,33)), op.BO_ADD, expr.LitE(1, Loc(15,33)), Loc(15,33)), Loc(15,33)),
+          ],
+
+          3: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(16,22)), expr.CallE(expr.FuncE("f:factorial", Loc(16,22)), [expr.VarE("v:main:Count", Loc(16,32))], Loc(16,22)), Loc(16,22)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(16,7)), [expr.LitE("""%d
+""", Loc(16,14)), expr.VarE("v:main:t.1", Loc(16,22))], Loc(16,7))),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (2, 4, types.UnCondEdge),
+          (3, 2, types.UnCondEdge),
+          (4, 3, types.TrueEdge),
+          (4, 1, types.FalseEdge),
+          (5, 4, types.UnCondEdge),
+          (-1, 5, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+    "f:factorial":
+      obj.Func(
+        name = "f:factorial",
+        paramNames = ["v:factorial:i"],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.AssignI(expr.VarE("v:factorial:t.1", Loc(8,28)), expr.BinaryE(expr.VarE("v:factorial:i", Loc(8,28)), op.BO_SUB, expr.LitE(1, Loc(8,32))), Loc(8,28)),
+            instr.AssignI(expr.VarE("v:factorial:t.2", Loc(8,18)), expr.CallE(expr.FuncE("f:factorial", Loc(8,18)), [expr.VarE("v:factorial:t.1", Loc(8,28))], Loc(8,18)), Loc(8,18)),
+            instr.AssignI(expr.VarE("v:factorial:t.3", Loc(8,14)), expr.BinaryE(expr.VarE("v:factorial:i", Loc(8,14)), op.BO_MUL, expr.VarE("v:factorial:t.2", Loc(8,18))), Loc(8,14)),
+            instr.ReturnI(expr.VarE("v:factorial:t.3", Loc(8,14)), Loc(8,7)),
+          ],
+
+          2: [
+            instr.ReturnI(expr.VarE("v:factorial:i", Loc(6,14)), Loc(6,7)),
+          ],
+
+          3: [
+            instr.AssignI(expr.VarE("v:factorial:t.4", Loc(5,8)), expr.BinaryE(expr.VarE("v:factorial:i", Loc(5,8)), op.BO_LT, expr.LitE(2, Loc(5,12))), Loc(5,8)),
+            instr.CondI(expr.VarE("v:factorial:t.4", Loc(5,8)), Loc(5,4)),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (2, 0, types.UnCondEdge),
+          (3, 2, types.TrueEdge),
+          (3, 1, types.FalseEdge),
+          (-1, 3, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:factorial() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

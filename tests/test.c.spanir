@@ -1,0 +1,76 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "tests/test.c",
+  description = "Auto-Translated from Clang AST.",
+  allVars = {
+    "v:main:t.1": types.Ptr(to=types.Void),
+    "v:main:x": types.Ptr(to=types.Int32),
+    "v:dummy_malloc:size": types.UInt32,
+  }, # end allVars dict
+
+  allObjs = {
+
+    "f:dummy_malloc":
+      obj.Func(
+        name = "f:dummy_malloc",
+        paramNames = ["v:dummy_malloc:size"],
+        variadic = False,
+        returnType = types.Ptr(to=types.Void),
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:dummy_malloc() end. 
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          1: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(7,19)), expr.CallE(expr.FuncE("f:dummy_malloc", Loc(7,19)), [expr.LitE(5, Loc(7,32))], Loc(7,19)), Loc(7,19)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(7,2)), expr.CastE(to=types.Ptr(to=types.Int32), expr.VarE("v:main:t.1", Loc(7,19))), Loc(7,11)), Loc(7,2)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

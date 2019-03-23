@@ -15,11 +15,13 @@
 irTUnit.TUnit(
   name = "002210.c",
   description = "Auto-Translated from Clang AST.",
+
   allVars = {
-    "v:main:func": types.Ptr(to=types.FuncSig(returnType=types.Ptr(to=types.Int32), paramTypes=[types.Int32,types.Int32], variadic=True),
+    "v:main:func": types.Ptr(to=types.FuncSig(returnType=types.Ptr(to=types.Int32), paramTypes=[types.Int32, types.Int32])),
   }, # end allVars dict
 
   allObjs = {
+
     "f:main":
       obj.Func(
         name = "f:main",
@@ -30,16 +32,16 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          0: [
-            instr.NopI(),
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(6,10)), Loc(6,3)),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(5,10)), Loc(5,3)),
+          0: [
+            instr.NopI(),
           ],
 
         }, # basicBlocks end.

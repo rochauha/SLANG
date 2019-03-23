@@ -1,0 +1,72 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "000570.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:t.1": types.ConstSizeArray(of=types.Int8, dim=16),
+    "v:main:b": types.ConstSizeArray(of=types.Int8, dim=16),
+    "v:main:a": types.ConstSizeArray(of=types.Int8, dim=16),
+  }, # end allVars dict
+
+  allObjs = {
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(8,9)), Loc(8,2)),
+          ],
+
+          2: [
+            instr.ReturnI(expr.LitE(1, Loc(7,10)), Loc(7,3)),
+          ],
+
+          3: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(6,5)), expr.BinaryE(expr.LitE(16, Loc(6,5)), op.BO_NE, expr.LitE(16, Loc(6,18))), Loc(6,5)),
+            instr.CondI(expr.VarE("v:main:t.1", Loc(6,5)), Loc(6,2)),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (2, 0, types.UnCondEdge),
+          (3, 0, types.TrueEdge),
+          (3, 1, types.FalseEdge),
+          (-1, 3, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

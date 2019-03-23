@@ -1,0 +1,129 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "001630.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:t.8": types.Int32,
+    "v:main:t.7": types.Int32,
+    "v:main:t.6": types.Int32,
+    "v:main:t.5": types.Int32,
+    "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:main:t.4": types.Int32,
+    "v:main:b": types.Ptr(to=types.Int32),
+    "v:main:t.3": types.Int32,
+    "v:main:a": types.Int32,
+    "v:main:t.2": types.Int32,
+    "v:main:tsar": types.Ptr(to=types.Struct("s:ziggy")),
+    "v:main:c": types.Int32,
+    "v:main:t.1": types.Int32,
+    "v:bolshevic": types.Struct("s:ziggy"),
+  }, # end allVars dict
+
+  allObjs = {
+    "s:ziggy":
+      types.Struct(
+        name = "s:ziggy",
+        fields = [
+          ("a", types.Int32),
+          ("b", types.Int32),
+          ("c", types.Int32),
+        ],
+        loc = Loc(3,1),
+      ),
+
+
+    "f:printf":
+      obj.Func(
+        name = "f:printf",
+        paramNames = ["v:printf:__format"],
+        variadic = True,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:printf() end. 
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          1: [
+            instr.AssignI(expr.VarE("v:main:a", Loc(16,4)), expr.LitE(42, Loc(16,8)), Loc(16,4)),
+            instr.AssignI(expr.VarE("v:main:b", Loc(17,4)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:main:a", Loc(17,9)), Loc(17,8)), Loc(17,4)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(18,23)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:b", Loc(18,24)), Loc(18,23)), Loc(18,23)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(18,4)), [expr.LitE("""a = %d
+""", Loc(18,11)), expr.VarE("v:main:t.1", Loc(18,23))], Loc(18,4))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:bolshevic", Loc(20,4)), ["a"], Loc(20,4)), expr.LitE(12, Loc(20,18)), Loc(20,4)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:bolshevic", Loc(21,4)), ["b"], Loc(21,4)), expr.LitE(34, Loc(21,18)), Loc(21,4)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:bolshevic", Loc(22,4)), ["c"], Loc(22,4)), expr.LitE(56, Loc(22,18)), Loc(22,4)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(24,33)), expr.MemberE(expr.VarE("v:bolshevic", Loc(24,33)), ["a"], Loc(24,33)), Loc(24,33)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(24,4)), [expr.LitE("""bolshevic.a = %d
+""", Loc(24,11)), expr.VarE("v:main:t.2", Loc(24,33))], Loc(24,4))),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(25,33)), expr.MemberE(expr.VarE("v:bolshevic", Loc(25,33)), ["b"], Loc(25,33)), Loc(25,33)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(25,4)), [expr.LitE("""bolshevic.b = %d
+""", Loc(25,11)), expr.VarE("v:main:t.3", Loc(25,33))], Loc(25,4))),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(26,33)), expr.MemberE(expr.VarE("v:bolshevic", Loc(26,33)), ["c"], Loc(26,33)), Loc(26,33)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(26,4)), [expr.LitE("""bolshevic.c = %d
+""", Loc(26,11)), expr.VarE("v:main:t.4", Loc(26,33))], Loc(26,4))),
+            instr.AssignI(expr.VarE("v:main:tsar", Loc(28,4)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:bolshevic", Loc(28,26)), Loc(28,25)), Loc(28,4)),
+            instr.AssignI(expr.VarE("v:main:t.5", Loc(30,29)), expr.MemberE(expr.VarE("v:main:tsar", Loc(30,29)), ["a"], Loc(30,29)), Loc(30,29)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(30,4)), [expr.LitE("""tsar->a = %d
+""", Loc(30,11)), expr.VarE("v:main:t.5", Loc(30,29))], Loc(30,4))),
+            instr.AssignI(expr.VarE("v:main:t.6", Loc(31,29)), expr.MemberE(expr.VarE("v:main:tsar", Loc(31,29)), ["b"], Loc(31,29)), Loc(31,29)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(31,4)), [expr.LitE("""tsar->b = %d
+""", Loc(31,11)), expr.VarE("v:main:t.6", Loc(31,29))], Loc(31,4))),
+            instr.AssignI(expr.VarE("v:main:t.7", Loc(32,29)), expr.MemberE(expr.VarE("v:main:tsar", Loc(32,29)), ["c"], Loc(32,29)), Loc(32,29)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(32,4)), [expr.LitE("""tsar->c = %d
+""", Loc(32,11)), expr.VarE("v:main:t.7", Loc(32,29))], Loc(32,4))),
+            instr.AssignI(expr.VarE("v:main:b", Loc(34,4)), expr.UnaryE(op.UO_ADDROF, expr.MemberE(expr.VarE("v:bolshevic", Loc(34,10)), ["b"], Loc(34,10)), Loc(34,8)), Loc(34,4)),
+            instr.AssignI(expr.VarE("v:main:t.8", Loc(35,33)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:b", Loc(35,34)), Loc(35,33)), Loc(35,33)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(35,4)), [expr.LitE("""bolshevic.b = %d
+""", Loc(35,11)), expr.VarE("v:main:t.8", Loc(35,33))], Loc(35,4))),
+            instr.ReturnI(expr.LitE(0, Loc(37,11)), Loc(37,4)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

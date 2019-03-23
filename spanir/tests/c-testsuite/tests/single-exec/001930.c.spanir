@@ -1,0 +1,153 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "001930.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:fred:t.3": types.Int,
+    "v:fred:x": types.Int32,
+    "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:fred:t.1": types.Int,
+    "v:fred:t.2": types.Int,
+  }, # end allVars dict
+
+  allObjs = {
+
+    "f:printf":
+      obj.Func(
+        name = "f:printf",
+        paramNames = ["v:printf:__format"],
+        variadic = True,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:printf() end. 
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:fred", Loc(17,4)), [expr.LitE(1, Loc(17,9))], Loc(17,4))),
+            instr.CallI(expr.CallE(expr.FuncE("f:fred", Loc(18,4)), [expr.LitE(2, Loc(18,9))], Loc(18,4))),
+            instr.CallI(expr.CallE(expr.FuncE("f:fred", Loc(19,4)), [expr.LitE(3, Loc(19,9))], Loc(19,4))),
+            instr.ReturnI(expr.LitE(0, Loc(21,11)), Loc(21,4)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+    "f:fred":
+      obj.Func(
+        name = "f:fred",
+        paramNames = ["v:fred:x"],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          5: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(7,15)), [expr.LitE("""1
+""", Loc(7,22))], Loc(7,15))),
+            instr.ReturnI(Loc(7,30)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          4: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(8,15)), [expr.LitE("""2
+""", Loc(8,22))], Loc(8,15))),
+          ],
+
+          3: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(9,15)), [expr.LitE("""3
+""", Loc(9,22))], Loc(9,15))),
+            instr.ReturnI(Loc(9,30)),
+          ],
+
+          8: [
+            instr.AssignI(expr.VarE("v:fred:t.3", Loc(9,7)), expr.BinaryE(expr.VarE("v:fred:x", Loc(5,12)), op.BO_EQ, expr.LitE(1, Loc(7,12)), ), ),
+            instr.CondI(expr.VarE("v:fred:t.3", Loc(9,7)), ),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(12,4)), [expr.LitE("""out
+""", Loc(12,11))], Loc(12,4))),
+          ],
+
+          2: [
+            instr.AssignI(expr.VarE("v:fred:t.1", Loc(7,7)), expr.BinaryE(expr.VarE("v:fred:x", Loc(5,12)), op.BO_EQ, expr.LitE(3, Loc(9,12)), ), ),
+            instr.CondI(expr.VarE("v:fred:t.1", Loc(7,7)), ),
+          ],
+
+          7: [
+            instr.AssignI(expr.VarE("v:fred:t.2", Loc(8,7)), expr.BinaryE(expr.VarE("v:fred:x", Loc(5,12)), op.BO_EQ, expr.LitE(2, Loc(8,12)), ), ),
+            instr.CondI(expr.VarE("v:fred:t.2", Loc(8,7)), ),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (2, 3, types.TrueEdge),
+          (7, 4, types.TrueEdge),
+          (2, 7, types.FalseEdge),
+          (8, 5, types.TrueEdge),
+          (7, 8, types.FalseEdge),
+          (8, 1, types.FalseEdge),
+          (3, 0, types.UnCondEdge),
+          (4, 1, types.UnCondEdge),
+          (5, 0, types.UnCondEdge),
+          (-1, 2, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:fred() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

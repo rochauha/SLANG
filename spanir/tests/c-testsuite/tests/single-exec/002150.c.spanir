@@ -1,0 +1,554 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "002150.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:kb_wait_4:t.1": types.Int,
+    "v:kb_wait_3:i": types.Int32,
+    "v:kb_wait_4:timeout": types.UInt32,
+    "v:kb_wait_2_2:timeout": types.UInt32,
+    "v:printf:format": types.Ptr(to=types.Int8),
+    "v:kb_wait_4:t.2": types.Int,
+    "v:kb_wait_1:timeout": types.UInt32,
+    "v:kb_wait_2_1:timeout": types.UInt32,
+    "v:kb_wait_3:timeout": types.UInt32,
+    "v:kb_wait_2:timeout": types.UInt32,
+  }, # end allVars dict
+
+  allObjs = {
+
+    "f:kb_wait_4":
+      obj.Func(
+        name = "f:kb_wait_4",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          11: [
+            instr.AssignI(expr.VarE("v:kb_wait_4:timeout", Loc(79,5)), expr.LitE(2, Loc(79,29)), Loc(79,5)),
+          ],
+
+          10: [
+            instr.NopI(),
+          ],
+
+          9: [
+            instr.NopI(),
+          ],
+
+          3: [
+            instr.NopI(),
+          ],
+
+          2: [
+            instr.AssignI(expr.VarE("v:kb_wait_4:timeout", Loc(98,9)), expr.BinaryE(expr.VarE("v:kb_wait_4:timeout", Loc(98,9)), op.BO_SUB, expr.LitE(1, Loc(98,9)), Loc(98,9)), Loc(98,9)),
+          ],
+
+          13: [
+            instr.AssignI(expr.VarE("v:kb_wait_4:t.2", Loc(88,21)), expr.BinaryE(expr.VarE("v:kb_wait_4:timeout", Loc(84,24)), op.BO_EQ, expr.LitE(2, Loc(85,26)), ), ),
+            instr.CondI(expr.VarE("v:kb_wait_4:t.2", Loc(88,21)), ),
+          ],
+
+          1: [
+            instr.CondI(expr.VarE("v:kb_wait_4:timeout", Loc(99,14)), Loc(80,5)),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          4: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:kb_wait_4:t.1", Loc(85,21)), expr.BinaryE(expr.VarE("v:kb_wait_4:timeout", Loc(84,24)), op.BO_EQ, expr.LitE(1, Loc(88,26)), ), ),
+            instr.CondI(expr.VarE("v:kb_wait_4:t.1", Loc(85,21)), ),
+          ],
+
+          6: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(92,25)), [expr.LitE("""timeout is 0?""", Loc(92,32))], Loc(92,25))),
+          ],
+
+          7: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(89,25)), [expr.LitE("""timeout is 1""", Loc(89,32))], Loc(89,25))),
+          ],
+
+          8: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(86,25)), [expr.LitE("""timeout is 2""", Loc(86,32))], Loc(86,25))),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 10, types.TrueEdge),
+          (1, 0, types.FalseEdge),
+          (2, 1, types.UnCondEdge),
+          (3, 2, types.UnCondEdge),
+          (4, 2, types.UnCondEdge),
+          (5, 7, types.TrueEdge),
+          (13, 8, types.TrueEdge),
+          (5, 13, types.FalseEdge),
+          (13, 6, types.FalseEdge),
+          (6, 4, types.UnCondEdge),
+          (7, 4, types.UnCondEdge),
+          (8, 4, types.UnCondEdge),
+          (9, 3, types.UnCondEdge),
+          (10, 9, types.UnCondEdge),
+          (11, 9, types.UnCondEdge),
+          (-1, 11, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:kb_wait_4() end. 
+
+    "f:kb_wait_2_2":
+      obj.Func(
+        name = "f:kb_wait_2_2",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          8: [
+            instr.AssignI(expr.VarE("v:kb_wait_2_2:timeout", Loc(47,5)), expr.LitE(2, Loc(47,29)), Loc(47,5)),
+          ],
+
+          7: [
+            instr.NopI(),
+          ],
+
+          6: [
+            instr.NopI(),
+          ],
+
+          5: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          4: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.CondI(expr.VarE("v:kb_wait_2_2:timeout", Loc(58,14)), Loc(48,5)),
+          ],
+
+          2: [
+            instr.AssignI(expr.VarE("v:kb_wait_2_2:timeout", Loc(57,9)), expr.BinaryE(expr.VarE("v:kb_wait_2_2:timeout", Loc(57,9)), op.BO_SUB, expr.LitE(1, Loc(57,9)), Loc(57,9)), Loc(57,9)),
+          ],
+
+          3: [
+            instr.NopI(),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 7, types.TrueEdge),
+          (1, 0, types.FalseEdge),
+          (2, 1, types.UnCondEdge),
+          (3, 2, types.UnCondEdge),
+          (4, 2, types.UnCondEdge),
+          (5, 5, types.UnCondEdge),
+          (6, 3, types.UnCondEdge),
+          (7, 6, types.UnCondEdge),
+          (8, 6, types.UnCondEdge),
+          (-1, 8, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:kb_wait_2_2() end. 
+
+    "f:kb_wait_1":
+      obj.Func(
+        name = "f:kb_wait_1",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          10: [
+            instr.AssignI(expr.VarE("v:kb_wait_1:timeout", Loc(4,5)), expr.LitE(2, Loc(4,29)), Loc(4,5)),
+          ],
+
+          3: [
+            instr.NopI(),
+          ],
+
+          2: [
+            instr.AssignI(expr.VarE("v:kb_wait_1:timeout", Loc(13,9)), expr.BinaryE(expr.VarE("v:kb_wait_1:timeout", Loc(13,9)), op.BO_SUB, expr.LitE(1, Loc(13,9)), Loc(13,9)), Loc(13,9)),
+          ],
+
+          1: [
+            instr.CondI(expr.VarE("v:kb_wait_1:timeout", Loc(14,14)), Loc(5,5)),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          4: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          5: [
+            instr.NopI(),
+          ],
+
+          6: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(10,21)), [expr.LitE("""error
+""", Loc(10,28))], Loc(10,21))),
+          ],
+
+          7: [
+            instr.CondI(expr.LitE(1, Loc(9,24)), Loc(9,17)),
+          ],
+
+          8: [
+            instr.NopI(),
+          ],
+
+          9: [
+            instr.NopI(),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 9, types.TrueEdge),
+          (1, 0, types.FalseEdge),
+          (2, 1, types.UnCondEdge),
+          (3, 2, types.UnCondEdge),
+          (4, 2, types.UnCondEdge),
+          (5, 7, types.UnCondEdge),
+          (6, 5, types.UnCondEdge),
+          (7, 6, types.TrueEdge),
+          (7, 0, types.FalseEdge),
+          (8, 3, types.UnCondEdge),
+          (9, 8, types.UnCondEdge),
+          (10, 8, types.UnCondEdge),
+          (-1, 10, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:kb_wait_1() end. 
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(103,5)), [expr.LitE("""begin
+""", Loc(103,12))], Loc(103,5))),
+            instr.CallI(expr.CallE(expr.FuncE("f:kb_wait_1", Loc(104,5)), [], Loc(104,5))),
+            instr.CallI(expr.CallE(expr.FuncE("f:kb_wait_2", Loc(105,5)), [], Loc(105,5))),
+            instr.CallI(expr.CallE(expr.FuncE("f:kb_wait_2_1", Loc(106,5)), [], Loc(106,5))),
+            instr.CallI(expr.CallE(expr.FuncE("f:kb_wait_2_2", Loc(107,5)), [], Loc(107,5))),
+            instr.CallI(expr.CallE(expr.FuncE("f:kb_wait_3", Loc(108,5)), [], Loc(108,5))),
+            instr.CallI(expr.CallE(expr.FuncE("f:kb_wait_4", Loc(109,5)), [], Loc(109,5))),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(110,5)), [expr.LitE("""end
+""", Loc(110,12))], Loc(110,5))),
+            instr.ReturnI(expr.LitE(0, Loc(111,12)), Loc(111,5)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+    "f:kb_wait_3":
+      obj.Func(
+        name = "f:kb_wait_3",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          3: [
+            instr.NopI(),
+          ],
+
+          2: [
+            instr.AssignI(expr.VarE("v:kb_wait_3:timeout", Loc(74,9)), expr.BinaryE(expr.VarE("v:kb_wait_3:timeout", Loc(74,9)), op.BO_SUB, expr.LitE(1, Loc(74,9)), Loc(74,9)), Loc(74,9)),
+          ],
+
+          1: [
+            instr.CondI(expr.VarE("v:kb_wait_3:timeout", Loc(75,14)), Loc(63,5)),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          4: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:kb_wait_3:i", Loc(69,17)), expr.BinaryE(expr.VarE("v:kb_wait_3:i", Loc(69,21)), op.BO_ADD, expr.LitE(2, Loc(69,25))), Loc(69,17)),
+          ],
+
+          6: [
+            instr.AssignI(expr.VarE("v:kb_wait_3:i", Loc(67,17)), expr.LitE(1, Loc(67,25)), Loc(67,17)),
+          ],
+
+          7: [
+            instr.NopI(),
+          ],
+
+          8: [
+            instr.NopI(),
+          ],
+
+          9: [
+            instr.AssignI(expr.VarE("v:kb_wait_3:timeout", Loc(62,5)), expr.LitE(2, Loc(62,29)), Loc(62,5)),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 8, types.TrueEdge),
+          (1, 0, types.FalseEdge),
+          (2, 1, types.UnCondEdge),
+          (3, 2, types.UnCondEdge),
+          (4, 2, types.UnCondEdge),
+          (5, 4, types.UnCondEdge),
+          (6, 4, types.UnCondEdge),
+          (7, 3, types.UnCondEdge),
+          (8, 7, types.UnCondEdge),
+          (9, 7, types.UnCondEdge),
+          (-1, 9, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:kb_wait_3() end. 
+
+    "f:kb_wait_2":
+      obj.Func(
+        name = "f:kb_wait_2",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          10: [
+            instr.AssignI(expr.VarE("v:kb_wait_2:timeout", Loc(18,5)), expr.LitE(2, Loc(18,29)), Loc(18,5)),
+          ],
+
+          3: [
+            instr.NopI(),
+          ],
+
+          2: [
+            instr.AssignI(expr.VarE("v:kb_wait_2:timeout", Loc(27,9)), expr.BinaryE(expr.VarE("v:kb_wait_2:timeout", Loc(27,9)), op.BO_SUB, expr.LitE(1, Loc(27,9)), Loc(27,9)), Loc(27,9)),
+          ],
+
+          1: [
+            instr.CondI(expr.VarE("v:kb_wait_2:timeout", Loc(28,14)), Loc(19,5)),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          4: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          5: [
+            instr.NopI(),
+          ],
+
+          6: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(24,21)), [expr.LitE("""error
+""", Loc(24,28))], Loc(24,21))),
+          ],
+
+          7: [
+            instr.CondI(expr.LitE(1), Loc(23,17)),
+          ],
+
+          8: [
+            instr.NopI(),
+          ],
+
+          9: [
+            instr.NopI(),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 9, types.TrueEdge),
+          (1, 0, types.FalseEdge),
+          (2, 1, types.UnCondEdge),
+          (3, 2, types.UnCondEdge),
+          (4, 2, types.UnCondEdge),
+          (5, 7, types.UnCondEdge),
+          (6, 5, types.UnCondEdge),
+          (7, 6, types.TrueEdge),
+          (7, 0, types.FalseEdge),
+          (8, 3, types.UnCondEdge),
+          (9, 8, types.UnCondEdge),
+          (10, 8, types.UnCondEdge),
+          (-1, 10, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:kb_wait_2() end. 
+
+    "f:printf":
+      obj.Func(
+        name = "f:printf",
+        paramNames = ["v:printf:format"],
+        variadic = True,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:printf() end. 
+
+    "f:kb_wait_2_1":
+      obj.Func(
+        name = "f:kb_wait_2_1",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          10: [
+            instr.AssignI(expr.VarE("v:kb_wait_2_1:timeout", Loc(32,5)), expr.LitE(2, Loc(32,29)), Loc(32,5)),
+          ],
+
+          3: [
+            instr.NopI(),
+          ],
+
+          2: [
+            instr.AssignI(expr.VarE("v:kb_wait_2_1:timeout", Loc(42,9)), expr.BinaryE(expr.VarE("v:kb_wait_2_1:timeout", Loc(42,9)), op.BO_SUB, expr.LitE(1, Loc(42,9)), Loc(42,9)), Loc(42,9)),
+          ],
+
+          1: [
+            instr.CondI(expr.VarE("v:kb_wait_2_1:timeout", Loc(43,14)), Loc(33,5)),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          4: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          5: [
+            instr.CondI(expr.LitE(1, Loc(39,12)), Loc(37,17)),
+          ],
+
+          6: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(38,21)), [expr.LitE("""error
+""", Loc(38,28))], Loc(38,21))),
+          ],
+
+          7: [
+            instr.NopI(),
+          ],
+
+          8: [
+            instr.NopI(),
+          ],
+
+          9: [
+            instr.NopI(),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 9, types.TrueEdge),
+          (1, 0, types.FalseEdge),
+          (2, 1, types.UnCondEdge),
+          (3, 2, types.UnCondEdge),
+          (4, 2, types.UnCondEdge),
+          (5, 7, types.TrueEdge),
+          (5, 0, types.FalseEdge),
+          (6, 5, types.UnCondEdge),
+          (7, 6, types.UnCondEdge),
+          (8, 3, types.UnCondEdge),
+          (9, 8, types.UnCondEdge),
+          (10, 8, types.UnCondEdge),
+          (-1, 10, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:kb_wait_2_1() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

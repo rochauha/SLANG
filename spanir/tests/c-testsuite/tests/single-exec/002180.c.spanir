@@ -1,0 +1,185 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "002180.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:convs": types.Union("u:tree_node"),
+    "v:convert_like_real:t.3": types.Int,
+    "v:convert_like_real:t.4": types.Int32,
+    "v:convert_like_real:convs": types.Ptr(to=types.Union("u:tree_node")),
+    "v:main:t.1": types.Ptr(to=types.Union("u:tree_node")),
+    "v:printf:": types.Ptr(to=types.Int8),
+    "v:convert_like_real:t.2": types.Int32,
+  }, # end allVars dict
+
+  allObjs = {
+    "s:tree_common":
+      types.Struct(
+        name = "s:tree_common",
+        fields = [
+          ("chain", types.Ptr(to=types.Union("u:tree_node"))),
+          ("type", types.Ptr(to=types.Union("u:tree_node"))),
+          ("code", types.Int32),
+          ("side_effects_flag", types.UInt32),
+        ],
+        loc = Loc(11,1),
+      ),
+
+    "u:tree_node":
+      types.Union(
+        name = "u:tree_node",
+        fields = [
+          ("common", types.Struct("s:tree_common")),
+        ],
+        loc = Loc(18,1),
+      ),
+
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          1: [
+            instr.AssignI(expr.MemberE(expr.VarE("v:main:convs", Loc(54,3)), ["common", "code"], Loc(54,3)), expr.LitE(152, Loc(54,23)), Loc(54,3)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(55,22)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:main:convs", Loc(55,23)), Loc(55,22)), Loc(55,22)),
+            instr.CallI(expr.CallE(expr.FuncE("f:convert_like_real", Loc(55,3)), [expr.VarE("v:main:t.1", Loc(55,22))], Loc(55,3))),
+            instr.ReturnI(expr.LitE(0, Loc(56,10)), Loc(56,3)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+    "f:printf":
+      obj.Func(
+        name = "f:printf",
+        paramNames = ["v:printf:"],
+        variadic = True,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:printf() end. 
+
+    "f:convert_like_real":
+      obj.Func(
+        name = "f:convert_like_real",
+        paramNames = ["v:convert_like_real:convs"],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          -1: [
+            instr.NopI(),
+          ],
+
+          4: [
+            instr.AssignI(expr.VarE("v:convert_like_real:t.4", Loc(43,14)), expr.CallE(expr.FuncE("f:blah", Loc(43,14)), [], Loc(43,14)), Loc(43,14)),
+            instr.ReturnI(expr.VarE("v:convert_like_real:t.4", Loc(43,14)), Loc(43,7)),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(47,4)), [expr.LitE("""unsigned enum bit-fields broken
+""", Loc(47,11))], Loc(47,4))),
+          ],
+
+          2: [
+            instr.AssignI(expr.VarE("v:convert_like_real:t.1", Loc(38,30)), expr.MemberE(expr.VarE("v:convert_like_real:convs", Loc(38,30)), ["common", "code"], Loc(38,30)), Loc(38,30)),
+            instr.AssignI(expr.VarE("v:convert_like_real:t.2", Loc(38,12)), expr.CastE(expr.VarE("v:convert_like_real:t.1", Loc(38,30)), types.Int32, Loc(38,12)), Loc(38,12)),
+            instr.AssignI(expr.VarE("v:convert_like_real:t.3", Loc(40,5)), expr.BinaryE(expr.VarE("v:convert_like_real:t.2", Loc(38,12)), op.BO_EQ, expr.LitE(152, Loc(40,10)), ), ),
+            instr.CondI(expr.VarE("v:convert_like_real:t.3", Loc(40,5)), ),
+          ],
+
+          3: [
+            instr.NopI(),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (2, 4, types.TrueEdge),
+          (2, 3, types.FalseEdge),
+          (3, 1, types.UnCondEdge),
+          (4, 0, types.UnCondEdge),
+          (-1, 2, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:convert_like_real() end. 
+
+    "f:blah":
+      obj.Func(
+        name = "f:blah",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(34,19)), Loc(34,12)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:blah() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

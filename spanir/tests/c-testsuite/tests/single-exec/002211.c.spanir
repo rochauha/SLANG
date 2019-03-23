@@ -15,16 +15,18 @@
 irTUnit.TUnit(
   name = "002211.c",
   description = "Auto-Translated from Clang AST.",
+
   allVars = {
     "v:main:t.2": types.Int32,
-    "v:main:func": types.Ptr(to=types.FuncSig(returnType=types.Int32, paramTypes=[types.Int32,types.Int32])),
-    "v:main:t.1": types.Ptr(to=types.FuncSig(returnType=types.Int32, paramTypes=[types.Int32,types.Int32])),
     "v:main:x": types.Int32,
     "v:sum:a": types.Int32,
+    "v:main:t.1": types.Ptr(to=types.FuncSig(returnType=types.Int32, paramTypes=[types.Int32, types.Int32])),
     "v:sum:b": types.Int32,
+    "v:main:func": types.Ptr(to=types.FuncSig(returnType=types.Int32, paramTypes=[types.Int32, types.Int32])),
   }, # end allVars dict
 
   allObjs = {
+
     "f:main":
       obj.Func(
         name = "f:main",
@@ -35,14 +37,6 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
           1: [
             instr.AssignI(expr.VarE("v:main:func", Loc(10,3)), expr.FuncE("f:sum", Loc(10,10)), Loc(10,3)),
             instr.AssignI(expr.VarE("v:main:func", Loc(11,3)), expr.BinaryE(expr.VarE("v:main:func", Loc(11,10)), op.BO_SUB, expr.LitE(1, Loc(11,17))), Loc(11,3)),
@@ -50,6 +44,14 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:main:t.1", Loc(15,11)), expr.BinaryE(expr.VarE("v:main:func", Loc(15,11)), op.BO_ADD, expr.LitE(1, Loc(15,16))), Loc(15,11)),
             instr.AssignI(expr.VarE("v:main:t.2", Loc(15,10)), expr.CallE(expr.VarE("v:main:t.1", Loc(15,11)), [expr.LitE(10, Loc(15,19)), expr.LitE(12, Loc(15,22))], Loc(15,10)), Loc(15,10)),
             instr.ReturnI(expr.VarE("v:main:t.2", Loc(15,10)), Loc(15,3)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
           ],
 
         }, # basicBlocks end.
@@ -70,17 +72,17 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          0: [
-            instr.NopI(),
+          1: [
+            instr.AssignI(expr.VarE("v:sum:t.1", Loc(4,10)), expr.BinaryE(expr.VarE("v:sum:a", Loc(4,10)), op.BO_ADD, expr.VarE("v:sum:b", Loc(4,14))), Loc(4,10)),
+            instr.ReturnI(expr.VarE("v:sum:t.1", Loc(4,10)), Loc(4,3)),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          1: [
-            instr.AssignI(expr.VarE("v:sum:t.1", Loc(4,10)), expr.BinaryE(expr.VarE("v:sum:a", Loc(4,10)), op.BO_ADD, expr.VarE("v:sum:b", Loc(4,14))), Loc(4,10)),
-            instr.ReturnI(expr.VarE("v:sum:t.1", Loc(4,10)), Loc(4,3)),
+          0: [
+            instr.NopI(),
           ],
 
         }, # basicBlocks end.

@@ -1,0 +1,141 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "001850.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:t.6": types.ConstSizeArray(of=types.Int32, dim=10),
+    "v:main:t.4": types.Int32,
+    "v:main:Array": types.ConstSizeArray(of=types.Int32, dim=10),
+    "v:main:t.3": types.ConstSizeArray(of=types.Int32, dim=10),
+    "v:main:t.5": types.Int32,
+    "v:main:Count": types.Int32,
+    "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:main:t.2": types.Int32,
+    "v:main:Array2": types.ConstSizeArray(of=types.Int32, dim=10),
+    "v:main:t.1": types.Int32,
+  }, # end allVars dict
+
+  allObjs = {
+    "":
+      types.Struct(
+        name = "",
+        fields = [
+        ],
+        loc = ,
+      ),
+
+
+    "f:printf":
+      obj.Func(
+        name = "f:printf",
+        paramNames = ["v:printf:__format"],
+        variadic = True,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:printf() end. 
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          3: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(15,33)), expr.ArrayE(expr.VarE("v:main:Array2", Loc(15,33)), [expr.VarE("v:main:Count", Loc(15,40))], Loc(15,33)), Loc(15,33)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(15,7)), [expr.LitE("""%d: %d
+""", Loc(15,14)), expr.VarE("v:main:Count", Loc(15,26)), expr.VarE("v:main:t.1", Loc(15,33))], Loc(15,7))),
+          ],
+
+          2: [
+            instr.AssignI(expr.VarE("v:main:Count", Loc(14,32)), expr.BinaryE(expr.VarE("v:main:Count", Loc(14,32)), op.BO_ADD, expr.LitE(1, Loc(14,32)), Loc(14,32)), Loc(14,32)),
+          ],
+
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(18,11)), Loc(18,4)),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          4: [
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(14,20)), expr.BinaryE(expr.VarE("v:main:Count", Loc(14,20)), op.BO_LT, expr.LitE(10, Loc(14,28))), Loc(14,20)),
+            instr.CondI(expr.VarE("v:main:t.2", Loc(14,20)), Loc(14,4)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:main:Array2", Loc(12,4)), expr.VarE("v:main:t.3", Loc(12,21)), Loc(12,4)),
+            instr.AssignI(expr.VarE("v:main:Count", Loc(14,9)), expr.LitE(0, Loc(14,17)), Loc(14,9)),
+          ],
+
+          6: [
+            instr.AssignI(expr.VarE("v:main:Count", Loc(9,32)), expr.BinaryE(expr.VarE("v:main:Count", Loc(9,32)), op.BO_ADD, expr.LitE(1, Loc(9,32)), Loc(9,32)), Loc(9,32)),
+          ],
+
+          7: [
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(10,33)), expr.ArrayE(expr.VarE("v:main:Array", Loc(10,33)), [expr.VarE("v:main:Count", Loc(10,39))], Loc(10,33)), Loc(10,33)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(10,7)), [expr.LitE("""%d: %d
+""", Loc(10,14)), expr.VarE("v:main:Count", Loc(10,26)), expr.VarE("v:main:t.4", Loc(10,33))], Loc(10,7))),
+          ],
+
+          8: [
+            instr.AssignI(expr.VarE("v:main:t.5", Loc(9,20)), expr.BinaryE(expr.VarE("v:main:Count", Loc(9,20)), op.BO_LT, expr.LitE(10, Loc(9,28))), Loc(9,20)),
+            instr.CondI(expr.VarE("v:main:t.5", Loc(9,20)), Loc(9,4)),
+          ],
+
+          9: [
+            instr.AssignI(expr.VarE("v:main:Array", Loc(7,4)), expr.VarE("v:main:t.6", Loc(7,20)), Loc(7,4)),
+            instr.AssignI(expr.VarE("v:main:Count", Loc(9,9)), expr.LitE(0, Loc(9,17)), Loc(9,9)),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (2, 4, types.UnCondEdge),
+          (3, 2, types.UnCondEdge),
+          (4, 3, types.TrueEdge),
+          (4, 1, types.FalseEdge),
+          (5, 4, types.UnCondEdge),
+          (6, 8, types.UnCondEdge),
+          (7, 6, types.UnCondEdge),
+          (8, 7, types.TrueEdge),
+          (8, 5, types.FalseEdge),
+          (9, 8, types.UnCondEdge),
+          (-1, 9, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.
