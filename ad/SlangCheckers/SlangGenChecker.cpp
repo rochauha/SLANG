@@ -80,6 +80,7 @@ namespace {
         void handleDeclRefExpr(const DeclRefExpr *DRE) const;
         void handleBinaryOperator(const BinaryOperator *binOp) const;
         void handleUnaryOperator(const UnaryOperator *unOp) const;
+        void handleCStyleCastExpr(const CStyleCastExpr *cCast) const;
         void handleCallExpr(const CallExpr *callExpr) const;
         void handleReturnStmt(std::string& locStr) const;
         void handleIfStmt(std::string& locStr) const;
@@ -366,6 +367,10 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
             SLANG_DEBUG("here handleStmt")
             handleUnaryOperator(cast<UnaryOperator>(stmt)); break;
 
+        case Stmt::CStyleCastExprClass:
+            handleCStyleCastExpr(cast<CStyleCastExpr>(stmt));
+            break;
+
         case Stmt::DeclRefExprClass:
             handleDeclRefExpr(cast<DeclRefExpr>(stmt)); break;
 
@@ -551,6 +556,15 @@ void SlangGenChecker::handleUnaryOperator(const UnaryOperator *unOp) const {
     }
 } // handleUnaryOperator()
 
+void SlangGenChecker::handleCStyleCastExpr(const CStyleCastExpr *cCast) const {
+    if (isTopLevel(cCast)) {
+        SlangExpr slangExpr = convertCStyleCastExpr(cCast, true);
+        stu.addBbStmts(slangExpr.slangStmts);
+    } else {
+        stu.pushToMainStack(cCast);
+    }
+} // handleCStyleCastExpr()
+
 void SlangGenChecker::handleCallExpr(const CallExpr *callExpr) const {
     stu.pushToMainStack(callExpr);
     if (isTopLevel(callExpr)) {
@@ -716,7 +730,7 @@ SlangExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
         case Stmt::MemberExprClass:
             return convertMemberExpr(cast<MemberExpr>(stmt), compound_receiver);
 
-        case Stmt::CStyleCastExpr:
+        case Stmt::CStyleCastExprClass:
             return convertCStyleCastExpr(cast<CStyleCastExpr>(stmt), compound_receiver);
 
         default: {
@@ -1686,9 +1700,40 @@ SlangExpr SlangGenChecker::convertAstExpr(const Stmt *stmt, bool compound_receiv
 
 SlangExpr SlangGenChecker::convertCStyleCastExpr(const CStyleCastExpr *cCast,
         bool compound_receiver) const {
+    std::stringstream ss;
+    std::string op;
+    SlangExpr varExpr{};
+    QualType qualType;
 
+    std::string locStr = getLocationString(cCast);
 
-}
+    SlangExpr exprArg = convertExpr(true);
+
+    adjustDirtyVar(exprArg, locStr);
+    qualType = cCast->getType();
+
+    
+    if (compound_receiver) {
+        varExpr = genTmpVariable(qualType, locStr);
+        ss << "instr.AssignI(" << varExpr.expr << ", ";
+    }
+
+    ss << "expr.CastE(to=" << convertClangType(qualType) << ", " << exprArg.expr << ")";
+    ss << ", " << locStr << ")";
+
+    // order_correction cast expression
+    varExpr.addSlangStmts(exprArg.slangStmts);
+
+    if (compound_receiver) {
+        ss << ", " << locStr << ")"; // close instr.AssignI(...
+        varExpr.addSlangStmt(ss.str());
+    } else {
+        varExpr.expr = ss.str();
+        varExpr.compound = true;
+        varExpr.qualType = qualType;
+    }
+    return varExpr;
+} // convertCStyleCastExpr()
 
 //BOUND END  : conversion_routines to SlangExpr
 
