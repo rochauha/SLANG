@@ -1,0 +1,78 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "000194.c",
+  description = "Auto-Translated from Clang AST.",
+  allVars = {
+    "v:main:p": types.Struct("s:my_type"),
+  }, # end allVars dict
+
+  allObjs = {
+    "s:inner_type":
+      types.Struct(
+        name = "s:inner_type",
+        fields = [
+          ("b1", types.Int32),
+          ("b2", types.Int32),
+          ("next", types.Ptr(to=types.Struct("s:inner_type"))),
+        ],
+        loc = Loc(1,1),
+      ),
+
+    "s:my_type":
+      types.Struct(
+        name = "s:my_type",
+        fields = [
+          ("attr_1", types.Int32),
+          ("attr_2", types.Struct("s:inner_type")),
+        ],
+        loc = Loc(6,1),
+      ),
+
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.AssignI(expr.VarE("v:main:p", Loc(12,2)), ERROR:convertExpr, Loc(12,2)),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

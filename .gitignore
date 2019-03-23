@@ -6,6 +6,3 @@ a.out
 *.bc
 *.ll
 
-*.spanir
-*.node.dot
-*.bb.dot

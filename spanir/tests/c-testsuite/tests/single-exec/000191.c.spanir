@@ -1,0 +1,86 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "000191.c",
+  description = "Auto-Translated from Clang AST.",
+  allVars = {
+    "v:main:p": types.Struct("s:1"),
+  }, # end allVars dict
+
+  allObjs = {
+    "s:2":
+      types.Struct(
+        name = "s:2",
+        fields = [
+          ("x", types.Ptr(to=types.Ptr(to=types.Int32))),
+          ("p", types.Int32),
+        ],
+        loc = Loc(9,2),
+      ),
+    "s:1":
+      types.Struct(
+        name = "s:1",
+        fields = [
+          ("a1", types.Int32),
+          ("a2", types.Struct("s:inner_t")),
+          ("t1", types.Struct("s:2")),
+        ],
+        loc = Loc(6,9),
+      ),
+    "s:inner_t":
+      types.Struct(
+        name = "s:inner_t",
+        fields = [
+          ("b1", types.Int32),
+          ("b2", types.Int32),
+          ("t", types.Ptr(to=types.Struct("s:inner_t"))),
+        ],
+        loc = Loc(1,1),
+      ),
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.AssignI(expr.MemberE(expr.VarE("v:main:p", Loc(18,2)), ["a1"], Loc(18,2)), expr.LitE(200, Loc(18,9)), Loc(18,2)),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.
