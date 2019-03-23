@@ -1806,7 +1806,7 @@ SlangExpr SlangGenChecker::convertCStyleCastExpr(const CStyleCastExpr *cCast,
         ss << "instr.AssignI(" << varExpr.expr << ", ";
     }
 
-    ss << "expr.CastE(to=" << convertClangType(qualType) << ", " << exprArg.expr << ")";
+    ss << "expr.CastE(" << exprArg.expr << ", " << convertClangType(qualType);
     ss << ", " << locStr << ")";
 
     // order_correction cast expression

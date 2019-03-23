@@ -385,6 +385,7 @@ void slang::SlangTranslationUnit::dumpFooter(std::stringstream &ss) {
 } // dumpFooter()
 
 void slang::SlangTranslationUnit::dumpVariables(std::stringstream &ss) {
+    ss << "\n";
     ss << NBSP2 << "allVars = {\n";
     for (const auto &var : varMap) {
         if (var.second.typeStr == DONT_PRINT)
