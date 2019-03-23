@@ -75,6 +75,7 @@ class SlangGenChecker : public Checker<check::ASTCodeBody, check::EndOfTranslati
     void handleStmt(const Stmt *stmt) const;
     void handleVariable(const ValueDecl *valueDecl, std::string funcName) const;
     void handleDeclStmt(const DeclStmt *declStmt) const;
+    void handleInitListExpr(const InitListExpr *initListExpr) const;
     void handleDeclRefExpr(const DeclRefExpr *DRE) const;
     void handleBinaryOperator(const BinaryOperator *binOp) const;
     void handleUnaryOperator(const UnaryOperator *unOp) const;
@@ -93,6 +94,7 @@ class SlangGenChecker : public Checker<check::ASTCodeBody, check::EndOfTranslati
     // a function, if stmt, *y on lhs, arr[i] on lhs
     // are examples of a compound_receiver.
     SlangExpr convertExpr(bool compound_receiver) const;
+    SlangExpr convertInitListExpr(const InitListExpr *initListExpr) const;
     SlangExpr convertMemberExpr(const MemberExpr *memberExpr, bool compound_receiver) const;
     SlangExpr convertDeclRefExpr(const DeclRefExpr *dre) const;
     SlangExpr convertVarDecl(const VarDecl *varDecl, std::string &locStr) const;
@@ -374,6 +376,10 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
         stu.printMainStack();
         break;
 
+    case Stmt::InitListExprClass:
+        handleInitListExpr(cast<InitListExpr>(stmt));
+        break;
+
     case Stmt::CompoundAssignOperatorClass:
     case Stmt::BinaryOperatorClass:
         handleBinaryOperator(cast<BinaryOperator>(stmt));
@@ -503,6 +509,10 @@ void SlangGenChecker::handleReturnStmt(std::string &locStr) const {
         stu.addBbStmt(ss.str()); // okay
     }
 } // handleReturnStmt()
+
+void SlangGenChecker::handleInitListExpr(const InitListExpr *initListExpr) const {
+    stu.pushToMainStack(initListExpr);
+} // handleInitListExpr();
 
 void SlangGenChecker::handleDeclRefExpr(const DeclRefExpr *declRefExpr) const {
     const ValueDecl *valueDecl = declRefExpr->getDecl();
@@ -711,6 +721,9 @@ SlangExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
 
     case Stmt::ArraySubscriptExprClass:
         return convertArraySubscript(cast<ArraySubscriptExpr>(stmt), compound_receiver);
+
+    case Stmt::InitListExprClass:
+        return convertInitListExpr(cast<InitListExpr>(stmt));
 
     case Stmt::CallExprClass:
         return convertCallExpr(cast<CallExpr>(stmt), compound_receiver);
@@ -1389,6 +1402,44 @@ SlangExpr SlangGenChecker::convertVarDecl(const VarDecl *varDecl, std::string &l
 
     return slangExpr;
 }
+
+SlangExpr SlangGenChecker::convertInitListExpr(const InitListExpr *initListExpr) const {
+    QualType qualType = initListExpr->getType();
+    std::string locStr = getLocationString(initListExpr);
+    SlangExpr tmp = genTmpVariable(qualType, locStr); // store it into temp
+
+    const Type *typePtr = qualType.getTypePtr();
+    RecordDecl *recordDecl = nullptr;
+
+    if (typePtr->isStructureType())
+        recordDecl = typePtr->getAsStructureType()->getDecl();
+    else if (typePtr->isUnionType())
+        recordDecl = typePtr->getAsUnionType()->getDecl();
+
+    // get info from map
+    SlangRecord slangRecord = stu.recordMap[(uint64_t)recordDecl];
+
+    std::vector<SlangRecordField> recordFields = slangRecord.getFields();
+    int fieldCount = recordFields.size();
+    
+    std::stack<SlangExpr> slangStmtStack;
+    for (int i = 0; i < fieldCount; ++i) {
+        SlangExpr currentExpr = convertExpr(true);
+        slangStmtStack.push(currentExpr);
+    }
+
+    std::stringstream ss;
+    for (int i = 0; i < fieldCount; ++i) {
+        SlangExpr currentStmt = slangStmtStack.top();
+        tmp.addSlangStmts(currentStmt.slangStmts);
+        ss << "instr.AssignI("
+           << "expr.MemberE(" << tmp.expr << ", " << recordFields[i].getName() << "), " << currentStmt.expr;
+        slangStmtStack.pop();
+        tmp.addSlangStmt(ss.str());
+        ss.str("");
+    }
+    return tmp;
+} // convertInitListExpr()
 
 SlangExpr SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
     std::stringstream ss;

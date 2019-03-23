@@ -97,6 +97,7 @@ namespace slang {
 
         // SlangRecordField_functions
         SlangRecordField();
+        std::string getName() const;
         std::string toString();
         void clear();
     };
@@ -112,6 +113,7 @@ namespace slang {
 
         // SlangRecord_functions
         SlangRecord();
+        std::vector<SlangRecordField> getFields() const;
         std::string getNextAnonymousFieldIdStr();
         std::string toShortString();
         std::string toString();

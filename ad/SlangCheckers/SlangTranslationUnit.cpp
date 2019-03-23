@@ -198,6 +198,10 @@ SlangRecordField::SlangRecordField(): anonymous{false}, name{""},
                typeStr{""}, type{QualType()} {
 }
 
+std::string SlangRecordField::getName() const {
+    return name;
+}
+
 std::string SlangRecordField::toString() {
     std::stringstream ss;
     ss << "(" << "\"" << name << "\"";
@@ -229,6 +233,10 @@ std::string SlangRecord::getNextAnonymousFieldIdStr() {
     nextAnonymousFieldId += 1;
     ss << nextAnonymousFieldId;
     return ss.str();
+}
+
+std::vector<SlangRecordField> SlangRecord::getFields() const {
+    return fields;
 }
 
 std::string SlangRecord::toString() {
