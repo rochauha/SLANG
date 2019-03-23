@@ -13,7 +13,18 @@
 #include "SlangTranslationUnit.h"
 #include "clang/Analysis/CFG.h"
 
+#define DONT_PRINT "DONT_PRINT"
+
 using namespace slang;
+
+SlangVar::SlangVar() {}
+
+SlangVar::SlangVar(uint64_t id, std::string name) {
+    // specially for anonymous field names (needed in member expressions)
+    this->id = id;
+    this->name = name;
+    this->typeStr = DONT_PRINT;
+}
 
 std::string slang::SlangVar::convertToString() {
     std::stringstream ss;
@@ -34,12 +45,13 @@ void slang::SlangVar::setGlobalVarName(std::string varName) {
 slang::SlangFunc::SlangFunc() {
     paramNames = std::vector<std::string>{};
     tmpVarCount = 0;
+    currBbId = 0;
+    nextBbId = 0;
 }
 
 slang::SlangTranslationUnit::SlangTranslationUnit(): currFunc{nullptr}, varMap{}, funcMap{},
                                          mainStack{}, dirtyVars{}, edgeLabels{3} {
     fileName = "";
-    nextBbId = 0;
     edgeLabels[FalseEdge] = "FalseEdge";
     edgeLabels[TrueEdge] = "TrueEdge";
     edgeLabels[UnCondEdge] = "UnCondEdge";
@@ -74,25 +86,25 @@ std::string slang::SlangTranslationUnit::getCurrFuncName() {
 }
 
 void slang::SlangTranslationUnit::setCurrBb(const CFGBlock *bb) {
-    currBbId = bb->getBlockID();
-    currBb = bb;
+    currFunc->currBbId = bb->getBlockID();
+    currFunc->currBb = bb;
 }
 
 int32_t slang::SlangTranslationUnit::getCurrBbId() {
-    return currBbId;
+    return currFunc->currBbId;
 }
 
 void slang::SlangTranslationUnit::setNextBbId(int32_t nextBbId) {
-    this->nextBbId = nextBbId;
+    currFunc->nextBbId = nextBbId;
 }
 
 int32_t slang::SlangTranslationUnit::genNextBbId() {
-    nextBbId += 1;
-    return nextBbId;
+    currFunc->nextBbId += 1;
+    return currFunc->nextBbId;
 }
 
 const CFGBlock* slang::SlangTranslationUnit::getCurrBb() {
-    return currBb;
+    return currFunc->currBb;
 }
 
 SlangVar& slang::SlangTranslationUnit::getVar(uint64_t varAddr) {
@@ -109,25 +121,25 @@ uint32_t slang::SlangTranslationUnit::nextTmpId() {
     return currFunc->tmpVarCount;
 }
 
-/// Add a new basic block with bbId, and set currBbId
+/// Add a new basic block with the given bbId
 void slang::SlangTranslationUnit::addBb(int32_t bbId) {
     std::vector<std::string> emptyVector;
     currFunc->bbStmts[bbId] = emptyVector;
 }
 
 void slang::SlangTranslationUnit::setCurrBbId(int32_t bbId) {
-    currBbId = bbId;
+    currFunc->currBbId = bbId;
 }
 
 // bb must already be added
 void slang::SlangTranslationUnit::addBbStmt(std::string stmt) {
-    currFunc->bbStmts[currBbId].push_back(stmt);
+    currFunc->bbStmts[currFunc->currBbId].push_back(stmt);
 }
 
 // bb must already be added
 void slang::SlangTranslationUnit::addBbStmts(std::vector<std::string>& slangStmts) {
     for (std::string slangStmt: slangStmts) {
-        currFunc->bbStmts[currBbId].push_back(slangStmt);
+        currFunc->bbStmts[currFunc->currBbId].push_back(slangStmt);
     }
 }
 
@@ -151,6 +163,109 @@ void slang::SlangTranslationUnit::addBbEdge(std::pair<int32_t,
 void slang::SlangTranslationUnit::addVar(uint64_t varId, SlangVar& slangVar) {
     varMap[varId] = slangVar;
 }
+
+//BOUND START: record_related_routines
+
+bool SlangTranslationUnit::isRecordPresent(uint64_t recordAddr) {
+    return !(recordMap.find(recordAddr) == recordMap.end());
+}
+
+void SlangTranslationUnit::addRecord(uint64_t recordAddr, SlangRecord slangRecord) {
+    recordMap[recordAddr] = slangRecord;
+}
+
+SlangRecord& SlangTranslationUnit::getRecord(uint64_t recordAddr) {
+    return recordMap[recordAddr];
+}
+
+int32_t SlangTranslationUnit::getNextRecordId() {
+    recordId += 1;
+    return recordId;
+}
+
+std::string SlangTranslationUnit::getNextRecordIdStr() {
+    std::stringstream ss;
+    ss << getNextRecordId();
+    return ss.str();
+}
+
+//BOUND END  : record_related_routines
+
+
+//BOUND START: SlangRecordField_functions
+
+SlangRecordField::SlangRecordField(): anonymous{false}, name{""},
+               typeStr{""}, type{QualType()} {
+}
+
+std::string SlangRecordField::toString() {
+    std::stringstream ss;
+    ss << "(" << "\"" << name << "\"";
+    ss << ", " << typeStr << ")";
+    return ss.str();
+}
+
+void SlangRecordField::clear() {
+    anonymous = false;
+    name = "";
+    typeStr = "";
+    type = QualType();
+}
+
+//BOUND END  : SlangRecordField_functions
+
+//BOUND START: SlangRecord_functions
+
+// SlangRecord_functions
+SlangRecord::SlangRecord() {
+    recordKind = Struct; // Struct, or Union
+    anonymous = false;
+    name = "";
+    nextAnonymousFieldId = 0;
+}
+
+std::string SlangRecord::getNextAnonymousFieldIdStr() {
+    std::stringstream ss;
+    nextAnonymousFieldId += 1;
+    ss << nextAnonymousFieldId;
+    return ss.str();
+}
+
+std::string SlangRecord::toString() {
+    std::stringstream ss;
+    ss << NBSP6;
+    ss << ((recordKind == Struct) ? "types.Struct(\n" : "types.Union(\n");
+
+    ss << NBSP8 << "name = ";
+    ss << "\"" << name << "\"" << ",\n";
+
+    std::string suffix = ",\n";
+    ss << NBSP8 << "fields = [\n";
+    for (auto field : fields) {
+        ss << NBSP10 << field.toString() << suffix;
+    }
+    ss << NBSP8 << "],\n";
+
+    ss << NBSP8 << "loc = " << locStr << ",\n";
+    ss << NBSP6 << ")"; // close types.*(...
+
+    return ss.str();
+}
+
+std::string SlangRecord::toShortString() {
+    std::stringstream ss;
+
+    if (recordKind == Struct) {
+        ss << "types.Struct";
+    } else {
+        ss << "types.Union";
+    }
+    ss << "(\"" << name << "\")";
+
+    return ss.str();
+}
+
+//BOUND END  : SlangRecord_functions
 
 //BOUND START: dirtyVars
 
@@ -285,6 +400,7 @@ void slang::SlangTranslationUnit::dumpFooter(std::stringstream& ss) {
 void slang::SlangTranslationUnit::dumpVariables(std::stringstream& ss) {
     ss << NBSP2 << "allVars = {\n";
     for (const auto& var: varMap) {
+        if (var.second.typeStr == DONT_PRINT) continue;
         ss << NBSP4;
         ss << "\"" << var.second.name << "\": "
                    << var.second.typeStr << ",\n";
@@ -294,8 +410,19 @@ void slang::SlangTranslationUnit::dumpVariables(std::stringstream& ss) {
 
 void slang::SlangTranslationUnit::dumpObjs(std::stringstream& ss) {
     ss << NBSP2 << "allObjs = {\n";
+    dumpRecords(ss);
     dumpFunctions(ss);
     ss << NBSP2 << "}, # end allObjs dict\n";
+}
+
+void slang::SlangTranslationUnit::dumpRecords(std::stringstream& ss) {
+    for (auto slangRecord: recordMap) {
+        ss << NBSP4;
+        ss << "\"" << slangRecord.second.name << "\":\n";
+        ss << slangRecord.second.toString();
+        ss << ",\n\n";
+    }
+    ss << "\n";
 }
 
 void slang::SlangTranslationUnit::dumpFunctions(std::stringstream& ss) {

@@ -45,6 +45,7 @@
 namespace slang {
     // the numbering 0,1,2 is important.
     enum EdgeLabel {FalseEdge = 0, TrueEdge = 1, UnCondEdge = 2};
+    enum SlangRecordKind {Struct = 0, Union = 1};
 
     class SlangVar {
     public:
@@ -53,6 +54,8 @@ namespace slang {
         std::string name;
         std::string typeStr;
 
+        SlangVar();
+        SlangVar(uint64_t id, std::string name);
         std::string convertToString();
         void setLocalVarName(std::string varName, std::string funcName);
         void setGlobalVarName(std::string varName);
@@ -74,6 +77,8 @@ namespace slang {
 
         uint32_t tmpVarCount;
         int32_t currBbId;
+        int32_t nextBbId;
+        const CFGBlock *currBb; // the current bb being converted
 
         // stores bbEdges(s); entry bb id is mapped to -1
         std::vector<std::pair<int32_t, std::pair<int32_t, EdgeLabel>>> bbEdges;
@@ -83,31 +88,33 @@ namespace slang {
         SlangFunc();
     };
 
-    class SlangUnionSig {
+    class SlangRecordField {
     public:
-        std::vector<std::string> fieldTypes;
-    };
-
-    class SlangUnion {
-    public:
+        bool anonymous;
         std::string name;
-        std::string fullName;
-        SlangUnionSig sig;
-        std::vector<std::string> fieldNames;
-        std::vector<std::string> fieldTypes;
+        std::string typeStr;
+        QualType type;
+
+        // SlangRecordField_functions
+        SlangRecordField();
+        std::string toString();
+        void clear();
     };
 
-    class SlangStructSig {
+    class SlangRecord {
     public:
-        std::vector<std::string> fieldTypes;
-    };
-
-    class SlangStruct {
-    public:
+        SlangRecordKind recordKind; // Struct, or Union
+        bool anonymous;
         std::string name;
-        std::string fullName;
-        std::vector<std::string> fieldNames;
-        std::vector<std::string> fieldTypes;
+        std::vector<SlangRecordField> fields;
+        std::string locStr;
+        int32_t nextAnonymousFieldId;
+
+        // SlangRecord_functions
+        SlangRecord();
+        std::string getNextAnonymousFieldIdStr();
+        std::string toShortString();
+        std::string toString();
     };
 
     class SlangTranslationUnit {
@@ -119,18 +126,16 @@ namespace slang {
         std::string fileName;
 
         SlangFunc *currFunc;
-        int32_t currBbId;
-        const CFGBlock *currBb; // the current bb being converted
-        int32_t nextBbId;
+        int32_t recordId; // used to generate names for anonymous records (see getNextRecordId())
 
         // maps a unique variable id to its SlangVar.
         std::unordered_map<uint64_t, SlangVar> varMap;
+        // map of var-name to a count: used in case two local variables have same name (blocks)
+        std::unordered_map<std::string, int32_t> varNameMap;
         // contains functions
         std::unordered_map<uint64_t, SlangFunc> funcMap;
         // contains structs
-        std::unordered_map<uint64_t, SlangStruct> structMap;
-        // contains unions
-        std::unordered_map<uint64_t, SlangUnion> unionMap;
+        std::unordered_map<uint64_t, SlangRecord> recordMap;
 
         // stack to help convert ast structure to 3-address code.
         std::vector<const Stmt*> mainStack;
@@ -185,6 +190,13 @@ namespace slang {
         void setCurrBb(const CFGBlock *bb);
         const CFGBlock* getCurrBb();
 
+        // record_related_routines
+        bool isRecordPresent(uint64_t recordAddr);
+        void addRecord(uint64_t recordAddr, SlangRecord slangRecord);
+        SlangRecord& getRecord(uint64_t recordAddr);
+        int32_t getNextRecordId();
+        std::string getNextRecordIdStr();
+
         // conversion_routines 1 to SPAN Strings
         std::string convertFuncName(std::string funcName);
         std::string convertVarExpr(uint64_t varAddr);
@@ -206,6 +218,7 @@ namespace slang {
         void dumpVariables(std::stringstream& ss);
         void dumpObjs(std::stringstream& ss);
         void dumpFunctions(std::stringstream& ss);
+        void dumpRecords(std::stringstream& ss);
 
         // helper_functions for tui
         void printMainStack() const;

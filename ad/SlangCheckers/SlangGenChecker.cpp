@@ -5,9 +5,13 @@
 //  Author: Ronak Chauhan (r.chauhan@somaiya.edu)
 //  Author: Anshuman Dhuliya [AD] (dhuliya@cse.iitb.ac.in)
 //
-//AD If SlangGenChecker class name is added or changed, then also edit,
-//AD ../../../../include/clang/StaticAnalyzer/Checkers/Checkers.td
+//  If SlangGenChecker class name is added or changed, then also edit,
+//  ../../../../include/clang/StaticAnalyzer/Checkers/Checkers.td
+//  if this checker is named `slanggen` (in Checkers.td) then it can be used as follows,
 //
+//      clang --analyze -Xanalyzer -analyzer-checker=debug.slanggen test.c |& tee mylog
+//
+//  which generates the file `test.c.spanir`.
 //===----------------------------------------------------------------------===//
 //
 
@@ -90,6 +94,7 @@ namespace {
         // a function, if stmt, *y on lhs, arr[i] on lhs
         // are examples of a compound_receiver.
         SlangExpr convertExpr(bool compound_receiver) const;
+        SlangExpr convertMemberExpr(const MemberExpr *memberExpr, bool compound_receiver) const;
         SlangExpr convertDeclRefExpr(const DeclRefExpr *dre) const;
         SlangExpr convertVarDecl(const VarDecl *varDecl, std::string& locStr) const;
         SlangExpr convertUnaryOp(const UnaryOperator *unOp, bool compound_receiver) const;
@@ -102,7 +107,15 @@ namespace {
                 bool compound_receiver) const;
         SlangExpr convertUnaryExprOrTypeTraitExpr(const UnaryExprOrTypeTraitExpr *stmt,
                 bool compound_receiver) const;
+        SlangExpr convertCStyleCastExpr(const CStyleCastExpr *cCast, bool compound_receiver) const;
+
+        // type_conversion_routines
         std::string convertClangType(QualType qt) const;
+        std::string convertClangBuiltinType(QualType qt) const;
+        std::string convertClangRecordType(const RecordDecl *recordDecl) const;
+        std::string convertClangArrayType(QualType qt) const;
+        std::string convertFunctionPointerType(QualType qt) const;
+
         SlangExpr convertAstExpr(const Stmt *stmt, bool compound_receiver) const;
 
         // helper_functions
@@ -114,6 +127,7 @@ namespace {
         bool isTopLevel(const Stmt* stmt) const;
         uint64_t getLocationId(const Stmt *stmt) const;
         std::string getLocationString(const Stmt *stmt) const;
+        std::string getLocationString(const RecordDecl *recordDecl) const;
         void getCaseExprElements(StmtVector& stmts, const Stmt *stmt) const;
         void getCaseExpr(std::vector<StmtVector>& stmtVecVec,
                          std::vector<std::string>& locStrs,
@@ -357,7 +371,6 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
 
         case Stmt::DeclStmtClass:
             handleDeclStmt(cast<DeclStmt>(stmt));
-            SLANG_DEBUG("AAAAAAAAAAAAAAAAAAAAAAA")
             stu.printMainStack();
             break;
 
@@ -562,7 +575,6 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switchStmt) const {
 
     // Get all successor ids
     std::vector<int32_t> succIds;
-    llvm::errs() << "successor ids : ";
     for (CFGBlock::const_succ_iterator I = stu.getCurrBb()->succ_begin();
          I != stu.getCurrBb()->succ_end(); ++I) {
         CFGBlock *succ = *I;
@@ -572,7 +584,6 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switchStmt) const {
             succIds.push_back(0); // succ is nullptr sometimes (weird)
         }
     }
-    llvm::errs() << "\n";
 
     if (succIds.size() == 1) {
         // only default case present
@@ -586,16 +597,12 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switchStmt) const {
     std::vector<std::string> locStrs;
 
     // Get all case statements inside switch.
-    const Stmt *body = switchStmt->getBody();
-    if (!isa<CompoundStmt>(body)) {
-        body = switchStmt;
-    }
-    for (auto it = body->child_begin(); it != body->child_end(); ++it) {
-        if (*it && isa<CaseStmt>(*it)) {
+    const CompoundStmt *body = cast<CompoundStmt>(switchStmt->getBody());
+    for (auto it = body->body_begin(); it != body->body_end(); ++it) {
+        if (isa<CaseStmt>(*it)) {
             getCaseExpr(stmtVecVec, locStrs, cast<CaseStmt>(*it));
         }
     }
-    llvm::errs() << "#new blocks = " << stmtVecVec.size() << "\n";
 
     // start creating and adding if-condition blocks for each case stmt
     int32_t ifBbId;
@@ -706,6 +713,12 @@ SlangExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
         case Stmt::ParenExprClass:
             return convertExpr(compound_receiver);
 
+        case Stmt::MemberExprClass:
+            return convertMemberExpr(cast<MemberExpr>(stmt), compound_receiver);
+
+        case Stmt::CStyleCastExpr:
+            return convertCStyleCastExpr(cast<CStyleCastExpr>(stmt), compound_receiver);
+
         default: {
             // error state
             SLANG_ERROR("UnknownStmt: " << stmt->getStmtClassName())
@@ -776,14 +789,66 @@ SlangExpr SlangGenChecker::convertStringLiteral(
     SLANG_TRACE(ss.str() << "---- " << sl->getByteLength() << " -- " << sl->getString())
 
     return SlangExpr(ss.str(), false, sl->getType());
-}
+} // convertStringLiteral()
+
+SlangExpr SlangGenChecker::convertMemberExpr(const MemberExpr *memberExpr,
+        bool compound_receiver) const {
+    std::stringstream ss;
+    SlangExpr slangExpr;
+    std::vector<std::string> memberNames;
+    const Stmt *stmt;
+
+    //slangExpr.qualType = FD->getASTContext().getTypeOfExprType(
+    //        const_cast<Expr*>(cast<Expr>(memberExpr)));
+    slangExpr.qualType = memberExpr->getType();
+    stmt = memberExpr;
+    std::string memberName;
+    do {
+        memberName = cast<MemberExpr>(stmt)->getMemberNameInfo().getAsString();
+        if (memberName == "") {
+            memberName = stu.getVar((uint64_t)(cast<MemberExpr>(stmt)->getMemberDecl())).name;
+        }
+        memberNames.push_back(memberName);
+        stmt = stu.popFromMainStack();
+    } while(isa<MemberExpr>(stmt));
+    std::string locStr = getLocationString(stmt);
+
+    // the last stmt can be converted by a call to convertExpr
+    stu.pushToMainStack(stmt);
+    SlangExpr mainVarExpr = convertExpr(true);
+
+    if (compound_receiver) {
+        slangExpr = genTmpVariable(slangExpr.qualType, locStr);
+        ss << "instr.AssignI(" << slangExpr.expr << ", ";
+    }
+
+    ss << "expr.MemberE(" << mainVarExpr.expr << ", ";
+    std::string prefix = "";
+    ss << "[";
+    std::reverse(memberNames.begin(), memberNames.end());
+    for (auto memberName: memberNames) {
+        ss << prefix << "\"" << memberName << "\"";
+        if (prefix == "") prefix = ", ";
+    }
+    ss << "]";
+    ss << ", " << locStr << ")"; // close expr.MemberE(...
+
+    slangExpr.addSlangStmts(mainVarExpr.slangStmts);
+    if (compound_receiver) {
+        ss << ", " << locStr << ")"; // close instr.AssignI(...
+        slangExpr.addSlangStmt(ss.str());
+    } else {
+        slangExpr.expr = ss.str();
+    }
+
+    return slangExpr;
+} // convertMemberExpr()
 
 SlangExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr,
         bool compound_receiver) const {
     std::stringstream ss;
     std::vector<SlangExpr> args;
     SlangExpr slangExpr;
-    const FunctionDecl *callee;
     std::string calleeName;
 
     std::string locStr = getLocationString(callExpr);
@@ -792,14 +857,6 @@ SlangExpr SlangGenChecker::convertCallExpr(const CallExpr *callExpr,
 
     uint32_t numOfArgs = callExpr->getNumArgs();
     slangExpr.qualType = callExpr->getType();
-    // callee = callExpr->getDirectCallee();
-    // if (callee) {
-    //     calleeName = callee->getNameInfo().getAsString();
-    // } else {
-    //     const Expr *calleeExpr = callExpr->getCallee();
-    //     calleeExpr->dump();
-    //     llvm::errs() << "AAAAAAAAAAAAAAAAZZZZZZ";
-    // }
 
     // convert each argument
     for (uint32_t i = 0; i < numOfArgs; ++i) {
@@ -1306,129 +1363,244 @@ SlangExpr SlangGenChecker::convertDeclRefExpr(const DeclRefExpr *dre) const {
         return SlangExpr("ERROR:convertDeclRefExpr", false, QualType());
     }
 }
+//BOUND START: type_conversion_routines
 
+// converts clang type to span ir types
 std::string SlangGenChecker::convertClangType(QualType qt) const {
     std::stringstream ss;
+
     if (qt.isNull()) {
-        return "types.Int"; // always the default type
+        return "types.Int"; // the default type
     }
 
     const Type *type = qt.getTypePtr();
+
     if (type->isBuiltinType()) {
-        if(type->isSignedIntegerType()) {
-            if (type->isCharType()) {
-                ss << "types.Int8";
-            } else if (type->isChar16Type()){
-                ss << "types.Int16";
-            } else if (type->isIntegerType()) {
-                ss << "types.Int32";
-            } else {
-                ss << "UnknownSignedIntType.";
-            }
+        return convertClangBuiltinType(qt);
 
-        } else if (type->isUnsignedIntegerType()) {
-            if (type->isCharType()) {
-                ss << "types.UInt8";
-            } else if (type->isChar16Type()){
-                ss << "types.UInt16";
-            } else if (type->isIntegerType()) {
-                ss << "types.UInt32";
-            } else {
-                ss << "UnknownUnsignedIntType.";
-            }
-
-        } else if(type->isFloatingType()) {
-            ss << "types.Float32";
-        } else if(type->isRealFloatingType()) {
-            ss << "types.Float64"; // FIXME: is realfloat a double?
-
-        } else if(type->isVoidType()) {
-            ss << "types.Void";
-        } else {
-            ss << "UnknownBuiltinType.";
-        }
+    } else if (type->isEnumeralType()) {
+        ss << "types.Int32";
 
     } else if(type->isFunctionPointerType()) {
         // should be before ->isPointerType() check below
-        ss << "types.Ptr(to=";
-        const Type *funcType = type->getPointeeType().getTypePtr();
-        funcType = funcType->getUnqualifiedDesugaredType();
-        if (isa<FunctionProtoType>(funcType)) {
-            auto funcProtoType = cast<FunctionProtoType>(funcType);
-            ss << "types.FuncSig(returnType=";
-            ss << convertClangType(funcProtoType->getReturnType());
-            ss << ", " << "paramTypes=[";
-            std::string prefix = "";
-            for (auto qType : funcProtoType->getParamTypes()) {
-                ss << prefix << convertClangType(qType);
-                if (prefix == "") prefix = ",";
-            }
-            ss << "]";
-            if (funcProtoType->isVariadic()) {
-                ss << ", variadic=True";
-            }
-            ss << ")"; // close types.FuncSig(...
-            ss << ")"; // close types.Ptr(...
-        } else if (isa<FunctionNoProtoType>(funcType)) {
-            ss << "types.FuncSig(returnType=types.Int32)";
-            ss << ")"; // close types.Ptr(...
-        } else if (isa<FunctionType>(funcType)) {
-            ss << "FuncType";
-        } else {
-            ss << "UnknownFunctionPtrType";
-        }
+        return convertFunctionPointerType(qt);
+
     } else if(type->isPointerType()) {
         ss << "types.Ptr(to=";
         QualType pqt = type->getPointeeType();
         ss << convertClangType(pqt);
         ss << ")";
-    } else if(type->isStructureType()) {
-        const RecordType *recordType = type->getAsStructureType();
-        const RecordDecl *recordDecl = recordType->getDecl();
-        if (recordDecl->isAnonymousStructOrUnion()) {
-            // generate a types.SturctSig object
-            ss << "anonymous";
-        }
-        ss << "types.Struct(" << recordDecl->getNameAsString();
-        for (auto it = recordDecl->field_begin();
-                it != recordDecl->field_end(); ++it) {
-            ss << "Field: " << (*it)->getNameAsString() << ", ";
-            ss << convertClangType((*it)->getType());
-        }
 
-    } else if(type->isUnionType()) {
-        // const RecordType *recordType = type->getAsUnionType();
-        // const RecordDecl *recordDecl = recordType->getDecl();
-        ss << "UnionType";
+    } else if(type->isRecordType()) {
+        if (type->isStructureType()) {
+            return convertClangRecordType(qt.getTypePtr()->getAsStructureType()->getDecl());
+        } else if (type->isUnionType()) {
+            return convertClangRecordType(qt.getTypePtr()->getAsUnionType()->getDecl());
+        } else {
+            ss << "ERROR:RecordType";
+        }
 
     } else if(type->isArrayType()) {
-        const ArrayType *arrayType = type->getAsArrayTypeUnsafe();
-        if (isa<ConstantArrayType>(arrayType)) {
-            ss << "types.ConstSizeArray(of=";
-            ss << convertClangType(arrayType->getElementType());
-            ss << ", ";
-            auto constArrType = cast<ConstantArrayType>(arrayType);
-            ss << "dim=" << constArrType->getSize().toString(10, true);
-            ss << ")";
-        } else if (isa<VariableArrayType>(arrayType)) {
-            ss << "types.VarArray(of=";
-            ss << convertClangType(arrayType->getElementType());
-            ss << ")";
-        } else if (isa<IncompleteArrayType>(arrayType)) {
-            ss << "types.IncompleteArray(of=";
-            ss << convertClangType(arrayType->getElementType());
-            ss << ")";
-        } else {
-            ss << "UnknownArrayType";
-        }
+        return convertClangArrayType(qt);
 
-        SLANG_DEBUG(ss.str())
     } else {
         ss << "UnknownType.";
     }
 
     return ss.str();
 } // convertClangType()
+
+std::string SlangGenChecker::convertClangBuiltinType(QualType qt) const {
+    std::stringstream ss;
+
+    const Type *type = qt.getTypePtr();
+
+    if(type->isSignedIntegerType()) {
+        if (type->isCharType()) {
+            ss << "types.Int8";
+        } else if (type->isChar16Type()){
+            ss << "types.Int16";
+        } else if (type->isIntegerType()) {
+            ss << "types.Int32";
+        } else {
+            ss << "UnknownSignedIntType.";
+        }
+
+    } else if (type->isUnsignedIntegerType()) {
+        if (type->isCharType()) {
+            ss << "types.UInt8";
+        } else if (type->isChar16Type()){
+            ss << "types.UInt16";
+        } else if (type->isIntegerType()) {
+            ss << "types.UInt32";
+        } else {
+            ss << "UnknownUnsignedIntType.";
+        }
+
+    } else if(type->isFloatingType()) {
+        ss << "types.Float32";
+    } else if(type->isRealFloatingType()) {
+        ss << "types.Float64"; // FIXME: is realfloat a double?
+
+    } else if(type->isVoidType()) {
+        ss << "types.Void";
+    } else {
+        ss << "UnknownBuiltinType.";
+    }
+
+    return ss.str();
+} // convertClangBuiltinType()
+
+std::string SlangGenChecker::convertClangRecordType(const RecordDecl *recordDecl) const {
+    // a hack1 for anonymous decls (it works!) see test 000193.c and its AST!!
+    static const RecordDecl *lastAnonymousRecordDecl = nullptr;
+
+    if (recordDecl == nullptr) {
+        // default to the last anonymous record decl
+        return convertClangRecordType(lastAnonymousRecordDecl);
+    }
+
+    if (stu.isRecordPresent((uint64_t)recordDecl)) {
+        return stu.getRecord((uint64_t)recordDecl).toShortString();
+    }
+
+    // store for later use (part-of-hack1))
+    lastAnonymousRecordDecl = recordDecl;
+
+    std::string namePrefix;
+    SlangRecord slangRecord;
+
+    if (recordDecl->isStruct()) {
+        namePrefix = "s:";
+        slangRecord.recordKind = Struct;
+    } else if (recordDecl->isUnion()) {
+        namePrefix = "u:";
+        slangRecord.recordKind = Union;
+    }
+
+    if (recordDecl->getNameAsString() == "") {
+        slangRecord.anonymous = true;
+        slangRecord.name = namePrefix + stu.getNextRecordIdStr();
+    } else {
+        slangRecord.anonymous = false;
+        slangRecord.name = namePrefix + recordDecl->getNameAsString();
+    }
+
+    slangRecord.locStr = getLocationString(recordDecl);
+
+    stu.addRecord((uint64_t)recordDecl, slangRecord); // IMPORTANT
+    SlangRecord& newSlangRecord = stu.getRecord((uint64_t)recordDecl); // IMPORTANT
+
+    SlangRecordField slangRecordField;
+
+    for (auto it = recordDecl->decls_begin();
+         it != recordDecl->decls_end(); ++it) {
+        (*it)->dump();
+        if (isa<RecordDecl>(*it)) {
+            convertClangRecordType(cast<RecordDecl>(*it));
+        } else if(isa<FieldDecl>(*it)) {
+            const FieldDecl *fieldDecl = cast<FieldDecl>(*it);
+
+            slangRecordField.clear();
+
+            if (fieldDecl->getNameAsString() == "") {
+                slangRecordField.name = "F-"
+                                        + newSlangRecord.getNextAnonymousFieldIdStr();
+                slangRecordField.anonymous = true;
+            } else {
+                slangRecordField.name = fieldDecl->getNameAsString();
+                slangRecordField.anonymous = false;
+            }
+
+            slangRecordField.type = fieldDecl->getType();
+            if (slangRecordField.anonymous) {
+                auto slangVar = SlangVar((uint64_t)fieldDecl, slangRecordField.name);
+                stu.addVar((uint64_t)fieldDecl, slangVar);
+                slangRecordField.typeStr = convertClangRecordType(nullptr);
+            } else {
+                slangRecordField.typeStr = convertClangType(slangRecordField.type);
+            }
+
+            newSlangRecord.fields.push_back(slangRecordField);
+        }
+
+    }
+
+    // no need to add newSlangRecord, its a reference to its entry in the stu.recordMap
+    return newSlangRecord.toShortString();
+} // convertClangRecordType()
+std::string SlangGenChecker::convertClangArrayType(QualType qt) const {
+    std::stringstream ss;
+
+    const Type *type = qt.getTypePtr();
+    const ArrayType *arrayType = type->getAsArrayTypeUnsafe();
+
+    if (isa<ConstantArrayType>(arrayType)) {
+        ss << "types.ConstSizeArray(of=";
+        ss << convertClangType(arrayType->getElementType());
+        ss << ", ";
+        auto constArrType = cast<ConstantArrayType>(arrayType);
+        ss << "dim=" << constArrType->getSize().toString(10, true);
+        ss << ")";
+
+    } else if (isa<VariableArrayType>(arrayType)) {
+        ss << "types.VarArray(of=";
+        ss << convertClangType(arrayType->getElementType());
+        ss << ")";
+
+    } else if (isa<IncompleteArrayType>(arrayType)) {
+        ss << "types.IncompleteArray(of=";
+        ss << convertClangType(arrayType->getElementType());
+        ss << ")";
+
+    } else {
+        ss << "UnknownArrayType";
+    }
+
+    SLANG_DEBUG(ss.str())
+    return ss.str();
+} // convertClangArrayType()
+
+std::string SlangGenChecker::convertFunctionPointerType(QualType qt) const {
+    std::stringstream ss;
+
+    const Type *type = qt.getTypePtr();
+
+    ss << "types.Ptr(to=";
+    const Type *funcType = type->getPointeeType().getTypePtr();
+    funcType = funcType->getUnqualifiedDesugaredType();
+    if (isa<FunctionProtoType>(funcType)) {
+        auto funcProtoType = cast<FunctionProtoType>(funcType);
+        ss << "types.FuncSig(returnType=";
+        ss << convertClangType(funcProtoType->getReturnType());
+        ss << ", " << "paramTypes=[";
+        std::string prefix = "";
+        for (auto qType : funcProtoType->getParamTypes()) {
+            ss << prefix << convertClangType(qType);
+            if (prefix == "") prefix = ", ";
+        }
+        ss << "]";
+        if (funcProtoType->isVariadic()) {
+            ss << ", variadic=True";
+        }
+        ss << ")"; // close types.FuncSig(...
+        ss << ")"; // close types.Ptr(...
+
+    } else if (isa<FunctionNoProtoType>(funcType)) {
+        ss << "types.FuncSig(returnType=types.Int32)";
+        ss << ")"; // close types.Ptr(...
+
+    } else if (isa<FunctionType>(funcType)) {
+        ss << "FuncType";
+
+    } else {
+        ss << "UnknownFunctionPtrType";
+    }
+
+    return ss.str();
+} // convertFunctionPointerType()
+
+//BOUND END  : type_conversion_routines
 
 SlangExpr SlangGenChecker::convertUnaryExprOrTypeTraitExpr(
         const UnaryExprOrTypeTraitExpr *stmt, bool compound_receiver) const {
@@ -1451,7 +1623,8 @@ SlangExpr SlangGenChecker::convertUnaryExprOrTypeTraitExpr(
 
                 const Stmt *firstChild = *iterator;
                 const Expr *expr = cast<Expr>(firstChild);
-                slangExpr.qualType = FD->getASTContext().getTypeOfExprType(const_cast<Expr*>(expr));
+                //slangExpr.qualType = FD->getASTContext().getTypeOfExprType(const_cast<Expr*>(expr));
+                slangExpr.qualType = expr->getType();
                 const Type *type = slangExpr.qualType.getTypePtr();
                 if (type && !isIncompleteType(type)) {
                     TypeInfo typeInfo = FD->getASTContext().getTypeInfo(slangExpr.qualType);
@@ -1510,6 +1683,12 @@ SlangExpr SlangGenChecker::convertAstExpr(const Stmt *stmt, bool compound_receiv
         return SlangExpr("", false, QualType());
     }
 } // convertAstExpr()
+
+SlangExpr SlangGenChecker::convertCStyleCastExpr(const CStyleCastExpr *cCast,
+        bool compound_receiver) const {
+
+
+}
 
 //BOUND END  : conversion_routines to SlangExpr
 
@@ -1682,6 +1861,22 @@ std::string SlangGenChecker::getLocationString(const Stmt *stmt) const {
     return ss.str();
 }
 
+std::string SlangGenChecker::getLocationString(const RecordDecl *recordDecl) const {
+    std::stringstream ss;
+    uint32_t line = 0;
+    uint32_t col = 0;
+
+    ss << "Loc(";
+    line = FD->getASTContext().getSourceManager()
+            .getExpansionLineNumber(recordDecl->getLocStart());
+    ss << line << ",";
+    col  = FD->getASTContext().getSourceManager()
+            .getExpansionColumnNumber(recordDecl->getLocStart());
+    ss << col << ")";
+
+    return ss.str();
+}
+
 // get and encode the location of a statement element
 uint64_t SlangGenChecker::getLocationId(const Stmt *stmt) const {
     uint64_t locId = 0;
@@ -1705,7 +1900,6 @@ bool SlangGenChecker::isTopLevel(const Stmt *stmt) const {
     if (!parents.empty()) {
         const Stmt *stmt1 = parents[0].get<Stmt>();
         if (stmt1) {
-            // llvm::errs() << "Parent: " << stmt1->getStmtClassName() << "\n";
             switch (stmt1->getStmtClass()) {
                 default:
                     return false;
@@ -1729,7 +1923,6 @@ bool SlangGenChecker::isTopLevel(const Stmt *stmt) const {
                 }
             }
         } else {
-            // llvm::errs() << "Parent: Cannot print.\n";
             return false;
         }
     } else {
