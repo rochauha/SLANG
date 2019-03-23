@@ -1433,8 +1433,8 @@ SlangExpr SlangGenChecker::convertInitListExpr(const InitListExpr *initListExpr)
         SlangExpr currentStmt = slangStmtStack.top();
         tmp.addSlangStmts(currentStmt.slangStmts);
         ss << "instr.AssignI("
-           << "expr.MemberE(" << tmp.expr << ", " << recordFields[i].getName() << "), "
-           << currentStmt.expr;
+           << "expr.MemberE(" << tmp.expr << ", [\"" << recordFields[i].getName() << "\"], "
+           << locStr << "), " << currentStmt.expr;
         slangStmtStack.pop();
         tmp.addSlangStmt(ss.str());
         ss.str("");
