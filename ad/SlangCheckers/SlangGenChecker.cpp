@@ -1421,7 +1421,7 @@ SlangExpr SlangGenChecker::convertInitListExpr(const InitListExpr *initListExpr)
 
     std::vector<SlangRecordField> recordFields = slangRecord.getFields();
     int fieldCount = recordFields.size();
-    
+
     std::stack<SlangExpr> slangStmtStack;
     for (int i = 0; i < fieldCount; ++i) {
         SlangExpr currentExpr = convertExpr(true);
@@ -1433,7 +1433,8 @@ SlangExpr SlangGenChecker::convertInitListExpr(const InitListExpr *initListExpr)
         SlangExpr currentStmt = slangStmtStack.top();
         tmp.addSlangStmts(currentStmt.slangStmts);
         ss << "instr.AssignI("
-           << "expr.MemberE(" << tmp.expr << ", " << recordFields[i].getName() << "), " << currentStmt.expr;
+           << "expr.MemberE(" << tmp.expr << ", " << recordFields[i].getName() << "), "
+           << currentStmt.expr;
         slangStmtStack.pop();
         tmp.addSlangStmt(ss.str());
         ss.str("");

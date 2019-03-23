@@ -19,26 +19,26 @@
 using namespace clang;
 
 namespace slang {
-    // SlangExpr class to store converted expression info.
-    class SlangExpr {
-    public:
-        std::string expr;
-        bool compound;
-        QualType qualType;
-        std::vector<std::string> slangStmts;
+// SlangExpr class to store converted expression info.
+class SlangExpr {
+  public:
+    std::string expr;
+    bool compound;
+    QualType qualType;
+    std::vector<std::string> slangStmts;
 
-        bool nonTmpVar;
-        uint64_t varId;
+    bool nonTmpVar;
+    uint64_t varId;
 
-        uint64_t locId; // (line_32 << 32) | col_32
+    uint64_t locId; // (line_32 << 32) | col_32
 
-        SlangExpr();
-        SlangExpr(std::string e, bool compnd, QualType qt);
-        std::string toString();
-        void addSlangStmt(std::string slangStmt);
-        void addSlangStmts(std::vector<std::string>& slangStmts);
-        bool isNonTmpVar();
-    };
+    SlangExpr();
+    SlangExpr(std::string e, bool compnd, QualType qt);
+    std::string toString();
+    void addSlangStmt(std::string slangStmt);
+    void addSlangStmts(std::vector<std::string> &slangStmts);
+    bool isNonTmpVar();
+};
 } // namespace slang
 
-#endif //SLANG_EXPR_H
+#endif // SLANG_EXPR_H

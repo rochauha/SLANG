@@ -39,17 +39,12 @@ std::string slang::SlangExpr::toString() {
     return ss.str();
 }
 
-void slang::SlangExpr::addSlangStmt(std::string slangStmt) {
-    slangStmts.push_back(slangStmt);
-}
+void slang::SlangExpr::addSlangStmt(std::string slangStmt) { slangStmts.push_back(slangStmt); }
 
-void slang::SlangExpr::addSlangStmts(std::vector<std::string>& slangStmts) {
-    for (std::string& slangStmt: slangStmts) {
+void slang::SlangExpr::addSlangStmts(std::vector<std::string> &slangStmts) {
+    for (std::string &slangStmt : slangStmts) {
         this->slangStmts.push_back(slangStmt);
     }
 }
 
-bool slang::SlangExpr::isNonTmpVar() {
-    return nonTmpVar;
-}
-
+bool slang::SlangExpr::isNonTmpVar() { return nonTmpVar; }

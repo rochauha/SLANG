@@ -49,17 +49,15 @@ slang::SlangFunc::SlangFunc() {
     nextBbId = 0;
 }
 
-slang::SlangTranslationUnit::SlangTranslationUnit(): currFunc{nullptr}, varMap{}, funcMap{},
-                                         mainStack{}, dirtyVars{}, edgeLabels{3} {
+slang::SlangTranslationUnit::SlangTranslationUnit()
+    : currFunc{nullptr}, varMap{}, funcMap{}, mainStack{}, dirtyVars{}, edgeLabels{3} {
     fileName = "";
     edgeLabels[FalseEdge] = "FalseEdge";
     edgeLabels[TrueEdge] = "TrueEdge";
     edgeLabels[UnCondEdge] = "UnCondEdge";
 }
 
-void slang::SlangTranslationUnit::clearMainStack() {
-    mainStack.clear();
-}
+void slang::SlangTranslationUnit::clearMainStack() { mainStack.clear(); }
 
 // clear the buffer for the next function.
 void slang::SlangTranslationUnit::clear() {
@@ -73,13 +71,11 @@ void slang::SlangTranslationUnit::pushBackFuncParams(std::string paramName) {
     currFunc->paramNames.push_back(paramName);
 }
 
-void slang::SlangTranslationUnit::setFuncReturnType(std::string& retType) {
+void slang::SlangTranslationUnit::setFuncReturnType(std::string &retType) {
     currFunc->retType = retType;
 }
 
-void slang::SlangTranslationUnit::setVariadicness(bool variadic) {
-    currFunc->variadic = variadic;
-}
+void slang::SlangTranslationUnit::setVariadicness(bool variadic) { currFunc->variadic = variadic; }
 
 std::string slang::SlangTranslationUnit::getCurrFuncName() {
     return currFunc->name; // not fullName
@@ -90,25 +86,19 @@ void slang::SlangTranslationUnit::setCurrBb(const CFGBlock *bb) {
     currFunc->currBb = bb;
 }
 
-int32_t slang::SlangTranslationUnit::getCurrBbId() {
-    return currFunc->currBbId;
-}
+int32_t slang::SlangTranslationUnit::getCurrBbId() { return currFunc->currBbId; }
 
-void slang::SlangTranslationUnit::setNextBbId(int32_t nextBbId) {
-    currFunc->nextBbId = nextBbId;
-}
+void slang::SlangTranslationUnit::setNextBbId(int32_t nextBbId) { currFunc->nextBbId = nextBbId; }
 
 int32_t slang::SlangTranslationUnit::genNextBbId() {
     currFunc->nextBbId += 1;
     return currFunc->nextBbId;
 }
 
-const CFGBlock* slang::SlangTranslationUnit::getCurrBb() {
-    return currFunc->currBb;
-}
+const CFGBlock *slang::SlangTranslationUnit::getCurrBb() { return currFunc->currBb; }
 
-SlangVar& slang::SlangTranslationUnit::getVar(uint64_t varAddr) {
-    //FIXME: there is no check
+SlangVar &slang::SlangTranslationUnit::getVar(uint64_t varAddr) {
+    // FIXME: there is no check
     return varMap[varAddr];
 }
 
@@ -127,9 +117,7 @@ void slang::SlangTranslationUnit::addBb(int32_t bbId) {
     currFunc->bbStmts[bbId] = emptyVector;
 }
 
-void slang::SlangTranslationUnit::setCurrBbId(int32_t bbId) {
-    currFunc->currBbId = bbId;
-}
+void slang::SlangTranslationUnit::setCurrBbId(int32_t bbId) { currFunc->currBbId = bbId; }
 
 // bb must already be added
 void slang::SlangTranslationUnit::addBbStmt(std::string stmt) {
@@ -137,8 +125,8 @@ void slang::SlangTranslationUnit::addBbStmt(std::string stmt) {
 }
 
 // bb must already be added
-void slang::SlangTranslationUnit::addBbStmts(std::vector<std::string>& slangStmts) {
-    for (std::string slangStmt: slangStmts) {
+void slang::SlangTranslationUnit::addBbStmts(std::vector<std::string> &slangStmts) {
+    for (std::string slangStmt : slangStmts) {
         currFunc->bbStmts[currFunc->currBbId].push_back(slangStmt);
     }
 }
@@ -149,22 +137,22 @@ void slang::SlangTranslationUnit::addBbStmt(int32_t bbId, std::string slangStmt)
 }
 
 // bb must already be added
-void slang::SlangTranslationUnit::addBbStmts(int32_t bbId, std::vector<std::string>& slangStmts) {
-    for (std::string slangStmt: slangStmts) {
+void slang::SlangTranslationUnit::addBbStmts(int32_t bbId, std::vector<std::string> &slangStmts) {
+    for (std::string slangStmt : slangStmts) {
         currFunc->bbStmts[bbId].push_back(slangStmt);
     }
 }
 
-void slang::SlangTranslationUnit::addBbEdge(std::pair<int32_t,
-        std::pair<int32_t, EdgeLabel>> bbEdge) {
+void slang::SlangTranslationUnit::addBbEdge(
+    std::pair<int32_t, std::pair<int32_t, EdgeLabel>> bbEdge) {
     currFunc->bbEdges.push_back(bbEdge);
 }
 
-void slang::SlangTranslationUnit::addVar(uint64_t varId, SlangVar& slangVar) {
+void slang::SlangTranslationUnit::addVar(uint64_t varId, SlangVar &slangVar) {
     varMap[varId] = slangVar;
 }
 
-//BOUND START: record_related_routines
+// BOUND START: record_related_routines
 
 bool SlangTranslationUnit::isRecordPresent(uint64_t recordAddr) {
     return !(recordMap.find(recordAddr) == recordMap.end());
@@ -174,9 +162,7 @@ void SlangTranslationUnit::addRecord(uint64_t recordAddr, SlangRecord slangRecor
     recordMap[recordAddr] = slangRecord;
 }
 
-SlangRecord& SlangTranslationUnit::getRecord(uint64_t recordAddr) {
-    return recordMap[recordAddr];
-}
+SlangRecord &SlangTranslationUnit::getRecord(uint64_t recordAddr) { return recordMap[recordAddr]; }
 
 int32_t SlangTranslationUnit::getNextRecordId() {
     recordId += 1;
@@ -189,22 +175,18 @@ std::string SlangTranslationUnit::getNextRecordIdStr() {
     return ss.str();
 }
 
-//BOUND END  : record_related_routines
+// BOUND END  : record_related_routines
 
+// BOUND START: SlangRecordField_functions
 
-//BOUND START: SlangRecordField_functions
+SlangRecordField::SlangRecordField() : anonymous{false}, name{""}, typeStr{""}, type{QualType()} {}
 
-SlangRecordField::SlangRecordField(): anonymous{false}, name{""},
-               typeStr{""}, type{QualType()} {
-}
-
-std::string SlangRecordField::getName() const {
-    return name;
-}
+std::string SlangRecordField::getName() const { return name; }
 
 std::string SlangRecordField::toString() {
     std::stringstream ss;
-    ss << "(" << "\"" << name << "\"";
+    ss << "("
+       << "\"" << name << "\"";
     ss << ", " << typeStr << ")";
     return ss.str();
 }
@@ -216,9 +198,9 @@ void SlangRecordField::clear() {
     type = QualType();
 }
 
-//BOUND END  : SlangRecordField_functions
+// BOUND END  : SlangRecordField_functions
 
-//BOUND START: SlangRecord_functions
+// BOUND START: SlangRecord_functions
 
 // SlangRecord_functions
 SlangRecord::SlangRecord() {
@@ -235,9 +217,7 @@ std::string SlangRecord::getNextAnonymousFieldIdStr() {
     return ss.str();
 }
 
-std::vector<SlangRecordField> SlangRecord::getFields() const {
-    return fields;
-}
+std::vector<SlangRecordField> SlangRecord::getFields() const { return fields; }
 
 std::string SlangRecord::toString() {
     std::stringstream ss;
@@ -245,7 +225,8 @@ std::string SlangRecord::toString() {
     ss << ((recordKind == Struct) ? "types.Struct(\n" : "types.Union(\n");
 
     ss << NBSP8 << "name = ";
-    ss << "\"" << name << "\"" << ",\n";
+    ss << "\"" << name << "\""
+       << ",\n";
 
     std::string suffix = ",\n";
     ss << NBSP8 << "fields = [\n";
@@ -273,9 +254,9 @@ std::string SlangRecord::toShortString() {
     return ss.str();
 }
 
-//BOUND END  : SlangRecord_functions
+// BOUND END  : SlangRecord_functions
 
-//BOUND START: dirtyVars
+// BOUND START: dirtyVars
 
 void slang::SlangTranslationUnit::setDirtyVar(uint64_t varId, SlangExpr slangExpr) {
     // Clear the value for varId to an empty SlangExpr.
@@ -293,13 +274,11 @@ bool slang::SlangTranslationUnit::isDirtyVar(uint64_t varId) {
     return !(dirtyVars.find(varId) == dirtyVars.end());
 }
 
-void slang::SlangTranslationUnit::clearDirtyVars() {
-    dirtyVars.clear();
-}
+void slang::SlangTranslationUnit::clearDirtyVars() { dirtyVars.clear(); }
 
-//BOUND END  : dirtyVars
+// BOUND END  : dirtyVars
 
-//BOUND START: conversion_routines 1 to SPAN Strings
+// BOUND START: conversion_routines 1 to SPAN Strings
 
 std::string slang::SlangTranslationUnit::convertFuncName(std::string funcName) {
     std::stringstream ss;
@@ -317,10 +296,10 @@ std::string slang::SlangTranslationUnit::convertVarExpr(uint64_t varAddr) {
     return ss.str();
 }
 
-std::string slang::SlangTranslationUnit::convertBbEdges(SlangFunc& slangFunc) {
+std::string slang::SlangTranslationUnit::convertBbEdges(SlangFunc &slangFunc) {
     std::stringstream ss;
 
-    for (auto p: slangFunc.bbEdges) {
+    for (auto p : slangFunc.bbEdges) {
         ss << NBSP10 << "(" << std::to_string(p.first);
         ss << ", " << std::to_string(p.second.first) << ", ";
         ss << "types." << edgeLabels[p.second.second] << "),\n";
@@ -329,15 +308,15 @@ std::string slang::SlangTranslationUnit::convertBbEdges(SlangFunc& slangFunc) {
     return ss.str();
 } // convertBbEdges()
 
-//BOUND END  : conversion_routines 1 to SPAN Strings
+// BOUND END  : conversion_routines 1 to SPAN Strings
 
-//BOUND START: helper_functions for tib
+// BOUND START: helper_functions for tib
 
 // used only for debugging purposes
 void slang::SlangTranslationUnit::printMainStack() const {
     std::stringstream ss;
     ss << "MAIN_STACK: [";
-    for (const Stmt* stmt: mainStack) {
+    for (const Stmt *stmt : mainStack) {
         ss << stmt->getStmtClassName() << ", ";
     }
     ss << "]\n";
@@ -348,8 +327,8 @@ void slang::SlangTranslationUnit::pushToMainStack(const Stmt *stmt) {
     mainStack.push_back(stmt);
 } // pushToMainStack()
 
-const Stmt* slang::SlangTranslationUnit::popFromMainStack() {
-    if(mainStack.size()) {
+const Stmt *slang::SlangTranslationUnit::popFromMainStack() {
+    if (mainStack.size()) {
         auto stmt = mainStack[mainStack.size() - 1];
         mainStack.pop_back();
         return stmt;
@@ -361,9 +340,9 @@ bool slang::SlangTranslationUnit::isMainStackEmpty() const {
     return mainStack.empty();
 } // isMainStackEmpty()
 
-//BOUND END  : helper_functions for tib
+// BOUND END  : helper_functions for tib
 
-//BOUND START: dumping_routines
+// BOUND START: dumping_routines
 
 // dump entire span ir module for the translation unit.
 void slang::SlangTranslationUnit::dumpSlangIr() {
@@ -374,13 +353,13 @@ void slang::SlangTranslationUnit::dumpSlangIr() {
     dumpObjs(ss);
     dumpFooter(ss);
 
-    //TODO: print the content to a file.
+    // TODO: print the content to a file.
     std::string fileName = this->fileName + ".spanir";
     Util::writeToFile(fileName, ss.str());
     llvm::errs() << ss.str();
 } // dumpSlangIr()
 
-void slang::SlangTranslationUnit::dumpHeader(std::stringstream& ss) {
+void slang::SlangTranslationUnit::dumpHeader(std::stringstream &ss) {
     ss << "\n";
     ss << "# START: A_SPAN_translation_unit.\n";
     ss << "\n";
@@ -400,31 +379,31 @@ void slang::SlangTranslationUnit::dumpHeader(std::stringstream& ss) {
     ss << NBSP2 << "description = \"Auto-Translated from Clang AST.\",\n";
 } // dumpHeader()
 
-void slang::SlangTranslationUnit::dumpFooter(std::stringstream& ss) {
+void slang::SlangTranslationUnit::dumpFooter(std::stringstream &ss) {
     ss << ") # irTUnit.TUnit() ends\n";
     ss << "\n# END  : A_SPAN_translation_unit.\n";
 } // dumpFooter()
 
-void slang::SlangTranslationUnit::dumpVariables(std::stringstream& ss) {
+void slang::SlangTranslationUnit::dumpVariables(std::stringstream &ss) {
     ss << NBSP2 << "allVars = {\n";
-    for (const auto& var: varMap) {
-        if (var.second.typeStr == DONT_PRINT) continue;
+    for (const auto &var : varMap) {
+        if (var.second.typeStr == DONT_PRINT)
+            continue;
         ss << NBSP4;
-        ss << "\"" << var.second.name << "\": "
-                   << var.second.typeStr << ",\n";
+        ss << "\"" << var.second.name << "\": " << var.second.typeStr << ",\n";
     }
     ss << NBSP2 << "}, # end allVars dict\n\n";
 } // dumpVariables()
 
-void slang::SlangTranslationUnit::dumpObjs(std::stringstream& ss) {
+void slang::SlangTranslationUnit::dumpObjs(std::stringstream &ss) {
     ss << NBSP2 << "allObjs = {\n";
     dumpRecords(ss);
     dumpFunctions(ss);
     ss << NBSP2 << "}, # end allObjs dict\n";
 }
 
-void slang::SlangTranslationUnit::dumpRecords(std::stringstream& ss) {
-    for (auto slangRecord: recordMap) {
+void slang::SlangTranslationUnit::dumpRecords(std::stringstream &ss) {
+    for (auto slangRecord : recordMap) {
         ss << NBSP4;
         ss << "\"" << slangRecord.second.name << "\":\n";
         ss << slangRecord.second.toString();
@@ -433,26 +412,26 @@ void slang::SlangTranslationUnit::dumpRecords(std::stringstream& ss) {
     ss << "\n";
 }
 
-void slang::SlangTranslationUnit::dumpFunctions(std::stringstream& ss) {
+void slang::SlangTranslationUnit::dumpFunctions(std::stringstream &ss) {
     std::string prefix;
-    for (auto slangFunc: funcMap) {
+    for (auto slangFunc : funcMap) {
         ss << NBSP4; // indent
         ss << "\"" << slangFunc.second.fullName << "\":\n";
         ss << NBSP6 << "obj.Func(\n";
 
         // fields
-        ss << NBSP8 << "name = " << "\"" << slangFunc.second.fullName << "\",\n";
+        ss << NBSP8 << "name = "
+           << "\"" << slangFunc.second.fullName << "\",\n";
         ss << NBSP8 << "paramNames = [";
         prefix = "";
-        for (std::string& paramName: slangFunc.second.paramNames) {
+        for (std::string &paramName : slangFunc.second.paramNames) {
             ss << prefix << "\"" << paramName << "\"";
             if (prefix.size() == 0) {
                 prefix = ", ";
             }
         }
         ss << "],\n";
-        ss << NBSP8 << "variadic = "
-           << (slangFunc.second.variadic? "True" : "False") << ",\n";
+        ss << NBSP8 << "variadic = " << (slangFunc.second.variadic ? "True" : "False") << ",\n";
 
         // ss << NBSP8 << "paramTypes = [";
         // prefix = "";
@@ -474,11 +453,12 @@ void slang::SlangTranslationUnit::dumpFunctions(std::stringstream& ss) {
         for (auto bb : slangFunc.second.bbStmts) {
             ss << NBSP10 << bb.first << ": [\n";
             if (bb.second.size()) {
-                for (auto& stmt: bb.second) {
+                for (auto &stmt : bb.second) {
                     ss << NBSP12 << stmt << ",\n";
                 }
             } else {
-                ss << NBSP12 << "instr.NopI()" << ",\n";
+                ss << NBSP12 << "instr.NopI()"
+                   << ",\n";
             }
             ss << NBSP10 << "],\n";
             ss << "\n";
@@ -492,10 +472,8 @@ void slang::SlangTranslationUnit::dumpFunctions(std::stringstream& ss) {
         ss << NBSP8 << "}, # bbEdges end\n";
 
         // close this function object
-        ss << NBSP6 << "), # " << slangFunc.second.fullName
-           << "() end. \n\n";
+        ss << NBSP6 << "), # " << slangFunc.second.fullName << "() end. \n\n";
     }
 } // dumpFunctions()
 
-//BOUND END  : dumping_routines
-
+// BOUND END  : dumping_routines
