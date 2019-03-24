@@ -22,16 +22,16 @@ irTUnit.TUnit(
     "v:main:t.12": types.Int8,
     "v:main:t.11": types.Int8,
     "v:main:t.10": types.Int8,
-    "v:main:t.3": types.Int8,
-    "v:main:t.2": types.Int8,
-    "v:main:t.1": types.Int8,
     "v:main:t.9": types.Int8,
+    "v:main:t.8": types.Int8,
+    "v:main:t.7": types.Int8,
+    "v:main:t.6": types.Int8,
+    "v:main:t.1": types.Int8,
+    "v:main:s": types.Ptr(to=types.Int8),
+    "v:main:t.2": types.Int8,
+    "v:main:t.3": types.Int8,
     "v:main:t.4": types.Int8,
     "v:main:t.5": types.Int8,
-    "v:main:s": types.Ptr(to=types.Int8),
-    "v:main:t.6": types.Int8,
-    "v:main:t.7": types.Int8,
-    "v:main:t.8": types.Int8,
   }, # end allVars dict
 
   allObjs = {
@@ -46,35 +46,14 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          15: [
-            instr.AssignI(expr.VarE("v:main:s", Loc(5,2)), expr.LitE("""abcdef""", Loc(5,6)), Loc(5,2)),
-            instr.AssignI(expr.VarE("v:main:t.13", Loc(6,5)), expr.ArrayE(expr.VarE("v:main:s", Loc(6,5)), [expr.LitE(0, Loc(6,7))], Loc(6,5)), Loc(6,5)),
-            instr.AssignI(expr.VarE("v:main:t.14", Loc(6,5)), expr.BinaryE(expr.VarE("v:main:t.13", Loc(6,5)), op.BO_NE, ERROR:convertExpr), Loc(6,5)),
-            instr.CondI(expr.VarE("v:main:t.14", Loc(6,5)), Loc(6,2)),
+          5: [
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(11,5)), expr.ArrayE(expr.VarE("v:main:s", Loc(11,5)), [expr.LitE(5, Loc(11,7))], Loc(11,5)), Loc(11,5)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(11,5)), expr.BinaryE(expr.VarE("v:main:t.3", Loc(11,5)), op.BO_NE, ERROR:convertExpr), Loc(11,5)),
+            instr.CondI(expr.VarE("v:main:t.4", Loc(11,5)), Loc(11,2)),
           ],
 
-          14: [
-            instr.ReturnI(expr.LitE(1, Loc(6,25)), Loc(6,18)),
-          ],
-
-          13: [
-            instr.AssignI(expr.VarE("v:main:t.11", Loc(7,5)), expr.ArrayE(expr.VarE("v:main:s", Loc(7,5)), [expr.LitE(1, Loc(7,7))], Loc(7,5)), Loc(7,5)),
-            instr.AssignI(expr.VarE("v:main:t.12", Loc(7,5)), expr.BinaryE(expr.VarE("v:main:t.11", Loc(7,5)), op.BO_NE, ERROR:convertExpr), Loc(7,5)),
-            instr.CondI(expr.VarE("v:main:t.12", Loc(7,5)), Loc(7,2)),
-          ],
-
-          12: [
-            instr.ReturnI(expr.LitE(2, Loc(7,25)), Loc(7,18)),
-          ],
-
-          11: [
-            instr.AssignI(expr.VarE("v:main:t.9", Loc(8,5)), expr.ArrayE(expr.VarE("v:main:s", Loc(8,5)), [expr.LitE(2, Loc(8,7))], Loc(8,5)), Loc(8,5)),
-            instr.AssignI(expr.VarE("v:main:t.10", Loc(8,5)), expr.BinaryE(expr.VarE("v:main:t.9", Loc(8,5)), op.BO_NE, ERROR:convertExpr), Loc(8,5)),
-            instr.CondI(expr.VarE("v:main:t.10", Loc(8,5)), Loc(8,2)),
-          ],
-
-          10: [
-            instr.ReturnI(expr.LitE(3, Loc(8,25)), Loc(8,18)),
+          4: [
+            instr.ReturnI(expr.LitE(6, Loc(11,25)), Loc(11,18)),
           ],
 
           3: [
@@ -87,26 +66,12 @@ irTUnit.TUnit(
             instr.ReturnI(expr.LitE(7, Loc(12,23)), Loc(12,16)),
           ],
 
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(14,9)), Loc(14,2)),
-          ],
-
           0: [
             instr.NopI(),
           ],
 
-          4: [
-            instr.ReturnI(expr.LitE(6, Loc(11,25)), Loc(11,18)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          5: [
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(11,5)), expr.ArrayE(expr.VarE("v:main:s", Loc(11,5)), [expr.LitE(5, Loc(11,7))], Loc(11,5)), Loc(11,5)),
-            instr.AssignI(expr.VarE("v:main:t.4", Loc(11,5)), expr.BinaryE(expr.VarE("v:main:t.3", Loc(11,5)), op.BO_NE, ERROR:convertExpr), Loc(11,5)),
-            instr.CondI(expr.VarE("v:main:t.4", Loc(11,5)), Loc(11,2)),
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(14,9)), Loc(14,2)),
           ],
 
           6: [
@@ -127,6 +92,41 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:main:t.7", Loc(9,5)), expr.ArrayE(expr.VarE("v:main:s", Loc(9,5)), [expr.LitE(3, Loc(9,7))], Loc(9,5)), Loc(9,5)),
             instr.AssignI(expr.VarE("v:main:t.8", Loc(9,5)), expr.BinaryE(expr.VarE("v:main:t.7", Loc(9,5)), op.BO_NE, ERROR:convertExpr), Loc(9,5)),
             instr.CondI(expr.VarE("v:main:t.8", Loc(9,5)), Loc(9,2)),
+          ],
+
+          10: [
+            instr.ReturnI(expr.LitE(3, Loc(8,25)), Loc(8,18)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          11: [
+            instr.AssignI(expr.VarE("v:main:t.9", Loc(8,5)), expr.ArrayE(expr.VarE("v:main:s", Loc(8,5)), [expr.LitE(2, Loc(8,7))], Loc(8,5)), Loc(8,5)),
+            instr.AssignI(expr.VarE("v:main:t.10", Loc(8,5)), expr.BinaryE(expr.VarE("v:main:t.9", Loc(8,5)), op.BO_NE, ERROR:convertExpr), Loc(8,5)),
+            instr.CondI(expr.VarE("v:main:t.10", Loc(8,5)), Loc(8,2)),
+          ],
+
+          12: [
+            instr.ReturnI(expr.LitE(2, Loc(7,25)), Loc(7,18)),
+          ],
+
+          13: [
+            instr.AssignI(expr.VarE("v:main:t.11", Loc(7,5)), expr.ArrayE(expr.VarE("v:main:s", Loc(7,5)), [expr.LitE(1, Loc(7,7))], Loc(7,5)), Loc(7,5)),
+            instr.AssignI(expr.VarE("v:main:t.12", Loc(7,5)), expr.BinaryE(expr.VarE("v:main:t.11", Loc(7,5)), op.BO_NE, ERROR:convertExpr), Loc(7,5)),
+            instr.CondI(expr.VarE("v:main:t.12", Loc(7,5)), Loc(7,2)),
+          ],
+
+          14: [
+            instr.ReturnI(expr.LitE(1, Loc(6,25)), Loc(6,18)),
+          ],
+
+          15: [
+            instr.AssignI(expr.VarE("v:main:s", Loc(5,2)), expr.LitE("""abcdef""", Loc(5,6)), Loc(5,2)),
+            instr.AssignI(expr.VarE("v:main:t.13", Loc(6,5)), expr.ArrayE(expr.VarE("v:main:s", Loc(6,5)), [expr.LitE(0, Loc(6,7))], Loc(6,5)), Loc(6,5)),
+            instr.AssignI(expr.VarE("v:main:t.14", Loc(6,5)), expr.BinaryE(expr.VarE("v:main:t.13", Loc(6,5)), op.BO_NE, ERROR:convertExpr), Loc(6,5)),
+            instr.CondI(expr.VarE("v:main:t.14", Loc(6,5)), Loc(6,2)),
           ],
 
         }, # basicBlocks end.

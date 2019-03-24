@@ -21,42 +21,42 @@ irTUnit.TUnit(
     "v:main:t.33": types.Int32,
     "v:main:t.32": types.Ptr(to=types.Int32),
     "v:main:t.31": types.Ptr(to=types.Int32),
-    "v:main:t.30": types.Int32,
-    "v:main:t.29": types.Ptr(to=types.Int32),
-    "v:main:t.28": types.Ptr(to=types.Int32),
-    "v:main:t.27": types.Int32,
-    "v:main:t.26": types.Ptr(to=types.Int32),
-    "v:main:t.25": types.Ptr(to=types.Int32),
-    "v:main:t.24": types.Int32,
-    "v:main:t.23": types.Ptr(to=types.Int32),
-    "v:main:t.22": types.Ptr(to=types.Int32),
-    "v:main:t.20": types.Ptr(to=types.Int32),
-    "v:main:t.19": types.Ptr(to=types.Int32),
-    "v:main:to": types.Ptr(to=types.Int32),
-    "v:main:t.17": types.Ptr(to=types.Int32),
-    "v:main:from": types.Ptr(to=types.Int32),
-    "v:main:t.16": types.Ptr(to=types.Int32),
-    "v:main:t.4": types.Int32,
-    "v:main:t.2": types.Int32,
-    "v:main:a": types.ConstSizeArray(of=types.Int32, dim=39),
-    "v:main:n": types.Int32,
-    "v:main:t.15": types.Int32,
-    "v:main:t.3": types.Int32,
-    "v:main:t.21": types.Int32,
-    "v:main:b": types.ConstSizeArray(of=types.Int32, dim=39),
-    "v:main:t.9": types.Int32,
-    "v:main:t.18": types.Int32,
-    "v:main:count": types.Int32,
     "v:main:t.10": types.Ptr(to=types.Int32),
-    "v:main:t.1": types.Int32,
-    "v:main:t.5": types.Int32,
-    "v:main:t.6": types.Int32,
+    "v:main:from": types.Ptr(to=types.Int32),
     "v:main:t.7": types.Int,
+    "v:main:t.6": types.Int32,
     "v:main:t.8": types.Int32,
+    "v:main:t.15": types.Int32,
+    "v:main:to": types.Ptr(to=types.Int32),
+    "v:main:t.19": types.Ptr(to=types.Int32),
+    "v:main:t.4": types.Int32,
+    "v:main:t.5": types.Int32,
+    "v:main:a": types.ConstSizeArray(of=types.Int32, dim=39),
+    "v:main:t.3": types.Int32,
+    "v:main:t.9": types.Int32,
+    "v:main:n": types.Int32,
+    "v:main:t.24": types.Int32,
+    "v:main:t.1": types.Int32,
+    "v:main:t.2": types.Int32,
+    "v:main:b": types.ConstSizeArray(of=types.Int32, dim=39),
+    "v:main:t.23": types.Ptr(to=types.Int32),
     "v:main:t.11": types.Ptr(to=types.Int32),
     "v:main:t.12": types.Int32,
     "v:main:t.13": types.Ptr(to=types.Int32),
     "v:main:t.14": types.Ptr(to=types.Int32),
+    "v:main:t.16": types.Ptr(to=types.Int32),
+    "v:main:t.17": types.Ptr(to=types.Int32),
+    "v:main:t.18": types.Int32,
+    "v:main:t.20": types.Ptr(to=types.Int32),
+    "v:main:t.21": types.Int32,
+    "v:main:t.22": types.Ptr(to=types.Int32),
+    "v:main:count": types.Int32,
+    "v:main:t.25": types.Ptr(to=types.Int32),
+    "v:main:t.26": types.Ptr(to=types.Int32),
+    "v:main:t.27": types.Int32,
+    "v:main:t.28": types.Ptr(to=types.Int32),
+    "v:main:t.29": types.Ptr(to=types.Int32),
+    "v:main:t.30": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -71,43 +71,39 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          -1: [
-            instr.NopI(),
-          ],
-
           22: [
             instr.AssignI(expr.VarE("v:main:n", Loc(14,9)), expr.LitE(0, Loc(14,13)), Loc(14,9)),
           ],
 
-          9: [
-            instr.AssignI(expr.VarE("v:main:t.11", Loc(30,27)), expr.VarE("v:main:from", Loc(30,27)), Loc(30,27)),
-            instr.AssignI(expr.VarE("v:main:from", Loc(30,27)), expr.BinaryE(expr.VarE("v:main:from", Loc(30,27)), op.BO_ADD, expr.LitE(1, Loc(30,27)), Loc(30,27)), Loc(30,27)),
-            instr.AssignI(expr.VarE("v:main:t.12", Loc(30,26)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:t.11", Loc(30,27)), Loc(30,26)), Loc(30,26)),
-            instr.AssignI(expr.VarE("v:main:t.10", Loc(30,19)), expr.VarE("v:main:to", Loc(30,19)), Loc(30,19)),
-            instr.AssignI(expr.VarE("v:main:to", Loc(30,19)), expr.BinaryE(expr.VarE("v:main:to", Loc(30,19)), op.BO_ADD, expr.LitE(1, Loc(30,19)), Loc(30,19)), Loc(30,19)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:t.10", Loc(30,19)), Loc(30,18)), expr.VarE("v:main:t.12", Loc(30,26)), Loc(30,18)),
+          21: [
+            instr.AssignI(expr.VarE("v:main:t.34", Loc(14,16)), expr.BinaryE(expr.VarE("v:main:n", Loc(14,16)), op.BO_LT, expr.LitE(39, Loc(14,20))), Loc(14,16)),
+            instr.CondI(expr.VarE("v:main:t.34", Loc(14,16)), Loc(14,5)),
           ],
 
-          8: [
-            instr.AssignI(expr.VarE("v:main:n", Loc(31,24)), expr.BinaryE(expr.VarE("v:main:n", Loc(31,24)), op.BO_SUB, expr.LitE(1), Loc(31,22)), Loc(31,22)),
-            instr.AssignI(expr.VarE("v:main:t.8", Loc(31,22)), expr.VarE("v:main:n", Loc(31,24)), Loc(31,22)),
-            instr.AssignI(expr.VarE("v:main:t.9", Loc(31,22)), expr.BinaryE(expr.VarE("v:main:t.8", Loc(31,22)), op.BO_GT, expr.LitE(0, Loc(31,28))), Loc(31,22)),
-            instr.CondI(expr.VarE("v:main:t.9", Loc(31,22)), Loc(23,13)),
+          20: [
+            instr.AssignI(expr.ArrayE(expr.VarE("v:main:a", Loc(15,9)), [expr.VarE("v:main:n", Loc(15,11))], Loc(15,9)), expr.VarE("v:main:n", Loc(15,16)), Loc(15,9)),
+            instr.AssignI(expr.ArrayE(expr.VarE("v:main:b", Loc(16,9)), [expr.VarE("v:main:n", Loc(16,11))], Loc(16,9)), expr.LitE(0, Loc(16,16)), Loc(16,9)),
           ],
 
-          7: [
-            instr.AssignI(expr.VarE("v:main:from", Loc(18,5)), expr.VarE("v:main:a", Loc(18,12)), Loc(18,5)),
-            instr.AssignI(expr.VarE("v:main:to", Loc(19,5)), expr.VarE("v:main:b", Loc(19,10)), Loc(19,5)),
-            instr.AssignI(expr.VarE("v:main:count", Loc(20,5)), expr.LitE(39, Loc(20,13)), Loc(20,5)),
-            instr.AssignI(expr.VarE("v:main:t.5", Loc(21,10)), expr.BinaryE(expr.VarE("v:main:count", Loc(21,10)), op.BO_ADD, expr.LitE(7, Loc(21,18))), Loc(21,10)),
-            instr.AssignI(expr.VarE("v:main:n", Loc(21,5)), expr.BinaryE(expr.VarE("v:main:t.5", Loc(21,10)), op.BO_DIV, expr.LitE(8, Loc(21,23))), Loc(21,5)),
-            instr.AssignI(expr.VarE("v:main:t.6", Loc(22,13)), expr.BinaryE(expr.VarE("v:main:count", Loc(22,13)), op.BO_MOD, expr.LitE(8, Loc(22,21))), Loc(22,13)),
-            instr.AssignI(expr.VarE("v:main:t.7", Loc(23,5)), expr.BinaryE(expr.VarE("v:main:t.6", Loc(22,13)), op.BO_EQ, expr.LitE(0, Loc(23,10)), ), ),
-            instr.CondI(expr.VarE("v:main:t.7", Loc(23,5)), ),
+          19: [
+            instr.AssignI(expr.VarE("v:main:n", Loc(14,24)), expr.BinaryE(expr.VarE("v:main:n", Loc(14,24)), op.BO_ADD, expr.LitE(1, Loc(14,24)), Loc(14,24)), Loc(14,24)),
           ],
 
-          6: [
-            instr.AssignI(expr.VarE("v:main:n", Loc(33,9)), expr.LitE(0, Loc(33,13)), Loc(33,9)),
+          18: [
+            instr.NopI(),
+          ],
+
+          17: [
+            instr.NopI(),
+          ],
+
+          16: [
+            instr.AssignI(expr.VarE("v:main:t.32", Loc(23,27)), expr.VarE("v:main:from", Loc(23,27)), Loc(23,27)),
+            instr.AssignI(expr.VarE("v:main:from", Loc(23,27)), expr.BinaryE(expr.VarE("v:main:from", Loc(23,27)), op.BO_ADD, expr.LitE(1, Loc(23,27)), Loc(23,27)), Loc(23,27)),
+            instr.AssignI(expr.VarE("v:main:t.33", Loc(23,26)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:t.32", Loc(23,27)), Loc(23,26)), Loc(23,26)),
+            instr.AssignI(expr.VarE("v:main:t.31", Loc(23,19)), expr.VarE("v:main:to", Loc(23,19)), Loc(23,19)),
+            instr.AssignI(expr.VarE("v:main:to", Loc(23,19)), expr.BinaryE(expr.VarE("v:main:to", Loc(23,19)), op.BO_ADD, expr.LitE(1, Loc(23,19)), Loc(23,19)), Loc(23,19)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:t.31", Loc(23,19)), Loc(23,18)), expr.VarE("v:main:t.33", Loc(23,26)), Loc(23,18)),
           ],
 
           5: [
@@ -122,6 +118,14 @@ irTUnit.TUnit(
             instr.CondI(expr.VarE("v:main:t.3", Loc(34,12)), Loc(34,9)),
           ],
 
+          3: [
+            instr.ReturnI(expr.LitE(1, Loc(35,20)), Loc(35,13)),
+          ],
+
+          2: [
+            instr.AssignI(expr.VarE("v:main:n", Loc(33,24)), expr.BinaryE(expr.VarE("v:main:n", Loc(33,24)), op.BO_ADD, expr.LitE(1, Loc(33,24)), Loc(33,24)), Loc(33,24)),
+          ],
+
           0: [
             instr.NopI(),
           ],
@@ -130,12 +134,35 @@ irTUnit.TUnit(
             instr.ReturnI(expr.LitE(0, Loc(36,12)), Loc(36,5)),
           ],
 
-          2: [
-            instr.AssignI(expr.VarE("v:main:n", Loc(33,24)), expr.BinaryE(expr.VarE("v:main:n", Loc(33,24)), op.BO_ADD, expr.LitE(1, Loc(33,24)), Loc(33,24)), Loc(33,24)),
+          6: [
+            instr.AssignI(expr.VarE("v:main:n", Loc(33,9)), expr.LitE(0, Loc(33,13)), Loc(33,9)),
           ],
 
-          3: [
-            instr.ReturnI(expr.LitE(1, Loc(35,20)), Loc(35,13)),
+          7: [
+            instr.AssignI(expr.VarE("v:main:from", Loc(18,5)), expr.VarE("v:main:a", Loc(18,12)), Loc(18,5)),
+            instr.AssignI(expr.VarE("v:main:to", Loc(19,5)), expr.VarE("v:main:b", Loc(19,10)), Loc(19,5)),
+            instr.AssignI(expr.VarE("v:main:count", Loc(20,5)), expr.LitE(39, Loc(20,13)), Loc(20,5)),
+            instr.AssignI(expr.VarE("v:main:t.5", Loc(21,10)), expr.BinaryE(expr.VarE("v:main:count", Loc(21,10)), op.BO_ADD, expr.LitE(7, Loc(21,18))), Loc(21,10)),
+            instr.AssignI(expr.VarE("v:main:n", Loc(21,5)), expr.BinaryE(expr.VarE("v:main:t.5", Loc(21,10)), op.BO_DIV, expr.LitE(8, Loc(21,23))), Loc(21,5)),
+            instr.AssignI(expr.VarE("v:main:t.6", Loc(22,13)), expr.BinaryE(expr.VarE("v:main:count", Loc(22,13)), op.BO_MOD, expr.LitE(8, Loc(22,21))), Loc(22,13)),
+            instr.AssignI(expr.VarE("v:main:t.7", Loc(23,5)), expr.BinaryE(expr.VarE("v:main:t.6", Loc(22,13)), op.BO_EQ, expr.LitE(0, Loc(23,10)), ), ),
+            instr.CondI(expr.VarE("v:main:t.7", Loc(23,5)), ),
+          ],
+
+          8: [
+            instr.AssignI(expr.VarE("v:main:n", Loc(31,24)), expr.BinaryE(expr.VarE("v:main:n", Loc(31,24)), op.BO_SUB, expr.LitE(1), Loc(31,22)), Loc(31,22)),
+            instr.AssignI(expr.VarE("v:main:t.8", Loc(31,22)), expr.VarE("v:main:n", Loc(31,24)), Loc(31,22)),
+            instr.AssignI(expr.VarE("v:main:t.9", Loc(31,22)), expr.BinaryE(expr.VarE("v:main:t.8", Loc(31,22)), op.BO_GT, expr.LitE(0, Loc(31,28))), Loc(31,22)),
+            instr.CondI(expr.VarE("v:main:t.9", Loc(31,22)), Loc(23,13)),
+          ],
+
+          9: [
+            instr.AssignI(expr.VarE("v:main:t.11", Loc(30,27)), expr.VarE("v:main:from", Loc(30,27)), Loc(30,27)),
+            instr.AssignI(expr.VarE("v:main:from", Loc(30,27)), expr.BinaryE(expr.VarE("v:main:from", Loc(30,27)), op.BO_ADD, expr.LitE(1, Loc(30,27)), Loc(30,27)), Loc(30,27)),
+            instr.AssignI(expr.VarE("v:main:t.12", Loc(30,26)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:t.11", Loc(30,27)), Loc(30,26)), Loc(30,26)),
+            instr.AssignI(expr.VarE("v:main:t.10", Loc(30,19)), expr.VarE("v:main:to", Loc(30,19)), Loc(30,19)),
+            instr.AssignI(expr.VarE("v:main:to", Loc(30,19)), expr.BinaryE(expr.VarE("v:main:to", Loc(30,19)), op.BO_ADD, expr.LitE(1, Loc(30,19)), Loc(30,19)), Loc(30,19)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:t.10", Loc(30,19)), Loc(30,18)), expr.VarE("v:main:t.12", Loc(30,26)), Loc(30,18)),
           ],
 
           10: [
@@ -145,6 +172,10 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:main:t.13", Loc(29,19)), expr.VarE("v:main:to", Loc(29,19)), Loc(29,19)),
             instr.AssignI(expr.VarE("v:main:to", Loc(29,19)), expr.BinaryE(expr.VarE("v:main:to", Loc(29,19)), op.BO_ADD, expr.LitE(1, Loc(29,19)), Loc(29,19)), Loc(29,19)),
             instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:t.13", Loc(29,19)), Loc(29,18)), expr.VarE("v:main:t.15", Loc(29,26)), Loc(29,18)),
+          ],
+
+          -1: [
+            instr.NopI(),
           ],
 
           11: [
@@ -190,37 +221,6 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:main:t.28", Loc(24,19)), expr.VarE("v:main:to", Loc(24,19)), Loc(24,19)),
             instr.AssignI(expr.VarE("v:main:to", Loc(24,19)), expr.BinaryE(expr.VarE("v:main:to", Loc(24,19)), op.BO_ADD, expr.LitE(1, Loc(24,19)), Loc(24,19)), Loc(24,19)),
             instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:t.28", Loc(24,19)), Loc(24,18)), expr.VarE("v:main:t.30", Loc(24,26)), Loc(24,18)),
-          ],
-
-          16: [
-            instr.AssignI(expr.VarE("v:main:t.32", Loc(23,27)), expr.VarE("v:main:from", Loc(23,27)), Loc(23,27)),
-            instr.AssignI(expr.VarE("v:main:from", Loc(23,27)), expr.BinaryE(expr.VarE("v:main:from", Loc(23,27)), op.BO_ADD, expr.LitE(1, Loc(23,27)), Loc(23,27)), Loc(23,27)),
-            instr.AssignI(expr.VarE("v:main:t.33", Loc(23,26)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:t.32", Loc(23,27)), Loc(23,26)), Loc(23,26)),
-            instr.AssignI(expr.VarE("v:main:t.31", Loc(23,19)), expr.VarE("v:main:to", Loc(23,19)), Loc(23,19)),
-            instr.AssignI(expr.VarE("v:main:to", Loc(23,19)), expr.BinaryE(expr.VarE("v:main:to", Loc(23,19)), op.BO_ADD, expr.LitE(1, Loc(23,19)), Loc(23,19)), Loc(23,19)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:t.31", Loc(23,19)), Loc(23,18)), expr.VarE("v:main:t.33", Loc(23,26)), Loc(23,18)),
-          ],
-
-          17: [
-            instr.NopI(),
-          ],
-
-          18: [
-            instr.NopI(),
-          ],
-
-          19: [
-            instr.AssignI(expr.VarE("v:main:n", Loc(14,24)), expr.BinaryE(expr.VarE("v:main:n", Loc(14,24)), op.BO_ADD, expr.LitE(1, Loc(14,24)), Loc(14,24)), Loc(14,24)),
-          ],
-
-          20: [
-            instr.AssignI(expr.ArrayE(expr.VarE("v:main:a", Loc(15,9)), [expr.VarE("v:main:n", Loc(15,11))], Loc(15,9)), expr.VarE("v:main:n", Loc(15,16)), Loc(15,9)),
-            instr.AssignI(expr.ArrayE(expr.VarE("v:main:b", Loc(16,9)), [expr.VarE("v:main:n", Loc(16,11))], Loc(16,9)), expr.LitE(0, Loc(16,16)), Loc(16,9)),
-          ],
-
-          21: [
-            instr.AssignI(expr.VarE("v:main:t.34", Loc(14,16)), expr.BinaryE(expr.VarE("v:main:n", Loc(14,16)), op.BO_LT, expr.LitE(39, Loc(14,20))), Loc(14,16)),
-            instr.CondI(expr.VarE("v:main:t.34", Loc(14,16)), Loc(14,5)),
           ],
 
         }, # basicBlocks end.

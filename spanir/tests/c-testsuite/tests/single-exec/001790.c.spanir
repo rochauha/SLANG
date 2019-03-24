@@ -17,62 +17,62 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.28": types.Int32,
     "v:main:t.27": types.Int32,
-    "v:main:t.26": types.Int32,
-    "v:main:t.24": types.Int32,
-    "v:main:t.23": types.Int32,
-    "v:memcmp:__s2": types.Ptr(to=types.Void),
-    "v:main:t.22": types.Ptr(to=types.Int8),
-    "v:strncmp:__s1": types.Ptr(to=types.Int8),
-    "v:strlen:__s": types.Ptr(to=types.Int8),
-    "v:main:t.4": types.Int32,
-    "v:memcpy:__src": types.Ptr(to=types.Void),
-    "v:main:t.6": types.Int32,
-    "v:main:t.17": types.Ptr(to=types.Int8),
-    "v:main:t.3": types.Int32,
-    "v:main:t.2": types.Int32,
-    "v:main:t.7": types.UInt32,
-    "v:strcpy:__dest": types.Ptr(to=types.Int8),
-    "v:main:t.9": types.Int32,
-    "v:strcat:__dest": types.Ptr(to=types.Int8),
     "v:main:t.25": types.Int32,
-    "v:strcmp:__s1": types.Ptr(to=types.Int8),
-    "v:strchr:__s": types.Ptr(to=types.Int8),
+    "v:memcmp:__n": types.UInt32,
     "v:memcmp:__s1": types.Ptr(to=types.Void),
+    "v:main:t.22": types.Ptr(to=types.Int8),
+    "v:main:t.24": types.Int32,
+    "v:memcpy:__n": types.UInt32,
+    "v:memcpy:__src": types.Ptr(to=types.Void),
+    "v:memcpy:__dest": types.Ptr(to=types.Void),
+    "v:main:t.21": types.Ptr(to=types.Int8),
+    "v:main:t.23": types.Int32,
+    "v:memset:__n": types.UInt32,
+    "v:memset:__c": types.Int32,
+    "v:main:t.28": types.Int32,
+    "v:memset:__s": types.Ptr(to=types.Void),
+    "v:main:t.20": types.Ptr(to=types.Int8),
+    "v:main:t.19": types.Ptr(to=types.Int8),
+    "v:main:t.18": types.Ptr(to=types.Void),
+    "v:main:t.5": types.Int32,
+    "v:main:t.4": types.Int32,
     "v:printf:__format": types.Ptr(to=types.Int8),
-    "v:main:t.10": types.Int32,
-    "v:strrchr:__c": types.Int32,
+    "v:strcmp:__s2": types.Ptr(to=types.Int8),
+    "v:main:t.6": types.Int32,
+    "v:main:t.16": types.Ptr(to=types.Int8),
+    "v:main:t.26": types.Int32,
+    "v:strncpy:__n": types.UInt32,
+    "v:main:t.2": types.Int32,
+    "v:strlen:__s": types.Ptr(to=types.Int8),
+    "v:main:t.1": types.Int32,
+    "v:strcpy:__dest": types.Ptr(to=types.Int8),
     "v:main:a": types.ConstSizeArray(of=types.Int8, dim=10),
     "v:strncpy:__src": types.Ptr(to=types.Int8),
-    "v:strncmp:__s2": types.Ptr(to=types.Int8),
-    "v:main:t.5": types.Int32,
-    "v:strncpy:__n": types.UInt32,
-    "v:memcmp:__n": types.UInt32,
-    "v:main:t.14": types.Int32,
-    "v:strcmp:__s2": types.Ptr(to=types.Int8),
-    "v:main:t.1": types.Int32,
-    "v:strchr:__c": types.Int32,
-    "v:main:t.8": types.Int32,
-    "v:main:t.11": types.Int32,
-    "v:main:t.13": types.Int32,
-    "v:strcat:__src": types.Ptr(to=types.Int8),
-    "v:main:t.15": types.Int32,
-    "v:main:t.16": types.Ptr(to=types.Int8),
-    "v:strncpy:__dest": types.Ptr(to=types.Int8),
-    "v:strrchr:__s": types.Ptr(to=types.Int8),
+    "v:main:t.3": types.Int32,
     "v:strcpy:__src": types.Ptr(to=types.Int8),
-    "v:main:t.18": types.Ptr(to=types.Void),
-    "v:strncmp:__n": types.UInt32,
-    "v:main:t.20": types.Ptr(to=types.Int8),
-    "v:memset:__s": types.Ptr(to=types.Void),
-    "v:memset:__c": types.Int32,
+    "v:strncpy:__dest": types.Ptr(to=types.Int8),
+    "v:memcmp:__s2": types.Ptr(to=types.Void),
+    "v:main:t.7": types.UInt32,
+    "v:strcat:__dest": types.Ptr(to=types.Int8),
+    "v:main:t.17": types.Ptr(to=types.Int8),
     "v:main:t.12": types.Int32,
-    "v:memset:__n": types.UInt32,
-    "v:main:t.21": types.Ptr(to=types.Int8),
-    "v:main:t.19": types.Ptr(to=types.Int8),
-    "v:memcpy:__dest": types.Ptr(to=types.Void),
-    "v:memcpy:__n": types.UInt32,
+    "v:strncmp:__n": types.UInt32,
+    "v:main:t.13": types.Int32,
+    "v:main:t.8": types.Int32,
+    "v:strchr:__c": types.Int32,
+    "v:main:t.9": types.Int32,
+    "v:main:t.10": types.Int32,
+    "v:strcat:__src": types.Ptr(to=types.Int8),
+    "v:main:t.11": types.Int32,
+    "v:strcmp:__s1": types.Ptr(to=types.Int8),
+    "v:main:t.14": types.Int32,
+    "v:main:t.15": types.Int32,
+    "v:strncmp:__s1": types.Ptr(to=types.Int8),
+    "v:strrchr:__s": types.Ptr(to=types.Int8),
+    "v:strchr:__s": types.Ptr(to=types.Int8),
+    "v:strncmp:__s2": types.Ptr(to=types.Int8),
+    "v:strrchr:__c": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -109,11 +109,43 @@ irTUnit.TUnit(
         }, # bbEdges end
       ), # f:memcpy() end. 
 
-    "f:printf":
+    "f:strrchr":
       obj.Func(
-        name = "f:printf",
-        paramNames = ["v:printf:__format"],
-        variadic = True,
+        name = "f:strrchr",
+        paramNames = ["v:strrchr:__s", "v:strrchr:__c"],
+        variadic = False,
+        returnType = types.Ptr(to=types.Int8),
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:strrchr() end. 
+
+    "f:strchr":
+      obj.Func(
+        name = "f:strchr",
+        paramNames = ["v:strchr:__s", "v:strchr:__c"],
+        variadic = False,
+        returnType = types.Ptr(to=types.Int8),
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:strchr() end. 
+
+    "f:strncmp":
+      obj.Func(
+        name = "f:strncmp",
+        paramNames = ["v:strncmp:__s1", "v:strncmp:__s2", "v:strncmp:__n"],
+        variadic = False,
         returnType = types.Int32,
 
         # Note: -1 is always start/entry BB. (REQUIRED)
@@ -123,7 +155,39 @@ irTUnit.TUnit(
 
         bbEdges= {
         }, # bbEdges end
-      ), # f:printf() end. 
+      ), # f:strncmp() end. 
+
+    "f:memset":
+      obj.Func(
+        name = "f:memset",
+        paramNames = ["v:memset:__s", "v:memset:__c", "v:memset:__n"],
+        variadic = False,
+        returnType = types.Ptr(to=types.Void),
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:memset() end. 
+
+    "f:strcat":
+      obj.Func(
+        name = "f:strcat",
+        paramNames = ["v:strcat:__dest", "v:strcat:__src"],
+        variadic = False,
+        returnType = types.Ptr(to=types.Int8),
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:strcat() end. 
 
     "f:strcpy":
       obj.Func(
@@ -157,6 +221,22 @@ irTUnit.TUnit(
         }, # bbEdges end
       ), # f:strcmp() end. 
 
+    "f:strlen":
+      obj.Func(
+        name = "f:strlen",
+        paramNames = ["v:strlen:__s"],
+        variadic = False,
+        returnType = types.UInt32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:strlen() end. 
+
     "f:main":
       obj.Func(
         name = "f:main",
@@ -167,6 +247,14 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
           1: [
             instr.CallI(expr.CallE(expr.FuncE("f:strcpy", Loc(8,4)), [expr.VarE("v:main:a", Loc(8,11)), expr.LitE("""hello""", Loc(8,14))], Loc(8,4))),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(9,4)), [expr.LitE("""%s
@@ -242,14 +330,6 @@ irTUnit.TUnit(
             instr.ReturnI(expr.LitE(0, Loc(42,11)), Loc(42,4)),
           ],
 
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
         }, # basicBlocks end.
 
         bbEdges= {
@@ -257,38 +337,6 @@ irTUnit.TUnit(
           (-1, 1, types.UnCondEdge),
         }, # bbEdges end
       ), # f:main() end. 
-
-    "f:strlen":
-      obj.Func(
-        name = "f:strlen",
-        paramNames = ["v:strlen:__s"],
-        variadic = False,
-        returnType = types.UInt32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:strlen() end. 
-
-    "f:strncmp":
-      obj.Func(
-        name = "f:strncmp",
-        paramNames = ["v:strncmp:__s1", "v:strncmp:__s2", "v:strncmp:__n"],
-        variadic = False,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:strncmp() end. 
 
     "f:strncpy":
       obj.Func(
@@ -306,12 +354,12 @@ irTUnit.TUnit(
         }, # bbEdges end
       ), # f:strncpy() end. 
 
-    "f:strcat":
+    "f:printf":
       obj.Func(
-        name = "f:strcat",
-        paramNames = ["v:strcat:__dest", "v:strcat:__src"],
-        variadic = False,
-        returnType = types.Ptr(to=types.Int8),
+        name = "f:printf",
+        paramNames = ["v:printf:__format"],
+        variadic = True,
+        returnType = types.Int32,
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
@@ -320,55 +368,7 @@ irTUnit.TUnit(
 
         bbEdges= {
         }, # bbEdges end
-      ), # f:strcat() end. 
-
-    "f:strchr":
-      obj.Func(
-        name = "f:strchr",
-        paramNames = ["v:strchr:__s", "v:strchr:__c"],
-        variadic = False,
-        returnType = types.Ptr(to=types.Int8),
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:strchr() end. 
-
-    "f:memset":
-      obj.Func(
-        name = "f:memset",
-        paramNames = ["v:memset:__s", "v:memset:__c", "v:memset:__n"],
-        variadic = False,
-        returnType = types.Ptr(to=types.Void),
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:memset() end. 
-
-    "f:strrchr":
-      obj.Func(
-        name = "f:strrchr",
-        paramNames = ["v:strrchr:__s", "v:strrchr:__c"],
-        variadic = False,
-        returnType = types.Ptr(to=types.Int8),
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:strrchr() end. 
+      ), # f:printf() end. 
 
   }, # end allObjs dict
 ) # irTUnit.TUnit() ends

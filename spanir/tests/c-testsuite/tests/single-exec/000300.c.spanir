@@ -19,16 +19,16 @@ irTUnit.TUnit(
   allVars = {
     "v:main:t.12": types.Int32,
     "v:main:t.11": types.Int32,
-    "v:main:t.4": types.Int32,
-    "v:main:t.3": types.Int32,
+    "v:main:t.10": types.Int32,
+    "v:main:t.9": types.Int32,
+    "v:main:t.8": types.Int32,
+    "v:main:t.7": types.Int32,
     "v:main:t.2": types.Int32,
     "v:main:t.1": types.Int32,
+    "v:main:t.3": types.Int32,
+    "v:main:t.4": types.Int32,
     "v:main:t.5": types.Int32,
     "v:main:t.6": types.Int32,
-    "v:main:t.7": types.Int32,
-    "v:main:t.8": types.Int32,
-    "v:main:t.9": types.Int32,
-    "v:main:t.10": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -63,40 +63,14 @@ irTUnit.TUnit(
             instr.ReturnI(expr.LitE(1, Loc(13,10)), Loc(13,3)),
           ],
 
-          3: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(20,13)), expr.CallE(expr.FuncE("f:f", Loc(20,13)), [], Loc(20,13)), Loc(20,13)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(20,6)), expr.BinaryE(expr.LitE(100, Loc(20,6)), op.BO_NE, expr.VarE("v:main:t.1", Loc(20,13))), Loc(20,6)),
-            instr.CondI(expr.VarE("v:main:t.2", Loc(20,6)), Loc(20,2)),
+          9: [
+            instr.AssignI(expr.VarE("v:main:t.7", Loc(14,13)), expr.CallE(expr.FuncE("f:f", Loc(14,13)), [], Loc(14,13)), Loc(14,13)),
+            instr.AssignI(expr.VarE("v:main:t.8", Loc(14,6)), expr.BinaryE(expr.LitE(1000, Loc(14,6)), op.BO_LT, expr.VarE("v:main:t.7", Loc(14,13))), Loc(14,6)),
+            instr.CondI(expr.VarE("v:main:t.8", Loc(14,6)), Loc(14,2)),
           ],
 
-          2: [
-            instr.ReturnI(expr.LitE(1, Loc(21,10)), Loc(21,3)),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(22,9)), Loc(22,2)),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          4: [
-            instr.ReturnI(expr.LitE(1, Loc(19,10)), Loc(19,3)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          5: [
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(18,14)), expr.CallE(expr.FuncE("f:f", Loc(18,14)), [], Loc(18,14)), Loc(18,14)),
-            instr.AssignI(expr.VarE("v:main:t.4", Loc(18,6)), expr.BinaryE(expr.LitE(1000, Loc(18,6)), op.BO_EQ, expr.VarE("v:main:t.3", Loc(18,14))), Loc(18,6)),
-            instr.CondI(expr.VarE("v:main:t.4", Loc(18,6)), Loc(18,2)),
-          ],
-
-          6: [
-            instr.ReturnI(expr.LitE(1, Loc(17,10)), Loc(17,3)),
+          8: [
+            instr.ReturnI(expr.LitE(1, Loc(15,10)), Loc(15,3)),
           ],
 
           7: [
@@ -105,14 +79,40 @@ irTUnit.TUnit(
             instr.CondI(expr.VarE("v:main:t.6", Loc(16,6)), Loc(16,2)),
           ],
 
-          8: [
-            instr.ReturnI(expr.LitE(1, Loc(15,10)), Loc(15,3)),
+          6: [
+            instr.ReturnI(expr.LitE(1, Loc(17,10)), Loc(17,3)),
           ],
 
-          9: [
-            instr.AssignI(expr.VarE("v:main:t.7", Loc(14,13)), expr.CallE(expr.FuncE("f:f", Loc(14,13)), [], Loc(14,13)), Loc(14,13)),
-            instr.AssignI(expr.VarE("v:main:t.8", Loc(14,6)), expr.BinaryE(expr.LitE(1000, Loc(14,6)), op.BO_LT, expr.VarE("v:main:t.7", Loc(14,13))), Loc(14,6)),
-            instr.CondI(expr.VarE("v:main:t.8", Loc(14,6)), Loc(14,2)),
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(22,9)), Loc(22,2)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          2: [
+            instr.ReturnI(expr.LitE(1, Loc(21,10)), Loc(21,3)),
+          ],
+
+          3: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(20,13)), expr.CallE(expr.FuncE("f:f", Loc(20,13)), [], Loc(20,13)), Loc(20,13)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(20,6)), expr.BinaryE(expr.LitE(100, Loc(20,6)), op.BO_NE, expr.VarE("v:main:t.1", Loc(20,13))), Loc(20,6)),
+            instr.CondI(expr.VarE("v:main:t.2", Loc(20,6)), Loc(20,2)),
+          ],
+
+          4: [
+            instr.ReturnI(expr.LitE(1, Loc(19,10)), Loc(19,3)),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(18,14)), expr.CallE(expr.FuncE("f:f", Loc(18,14)), [], Loc(18,14)), Loc(18,14)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(18,6)), expr.BinaryE(expr.LitE(1000, Loc(18,6)), op.BO_EQ, expr.VarE("v:main:t.3", Loc(18,14))), Loc(18,6)),
+            instr.CondI(expr.VarE("v:main:t.4", Loc(18,6)), Loc(18,2)),
           ],
 
         }, # basicBlocks end.
@@ -151,16 +151,16 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          1: [
-            instr.ReturnI(expr.LitE(100, Loc(4,9)), Loc(4,2)),
+          0: [
+            instr.NopI(),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          0: [
-            instr.NopI(),
+          1: [
+            instr.ReturnI(expr.LitE(100, Loc(4,9)), Loc(4,2)),
           ],
 
         }, # basicBlocks end.

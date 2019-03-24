@@ -18,10 +18,10 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.3": types.Int32,
-    "v:main:x": types.Int32,
-    "v:main:p": types.Ptr(to=types.Void),
     "v:main:t.2": types.Int32,
     "v:main:t.1": types.Ptr(to=types.Int32),
+    "v:main:p": types.Ptr(to=types.Void),
+    "v:main:x": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -36,22 +36,6 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(12,9)), Loc(12,2)),
-          ],
-
-          2: [
-            instr.ReturnI(expr.LitE(1, Loc(11,10)), Loc(11,3)),
-          ],
-
           3: [
             instr.AssignI(expr.VarE("v:main:x", Loc(7,2)), expr.LitE(2, Loc(7,6)), Loc(7,2)),
             instr.AssignI(expr.VarE("v:main:p", Loc(8,2)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:main:x", Loc(8,7)), Loc(8,6)), Loc(8,2)),
@@ -59,6 +43,22 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:main:t.2", Loc(10,5)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:t.1", Loc(10,7)), Loc(10,5)), Loc(10,5)),
             instr.AssignI(expr.VarE("v:main:t.3", Loc(10,5)), expr.BinaryE(expr.VarE("v:main:t.2", Loc(10,5)), op.BO_NE, expr.LitE(2, Loc(10,19))), Loc(10,5)),
             instr.CondI(expr.VarE("v:main:t.3", Loc(10,5)), Loc(10,2)),
+          ],
+
+          2: [
+            instr.ReturnI(expr.LitE(1, Loc(11,10)), Loc(11,3)),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(12,9)), Loc(12,2)),
           ],
 
         }, # basicBlocks end.

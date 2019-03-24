@@ -18,10 +18,10 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.3": types.Int32,
-    "v:printf:__format": types.Ptr(to=types.Int8),
-    "v:main:res": types.Int32,
     "v:main:t.1": types.Int32,
     "v:main:t.2": types.Int32,
+    "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:main:res": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -59,27 +59,16 @@ irTUnit.TUnit(
             instr.CondI(expr.VarE("v:main:t.3", Loc(7,9)), Loc(7,5)),
           ],
 
-          5: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(8,9)), [expr.LitE("""Error: 0 < -2147483648
-""", Loc(8,16))], Loc(8,9))),
-            instr.ReturnI(expr.LitE(1, Loc(9,16)), Loc(9,9)),
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(18,12)), Loc(18,5)),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          4: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(12,9)), expr.BinaryE(expr.LitE(2147483647, Loc(12,9)), op.BO_LT, expr.VarE("v:main:res", Loc(12,24))), Loc(12,9)),
-            instr.CondI(expr.VarE("v:main:t.1", Loc(12,9)), Loc(12,5)),
-          ],
-
           0: [
             instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(18,12)), Loc(18,5)),
           ],
 
           2: [
@@ -91,6 +80,17 @@ irTUnit.TUnit(
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(13,9)), [expr.LitE("""Error: 2147483647 < 0
 """, Loc(13,16))], Loc(13,9))),
             instr.ReturnI(expr.LitE(2, Loc(14,16)), Loc(14,9)),
+          ],
+
+          4: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(12,9)), expr.BinaryE(expr.LitE(2147483647, Loc(12,9)), op.BO_LT, expr.VarE("v:main:res", Loc(12,24))), Loc(12,9)),
+            instr.CondI(expr.VarE("v:main:t.1", Loc(12,9)), Loc(12,5)),
+          ],
+
+          5: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(8,9)), [expr.LitE("""Error: 0 < -2147483648
+""", Loc(8,16))], Loc(8,9))),
+            instr.ReturnI(expr.LitE(1, Loc(9,16)), Loc(9,9)),
           ],
 
         }, # basicBlocks end.

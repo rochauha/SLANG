@@ -1,0 +1,8 @@
+digraph {
+  node [shape=box]
+  END [label="[END]\lnop()\l"];
+  START [label="[START]\lnop()\l"];
+  BB1 [label="[BB1]\lbloggs.boris = 12\lbloggs.natasha = 34\lt.1 = bloggs.boris\lprintf('%d\n',t.1)\lt.2 = bloggs.natasha\lprintf('%d\n',t.2)\lt.3 = jones[0]\lt.3.boris = 12\lt.4 = jones[0]\lt.4.natasha = 34\lt.5 = jones[1]\lt.5.boris = 56\lt.6 = jones[1]\lt.6.natasha = 78\lt.7 = jones[0]\lt.8 = t.7.boris\lprintf('%d\n',t.8)\lt.9 = jones[0]\lt.10 = t.9.natasha\lprintf('%d\n',t.10)\lt.11 = jones[1]\lt.12 = t.11.boris\lprintf('%d\n',t.12)\lt.13 = jones[1]\lt.14 = t.13.natasha\lprintf('%d\n',t.14)\lreturn 0\l"];
+  START -> BB1;
+  BB1 -> END;
+}

@@ -17,10 +17,10 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.1": types.Int32,
     "v:printf:__format": types.Ptr(to=types.Int8),
-    "v:main:jim": types.Int32,
     "v:main:bob": types.Int32,
+    "v:main:t.1": types.Int32,
+    "v:main:jim": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -51,6 +51,14 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
           1: [
             instr.AssignI(expr.VarE("v:main:jim", Loc(8,14)), expr.LitE(21, Loc(8,20)), Loc(8,14)),
             instr.AssignI(expr.VarE("v:main:bob", Loc(9,5)), expr.VarE("v:main:jim", Loc(9,11)), Loc(9,5)),
@@ -62,14 +70,6 @@ irTUnit.TUnit(
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(12,5)), [expr.LitE("""jim: %d
 """, Loc(12,12)), expr.VarE("v:main:jim", Loc(12,25))], Loc(12,5))),
             instr.ReturnI(expr.LitE(0, Loc(13,12)), Loc(13,5)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
           ],
 
         }, # basicBlocks end.

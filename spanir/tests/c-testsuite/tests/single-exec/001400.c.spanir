@@ -17,15 +17,15 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:main:f": types.Struct("s:foo"),
     "v:f1:t.5": types.Int32,
     "v:main:t.4": types.Ptr(to=types.Struct("s:foo")),
-    "v:main:f": types.Struct("s:foo"),
-    "v:main:t.3": types.Ptr(to=types.Struct("s:foo")),
-    "v:main:t.2": types.Ptr(to=types.Struct("s:foo")),
     "v:f1:f": types.Struct("s:foo"),
-    "v:f1:n": types.Int32,
-    "v:f1:p": types.Ptr(to=types.Struct("s:foo")),
     "v:main:t.1": types.Int32,
+    "v:f1:p": types.Ptr(to=types.Struct("s:foo")),
+    "v:main:t.2": types.Ptr(to=types.Struct("s:foo")),
+    "v:f1:n": types.Int32,
+    "v:main:t.3": types.Ptr(to=types.Struct("s:foo")),
   }, # end allVars dict
 
   allObjs = {
@@ -53,6 +53,14 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
           1: [
             instr.AssignI(expr.MemberE(expr.VarE("v:main:f", Loc(20,8)), ["j"], Loc(20,8)), expr.LitE(1, Loc(20,14)), Loc(20,8)),
             instr.AssignI(expr.VarE("v:main:t.1", Loc(20,8)), expr.MemberE(expr.VarE("v:main:f", Loc(20,8)), ["j"], Loc(20,8)), Loc(20,8)),
@@ -63,14 +71,6 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:main:t.3", Loc(22,21)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:main:f", Loc(22,22)), Loc(22,21)), Loc(22,21)),
             instr.CallI(expr.CallE(expr.FuncE("f:f1", Loc(22,2)), [expr.VarE("v:main:f", Loc(22,5)), expr.VarE("v:main:t.4", Loc(22,8)), expr.LitE(2, Loc(22,12)), expr.LitE(1, Loc(22,15)), expr.VarE("v:main:f", Loc(22,18)), expr.VarE("v:main:t.3", Loc(22,21))], Loc(22,2))),
             instr.ReturnI(expr.LitE(0, Loc(24,9)), Loc(24,2)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
           ],
 
         }, # basicBlocks end.
@@ -91,11 +91,22 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          -1: [
-            instr.NopI(),
+          3: [
+            instr.AssignI(expr.VarE("v:f1:t.4", Loc(10,6)), expr.MemberE(expr.VarE("v:f1:f", Loc(10,6)), ["i"], Loc(10,6)), Loc(10,6)),
+            instr.AssignI(expr.VarE("v:f1:t.3", Loc(10,13)), expr.MemberE(expr.VarE("v:f1:p", Loc(10,13)), ["i"], Loc(10,13)), Loc(10,13)),
+            instr.AssignI(expr.VarE("v:f1:t.5", Loc(10,6)), expr.BinaryE(expr.VarE("v:f1:t.4", Loc(10,6)), op.BO_NE, expr.VarE("v:f1:t.3", Loc(10,13))), Loc(10,6)),
+            instr.CondI(expr.VarE("v:f1:t.5", Loc(10,6)), Loc(10,2)),
+          ],
+
+          2: [
+            instr.ReturnI(expr.LitE(0, Loc(11,10)), Loc(11,3)),
           ],
 
           0: [
+            instr.NopI(),
+          ],
+
+          -1: [
             instr.NopI(),
           ],
 
@@ -103,17 +114,6 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:f1:t.1", Loc(12,9)), expr.MemberE(expr.VarE("v:f1:p", Loc(12,9)), ["j"], Loc(12,9)), Loc(12,9)),
             instr.AssignI(expr.VarE("v:f1:t.2", Loc(12,9)), expr.BinaryE(expr.VarE("v:f1:t.1", Loc(12,9)), op.BO_ADD, expr.VarE("v:f1:n", Loc(12,16))), Loc(12,9)),
             instr.ReturnI(expr.VarE("v:f1:t.2", Loc(12,9)), Loc(12,2)),
-          ],
-
-          2: [
-            instr.ReturnI(expr.LitE(0, Loc(11,10)), Loc(11,3)),
-          ],
-
-          3: [
-            instr.AssignI(expr.VarE("v:f1:t.4", Loc(10,6)), expr.MemberE(expr.VarE("v:f1:f", Loc(10,6)), ["i"], Loc(10,6)), Loc(10,6)),
-            instr.AssignI(expr.VarE("v:f1:t.3", Loc(10,13)), expr.MemberE(expr.VarE("v:f1:p", Loc(10,13)), ["i"], Loc(10,13)), Loc(10,13)),
-            instr.AssignI(expr.VarE("v:f1:t.5", Loc(10,6)), expr.BinaryE(expr.VarE("v:f1:t.4", Loc(10,6)), op.BO_NE, expr.VarE("v:f1:t.3", Loc(10,13))), Loc(10,6)),
-            instr.CondI(expr.VarE("v:f1:t.5", Loc(10,6)), Loc(10,2)),
           ],
 
         }, # basicBlocks end.

@@ -49,18 +49,18 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          1: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(10,26)), expr.BinaryE(expr.LitE(14, Loc(10,26)), op.BO_ADD, expr.LitE(1, Loc(10,28))), Loc(10,26)),
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(10,5)), [expr.LitE("""n+1 = %d
-""", Loc(10,12)), expr.VarE("v:main:t.1", Loc(10,26))], Loc(10,5))),
+          0: [
+            instr.NopI(),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          0: [
-            instr.NopI(),
+          1: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(10,26)), expr.BinaryE(expr.LitE(14, Loc(10,26)), op.BO_ADD, expr.LitE(1, Loc(10,28))), Loc(10,26)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(10,5)), [expr.LitE("""n+1 = %d
+""", Loc(10,12)), expr.VarE("v:main:t.1", Loc(10,26))], Loc(10,5))),
           ],
 
         }, # basicBlocks end.

@@ -33,22 +33,6 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(13,16)), Loc(13,9)),
-          ],
-
-          2: [
-            instr.ReturnI(expr.LitE(1, Loc(12,24)), Loc(12,17)),
-          ],
-
           3: [
             instr.AssignI(expr.VarE("v:main:x", Loc(6,9)), expr.LitE(3, Loc(6,13)), Loc(6,9)),
             instr.AssignI(expr.VarE("v:main:x", Loc(7,9)), expr.UnaryE(op.UO_NOT, expr.VarE("v:main:x", Loc(7,14)), Loc(7,13)), Loc(7,9)),
@@ -57,6 +41,22 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:main:x", Loc(10,9)), expr.UnaryE(op.UO_MINUS, expr.VarE("v:main:x", Loc(10,14)), Loc(10,13)), Loc(10,9)),
             instr.AssignI(expr.VarE("v:main:t.1", Loc(11,12)), expr.BinaryE(expr.VarE("v:main:x", Loc(11,12)), op.BO_NE, expr.LitE(2, Loc(11,17))), Loc(11,12)),
             instr.CondI(expr.VarE("v:main:t.1", Loc(11,12)), Loc(11,9)),
+          ],
+
+          2: [
+            instr.ReturnI(expr.LitE(1, Loc(12,24)), Loc(12,17)),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(13,16)), Loc(13,9)),
           ],
 
         }, # basicBlocks end.

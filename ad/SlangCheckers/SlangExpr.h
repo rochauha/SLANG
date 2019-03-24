@@ -35,8 +35,10 @@ class SlangExpr {
     SlangExpr();
     SlangExpr(std::string e, bool compnd, QualType qt);
     std::string toString();
-    void addSlangStmt(std::string slangStmt);
-    void addSlangStmts(std::vector<std::string> &slangStmts);
+    void addSlangStmtBack(std::string slangStmt);
+    void addSlangStmtsBack(std::vector<std::string> &slangStmts);
+    void addSlangStmtsFront(std::vector<std::string> &slangStmts);
+    void addSlangStmtFront(std::string slangStmt);
     bool isNonTmpVar();
 };
 } // namespace slang

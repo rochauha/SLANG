@@ -1,0 +1,8 @@
+digraph {
+  node [shape=box]
+  END [label="[END]\lnop()\l"];
+  START [label="[START]\lnop()\l"];
+  BB1 [label="[BB1]\lfunction_pointer = &actual_function\lt.1 = (types.Ptr(FUNC_SIG, 1))function_pointer\la = t.1()\lprintf('%i\n',a)\lt.2 = (types.Ptr(FUNC_SIG, 1))function_pointer\lb = t.2()\lprintf('%i\n',b)\lreturn 0\l"];
+  BB1 -> END;
+  START -> BB1;
+}

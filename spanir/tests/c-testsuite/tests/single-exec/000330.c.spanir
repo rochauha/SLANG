@@ -17,14 +17,14 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.5": types.Int32,
-    "v:main:t.4": types.Int32,
-    "v:main:t.3": types.Int32,
-    "v:g": types.Int32,
-    "v:main:t.1": types.Int32,
-    "v:main:t.2": types.Int32,
     "v:main:t.6": types.Int32,
+    "v:main:t.5": types.Int32,
+    "v:main:t.1": types.Int32,
     "v:main:x": types.Int32,
+    "v:g": types.Int32,
+    "v:main:t.4": types.Int32,
+    "v:main:t.2": types.Int32,
+    "v:main:t.3": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -39,25 +39,32 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          -1: [
-            instr.NopI(),
+          21: [
+            instr.AssignI(expr.VarE("v:g", Loc(15,5)), expr.LitE(0, Loc(15,9)), Loc(15,5)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(16,5)), expr.LitE(0, Loc(16,9)), Loc(16,5)),
+            instr.CondI(expr.VarE("v:main:x", Loc(17,8)), Loc(17,8)),
           ],
 
-          9: [
-            instr.CondI(expr.VarE("v:g", Loc(31,9)), Loc(31,6)),
+          20: [
+            instr.AssignI(expr.VarE("v:main:t.6", Loc(17,13)), expr.CallE(expr.FuncE("f:effect", Loc(17,13)), [], Loc(17,13)), Loc(17,13)),
+            instr.CondI(expr.VarE("v:main:t.6", Loc(17,13)), Loc(17,5)),
           ],
 
-          8: [
-            instr.ReturnI(expr.LitE(5, Loc(32,14)), Loc(32,7)),
+          19: [
+            instr.ReturnI(expr.LitE(1, Loc(18,13)), Loc(18,6)),
           ],
 
-          7: [
-            instr.ReturnI(expr.LitE(6, Loc(34,13)), Loc(34,6)),
+          18: [
+            instr.CondI(expr.VarE("v:g", Loc(19,8)), Loc(19,5)),
           ],
 
-          6: [
-            instr.AssignI(expr.VarE("v:main:x", Loc(36,5)), expr.LitE(0, Loc(36,9)), Loc(36,5)),
-            instr.CondI(expr.VarE("v:main:x", Loc(37,8)), Loc(37,8)),
+          17: [
+            instr.ReturnI(expr.LitE(2, Loc(20,13)), Loc(20,6)),
+          ],
+
+          16: [
+            instr.AssignI(expr.VarE("v:main:x", Loc(21,5)), expr.LitE(1, Loc(21,9)), Loc(21,5)),
+            instr.CondI(expr.VarE("v:main:x", Loc(22,8)), Loc(22,8)),
           ],
 
           5: [
@@ -70,6 +77,14 @@ irTUnit.TUnit(
             instr.CondI(expr.VarE("v:main:t.1", Loc(38,9)), Loc(38,6)),
           ],
 
+          3: [
+            instr.ReturnI(expr.LitE(7, Loc(39,14)), Loc(39,7)),
+          ],
+
+          2: [
+            instr.ReturnI(expr.LitE(8, Loc(41,13)), Loc(41,6)),
+          ],
+
           0: [
             instr.NopI(),
           ],
@@ -78,17 +93,30 @@ irTUnit.TUnit(
             instr.ReturnI(expr.LitE(0, Loc(43,12)), Loc(43,5)),
           ],
 
-          2: [
-            instr.ReturnI(expr.LitE(8, Loc(41,13)), Loc(41,6)),
+          6: [
+            instr.AssignI(expr.VarE("v:main:x", Loc(36,5)), expr.LitE(0, Loc(36,9)), Loc(36,5)),
+            instr.CondI(expr.VarE("v:main:x", Loc(37,8)), Loc(37,8)),
           ],
 
-          3: [
-            instr.ReturnI(expr.LitE(7, Loc(39,14)), Loc(39,7)),
+          7: [
+            instr.ReturnI(expr.LitE(6, Loc(34,13)), Loc(34,6)),
+          ],
+
+          8: [
+            instr.ReturnI(expr.LitE(5, Loc(32,14)), Loc(32,7)),
+          ],
+
+          9: [
+            instr.CondI(expr.VarE("v:g", Loc(31,9)), Loc(31,6)),
           ],
 
           10: [
             instr.AssignI(expr.VarE("v:main:t.3", Loc(30,13)), expr.CallE(expr.FuncE("f:effect", Loc(30,13)), [], Loc(30,13)), Loc(30,13)),
             instr.CondI(expr.VarE("v:main:t.3", Loc(30,13)), Loc(30,5)),
+          ],
+
+          -1: [
+            instr.NopI(),
           ],
 
           11: [
@@ -113,34 +141,6 @@ irTUnit.TUnit(
           15: [
             instr.AssignI(expr.VarE("v:main:t.5", Loc(22,13)), expr.CallE(expr.FuncE("f:effect", Loc(22,13)), [], Loc(22,13)), Loc(22,13)),
             instr.CondI(expr.VarE("v:main:t.5", Loc(22,13)), Loc(22,5)),
-          ],
-
-          16: [
-            instr.AssignI(expr.VarE("v:main:x", Loc(21,5)), expr.LitE(1, Loc(21,9)), Loc(21,5)),
-            instr.CondI(expr.VarE("v:main:x", Loc(22,8)), Loc(22,8)),
-          ],
-
-          17: [
-            instr.ReturnI(expr.LitE(2, Loc(20,13)), Loc(20,6)),
-          ],
-
-          18: [
-            instr.CondI(expr.VarE("v:g", Loc(19,8)), Loc(19,5)),
-          ],
-
-          19: [
-            instr.ReturnI(expr.LitE(1, Loc(18,13)), Loc(18,6)),
-          ],
-
-          20: [
-            instr.AssignI(expr.VarE("v:main:t.6", Loc(17,13)), expr.CallE(expr.FuncE("f:effect", Loc(17,13)), [], Loc(17,13)), Loc(17,13)),
-            instr.CondI(expr.VarE("v:main:t.6", Loc(17,13)), Loc(17,5)),
-          ],
-
-          21: [
-            instr.AssignI(expr.VarE("v:g", Loc(15,5)), expr.LitE(0, Loc(15,9)), Loc(15,5)),
-            instr.AssignI(expr.VarE("v:main:x", Loc(16,5)), expr.LitE(0, Loc(16,9)), Loc(16,5)),
-            instr.CondI(expr.VarE("v:main:x", Loc(17,8)), Loc(17,8)),
           ],
 
         }, # basicBlocks end.
@@ -193,17 +193,17 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          1: [
-            instr.AssignI(expr.VarE("v:g", Loc(6,2)), expr.LitE(1, Loc(6,6)), Loc(6,2)),
-            instr.ReturnI(expr.LitE(1, Loc(7,9)), Loc(7,2)),
+          0: [
+            instr.NopI(),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          0: [
-            instr.NopI(),
+          1: [
+            instr.AssignI(expr.VarE("v:g", Loc(6,2)), expr.LitE(1, Loc(6,6)), Loc(6,2)),
+            instr.ReturnI(expr.LitE(1, Loc(7,9)), Loc(7,2)),
           ],
 
         }, # basicBlocks end.

@@ -1,0 +1,8 @@
+digraph {
+  node [shape=box]
+  END [label="[END]\lnop()\l"];
+  START [label="[START]\lnop()\l"];
+  BB1 [label="[BB1]\la = 42\lb = &a\lt.1 = *b\lprintf('a = %d\n',t.1)\lbolshevic.a = 12\lbolshevic.b = 34\lbolshevic.c = 56\lt.2 = bolshevic.a\lprintf('bolshevic.a = %d\n',t.2)\lt.3 = bolshevic.b\lprintf('bolshevic.b = %d\n',t.3)\lt.4 = bolshevic.c\lprintf('bolshevic.c = %d\n',t.4)\ltsar = &bolshevic\lt.5 = tsar.a\lprintf('tsar->a = %d\n',t.5)\lt.6 = tsar.b\lprintf('tsar->b = %d\n',t.6)\lt.7 = tsar.c\lprintf('tsar->c = %d\n',t.7)\lb = &bolshevic.b\lt.8 = *b\lprintf('bolshevic.b = %d\n',t.8)\lreturn 0\l"];
+  START -> BB1;
+  BB1 -> END;
+}

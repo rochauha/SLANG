@@ -1,0 +1,18 @@
+digraph {
+  node [shape=box]
+  BB1 [label="[BB1]\lreturn 0\l"];
+  START [label="[START]\lnop()\l"];
+  END [label="[END]\lnop()\l"];
+  BB2 [label="[BB2]\lreturn 1\l"];
+  BB3 [label="[BB3]\lt.2 = &x[1]\lt.1 = &x[0]\lt.3 = t.2 - t.1\lt.4 = t.3 != 1\lif (t.4)\l"];
+  BB4 [label="[BB4]\lreturn 1\l"];
+  BB5 [label="[BB5]\lx[1] = 7\lp = &x[0]\lp = p + 1\lt.5 = *p\lt.6 = t.5 != 7\lif (t.6)\l"];
+  BB5 -> BB3 [color=red, penwidth=2];
+  BB1 -> END;
+  BB3 -> BB1 [color=red, penwidth=2];
+  START -> BB5;
+  BB3 -> END [color=green, penwidth=2];
+  BB4 -> END;
+  BB2 -> END;
+  BB5 -> BB4 [color=green, penwidth=2];
+}

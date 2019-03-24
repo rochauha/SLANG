@@ -20,12 +20,12 @@ irTUnit.TUnit(
     "v:main:t.8": types.Int32,
     "v:main:t.7": types.Int32,
     "v:main:t.6": types.Int32,
+    "v:main:t.1": types.Int32,
+    "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:main:t.3": types.Int32,
+    "v:main:t.2": types.Int32,
     "v:main:t.4": types.Int32,
     "v:main:t.5": types.Int32,
-    "v:printf:__format": types.Ptr(to=types.Int8),
-    "v:main:t.1": types.Int32,
-    "v:main:t.2": types.Int32,
-    "v:main:t.3": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -49,36 +49,14 @@ irTUnit.TUnit(
             instr.NopI(),
           ],
 
-          15: [
-            instr.CondI(expr.LitE(1), Loc(17,19)),
-            instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(17,4))),
-            instr.AssignI(expr.VarE("v:main:t.7", Loc(18,19)), expr.CallE(expr.FuncE("f:fred", Loc(18,19)), [], Loc(18,19)), Loc(18,19)),
-            instr.CondI(expr.VarE("v:main:t.7", Loc(18,19)), Loc(18,19)),
+          5: [
+            instr.CondI(expr.LitE(1), Loc(22,19)),
+            instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(22,4))),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(23,19)), expr.CallE(expr.FuncE("f:joe", Loc(23,19)), [], Loc(23,19)), Loc(23,19)),
+            instr.CondI(expr.VarE("v:main:t.2", Loc(23,19)), Loc(23,19)),
           ],
 
-          14: [
-            instr.NopI(),
-          ],
-
-          13: [
-            instr.CondI(expr.LitE(1), Loc(18,19)),
-            instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(18,4))),
-            instr.AssignI(expr.VarE("v:main:t.6", Loc(19,19)), expr.CallE(expr.FuncE("f:joe", Loc(19,19)), [], Loc(19,19)), Loc(19,19)),
-            instr.CondI(expr.VarE("v:main:t.6", Loc(19,19)), Loc(19,19)),
-          ],
-
-          12: [
-            instr.NopI(),
-          ],
-
-          11: [
-            instr.CondI(expr.LitE(1), Loc(19,19)),
-            instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(19,4))),
-            instr.AssignI(expr.VarE("v:main:t.5", Loc(20,19)), expr.CallE(expr.FuncE("f:joe", Loc(20,19)), [], Loc(20,19)), Loc(20,19)),
-            instr.CondI(expr.VarE("v:main:t.5", Loc(20,19)), Loc(20,19)),
-          ],
-
-          10: [
+          4: [
             instr.NopI(),
           ],
 
@@ -93,29 +71,14 @@ irTUnit.TUnit(
             instr.NopI(),
           ],
 
-          1: [
-            instr.CondI(expr.LitE(1), Loc(24,19)),
-            instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(24,4))),
-            instr.ReturnI(expr.LitE(0, Loc(26,11)), Loc(26,4)),
-          ],
-
           0: [
             instr.NopI(),
           ],
 
-          4: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          5: [
-            instr.CondI(expr.LitE(1), Loc(22,19)),
-            instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(22,4))),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(23,19)), expr.CallE(expr.FuncE("f:joe", Loc(23,19)), [], Loc(23,19)), Loc(23,19)),
-            instr.CondI(expr.VarE("v:main:t.2", Loc(23,19)), Loc(23,19)),
+          1: [
+            instr.CondI(expr.LitE(1), Loc(24,19)),
+            instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(24,4))),
+            instr.ReturnI(expr.LitE(0, Loc(26,11)), Loc(26,4)),
           ],
 
           6: [
@@ -138,6 +101,43 @@ irTUnit.TUnit(
             instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(20,4))),
             instr.AssignI(expr.VarE("v:main:t.4", Loc(21,19)), expr.CallE(expr.FuncE("f:fred", Loc(21,19)), [], Loc(21,19)), Loc(21,19)),
             instr.CondI(expr.VarE("v:main:t.4", Loc(21,19)), Loc(21,19)),
+          ],
+
+          10: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          11: [
+            instr.CondI(expr.LitE(1), Loc(19,19)),
+            instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(19,4))),
+            instr.AssignI(expr.VarE("v:main:t.5", Loc(20,19)), expr.CallE(expr.FuncE("f:joe", Loc(20,19)), [], Loc(20,19)), Loc(20,19)),
+            instr.CondI(expr.VarE("v:main:t.5", Loc(20,19)), Loc(20,19)),
+          ],
+
+          12: [
+            instr.NopI(),
+          ],
+
+          13: [
+            instr.CondI(expr.LitE(1), Loc(18,19)),
+            instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(18,4))),
+            instr.AssignI(expr.VarE("v:main:t.6", Loc(19,19)), expr.CallE(expr.FuncE("f:joe", Loc(19,19)), [], Loc(19,19)), Loc(19,19)),
+            instr.CondI(expr.VarE("v:main:t.6", Loc(19,19)), Loc(19,19)),
+          ],
+
+          14: [
+            instr.NopI(),
+          ],
+
+          15: [
+            instr.CondI(expr.LitE(1), Loc(17,19)),
+            instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(17,4))),
+            instr.AssignI(expr.VarE("v:main:t.7", Loc(18,19)), expr.CallE(expr.FuncE("f:fred", Loc(18,19)), [], Loc(18,19)), Loc(18,19)),
+            instr.CondI(expr.VarE("v:main:t.7", Loc(18,19)), Loc(18,19)),
           ],
 
         }, # basicBlocks end.
@@ -182,18 +182,18 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(11,4)), [expr.LitE("""joe
-""", Loc(11,11))], Loc(11,4))),
-            instr.ReturnI(expr.LitE(1, Loc(12,11)), Loc(12,4)),
+          0: [
+            instr.NopI(),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          0: [
-            instr.NopI(),
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(11,4)), [expr.LitE("""joe
+""", Loc(11,11))], Loc(11,4))),
+            instr.ReturnI(expr.LitE(1, Loc(12,11)), Loc(12,4)),
           ],
 
         }, # basicBlocks end.
@@ -203,6 +203,38 @@ irTUnit.TUnit(
           (-1, 1, types.UnCondEdge),
         }, # bbEdges end
       ), # f:joe() end. 
+
+    "f:fred":
+      obj.Func(
+        name = "f:fred",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(5,4)), [expr.LitE("""fred
+""", Loc(5,11))], Loc(5,4))),
+            instr.ReturnI(expr.LitE(0, Loc(6,11)), Loc(6,4)),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:fred() end. 
 
     "f:printf":
       obj.Func(
@@ -219,38 +251,6 @@ irTUnit.TUnit(
         bbEdges= {
         }, # bbEdges end
       ), # f:printf() end. 
-
-    "f:fred":
-      obj.Func(
-        name = "f:fred",
-        paramNames = [],
-        variadic = False,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(5,4)), [expr.LitE("""fred
-""", Loc(5,11))], Loc(5,4))),
-            instr.ReturnI(expr.LitE(0, Loc(6,11)), Loc(6,4)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
-      ), # f:fred() end. 
 
   }, # end allObjs dict
 ) # irTUnit.TUnit() ends

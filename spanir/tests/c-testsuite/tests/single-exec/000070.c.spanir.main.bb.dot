@@ -1,0 +1,29 @@
+digraph {
+  node [shape=box]
+  BB10 [label="[BB10]\lx = 1\lx = 10\l"];
+  BB9 [label="[BB9]\lif (x)\l"];
+  BB8 [label="[BB8]\lx = x - 1\l"];
+  BB7 [label="[BB7]\lif (x)\l"];
+  BB6 [label="[BB6]\lreturn 1\l"];
+  BB1 [label="[BB1]\lreturn x\l"];
+  START [label="[START]\lnop()\l"];
+  END [label="[END]\lnop()\l"];
+  BB2 [label="[BB2]\lnop()\l"];
+  BB3 [label="[BB3]\lx = x - 1\l"];
+  BB4 [label="[BB4]\lif (x)\l"];
+  BB5 [label="[BB5]\lx = 10\l"];
+  BB4 -> BB1 [color=red, penwidth=2];
+  BB1 -> END;
+  BB2 -> BB4;
+  BB10 -> BB9;
+  START -> BB10;
+  BB7 -> BB6 [color=green, penwidth=2];
+  BB9 -> BB8 [color=green, penwidth=2];
+  BB4 -> BB3 [color=green, penwidth=2];
+  BB7 -> BB5 [color=red, penwidth=2];
+  BB9 -> BB7 [color=red, penwidth=2];
+  BB6 -> END;
+  BB3 -> BB2;
+  BB5 -> BB4;
+  BB8 -> BB9;
+}

@@ -17,13 +17,13 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.4": types.Int32,
-    "v:x": types.Int32,
-    "v:main:t.3": types.Int32,
-    "v:p": types.Ptr(to=types.Int32),
     "v:main:t.1": types.Int32,
+    "v:main:t.4": types.Int32,
+    "v:p": types.Ptr(to=types.Int32),
     "v:main:t.2": types.Int32,
     "v:y": types.Int32,
+    "v:main:t.3": types.Int32,
+    "v:x": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -47,25 +47,16 @@ irTUnit.TUnit(
             instr.ReturnI(expr.LitE(1, Loc(9,10)), Loc(9,3)),
           ],
 
-          5: [
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(10,6)), expr.BinaryE(expr.VarE("v:y", Loc(10,6)), op.BO_NE, expr.LitE(6, Loc(10,11))), Loc(10,6)),
-            instr.CondI(expr.VarE("v:main:t.3", Loc(10,6)), Loc(10,2)),
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(14,9)), Loc(14,2)),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          4: [
-            instr.ReturnI(expr.LitE(2, Loc(11,10)), Loc(11,3)),
-          ],
-
           0: [
             instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(14,9)), Loc(14,2)),
           ],
 
           2: [
@@ -76,6 +67,15 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:main:t.1", Loc(12,6)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:p", Loc(12,7)), Loc(12,6)), Loc(12,6)),
             instr.AssignI(expr.VarE("v:main:t.2", Loc(12,6)), expr.BinaryE(expr.VarE("v:main:t.1", Loc(12,6)), op.BO_NE, expr.LitE(5, Loc(12,12))), Loc(12,6)),
             instr.CondI(expr.VarE("v:main:t.2", Loc(12,6)), Loc(12,2)),
+          ],
+
+          4: [
+            instr.ReturnI(expr.LitE(2, Loc(11,10)), Loc(11,3)),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(10,6)), expr.BinaryE(expr.VarE("v:y", Loc(10,6)), op.BO_NE, expr.LitE(6, Loc(10,11))), Loc(10,6)),
+            instr.CondI(expr.VarE("v:main:t.3", Loc(10,6)), Loc(10,2)),
           ],
 
         }, # basicBlocks end.

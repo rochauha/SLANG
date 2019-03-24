@@ -50,7 +50,7 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          1: [
+          0: [
             instr.NopI(),
           ],
 
@@ -58,7 +58,7 @@ irTUnit.TUnit(
             instr.NopI(),
           ],
 
-          0: [
+          1: [
             instr.NopI(),
           ],
 

@@ -18,8 +18,8 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.1": types.Int32,
-    "v:printf:__format": types.Ptr(to=types.Int8),
     "v:main:Count": types.Int32,
+    "v:printf:__format": types.Ptr(to=types.Int8),
   }, # end allVars dict
 
   allObjs = {
@@ -63,24 +63,16 @@ irTUnit.TUnit(
             instr.NopI(),
           ],
 
-          5: [
-            instr.NopI(),
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(12,11)), Loc(12,4)),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          4: [
-            instr.NopI(),
-          ],
-
           0: [
             instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(12,11)), Loc(12,4)),
           ],
 
           2: [
@@ -89,6 +81,14 @@ irTUnit.TUnit(
 
           3: [
             instr.CallI(expr.CallE(NullStmt, [NullStmt, ERROR:convertExpr], Loc(9,7))),
+          ],
+
+          4: [
+            instr.NopI(),
+          ],
+
+          5: [
+            instr.NopI(),
           ],
 
         }, # basicBlocks end.

@@ -18,8 +18,8 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.2": types.Int32,
-    "v:main:t.1": types.Ptr(to=types.FuncSig(returnType=types.Int32)),
     "v:main:v": types.Struct("s:S"),
+    "v:main:t.1": types.Ptr(to=types.FuncSig(returnType=types.Int32)),
   }, # end allVars dict
 
   allObjs = {
@@ -43,19 +43,19 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          1: [
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:v", Loc(17,2)), ["fptr"], Loc(17,2)), expr.FuncE("f:foo", Loc(17,11)), Loc(17,2)),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(18,9)), expr.MemberE(expr.VarE("v:main:v", Loc(18,9)), ["fptr"], Loc(18,9)), Loc(18,9)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(18,9)), expr.CallE(expr.VarE("v:main:t.1", Loc(18,9)), [], Loc(18,9)), Loc(18,9)),
-            instr.ReturnI(expr.VarE("v:main:t.2", Loc(18,9)), Loc(18,2)),
+          0: [
+            instr.NopI(),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          0: [
-            instr.NopI(),
+          1: [
+            instr.AssignI(expr.MemberE(expr.VarE("v:main:v", Loc(17,2)), ["fptr"], Loc(17,2)), expr.FuncE("f:foo", Loc(17,11)), Loc(17,2)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(18,9)), expr.MemberE(expr.VarE("v:main:v", Loc(18,9)), ["fptr"], Loc(18,9)), Loc(18,9)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(18,9)), expr.CallE(expr.VarE("v:main:t.1", Loc(18,9)), [], Loc(18,9)), Loc(18,9)),
+            instr.ReturnI(expr.VarE("v:main:t.2", Loc(18,9)), Loc(18,2)),
           ],
 
         }, # basicBlocks end.
@@ -76,16 +76,16 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(9,9)), Loc(9,2)),
+          0: [
+            instr.NopI(),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          0: [
-            instr.NopI(),
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(9,9)), Loc(9,2)),
           ],
 
         }, # basicBlocks end.

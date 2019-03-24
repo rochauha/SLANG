@@ -39,47 +39,47 @@ irTUnit.TUnit(
             instr.NopI(),
           ],
 
-          3: [
-            instr.CondI(ERROR:convertExpr, Loc(6,2)),
-          ],
-
-          2: [
-            instr.ReturnI(expr.LitE(2, Loc(7,10)), Loc(7,3)),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(8,9)), Loc(8,2)),
-          ],
-
-          0: [
+          9: [
             instr.NopI(),
-          ],
-
-          4: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          5: [
-            instr.NopI(),
-          ],
-
-          6: [
-            instr.NopI(),
-          ],
-
-          7: [
-            instr.ReturnI(expr.LitE(1, Loc(5,10)), Loc(5,3)),
           ],
 
           8: [
             instr.CondI(ERROR:convertExpr, Loc(4,2)),
           ],
 
-          9: [
+          7: [
+            instr.ReturnI(expr.LitE(1, Loc(5,10)), Loc(5,3)),
+          ],
+
+          6: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(8,9)), Loc(8,2)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          2: [
+            instr.ReturnI(expr.LitE(2, Loc(7,10)), Loc(7,3)),
+          ],
+
+          3: [
+            instr.CondI(ERROR:convertExpr, Loc(6,2)),
+          ],
+
+          4: [
+            instr.NopI(),
+          ],
+
+          5: [
             instr.NopI(),
           ],
 

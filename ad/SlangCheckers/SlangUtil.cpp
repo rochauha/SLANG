@@ -17,6 +17,7 @@
 
 // TRACE < DEBUG < INFO < EVENT < ERROR < FATAL
 uint8_t slang::Util::LogLevel = SLANG_TRACE_LEVEL;
+uint32_t slang::Util::id = 0;
 
 std::string slang::Util::getDateTimeString() {
     time_t rawtime;
@@ -80,3 +81,15 @@ int slang::Util::appendToFile(std::string fileName, std::string content) {
 
     return 1;
 }
+
+uint32_t slang::Util::getNextUniqueId() {
+    id += 1;
+    return id;
+}
+
+std::string slang::Util::getNextUniqueIdStr() {
+    std::stringstream ss;
+    ss << getNextUniqueId();
+    return ss.str();
+}
+

@@ -472,7 +472,7 @@ class Struct(Type):
   """A structure type."""
   def __init__(self,
                name: StructNameT,
-               fields: List[Tuple[str, Type]],
+               fields: List[Tuple[str, Type]] = None,
                loc: Optional[Loc] = None,
   ) -> None:
     super().__init__(STRUCT_TC)
@@ -504,7 +504,7 @@ class Union(Type):
   """A union type."""
   def __init__(self,
                name: UnionNameT,
-               fields: List[Tuple[str, Type]],
+               fields: List[Tuple[str, Type]] = None,
                loc: Optional[Loc] = None,
   ) -> None:
     super().__init__(UNION_TC)

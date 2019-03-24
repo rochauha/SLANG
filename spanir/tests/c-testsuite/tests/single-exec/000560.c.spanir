@@ -18,10 +18,10 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:d": types.Int32,
-    "v:main:a": types.Int32,
-    "v:printf:__format": types.Ptr(to=types.Int8),
     "v:main:c": types.Int32,
     "v:main:b": types.Int32,
+    "v:main:a": types.Int32,
+    "v:printf:__format": types.Ptr(to=types.Int8),
   }, # end allVars dict
 
   allObjs = {
@@ -52,6 +52,14 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
           1: [
             instr.AssignI(expr.VarE("v:main:a", Loc(6,4)), expr.LitE(42, Loc(6,8)), Loc(6,4)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(7,4)), [expr.LitE("""%d
@@ -64,14 +72,6 @@ irTUnit.TUnit(
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(13,4)), [expr.LitE("""%d, %d
 """, Loc(13,11)), expr.VarE("v:main:c", Loc(13,23)), expr.VarE("v:main:d", Loc(13,26))], Loc(13,4))),
             instr.ReturnI(expr.LitE(0, Loc(15,11)), Loc(15,4)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
           ],
 
         }, # basicBlocks end.

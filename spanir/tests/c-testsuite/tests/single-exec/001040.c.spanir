@@ -17,10 +17,10 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.1": types.Int32,
     "v:main:t.2": types.Int32,
-    "v:main:x": types.Int32,
+    "v:main:t.1": types.Int32,
     "v:main:l": types.Int32,
+    "v:main:x": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -35,28 +35,16 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          5: [
-            instr.AssignI(expr.VarE("v:main:x", Loc(9,2)), expr.LitE(0, Loc(9,6)), Loc(9,2)),
-            instr.AssignI(expr.VarE("v:main:l", Loc(10,2)), expr.LitE(0, Loc(10,6)), Loc(10,2)),
-            instr.AssignI(expr.VarE("v:main:x", Loc(12,2)), ERROR:convertUnaryOp, Loc(12,2)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(13,6)), expr.BinaryE(expr.VarE("v:main:x", Loc(13,6)), op.BO_NE, expr.LitE(4294967295, Loc(13,11))), Loc(13,6)),
-            instr.CondI(expr.VarE("v:main:t.2", Loc(13,6)), Loc(13,2)),
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(21,9)), Loc(21,2)),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          4: [
-            instr.ReturnI(expr.LitE(1, Loc(14,10)), Loc(14,3)),
-          ],
-
           0: [
             instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(21,9)), Loc(21,2)),
           ],
 
           2: [
@@ -67,6 +55,18 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:main:l", Loc(16,2)), ERROR:convertUnaryOp, Loc(16,2)),
             instr.AssignI(expr.VarE("v:main:t.1", Loc(17,6)), expr.BinaryE(expr.VarE("v:main:x", Loc(17,6)), op.BO_NE, expr.LitE(18446744073709551615, Loc(17,11))), Loc(17,6)),
             instr.CondI(expr.VarE("v:main:t.1", Loc(17,6)), Loc(17,2)),
+          ],
+
+          4: [
+            instr.ReturnI(expr.LitE(1, Loc(14,10)), Loc(14,3)),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:main:x", Loc(9,2)), expr.LitE(0, Loc(9,6)), Loc(9,2)),
+            instr.AssignI(expr.VarE("v:main:l", Loc(10,2)), expr.LitE(0, Loc(10,6)), Loc(10,2)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(12,2)), ERROR:convertUnaryOp, Loc(12,2)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(13,6)), expr.BinaryE(expr.VarE("v:main:x", Loc(13,6)), op.BO_NE, expr.LitE(4294967295, Loc(13,11))), Loc(13,6)),
+            instr.CondI(expr.VarE("v:main:t.2", Loc(13,6)), Loc(13,2)),
           ],
 
         }, # basicBlocks end.

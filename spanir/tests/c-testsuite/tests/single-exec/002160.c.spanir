@@ -19,160 +19,160 @@ irTUnit.TUnit(
   allVars = {
     "v:phdr": types.Struct("s:pkthdr"),
     "v:guv": types.Union("u:UV"),
-    "v:gsu": types.Struct("s:SU"),
+    "v:gw": types.Struct("s:W"),
     "v:sinit16": types.ConstSizeArray(of=types.Struct("s:SS"), dim=2),
+    "v:gv3": types.Struct("s:V"),
     "v:gv2": types.Struct("s:V"),
-    "v:guv3": types.Union("u:UV"),
     "v:gv": types.Struct("s:V"),
+    "v:guv3": types.Union("u:UV"),
     "v:gs3": types.Struct("s:S"),
-    "v:gu3": types.Struct("s:U"),
+    "v:gu4": types.Struct("s:U"),
     "v:gu2": types.Struct("s:U"),
-    "v:gs2": types.Struct("s:S"),
+    "v:gu": types.Struct("s:U"),
+    "v:gt": types.Struct("s:T"),
     "v:gs": types.Struct("s:S"),
-    "v:test_zero_init:b": types.Struct("s:SEB"),
-    "v:i": types.Int32,
-    "v:test_compound_with_relocs:p": types.Ptr(to=types.FuncSig(returnType=types.Void, paramTypes=[])),
+    "v:ce": types.Struct("s:contains_empty"),
+    "v:test_zero_init:d": types.Struct("s:SED"),
+    "v:table": types.ConstSizeArray(of=types.Ptr(to=types.FuncSig(returnType=types.Void, paramTypes=[])), dim=3),
+    "v:test_multi_relocs:i": types.Int32,
+    "v:test_compound_with_relocs:local_wrap": types.ConstSizeArray(of=types.Struct("s:Wrap"), dim=2),
     "v:foo:t.79": types.Ptr(to=types.UInt8),
-    "v:foo:t.76": types.Ptr(to=types.Struct("s:T")),
-    "v:foo:t.74": types.Ptr(to=types.Struct("s:V")),
+    "v:foo:t.77": types.Ptr(to=types.UInt8),
+    "v:foo:t.75": types.Ptr(to=types.UInt8),
     "v:foo:t.73": types.Ptr(to=types.UInt8),
     "v:foo:t.72": types.Ptr(to=types.Struct("s:V")),
     "v:foo:t.71": types.Ptr(to=types.UInt8),
+    "v:test_compound_with_relocs:p": types.Ptr(to=types.FuncSig(returnType=types.Void, paramTypes=[])),
     "v:foo:t.70": types.Ptr(to=types.Struct("s:V")),
-    "v:main:t.26": types.Ptr(to=types.UInt8),
-    "v:main:t.25": types.Ptr(to=types.ConstSizeArray(of=types.Struct("s:SS"), dim=2)),
-    "v:main:t.24": types.Ptr(to=types.UInt8),
-    "v:gu4": types.Struct("s:U"),
-    "v:main:t.23": types.Ptr(to=types.Struct("s:V")),
-    "v:foo:lu4": types.Struct("s:U"),
-    "v:main:t.31": types.Ptr(to=types.Union("u:UV")),
+    "v:gsu": types.Struct("s:SU"),
+    "v:foo:t.69": types.Ptr(to=types.UInt8),
+    "v:foo:t.68": types.Ptr(to=types.Struct("s:S")),
+    "v:foo:t.67": types.Ptr(to=types.UInt8),
+    "v:gs2": types.Struct("s:S"),
+    "v:foo:t.66": types.Ptr(to=types.Struct("s:U")),
+    "v:foo:t.65": types.Ptr(to=types.UInt8),
+    "v:foo:t.64": types.Ptr(to=types.Struct("s:U")),
+    "v:foo:t.63": types.Ptr(to=types.UInt8),
+    "v:foo:t.62": types.Ptr(to=types.Struct("s:U")),
+    "v:foo:t.60": types.Ptr(to=types.Struct("s:U")),
+    "v:foo:t.59": types.Ptr(to=types.UInt8),
+    "v:foo:t.58": types.Ptr(to=types.Struct("s:S")),
+    "v:foo:t.57": types.Ptr(to=types.UInt8),
+    "v:foo:t.56": types.Ptr(to=types.Struct("s:U")),
+    "v:foo:t.55": types.Ptr(to=types.UInt8),
+    "v:foo:t.54": types.Ptr(to=types.Struct("s:U")),
+    "v:foo:t.53": types.Ptr(to=types.UInt8),
+    "v:foo:t.74": types.Ptr(to=types.Struct("s:V")),
+    "v:foo:lu3": types.Struct("s:U"),
     "v:main:t.18": types.Ptr(to=types.UInt8),
-    "v:gv3": types.Struct("s:V"),
-    "v:main:t.17": types.Ptr(to=types.Struct("s:S")),
-    "v:foo:lu21": types.Struct("s:U"),
-    "v:main:t.19": types.Ptr(to=types.Struct("s:V")),
-    "v:foo:pls": types.Ptr(to=types.Struct("s:S")),
-    "v:test_multi_relocs:i": types.Int32,
     "v:main:t.16": types.Ptr(to=types.UInt8),
     "v:main:t.15": types.Ptr(to=types.Struct("s:U")),
-    "v:main:t.14": types.Ptr(to=types.UInt8),
-    "v:main:t.12": types.Ptr(to=types.UInt8),
-    "v:main:t.21": types.Ptr(to=types.Struct("s:V")),
-    "v:foo:w": types.Ptr(to=types.Struct("s:W")),
-    "v:foo:phdr_": types.Ptr(to=types.Struct("s:pkthdr")),
-    "v:foo:ls3": types.Struct("s:S"),
-    "v:foo:t.51": types.Ptr(to=types.UInt8),
-    "v:main:t.2": types.Ptr(to=types.UInt8),
-    "v:main:t.1": types.Ptr(to=types.Struct("s:contains_empty")),
-    "v:main:t.13": types.Ptr(to=types.Struct("s:U")),
-    "v:foo:flow": types.Struct("s:flowi6"),
-    "v:foo:t.75": types.Ptr(to=types.UInt8),
-    "v:foo:ls": types.Struct("s:S"),
-    "v:test_zero_init:d": types.Struct("s:SED"),
-    "v:foo:t.46": types.Ptr(to=types.Struct("s:S")),
-    "v:gw": types.Struct("s:W"),
-    "v:main:t.8": types.Ptr(to=types.UInt8),
-    "v:global": types.Int32,
-    "v:foo:lu22": types.Struct("s:U"),
-    "v:test_zero_init:c": types.Struct("s:SEC"),
-    "v:main:t.3": types.Ptr(to=types.Struct("s:S")),
-    "v:main:t.20": types.Ptr(to=types.UInt8),
-    "v:foo:phdr": types.Ptr(to=types.Struct("s:pkthdr")),
-    "v:main:t.7": types.Ptr(to=types.Struct("s:T")),
-    "v:test_compound_with_relocs:local_wrap": types.ConstSizeArray(of=types.Struct("s:Wrap"), dim=2),
-    "v:print_:size": types.Int32,
+    "v:foo:ls21": types.Struct("s:S"),
+    "v:foo:t.76": types.Ptr(to=types.Struct("s:T")),
     "v:foo:ls2": types.Struct("s:S"),
-    "v:foo:t.77": types.Ptr(to=types.UInt8),
-    "v:print_:name": types.Ptr(to=types.Int8),
-    "v:foo:t.78": types.Ptr(to=types.Struct("s:flowi6")),
     "v:foo:lu2": types.Struct("s:U"),
-    "v:print_:p": types.Ptr(to=types.UInt8),
-    "v:main:t.11": types.Ptr(to=types.Struct("s:U")),
-    "v:main:t.5": types.Ptr(to=types.Struct("s:S")),
-    "v:foo:lt": types.Struct("s:T"),
-    "v:foo:lu3": types.Struct("s:U"),
-    "v:main:t.4": types.Ptr(to=types.UInt8),
-    "v:gu": types.Struct("s:U"),
-    "v:foo:lu": types.Struct("s:U"),
-    "v:main:t.33": types.UInt8,
-    "v:main:t.6": types.Ptr(to=types.UInt8),
-    "v:main:t.9": types.Ptr(to=types.Struct("s:U")),
-    "v:main:t.22": types.Ptr(to=types.UInt8),
-    "v:ce": types.Struct("s:contains_empty"),
+    "v:main:t.19": types.Ptr(to=types.Struct("s:V")),
     "v:main:t.10": types.Ptr(to=types.UInt8),
-    "v:main:t.27": types.Ptr(to=types.Struct("s:W")),
+    "v:guv2": types.Union("u:UV"),
+    "v:foo:lu1": types.Struct("s:U"),
+    "v:main:t.1": types.Ptr(to=types.Struct("s:contains_empty")),
+    "v:foo:lu22": types.Struct("s:U"),
+    "v:main:t.8": types.Ptr(to=types.UInt8),
+    "v:print_:name": types.Ptr(to=types.Int8),
+    "v:global_wrap": types.ConstSizeArray(of=types.Struct("s:Wrap"), dim=2),
+    "v:main:t.7": types.Ptr(to=types.Struct("s:T")),
+    "v:print_:size": types.Int32,
+    "v:i": types.Int32,
+    "v:main:t.13": types.Ptr(to=types.Struct("s:U")),
+    "v:main:t.17": types.Ptr(to=types.Struct("s:S")),
+    "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:main:t.9": types.Ptr(to=types.Struct("s:U")),
+    "v:print_:p": types.Ptr(to=types.UInt8),
+    "v:test_zero_init:b": types.Struct("s:SEB"),
+    "v:foo:t.51": types.Ptr(to=types.UInt8),
+    "v:gu3": types.Struct("s:U"),
+    "v:foo:lu21": types.Struct("s:U"),
+    "v:main:t.3": types.Ptr(to=types.Struct("s:S")),
+    "v:foo:pls": types.Ptr(to=types.Struct("s:S")),
+    "v:main:t.24": types.Ptr(to=types.UInt8),
+    "v:foo:ls": types.Struct("s:S"),
+    "v:global": types.Int32,
+    "v:main:t.6": types.Ptr(to=types.UInt8),
     "v:main:t.28": types.Ptr(to=types.UInt8),
-    "v:foo:t.50": types.Ptr(to=types.Struct("s:T")),
+    "v:foo:lt2": types.Struct("s:T"),
+    "v:foo:phdr_": types.Ptr(to=types.Struct("s:pkthdr")),
+    "v:main:t.22": types.Ptr(to=types.UInt8),
+    "v:main:t.4": types.Ptr(to=types.UInt8),
+    "v:main:t.2": types.Ptr(to=types.UInt8),
+    "v:foo:t.78": types.Ptr(to=types.Struct("s:flowi6")),
+    "v:foo:flow": types.Struct("s:flowi6"),
+    "v:main:t.12": types.Ptr(to=types.UInt8),
+    "v:foo:t.52": types.Ptr(to=types.Struct("s:U")),
+    "v:foo:w": types.Ptr(to=types.Struct("s:W")),
+    "v:foo:ls3": types.Struct("s:S"),
+    "v:foo:lt": types.Struct("s:T"),
+    "v:main:t.5": types.Ptr(to=types.Struct("s:S")),
+    "v:main:t.35": types.Ptr(to=types.UInt8),
+    "v:foo:lu": types.Struct("s:U"),
+    "v:main:t.20": types.Ptr(to=types.UInt8),
+    "v:foo:lu4": types.Struct("s:U"),
+    "v:main:t.21": types.Ptr(to=types.Struct("s:V")),
+    "v:test_zero_init:c": types.Struct("s:SEC"),
+    "v:main:t.23": types.Ptr(to=types.Struct("s:V")),
+    "v:main:t.25": types.Ptr(to=types.ConstSizeArray(of=types.Struct("s:SS"), dim=2)),
+    "v:test_correct_filling:x": types.Ptr(to=types.Struct("s:SEA")),
+    "v:main:t.26": types.Ptr(to=types.UInt8),
+    "v:main:t.27": types.Ptr(to=types.Struct("s:W")),
+    "v:main:t.14": types.Ptr(to=types.UInt8),
+    "v:foo:lv": types.Struct("s:V"),
+    "v:main:t.38": types.Ptr(to=types.Union("u:UV")),
     "v:main:t.29": types.Ptr(to=types.Struct("s:SU")),
     "v:main:t.30": types.Ptr(to=types.UInt8),
+    "v:foo:phdr": types.Ptr(to=types.Struct("s:pkthdr")),
+    "v:main:t.31": types.Ptr(to=types.Union("u:UV")),
     "v:main:t.32": types.Ptr(to=types.UInt8),
-    "v:gt": types.Struct("s:T"),
-    "v:global_wrap": types.ConstSizeArray(of=types.Struct("s:Wrap"), dim=2),
+    "v:main:t.33": types.UInt8,
+    "v:foo:t.61": types.Ptr(to=types.UInt8),
+    "v:foo:lv2": types.Struct("s:V"),
     "v:main:t.34": types.Ptr(to=types.UInt8),
-    "v:main:t.35": types.Ptr(to=types.UInt8),
     "v:main:t.36": types.Ptr(to=types.Union("u:UV")),
-    "v:foo:ls21": types.Struct("s:S"),
     "v:main:t.37": types.Ptr(to=types.UInt8),
     "v:foo:lv3": types.Struct("s:V"),
-    "v:table": types.ConstSizeArray(of=types.Ptr(to=types.FuncSig(returnType=types.Void, paramTypes=[])), dim=3),
-    "v:foo:t.52": types.Ptr(to=types.Struct("s:U")),
-    "v:main:t.38": types.Ptr(to=types.Union("u:UV")),
+    "v:main:t.41": types.Ptr(to=types.UInt8),
     "v:main:t.39": types.Ptr(to=types.UInt8),
     "v:main:t.40": types.Ptr(to=types.Struct("s:pkthdr")),
-    "v:main:t.41": types.Ptr(to=types.UInt8),
     "v:main:t.42": types.Ptr(to=types.Struct("s:pkthdr")),
-    "v:printf:__format": types.Ptr(to=types.Int8),
     "v:main:t.43": types.Ptr(to=types.Struct("s:W")),
+    "v:main:t.11": types.Ptr(to=types.Struct("s:U")),
+    "v:foo:elt": types.Int32,
     "v:foo:t.44": types.Struct("s:T"),
     "v:foo:t.45": types.ConstSizeArray(of=types.UInt8, dim=16),
-    "v:foo:lv": types.Struct("s:V"),
+    "v:foo:t.46": types.Ptr(to=types.Struct("s:S")),
     "v:foo:t.47": types.Ptr(to=types.UInt8),
     "v:foo:t.48": types.Ptr(to=types.Struct("s:S")),
     "v:foo:t.49": types.Ptr(to=types.UInt8),
-    "v:foo:lt2": types.Struct("s:T"),
-    "v:foo:t.53": types.Ptr(to=types.UInt8),
-    "v:foo:t.54": types.Ptr(to=types.Struct("s:U")),
-    "v:foo:t.55": types.Ptr(to=types.UInt8),
-    "v:foo:t.56": types.Ptr(to=types.Struct("s:U")),
-    "v:foo:t.57": types.Ptr(to=types.UInt8),
-    "v:foo:t.58": types.Ptr(to=types.Struct("s:S")),
-    "v:foo:t.59": types.Ptr(to=types.UInt8),
-    "v:foo:t.60": types.Ptr(to=types.Struct("s:U")),
-    "v:foo:t.61": types.Ptr(to=types.UInt8),
-    "v:foo:t.62": types.Ptr(to=types.Struct("s:U")),
-    "v:foo:t.63": types.Ptr(to=types.UInt8),
-    "v:guv2": types.Union("u:UV"),
-    "v:foo:t.64": types.Ptr(to=types.Struct("s:U")),
-    "v:test_correct_filling:x": types.Ptr(to=types.Struct("s:SEA")),
-    "v:foo:t.65": types.Ptr(to=types.UInt8),
-    "v:foo:lu1": types.Struct("s:U"),
-    "v:foo:t.66": types.Ptr(to=types.Struct("s:U")),
-    "v:foo:t.67": types.Ptr(to=types.UInt8),
-    "v:foo:elt": types.Int32,
-    "v:foo:t.68": types.Ptr(to=types.Struct("s:S")),
-    "v:foo:lv2": types.Struct("s:V"),
-    "v:foo:t.69": types.Ptr(to=types.UInt8),
+    "v:foo:t.50": types.Ptr(to=types.Struct("s:T")),
   }, # end allVars dict
 
   allObjs = {
-    "s:3":
-      types.Struct(
-        name = "s:3",
+    "u:UV":
+      types.Union(
+        name = "u:UV",
+        fields = [
+          ("F-1", types.Struct("s:3")),
+          ("s", types.Struct("s:S")),
+        ],
+        loc = Loc(82,1),
+      ),
+
+    "u:UU":
+      types.Union(
+        name = "u:UU",
         fields = [
           ("a", types.UInt8),
           ("b", types.UInt8),
         ],
-        loc = Loc(83,5),
-      ),
-
-    "s:SEC":
-      types.Struct(
-        name = "s:SEC",
-        fields = [
-          ("a", types.Struct("s:SEA")),
-          ("r", types.ConstSizeArray(of=types.Int32, dim=0)),
-        ],
-        loc = Loc(225,1),
+        loc = Loc(70,1),
       ),
 
     "s:SS":
@@ -185,36 +185,6 @@ irTUnit.TUnit(
         loc = Loc(14,1),
       ),
 
-    "s:SEB":
-      types.Struct(
-        name = "s:SEB",
-        fields = [
-          ("a", types.Struct("s:SEA")),
-          ("r", types.ConstSizeArray(of=types.Int32, dim=1)),
-        ],
-        loc = Loc(224,1),
-      ),
-
-    "s:T":
-      types.Struct(
-        name = "s:T",
-        fields = [
-          ("s", types.ConstSizeArray(of=types.UInt8, dim=16)),
-          ("a", types.UInt8),
-        ],
-        loc = Loc(22,1),
-      ),
-
-    "s:SU":
-      types.Struct(
-        name = "s:SU",
-        fields = [
-          ("u", types.Union("u:UU")),
-          ("c", types.UInt8),
-        ],
-        loc = Loc(74,1),
-      ),
-
     "s:2":
       types.Struct(
         name = "s:2",
@@ -223,15 +193,12 @@ irTUnit.TUnit(
         loc = Loc(2,9),
       ),
 
-    "s:contains_empty":
+    "":
       types.Struct(
-        name = "s:contains_empty",
+        name = "",
         fields = [
-          ("a", types.UInt8),
-          ("empty", types.Struct("s:2")),
-          ("b", types.UInt8),
         ],
-        loc = Loc(3,1),
+        loc = ,
       ),
 
     "s:S":
@@ -245,43 +212,24 @@ irTUnit.TUnit(
         loc = Loc(16,1),
       ),
 
-    "s:SED":
+    "s:W":
       types.Struct(
-        name = "s:SED",
+        name = "s:W",
         fields = [
-          ("a", types.Struct("s:SEA")),
-          ("r", types.IncompleteArray(of=types.Int32)),
+          ("t", types.Struct("s:V")),
+          ("s", types.IncompleteArray(of=types.Struct("s:S"))),
         ],
-        loc = Loc(226,1),
+        loc = Loc(43,1),
       ),
 
-    "s:flowi6":
+    "s:T":
       types.Struct(
-        name = "s:flowi6",
+        name = "s:T",
         fields = [
-          ("saddr", types.Struct("s:in6_addr")),
-          ("daddr", types.Struct("s:in6_addr")),
-        ],
-        loc = Loc(105,1),
-      ),
-
-    "u:UU":
-      types.Union(
-        name = "u:UU",
-        fields = [
+          ("s", types.ConstSizeArray(of=types.UInt8, dim=16)),
           ("a", types.UInt8),
-          ("b", types.UInt8),
         ],
-        loc = Loc(70,1),
-      ),
-
-    "s:Wrap":
-      types.Struct(
-        name = "s:Wrap",
-        fields = [
-          ("func", types.Ptr(to=types.Void)),
-        ],
-        loc = Loc(113,1),
+        loc = Loc(22,1),
       ),
 
     "s:V":
@@ -295,28 +243,6 @@ irTUnit.TUnit(
         loc = Loc(36,1),
       ),
 
-    "s:W":
-      types.Struct(
-        name = "s:W",
-        fields = [
-          ("t", types.Struct("s:V")),
-          ("s", types.IncompleteArray(of=types.Struct("s:S"))),
-        ],
-        loc = Loc(43,1),
-      ),
-
-    "s:SEA":
-      types.Struct(
-        name = "s:SEA",
-        fields = [
-          ("i", types.Int32),
-          ("j", types.Int32),
-          ("k", types.Int32),
-          ("l", types.Int32),
-        ],
-        loc = Loc(223,1),
-      ),
-
     "s:in6_addr":
       types.Struct(
         name = "s:in6_addr",
@@ -326,34 +252,13 @@ irTUnit.TUnit(
         loc = Loc(99,1),
       ),
 
-    "u:1":
-      types.Union(
-        name = "u:1",
-        fields = [
-          ("u6_addr8", types.ConstSizeArray(of=types.UInt8, dim=16)),
-          ("u6_addr16", types.ConstSizeArray(of=types.UInt32, dim=8)),
-        ],
-        loc = Loc(100,5),
-      ),
-
-    "s:pkthdr":
+    "s:Wrap":
       types.Struct(
-        name = "s:pkthdr",
+        name = "s:Wrap",
         fields = [
-          ("daddr", types.Struct("s:in6_addr")),
-          ("saddr", types.Struct("s:in6_addr")),
+          ("func", types.Ptr(to=types.Void)),
         ],
-        loc = Loc(108,1),
-      ),
-
-    "u:UV":
-      types.Union(
-        name = "u:UV",
-        fields = [
-          ("F-1", types.Struct("s:3")),
-          ("s", types.Struct("s:S")),
-        ],
-        loc = Loc(82,1),
+        loc = Loc(113,1),
       ),
 
     "s:U":
@@ -368,14 +273,247 @@ irTUnit.TUnit(
         loc = Loc(28,1),
       ),
 
-    "":
+    "s:3":
       types.Struct(
-        name = "",
+        name = "s:3",
         fields = [
+          ("a", types.UInt8),
+          ("b", types.UInt8),
         ],
-        loc = ,
+        loc = Loc(83,5),
       ),
 
+    "s:SU":
+      types.Struct(
+        name = "s:SU",
+        fields = [
+          ("u", types.Union("u:UU")),
+          ("c", types.UInt8),
+        ],
+        loc = Loc(74,1),
+      ),
+
+    "s:SEC":
+      types.Struct(
+        name = "s:SEC",
+        fields = [
+          ("a", types.Struct("s:SEA")),
+          ("r", types.ConstSizeArray(of=types.Int32, dim=0)),
+        ],
+        loc = Loc(225,1),
+      ),
+
+    "s:contains_empty":
+      types.Struct(
+        name = "s:contains_empty",
+        fields = [
+          ("a", types.UInt8),
+          ("empty", types.Struct("s:2")),
+          ("b", types.UInt8),
+        ],
+        loc = Loc(3,1),
+      ),
+
+    "s:flowi6":
+      types.Struct(
+        name = "s:flowi6",
+        fields = [
+          ("saddr", types.Struct("s:in6_addr")),
+          ("daddr", types.Struct("s:in6_addr")),
+        ],
+        loc = Loc(105,1),
+      ),
+
+    "s:SEA":
+      types.Struct(
+        name = "s:SEA",
+        fields = [
+          ("i", types.Int32),
+          ("j", types.Int32),
+          ("k", types.Int32),
+          ("l", types.Int32),
+        ],
+        loc = Loc(223,1),
+      ),
+
+    "s:pkthdr":
+      types.Struct(
+        name = "s:pkthdr",
+        fields = [
+          ("daddr", types.Struct("s:in6_addr")),
+          ("saddr", types.Struct("s:in6_addr")),
+        ],
+        loc = Loc(108,1),
+      ),
+
+    "s:SEB":
+      types.Struct(
+        name = "s:SEB",
+        fields = [
+          ("a", types.Struct("s:SEA")),
+          ("r", types.ConstSizeArray(of=types.Int32, dim=1)),
+        ],
+        loc = Loc(224,1),
+      ),
+
+    "u:1":
+      types.Union(
+        name = "u:1",
+        fields = [
+          ("u6_addr8", types.ConstSizeArray(of=types.UInt8, dim=16)),
+          ("u6_addr16", types.ConstSizeArray(of=types.UInt32, dim=8)),
+        ],
+        loc = Loc(100,5),
+      ),
+
+    "s:SED":
+      types.Struct(
+        name = "s:SED",
+        fields = [
+          ("a", types.Struct("s:SEA")),
+          ("r", types.IncompleteArray(of=types.Int32)),
+        ],
+        loc = Loc(226,1),
+      ),
+
+
+    "f:test_zero_init":
+      obj.Func(
+        name = "f:test_zero_init",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.2", Loc(245,22)), ["i"], Loc(245,22)), ERROR:convertExpr),
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.2", Loc(245,22)), ["j"], Loc(245,22)), expr.LitE(5, Loc(245,27))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.2", Loc(245,22)), ["k"], Loc(245,22)), ERROR:convertExpr),
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.2", Loc(245,22)), ["l"], Loc(245,22)), ERROR:convertExpr),
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.1", Loc(245,18)), ["a"], Loc(245,18)), expr.VarE("v:test_zero_init:t.2", Loc(245,22))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.1", Loc(245,18)), ["r"], Loc(245,18)), ERROR:convertExpr),
+            instr.AssignI(expr.VarE("v:test_zero_init:b", Loc(245,3)), expr.VarE("v:test_zero_init:t.1", Loc(245,18)), Loc(245,3)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.4", Loc(246,22)), ["i"], Loc(246,22)), ERROR:convertExpr),
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.4", Loc(246,22)), ["j"], Loc(246,22)), expr.LitE(5, Loc(246,27))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.4", Loc(246,22)), ["k"], Loc(246,22)), ERROR:convertExpr),
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.4", Loc(246,22)), ["l"], Loc(246,22)), ERROR:convertExpr),
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.3", Loc(246,18)), ["a"], Loc(246,18)), expr.VarE("v:test_zero_init:t.4", Loc(246,22))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.3", Loc(246,18)), ["r"], Loc(246,18)), ERROR:convertExpr),
+            instr.AssignI(expr.VarE("v:test_zero_init:c", Loc(246,3)), expr.VarE("v:test_zero_init:t.3", Loc(246,18)), Loc(246,3)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.6", Loc(247,22)), ["i"], Loc(247,22)), ERROR:convertExpr),
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.6", Loc(247,22)), ["j"], Loc(247,22)), expr.LitE(5, Loc(247,27))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.6", Loc(247,22)), ["k"], Loc(247,22)), ERROR:convertExpr),
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.6", Loc(247,22)), ["l"], Loc(247,22)), ERROR:convertExpr),
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.5", Loc(247,18)), ["a"], Loc(247,18)), expr.VarE("v:test_zero_init:t.6", Loc(247,22))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.5", Loc(247,18)), ["r"], Loc(247,18)), ERROR:convertExpr),
+            instr.AssignI(expr.VarE("v:test_zero_init:d", Loc(247,3)), expr.VarE("v:test_zero_init:t.5", Loc(247,18)), Loc(247,3)),
+            instr.AssignI(expr.VarE("v:test_zero_init:t.7", Loc(248,25)), expr.UnaryE(op.UO_ADDROF, expr.MemberE(expr.VarE("v:test_zero_init:b", Loc(248,26)), ["a"], Loc(248,26)), Loc(248,25)), Loc(248,25)),
+            instr.CallI(expr.CallE(expr.FuncE("f:test_correct_filling", Loc(248,3)), [expr.VarE("v:test_zero_init:t.7", Loc(248,25))], Loc(248,3))),
+            instr.AssignI(expr.VarE("v:test_zero_init:t.8", Loc(249,25)), expr.UnaryE(op.UO_ADDROF, expr.MemberE(expr.VarE("v:test_zero_init:c", Loc(249,26)), ["a"], Loc(249,26)), Loc(249,25)), Loc(249,25)),
+            instr.CallI(expr.CallE(expr.FuncE("f:test_correct_filling", Loc(249,3)), [expr.VarE("v:test_zero_init:t.8", Loc(249,25))], Loc(249,3))),
+            instr.AssignI(expr.VarE("v:test_zero_init:t.9", Loc(250,25)), expr.UnaryE(op.UO_ADDROF, expr.MemberE(expr.VarE("v:test_zero_init:d", Loc(250,26)), ["a"], Loc(250,26)), Loc(250,25)), Loc(250,25)),
+            instr.CallI(expr.CallE(expr.FuncE("f:test_correct_filling", Loc(250,3)), [expr.VarE("v:test_zero_init:t.9", Loc(250,25))], Loc(250,3))),
+            instr.ReturnI(expr.LitE(0, Loc(251,10)), Loc(251,3)),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:test_zero_init() end. 
+
+    "f:test_multi_relocs":
+      obj.Func(
+        name = "f:test_multi_relocs",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          4: [
+            instr.AssignI(expr.VarE("v:test_multi_relocs:i", Loc(217,8)), expr.LitE(0, Loc(217,12)), Loc(217,8)),
+          ],
+
+          3: [
+            instr.AssignI(expr.VarE("v:test_multi_relocs:t.2", Loc(217,40)), expr.ArrayE(expr.VarE("v:table", Loc(217,40)), [expr.LitE(0, Loc(217,46))], Loc(217,40)), Loc(217,40)),
+            instr.AssignI(expr.VarE("v:test_multi_relocs:t.3", Loc(217,19)), expr.BinaryE(expr.LitE(24, Loc(217,19)), op.BO_DIV, expr.LitE(8, Loc(217,33))), Loc(217,19)),
+            instr.AssignI(expr.VarE("v:test_multi_relocs:t.4", Loc(217,15)), expr.BinaryE(expr.VarE("v:test_multi_relocs:i", Loc(217,15)), op.BO_LT, expr.VarE("v:test_multi_relocs:t.3", Loc(217,19))), Loc(217,15)),
+            instr.CondI(expr.VarE("v:test_multi_relocs:t.4", Loc(217,15)), Loc(217,3)),
+          ],
+
+          2: [
+            instr.AssignI(expr.VarE("v:test_multi_relocs:t.1", Loc(218,5)), expr.ArrayE(expr.VarE("v:table", Loc(218,5)), [expr.VarE("v:test_multi_relocs:i", Loc(218,11))], Loc(218,5)), Loc(218,5)),
+            instr.CallI(expr.CallE(expr.VarE("v:test_multi_relocs:t.1", Loc(218,5)), [], Loc(218,5))),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.AssignI(expr.VarE("v:test_multi_relocs:i", Loc(217,51)), expr.BinaryE(expr.VarE("v:test_multi_relocs:i", Loc(217,51)), op.BO_ADD, expr.LitE(1, Loc(217,51)), Loc(217,51)), Loc(217,51)),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 3, types.UnCondEdge),
+          (2, 1, types.UnCondEdge),
+          (3, 2, types.TrueEdge),
+          (3, 0, types.FalseEdge),
+          (4, 3, types.UnCondEdge),
+          (-1, 4, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:test_multi_relocs() end. 
+
+    "f:sys_two":
+      obj.Func(
+        name = "f:sys_two",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(204,22)), [expr.LitE("""two
+""", Loc(204,29))], Loc(204,22))),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:sys_two() end. 
 
     "f:main":
       obj.Func(
@@ -387,6 +525,14 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
           1: [
             instr.AssignI(expr.VarE("v:main:t.1", Loc(256,3)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:ce", Loc(256,3)), Loc(256,3)), Loc(256,3)),
             instr.AssignI(expr.VarE("v:main:t.2", Loc(256,3)), expr.CastE(expr.VarE("v:main:t.1", Loc(256,3)), types.Ptr(to=types.UInt8), Loc(256,3)), Loc(256,3)),
@@ -458,12 +604,35 @@ irTUnit.TUnit(
             instr.ReturnI(expr.LitE(0, Loc(281,10)), Loc(281,3)),
           ],
 
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+    "f:sys_one":
+      obj.Func(
+        name = "f:sys_one",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
           -1: [
             instr.NopI(),
           ],
 
-          0: [
-            instr.NopI(),
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(203,22)), [expr.LitE("""one
+""", Loc(203,29))], Loc(203,22))),
           ],
 
         }, # basicBlocks end.
@@ -472,7 +641,7 @@ irTUnit.TUnit(
           (1, 0, types.UnCondEdge),
           (-1, 1, types.UnCondEdge),
         }, # bbEdges end
-      ), # f:main() end. 
+      ), # f:sys_one() end. 
 
     "f:test_correct_filling":
       obj.Func(
@@ -484,44 +653,12 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          3: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(233,5)), [expr.LitE("""sea_fill%d: wrong
-""", Loc(233,12)), expr.VarE("v:i", Loc(233,35))], Loc(233,5))),
-          ],
-
-          2: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(235,5)), [expr.LitE("""sea_fill%d: okay
-""", Loc(235,12)), expr.VarE("v:i", Loc(235,34))], Loc(235,5))),
-          ],
-
-          1: [
-            instr.AssignI(expr.VarE("v:i", Loc(236,3)), expr.BinaryE(expr.VarE("v:i", Loc(236,3)), op.BO_ADD, expr.LitE(1, Loc(236,3)), Loc(236,3)), Loc(236,3)),
-          ],
-
-          0: [
+          9: [
             instr.NopI(),
           ],
 
-          4: [
-            instr.AssignI(expr.VarE("v:test_correct_filling:t.1", Loc(232,46)), expr.MemberE(expr.VarE("v:test_correct_filling:x", Loc(232,46)), ["l"], Loc(232,46)), Loc(232,46)),
-            instr.AssignI(expr.VarE("v:test_correct_filling:t.2", Loc(232,46)), expr.BinaryE(expr.VarE("v:test_correct_filling:t.1", Loc(232,46)), op.BO_NE, expr.LitE(0, Loc(232,54))), Loc(232,46)),
-            instr.CondI(expr.VarE("v:test_correct_filling:t.2", Loc(232,46)), Loc(232,3)),
-          ],
-
-          -1: [
+          8: [
             instr.NopI(),
-          ],
-
-          5: [
-            instr.AssignI(expr.VarE("v:test_correct_filling:t.3", Loc(232,33)), expr.MemberE(expr.VarE("v:test_correct_filling:x", Loc(232,33)), ["k"], Loc(232,33)), Loc(232,33)),
-            instr.AssignI(expr.VarE("v:test_correct_filling:t.4", Loc(232,33)), expr.BinaryE(expr.VarE("v:test_correct_filling:t.3", Loc(232,33)), op.BO_NE, expr.LitE(0, Loc(232,41))), Loc(232,33)),
-            instr.CondI(expr.VarE("v:test_correct_filling:t.4", Loc(232,33)), Loc(232,7)),
-          ],
-
-          6: [
-            instr.AssignI(expr.VarE("v:test_correct_filling:t.5", Loc(232,20)), expr.MemberE(expr.VarE("v:test_correct_filling:x", Loc(232,20)), ["j"], Loc(232,20)), Loc(232,20)),
-            instr.AssignI(expr.VarE("v:test_correct_filling:t.6", Loc(232,20)), expr.BinaryE(expr.VarE("v:test_correct_filling:t.5", Loc(232,20)), op.BO_NE, expr.LitE(5, Loc(232,28))), Loc(232,20)),
-            instr.CondI(expr.VarE("v:test_correct_filling:t.6", Loc(232,20)), Loc(232,7)),
           ],
 
           7: [
@@ -530,12 +667,44 @@ irTUnit.TUnit(
             instr.CondI(expr.VarE("v:test_correct_filling:t.8", Loc(232,7)), Loc(232,7)),
           ],
 
-          8: [
+          6: [
+            instr.AssignI(expr.VarE("v:test_correct_filling:t.5", Loc(232,20)), expr.MemberE(expr.VarE("v:test_correct_filling:x", Loc(232,20)), ["j"], Loc(232,20)), Loc(232,20)),
+            instr.AssignI(expr.VarE("v:test_correct_filling:t.6", Loc(232,20)), expr.BinaryE(expr.VarE("v:test_correct_filling:t.5", Loc(232,20)), op.BO_NE, expr.LitE(5, Loc(232,28))), Loc(232,20)),
+            instr.CondI(expr.VarE("v:test_correct_filling:t.6", Loc(232,20)), Loc(232,7)),
+          ],
+
+          1: [
+            instr.AssignI(expr.VarE("v:i", Loc(236,3)), expr.BinaryE(expr.VarE("v:i", Loc(236,3)), op.BO_ADD, expr.LitE(1, Loc(236,3)), Loc(236,3)), Loc(236,3)),
+          ],
+
+          -1: [
             instr.NopI(),
           ],
 
-          9: [
+          0: [
             instr.NopI(),
+          ],
+
+          2: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(235,5)), [expr.LitE("""sea_fill%d: okay
+""", Loc(235,12)), expr.VarE("v:i", Loc(235,34))], Loc(235,5))),
+          ],
+
+          3: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(233,5)), [expr.LitE("""sea_fill%d: wrong
+""", Loc(233,12)), expr.VarE("v:i", Loc(233,35))], Loc(233,5))),
+          ],
+
+          4: [
+            instr.AssignI(expr.VarE("v:test_correct_filling:t.1", Loc(232,46)), expr.MemberE(expr.VarE("v:test_correct_filling:x", Loc(232,46)), ["l"], Loc(232,46)), Loc(232,46)),
+            instr.AssignI(expr.VarE("v:test_correct_filling:t.2", Loc(232,46)), expr.BinaryE(expr.VarE("v:test_correct_filling:t.1", Loc(232,46)), op.BO_NE, expr.LitE(0, Loc(232,54))), Loc(232,46)),
+            instr.CondI(expr.VarE("v:test_correct_filling:t.2", Loc(232,46)), Loc(232,3)),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:test_correct_filling:t.3", Loc(232,33)), expr.MemberE(expr.VarE("v:test_correct_filling:x", Loc(232,33)), ["k"], Loc(232,33)), Loc(232,33)),
+            instr.AssignI(expr.VarE("v:test_correct_filling:t.4", Loc(232,33)), expr.BinaryE(expr.VarE("v:test_correct_filling:t.3", Loc(232,33)), op.BO_NE, expr.LitE(0, Loc(232,41))), Loc(232,33)),
+            instr.CondI(expr.VarE("v:test_correct_filling:t.4", Loc(232,33)), Loc(232,7)),
           ],
 
         }, # basicBlocks end.
@@ -559,6 +728,184 @@ irTUnit.TUnit(
         }, # bbEdges end
       ), # f:test_correct_filling() end. 
 
+    "f:print_":
+      obj.Func(
+        name = "f:print_",
+        paramNames = ["v:print_:name", "v:print_:p", "v:print_:size"],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(134,3)), [expr.LitE("""
+""", Loc(134,11))], Loc(134,3))),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          2: [
+            instr.NopI(),
+          ],
+
+          3: [
+            instr.AssignI(expr.VarE("v:print_:t.1", Loc(132,23)), expr.VarE("v:print_:p", Loc(132,23)), Loc(132,23)),
+            instr.AssignI(expr.VarE("v:print_:p", Loc(132,23)), expr.BinaryE(expr.VarE("v:print_:p", Loc(132,23)), op.BO_ADD, expr.LitE(1, Loc(132,23)), Loc(132,23)), Loc(132,23)),
+            instr.AssignI(expr.VarE("v:print_:t.2", Loc(132,22)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:print_:t.1", Loc(132,23)), Loc(132,22)), Loc(132,22)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(132,7)), [expr.LitE(""" %x""", Loc(132,15)), expr.VarE("v:print_:t.2", Loc(132,22))], Loc(132,7))),
+          ],
+
+          4: [
+            instr.AssignI(expr.VarE("v:print_:t.3", Loc(131,10)), expr.VarE("v:print_:size", Loc(131,10)), Loc(131,10)),
+            instr.AssignI(expr.VarE("v:print_:size", Loc(131,10)), expr.BinaryE(expr.VarE("v:print_:size", Loc(131,10)), op.BO_SUB, expr.LitE(1, Loc(131,10)), Loc(131,10)), Loc(131,10)),
+            instr.CondI(expr.VarE("v:print_:t.3", Loc(131,10)), Loc(131,3)),
+          ],
+
+          5: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(130,3)), [expr.LitE("""%s:""", Loc(130,11)), expr.VarE("v:print_:name", Loc(130,18))], Loc(130,3))),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (2, 4, types.UnCondEdge),
+          (3, 2, types.UnCondEdge),
+          (4, 3, types.TrueEdge),
+          (4, 1, types.FalseEdge),
+          (5, 4, types.UnCondEdge),
+          (-1, 5, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:print_() end. 
+
+    "f:test_compound_with_relocs":
+      obj.Func(
+        name = "f:test_compound_with_relocs",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.AssignI(expr.VarE("v:test_compound_with_relocs:local_wrap", Loc(191,3)), expr.VarE("v:test_compound_with_relocs:t.1", Loc(191,30)), Loc(191,3)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:test_compound_with_relocs:t.2", Loc(193,7)), ["func"], Loc(193,7)), expr.FuncE("f:inc_global", Loc(193,7))),
+            instr.AssignI(expr.VarE("v:test_compound_with_relocs:p", Loc(195,3)), expr.VarE("v:test_compound_with_relocs:t.2", Loc(193,7)), Loc(195,3)),
+            instr.AssignI(expr.VarE("v:test_compound_with_relocs:t.3", Loc(196,7)), expr.ArrayE(expr.VarE("v:global_wrap", Loc(196,7)), [expr.LitE(0, Loc(196,19))], Loc(196,7)), Loc(196,7)),
+            instr.AssignI(expr.VarE("v:test_compound_with_relocs:p", Loc(196,3)), expr.MemberE(expr.VarE("v:test_compound_with_relocs:t.3", Loc(196,7)), ["func"], Loc(196,7)), Loc(196,3)),
+            instr.CallI(expr.CallE(expr.VarE("v:test_compound_with_relocs:p", Loc(196,28)), [], Loc(196,28))),
+            instr.AssignI(expr.VarE("v:test_compound_with_relocs:t.4", Loc(197,7)), expr.ArrayE(expr.VarE("v:global_wrap", Loc(197,7)), [expr.LitE(1, Loc(197,19))], Loc(197,7)), Loc(197,7)),
+            instr.AssignI(expr.VarE("v:test_compound_with_relocs:p", Loc(197,3)), expr.MemberE(expr.VarE("v:test_compound_with_relocs:t.4", Loc(197,7)), ["func"], Loc(197,7)), Loc(197,3)),
+            instr.CallI(expr.CallE(expr.VarE("v:test_compound_with_relocs:p", Loc(197,28)), [], Loc(197,28))),
+            instr.AssignI(expr.VarE("v:test_compound_with_relocs:t.5", Loc(198,7)), expr.ArrayE(expr.VarE("v:test_compound_with_relocs:local_wrap", Loc(198,7)), [expr.LitE(0, Loc(198,18))], Loc(198,7)), Loc(198,7)),
+            instr.AssignI(expr.VarE("v:test_compound_with_relocs:p", Loc(198,3)), expr.MemberE(expr.VarE("v:test_compound_with_relocs:t.5", Loc(198,7)), ["func"], Loc(198,7)), Loc(198,3)),
+            instr.CallI(expr.CallE(expr.VarE("v:test_compound_with_relocs:p", Loc(198,27)), [], Loc(198,27))),
+            instr.AssignI(expr.VarE("v:test_compound_with_relocs:t.6", Loc(199,7)), expr.ArrayE(expr.VarE("v:test_compound_with_relocs:local_wrap", Loc(199,7)), [expr.LitE(1, Loc(199,18))], Loc(199,7)), Loc(199,7)),
+            instr.AssignI(expr.VarE("v:test_compound_with_relocs:p", Loc(199,3)), expr.MemberE(expr.VarE("v:test_compound_with_relocs:t.6", Loc(199,7)), ["func"], Loc(199,7)), Loc(199,3)),
+            instr.CallI(expr.CallE(expr.VarE("v:test_compound_with_relocs:p", Loc(199,27)), [], Loc(199,27))),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:test_compound_with_relocs() end. 
+
+    "f:inc_global":
+      obj.Func(
+        name = "f:inc_global",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.AssignI(expr.VarE("v:global", Loc(119,3)), expr.BinaryE(expr.VarE("v:global", Loc(119,3)), op.BO_ADD, expr.LitE(1, Loc(119,3)), Loc(119,3)), Loc(119,3)),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:inc_global() end. 
+
+    "f:sys_three":
+      obj.Func(
+        name = "f:sys_three",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(205,24)), [expr.LitE("""three
+""", Loc(205,31))], Loc(205,24))),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:sys_three() end. 
+
+    "f:printf":
+      obj.Func(
+        name = "f:printf",
+        paramNames = ["v:printf:__format"],
+        variadic = True,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:printf() end. 
+
     "f:foo":
       obj.Func(
         name = "f:foo",
@@ -569,116 +916,124 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
           1: [
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.1", Loc(140,17)), ["a"], Loc(140,17)), expr.LitE(3, Loc(140,24)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.1", Loc(140,17)), ["b"], Loc(140,17)), expr.LitE(4, Loc(140,27)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.1", Loc(140,17)), ["c"], Loc(140,17)), expr.VarE("v:foo:t.2", Loc(140,24)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.1", Loc(140,17)), ["a"], Loc(140,17)), expr.LitE(3, Loc(140,24))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.1", Loc(140,17)), ["b"], Loc(140,17)), expr.LitE(4, Loc(140,27))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.1", Loc(140,17)), ["c"], Loc(140,17)), expr.VarE("v:foo:t.2", Loc(140,24))),
             instr.AssignI(expr.VarE("v:foo:ls", Loc(140,3)), expr.VarE("v:foo:t.1", Loc(140,17)), Loc(140,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.3", Loc(141,18)), ["a"], Loc(141,18)), expr.LitE(3, Loc(141,26)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.3", Loc(141,18)), ["b"], Loc(141,18)), expr.LitE(4, Loc(141,29)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.3", Loc(141,18)), ["c"], Loc(141,18)), expr.VarE("v:foo:t.4", Loc(141,25)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.3", Loc(141,18)), ["a"], Loc(141,18)), expr.LitE(3, Loc(141,26))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.3", Loc(141,18)), ["b"], Loc(141,18)), expr.LitE(4, Loc(141,29))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.3", Loc(141,18)), ["c"], Loc(141,18)), expr.VarE("v:foo:t.4", Loc(141,25))),
             instr.AssignI(expr.VarE("v:foo:ls2", Loc(141,3)), expr.VarE("v:foo:t.3", Loc(141,18)), Loc(141,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.5", Loc(142,17)), ["s"], Loc(142,17)), expr.LitE("""hello""", Loc(142,18)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.5", Loc(142,17)), ["a"], Loc(142,17)), expr.LitE(42, Loc(142,27)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.5", Loc(142,17)), ["s"], Loc(142,17)), expr.LitE("""hello""", Loc(142,18))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.5", Loc(142,17)), ["a"], Loc(142,17)), expr.LitE(42, Loc(142,27))),
             instr.AssignI(expr.VarE("v:foo:lt", Loc(142,3)), expr.VarE("v:foo:t.5", Loc(142,17)), Loc(142,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.6", Loc(143,17)), ["a"], Loc(143,17)), expr.LitE(6, Loc(143,23)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.8", Loc(143,21)), ["a"], Loc(143,21)), expr.LitE(7, Loc(143,25)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.8", Loc(143,21)), ["b"], Loc(143,21)), expr.LitE(8, Loc(143,27)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.8", Loc(143,21)), ["c"], Loc(143,21)), expr.VarE("v:foo:t.9", Loc(143,25)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.6", Loc(143,17)), ["s"], Loc(143,17)), expr.VarE("v:foo:t.8", Loc(143,21)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.6", Loc(143,17)), ["b"], Loc(143,17)), expr.LitE(4, Loc(143,30)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.7", Loc(143,33)), ["s"], Loc(143,33)), expr.LitE("""huhu""", Loc(143,33)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.7", Loc(143,33)), ["a"], Loc(143,33)), expr.LitE(43, Loc(143,41)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.6", Loc(143,17)), ["t"], Loc(143,17)), expr.VarE("v:foo:t.7", Loc(143,33)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.6", Loc(143,17)), ["a"], Loc(143,17)), expr.LitE(6, Loc(143,23))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.8", Loc(143,21)), ["a"], Loc(143,21)), expr.LitE(7, Loc(143,25))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.8", Loc(143,21)), ["b"], Loc(143,21)), expr.LitE(8, Loc(143,27))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.8", Loc(143,21)), ["c"], Loc(143,21)), expr.VarE("v:foo:t.9", Loc(143,25))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.6", Loc(143,17)), ["s"], Loc(143,17)), expr.VarE("v:foo:t.8", Loc(143,21))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.6", Loc(143,17)), ["b"], Loc(143,17)), expr.LitE(4, Loc(143,30))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.7", Loc(143,33)), ["s"], Loc(143,33)), expr.LitE("""huhu""", Loc(143,33))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.7", Loc(143,33)), ["a"], Loc(143,33)), expr.LitE(43, Loc(143,41))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.6", Loc(143,17)), ["t"], Loc(143,17)), expr.VarE("v:foo:t.7", Loc(143,33))),
             instr.AssignI(expr.VarE("v:foo:lu", Loc(143,3)), expr.VarE("v:foo:t.6", Loc(143,17)), Loc(143,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.10", Loc(144,18)), ["a"], Loc(144,18)), expr.LitE(3, Loc(144,19)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.10", Loc(144,18)), ["s"], Loc(144,18)), expr.VarE("v:foo:ls", Loc(144,22)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.10", Loc(144,18)), ["b"], Loc(144,18)), expr.LitE(4, Loc(144,26)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.11", Loc(144,29)), ["s"], Loc(144,29)), expr.LitE("""huhu""", Loc(144,30)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.11", Loc(144,29)), ["a"], Loc(144,29)), expr.LitE(43, Loc(144,38)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.10", Loc(144,18)), ["t"], Loc(144,18)), expr.VarE("v:foo:t.11", Loc(144,29)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.10", Loc(144,18)), ["a"], Loc(144,18)), expr.LitE(3, Loc(144,19))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.10", Loc(144,18)), ["s"], Loc(144,18)), expr.VarE("v:foo:ls", Loc(144,22))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.10", Loc(144,18)), ["b"], Loc(144,18)), expr.LitE(4, Loc(144,26))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.11", Loc(144,29)), ["s"], Loc(144,29)), expr.LitE("""huhu""", Loc(144,30))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.11", Loc(144,29)), ["a"], Loc(144,29)), expr.LitE(43, Loc(144,38))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.10", Loc(144,18)), ["t"], Loc(144,18)), expr.VarE("v:foo:t.11", Loc(144,29))),
             instr.AssignI(expr.VarE("v:foo:lu1", Loc(144,3)), expr.VarE("v:foo:t.10", Loc(144,18)), Loc(144,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.12", Loc(145,18)), ["a"], Loc(145,18)), expr.LitE(3, Loc(145,19)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.12", Loc(145,18)), ["s"], Loc(145,18)), expr.VarE("v:foo:ls", Loc(145,23)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.12", Loc(145,18)), ["b"], Loc(145,18)), expr.LitE(4, Loc(145,28)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.13", Loc(145,31)), ["s"], Loc(145,31)), expr.LitE("""huhu""", Loc(145,32)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.13", Loc(145,31)), ["a"], Loc(145,31)), expr.LitE(43, Loc(145,40)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.12", Loc(145,18)), ["t"], Loc(145,18)), expr.VarE("v:foo:t.13", Loc(145,31)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.12", Loc(145,18)), ["a"], Loc(145,18)), expr.LitE(3, Loc(145,19))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.12", Loc(145,18)), ["s"], Loc(145,18)), expr.VarE("v:foo:ls", Loc(145,23))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.12", Loc(145,18)), ["b"], Loc(145,18)), expr.LitE(4, Loc(145,28))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.13", Loc(145,31)), ["s"], Loc(145,31)), expr.LitE("""huhu""", Loc(145,32))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.13", Loc(145,31)), ["a"], Loc(145,31)), expr.LitE(43, Loc(145,40))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.12", Loc(145,18)), ["t"], Loc(145,18)), expr.VarE("v:foo:t.13", Loc(145,31))),
             instr.AssignI(expr.VarE("v:foo:lu2", Loc(145,3)), expr.VarE("v:foo:t.12", Loc(145,18)), Loc(145,3)),
             instr.AssignI(expr.VarE("v:foo:pls", Loc(146,3)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:foo:ls", Loc(146,26)), Loc(146,25)), Loc(146,3)),
             instr.AssignI(expr.VarE("v:foo:ls21", Loc(147,3)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:foo:pls", Loc(147,20)), Loc(147,19)), Loc(147,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.14", Loc(148,19)), ["a"], Loc(148,19)), expr.LitE(3, Loc(148,20)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.14", Loc(148,19)), ["a"], Loc(148,19)), expr.LitE(3, Loc(148,20))),
             instr.AssignI(expr.VarE("v:foo:t.16", Loc(148,23)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:foo:pls", Loc(148,24)), Loc(148,23)), Loc(148,23)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.14", Loc(148,19)), ["s"], Loc(148,19)), expr.VarE("v:foo:t.16", Loc(148,23)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.14", Loc(148,19)), ["b"], Loc(148,19)), expr.LitE(4, Loc(148,29)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.15", Loc(148,32)), ["s"], Loc(148,32)), expr.LitE("""huhu""", Loc(148,33)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.15", Loc(148,32)), ["a"], Loc(148,32)), expr.LitE(43, Loc(148,41)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.14", Loc(148,19)), ["t"], Loc(148,19)), expr.VarE("v:foo:t.15", Loc(148,32)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.14", Loc(148,19)), ["s"], Loc(148,19)), expr.VarE("v:foo:t.16", Loc(148,23))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.14", Loc(148,19)), ["b"], Loc(148,19)), expr.LitE(4, Loc(148,29))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.15", Loc(148,32)), ["s"], Loc(148,32)), expr.LitE("""huhu""", Loc(148,33))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.15", Loc(148,32)), ["a"], Loc(148,32)), expr.LitE(43, Loc(148,41))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.14", Loc(148,19)), ["t"], Loc(148,19)), expr.VarE("v:foo:t.15", Loc(148,32))),
             instr.AssignI(expr.VarE("v:foo:lu22", Loc(148,3)), expr.VarE("v:foo:t.14", Loc(148,19)), Loc(148,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.17", Loc(150,19)), ["a"], Loc(150,19)), expr.LitE(3, Loc(150,20)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.17", Loc(150,19)), ["s"], Loc(150,19)), expr.VarE("v:foo:ls", Loc(150,23)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.17", Loc(150,19)), ["b"], Loc(150,19)), expr.LitE(4, Loc(150,27)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.18", Loc(150,30)), ["s"], Loc(150,30)), expr.LitE("""huhu""", Loc(150,30)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.18", Loc(150,30)), ["a"], Loc(150,30)), expr.LitE(43, Loc(150,38)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.17", Loc(150,19)), ["t"], Loc(150,19)), expr.VarE("v:foo:t.18", Loc(150,30)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.17", Loc(150,19)), ["a"], Loc(150,19)), expr.LitE(3, Loc(150,20))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.17", Loc(150,19)), ["s"], Loc(150,19)), expr.VarE("v:foo:ls", Loc(150,23))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.17", Loc(150,19)), ["b"], Loc(150,19)), expr.LitE(4, Loc(150,27))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.18", Loc(150,30)), ["s"], Loc(150,30)), expr.LitE("""huhu""", Loc(150,30))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.18", Loc(150,30)), ["a"], Loc(150,30)), expr.LitE(43, Loc(150,38))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.17", Loc(150,19)), ["t"], Loc(150,19)), expr.VarE("v:foo:t.18", Loc(150,30))),
             instr.AssignI(expr.VarE("v:foo:lu21", Loc(150,3)), expr.VarE("v:foo:t.17", Loc(150,19)), Loc(150,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.19", Loc(153,18)), ["a"], Loc(153,18)), expr.LitE(6, Loc(153,26)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.21", Loc(153,23)), ["a"], Loc(153,23)), expr.LitE(7, Loc(153,28)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.21", Loc(153,23)), ["b"], Loc(153,23)), expr.LitE(8, Loc(153,30)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.21", Loc(153,23)), ["c"], Loc(153,23)), expr.VarE("v:foo:t.22", Loc(153,28)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.19", Loc(153,18)), ["s"], Loc(153,18)), expr.VarE("v:foo:t.21", Loc(153,23)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.19", Loc(153,18)), ["b"], Loc(153,18)), expr.LitE(4, Loc(153,35)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.20", Loc(153,38)), ["s"], Loc(153,38)), expr.LitE("""huhu""", Loc(153,39)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.20", Loc(153,38)), ["a"], Loc(153,38)), expr.LitE(43, Loc(153,47)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.19", Loc(153,18)), ["t"], Loc(153,18)), expr.VarE("v:foo:t.20", Loc(153,38)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.19", Loc(153,18)), ["a"], Loc(153,18)), expr.LitE(6, Loc(153,26))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.21", Loc(153,23)), ["a"], Loc(153,23)), expr.LitE(7, Loc(153,28))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.21", Loc(153,23)), ["b"], Loc(153,23)), expr.LitE(8, Loc(153,30))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.21", Loc(153,23)), ["c"], Loc(153,23)), expr.VarE("v:foo:t.22", Loc(153,28))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.19", Loc(153,18)), ["s"], Loc(153,18)), expr.VarE("v:foo:t.21", Loc(153,23))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.19", Loc(153,18)), ["b"], Loc(153,18)), expr.LitE(4, Loc(153,35))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.20", Loc(153,38)), ["s"], Loc(153,38)), expr.LitE("""huhu""", Loc(153,39))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.20", Loc(153,38)), ["a"], Loc(153,38)), expr.LitE(43, Loc(153,47))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.19", Loc(153,18)), ["t"], Loc(153,18)), expr.VarE("v:foo:t.20", Loc(153,38))),
             instr.AssignI(expr.VarE("v:foo:lu3", Loc(153,3)), expr.VarE("v:foo:t.19", Loc(153,18)), Loc(153,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.23", Loc(155,18)), ["a"], Loc(155,18)), expr.LitE(5, Loc(155,24)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.25", Loc(155,23)), ["a"], Loc(155,23)), expr.LitE(6, Loc(155,26)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.25", Loc(155,23)), ["b"], Loc(155,23)), expr.LitE(7, Loc(155,28)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.25", Loc(155,23)), ["c"], Loc(155,23)), expr.VarE("v:foo:t.26", Loc(155,28)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.23", Loc(155,18)), ["s"], Loc(155,18)), expr.VarE("v:foo:t.25", Loc(155,23)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.23", Loc(155,18)), ["b"], Loc(155,18)), expr.LitE(5, Loc(155,34)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.24", Loc(155,37)), ["s"], Loc(155,37)), expr.LitE("""bla""", Loc(155,39)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.24", Loc(155,37)), ["a"], Loc(155,37)), expr.LitE(44, Loc(155,46)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.23", Loc(155,18)), ["t"], Loc(155,18)), expr.VarE("v:foo:t.24", Loc(155,37)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.23", Loc(155,18)), ["a"], Loc(155,18)), expr.LitE(5, Loc(155,24))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.25", Loc(155,23)), ["a"], Loc(155,23)), expr.LitE(6, Loc(155,26))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.25", Loc(155,23)), ["b"], Loc(155,23)), expr.LitE(7, Loc(155,28))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.25", Loc(155,23)), ["c"], Loc(155,23)), expr.VarE("v:foo:t.26", Loc(155,28))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.23", Loc(155,18)), ["s"], Loc(155,18)), expr.VarE("v:foo:t.25", Loc(155,23))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.23", Loc(155,18)), ["b"], Loc(155,18)), expr.LitE(5, Loc(155,34))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.24", Loc(155,37)), ["s"], Loc(155,37)), expr.LitE("""bla""", Loc(155,39))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.24", Loc(155,37)), ["a"], Loc(155,37)), expr.LitE(44, Loc(155,46))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.23", Loc(155,18)), ["t"], Loc(155,18)), expr.VarE("v:foo:t.24", Loc(155,37))),
             instr.AssignI(expr.VarE("v:foo:lu4", Loc(155,3)), expr.VarE("v:foo:t.23", Loc(155,18)), Loc(155,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.27", Loc(157,18)), ["a"], Loc(157,18)), expr.LitE(3, Loc(157,34)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.27", Loc(157,18)), ["b"], Loc(157,18)), expr.LitE(4, Loc(157,40)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.27", Loc(157,18)), ["c"], Loc(157,18)), expr.VarE("v:foo:t.28", Loc(157,30)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.27", Loc(157,18)), ["a"], Loc(157,18)), expr.LitE(3, Loc(157,34))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.27", Loc(157,18)), ["b"], Loc(157,18)), expr.LitE(4, Loc(157,40))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.27", Loc(157,18)), ["c"], Loc(157,18)), expr.VarE("v:foo:t.28", Loc(157,30))),
             instr.AssignI(expr.VarE("v:foo:ls3", Loc(157,3)), expr.VarE("v:foo:t.27", Loc(157,18)), Loc(157,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.32", Loc(159,18)), ["a"], Loc(159,18)), expr.LitE(5, Loc(159,24)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.32", Loc(159,18)), ["b"], Loc(159,18)), expr.LitE(6, Loc(159,26)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.32", Loc(159,18)), ["c"], Loc(159,18)), expr.VarE("v:foo:t.33", Loc(159,23)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.29", Loc(159,17)), ["s"], Loc(159,17)), expr.VarE("v:foo:t.32", Loc(159,18)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.30", Loc(159,31)), ["s"], Loc(159,31)), expr.LitE("""haha""", Loc(159,31)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.32", Loc(159,18)), ["a"], Loc(159,18)), expr.LitE(5, Loc(159,24))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.32", Loc(159,18)), ["b"], Loc(159,18)), expr.LitE(6, Loc(159,26))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.32", Loc(159,18)), ["c"], Loc(159,18)), expr.VarE("v:foo:t.33", Loc(159,23))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.29", Loc(159,17)), ["s"], Loc(159,17)), expr.VarE("v:foo:t.32", Loc(159,18))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.30", Loc(159,31)), ["s"], Loc(159,31)), expr.LitE("""haha""", Loc(159,31))),
             instr.AssignI(expr.VarE("v:foo:t.31", Loc(159,39)), expr.CastE(expr.LitE(45, Loc(159,43)), types.UInt8, Loc(159,39)), Loc(159,39)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.30", Loc(159,31)), ["a"], Loc(159,31)), expr.VarE("v:foo:t.31", Loc(159,39)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.29", Loc(159,17)), ["t"], Loc(159,17)), expr.VarE("v:foo:t.30", Loc(159,31)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.29", Loc(159,17)), ["a"], Loc(159,17)), expr.LitE(46, Loc(159,47)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.30", Loc(159,31)), ["a"], Loc(159,31)), expr.VarE("v:foo:t.31", Loc(159,39))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.29", Loc(159,17)), ["t"], Loc(159,17)), expr.VarE("v:foo:t.30", Loc(159,31))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.29", Loc(159,17)), ["a"], Loc(159,17)), expr.LitE(46, Loc(159,47))),
             instr.AssignI(expr.VarE("v:foo:lv", Loc(159,3)), expr.VarE("v:foo:t.29", Loc(159,17)), Loc(159,3)),
             instr.AssignI(expr.VarE("v:foo:t.36", Loc(161,29)), expr.MemberE(expr.VarE("v:foo:w", Loc(161,29)), ["t", "s"], Loc(161,29)), Loc(161,29)),
             instr.AssignI(expr.VarE("v:foo:t.37", Loc(161,19)), expr.CastE(expr.VarE("v:foo:t.36", Loc(161,29)), types.Struct("s:S"), Loc(161,19)), Loc(161,19)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.34", Loc(161,18)), ["s"], Loc(161,18)), expr.VarE("v:foo:t.37", Loc(161,19)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.35", Loc(161,37)), ["s"], Loc(161,37)), expr.LitE("""hihi""", Loc(161,38)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.35", Loc(161,37)), ["a"], Loc(161,37)), expr.LitE(47, Loc(161,46)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.34", Loc(161,18)), ["t"], Loc(161,18)), expr.VarE("v:foo:t.35", Loc(161,37)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.34", Loc(161,18)), ["a"], Loc(161,18)), expr.LitE(48, Loc(161,51)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.34", Loc(161,18)), ["s"], Loc(161,18)), expr.VarE("v:foo:t.37", Loc(161,19))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.35", Loc(161,37)), ["s"], Loc(161,37)), expr.LitE("""hihi""", Loc(161,38))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.35", Loc(161,37)), ["a"], Loc(161,37)), expr.LitE(47, Loc(161,46))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.34", Loc(161,18)), ["t"], Loc(161,18)), expr.VarE("v:foo:t.35", Loc(161,37))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.34", Loc(161,18)), ["a"], Loc(161,18)), expr.LitE(48, Loc(161,51))),
             instr.AssignI(expr.VarE("v:foo:lv2", Loc(161,3)), expr.VarE("v:foo:t.34", Loc(161,18)), Loc(161,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.38", Loc(163,18)), ["s"], Loc(163,18)), ERROR:convertExpr,
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.38", Loc(163,18)), ["s"], Loc(163,18)), ERROR:convertExpr),
             instr.AssignI(expr.VarE("v:foo:t.39", Loc(163,46)), expr.CastE(expr.VarE("v:foo:w", Loc(163,64)), types.Ptr(to=types.Struct("s:W")), Loc(163,46)), Loc(163,46)),
             instr.AssignI(expr.VarE("v:foo:t.40", Loc(163,46)), expr.MemberE(expr.VarE("v:foo:t.39", Loc(163,46)), ["t", "t"], Loc(163,46)), Loc(163,46)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.38", Loc(163,18)), ["t"], Loc(163,18)), expr.VarE("v:foo:t.40", Loc(163,46)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.38", Loc(163,18)), ["a"], Loc(163,18)), expr.LitE(50, Loc(163,73)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.38", Loc(163,18)), ["t"], Loc(163,18)), expr.VarE("v:foo:t.40", Loc(163,46))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.38", Loc(163,18)), ["a"], Loc(163,18)), expr.LitE(50, Loc(163,73))),
             instr.AssignI(expr.VarE("v:foo:lv3", Loc(163,3)), expr.VarE("v:foo:t.38", Loc(163,18)), Loc(163,3)),
             instr.AssignI(expr.VarE("v:foo:phdr", Loc(164,3)), expr.VarE("v:foo:phdr_", Loc(164,31)), Loc(164,3)),
             instr.AssignI(expr.VarE("v:foo:t.43", Loc(165,57)), expr.MemberE(expr.VarE("v:foo:phdr", Loc(165,57)), ["saddr"], Loc(165,57)), Loc(165,57)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.41", Loc(165,24)), ["saddr"], Loc(165,24)), expr.VarE("v:foo:t.43", Loc(165,57)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.41", Loc(165,24)), ["saddr"], Loc(165,24)), expr.VarE("v:foo:t.43", Loc(165,57))),
             instr.AssignI(expr.VarE("v:foo:t.42", Loc(165,35)), expr.MemberE(expr.VarE("v:foo:phdr", Loc(165,35)), ["daddr"], Loc(165,35)), Loc(165,35)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.41", Loc(165,24)), ["daddr"], Loc(165,24)), expr.VarE("v:foo:t.42", Loc(165,35)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.41", Loc(165,24)), ["daddr"], Loc(165,24)), expr.VarE("v:foo:t.42", Loc(165,35))),
             instr.AssignI(expr.VarE("v:foo:flow", Loc(165,3)), expr.VarE("v:foo:t.41", Loc(165,24)), Loc(165,3)),
             instr.AssignI(expr.VarE("v:foo:elt", Loc(166,3)), expr.LitE(66, Loc(166,13)), Loc(166,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.44", Loc(168,18)), ["s"], Loc(168,18)), expr.VarE("v:foo:t.45", Loc(168,20)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.44", Loc(168,18)), ["a"], Loc(168,18)), expr.LitE(1, Loc(168,76)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.44", Loc(168,18)), ["s"], Loc(168,18)), expr.VarE("v:foo:t.45", Loc(168,20))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:foo:t.44", Loc(168,18)), ["a"], Loc(168,18)), expr.LitE(1, Loc(168,76))),
             instr.AssignI(expr.VarE("v:foo:lt2", Loc(168,3)), expr.VarE("v:foo:t.44", Loc(168,18)), Loc(168,3)),
             instr.AssignI(expr.VarE("v:foo:t.46", Loc(169,3)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:foo:ls", Loc(169,3)), Loc(169,3)), Loc(169,3)),
             instr.AssignI(expr.VarE("v:foo:t.47", Loc(169,3)), expr.CastE(expr.VarE("v:foo:t.46", Loc(169,3)), types.Ptr(to=types.UInt8), Loc(169,3)), Loc(169,3)),
@@ -733,14 +1088,6 @@ irTUnit.TUnit(
             instr.CallI(expr.CallE(expr.FuncE("f:print_", Loc(185,3)), [expr.LitE("""flow""", Loc(185,3)), expr.VarE("v:foo:t.79", Loc(185,3)), expr.LitE(32, Loc(185,3))], Loc(185,3))),
           ],
 
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
         }, # basicBlocks end.
 
         bbEdges= {
@@ -748,291 +1095,6 @@ irTUnit.TUnit(
           (-1, 1, types.UnCondEdge),
         }, # bbEdges end
       ), # f:foo() end. 
-
-    "f:test_zero_init":
-      obj.Func(
-        name = "f:test_zero_init",
-        paramNames = [],
-        variadic = False,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          1: [
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.2", Loc(245,22)), ["i"], Loc(245,22)), ERROR:convertExpr,
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.2", Loc(245,22)), ["j"], Loc(245,22)), expr.LitE(5, Loc(245,27)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.2", Loc(245,22)), ["k"], Loc(245,22)), ERROR:convertExpr,
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.2", Loc(245,22)), ["l"], Loc(245,22)), ERROR:convertExpr,
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.1", Loc(245,18)), ["a"], Loc(245,18)), expr.VarE("v:test_zero_init:t.2", Loc(245,22)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.1", Loc(245,18)), ["r"], Loc(245,18)), ERROR:convertExpr,
-            instr.AssignI(expr.VarE("v:test_zero_init:b", Loc(245,3)), expr.VarE("v:test_zero_init:t.1", Loc(245,18)), Loc(245,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.4", Loc(246,22)), ["i"], Loc(246,22)), ERROR:convertExpr,
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.4", Loc(246,22)), ["j"], Loc(246,22)), expr.LitE(5, Loc(246,27)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.4", Loc(246,22)), ["k"], Loc(246,22)), ERROR:convertExpr,
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.4", Loc(246,22)), ["l"], Loc(246,22)), ERROR:convertExpr,
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.3", Loc(246,18)), ["a"], Loc(246,18)), expr.VarE("v:test_zero_init:t.4", Loc(246,22)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.3", Loc(246,18)), ["r"], Loc(246,18)), ERROR:convertExpr,
-            instr.AssignI(expr.VarE("v:test_zero_init:c", Loc(246,3)), expr.VarE("v:test_zero_init:t.3", Loc(246,18)), Loc(246,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.6", Loc(247,22)), ["i"], Loc(247,22)), ERROR:convertExpr,
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.6", Loc(247,22)), ["j"], Loc(247,22)), expr.LitE(5, Loc(247,27)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.6", Loc(247,22)), ["k"], Loc(247,22)), ERROR:convertExpr,
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.6", Loc(247,22)), ["l"], Loc(247,22)), ERROR:convertExpr,
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.5", Loc(247,18)), ["a"], Loc(247,18)), expr.VarE("v:test_zero_init:t.6", Loc(247,22)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_zero_init:t.5", Loc(247,18)), ["r"], Loc(247,18)), ERROR:convertExpr,
-            instr.AssignI(expr.VarE("v:test_zero_init:d", Loc(247,3)), expr.VarE("v:test_zero_init:t.5", Loc(247,18)), Loc(247,3)),
-            instr.AssignI(expr.VarE("v:test_zero_init:t.7", Loc(248,25)), expr.UnaryE(op.UO_ADDROF, expr.MemberE(expr.VarE("v:test_zero_init:b", Loc(248,26)), ["a"], Loc(248,26)), Loc(248,25)), Loc(248,25)),
-            instr.CallI(expr.CallE(expr.FuncE("f:test_correct_filling", Loc(248,3)), [expr.VarE("v:test_zero_init:t.7", Loc(248,25))], Loc(248,3))),
-            instr.AssignI(expr.VarE("v:test_zero_init:t.8", Loc(249,25)), expr.UnaryE(op.UO_ADDROF, expr.MemberE(expr.VarE("v:test_zero_init:c", Loc(249,26)), ["a"], Loc(249,26)), Loc(249,25)), Loc(249,25)),
-            instr.CallI(expr.CallE(expr.FuncE("f:test_correct_filling", Loc(249,3)), [expr.VarE("v:test_zero_init:t.8", Loc(249,25))], Loc(249,3))),
-            instr.AssignI(expr.VarE("v:test_zero_init:t.9", Loc(250,25)), expr.UnaryE(op.UO_ADDROF, expr.MemberE(expr.VarE("v:test_zero_init:d", Loc(250,26)), ["a"], Loc(250,26)), Loc(250,25)), Loc(250,25)),
-            instr.CallI(expr.CallE(expr.FuncE("f:test_correct_filling", Loc(250,3)), [expr.VarE("v:test_zero_init:t.9", Loc(250,25))], Loc(250,3))),
-            instr.ReturnI(expr.LitE(0, Loc(251,10)), Loc(251,3)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
-      ), # f:test_zero_init() end. 
-
-    "f:inc_global":
-      obj.Func(
-        name = "f:inc_global",
-        paramNames = [],
-        variadic = False,
-        returnType = types.Void,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          1: [
-            instr.AssignI(expr.VarE("v:global", Loc(119,3)), expr.BinaryE(expr.VarE("v:global", Loc(119,3)), op.BO_ADD, expr.LitE(1, Loc(119,3)), Loc(119,3)), Loc(119,3)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
-      ), # f:inc_global() end. 
-
-    "f:printf":
-      obj.Func(
-        name = "f:printf",
-        paramNames = ["v:printf:__format"],
-        variadic = True,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:printf() end. 
-
-    "f:print_":
-      obj.Func(
-        name = "f:print_",
-        paramNames = ["v:print_:name", "v:print_:p", "v:print_:size"],
-        variadic = False,
-        returnType = types.Void,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          5: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(130,3)), [expr.LitE("""%s:""", Loc(130,11)), expr.VarE("v:print_:name", Loc(130,18))], Loc(130,3))),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          4: [
-            instr.AssignI(expr.VarE("v:print_:t.3", Loc(131,10)), expr.VarE("v:print_:size", Loc(131,10)), Loc(131,10)),
-            instr.AssignI(expr.VarE("v:print_:size", Loc(131,10)), expr.BinaryE(expr.VarE("v:print_:size", Loc(131,10)), op.BO_SUB, expr.LitE(1, Loc(131,10)), Loc(131,10)), Loc(131,10)),
-            instr.CondI(expr.VarE("v:print_:t.3", Loc(131,10)), Loc(131,3)),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(134,3)), [expr.LitE("""
-""", Loc(134,11))], Loc(134,3))),
-          ],
-
-          2: [
-            instr.NopI(),
-          ],
-
-          3: [
-            instr.AssignI(expr.VarE("v:print_:t.1", Loc(132,23)), expr.VarE("v:print_:p", Loc(132,23)), Loc(132,23)),
-            instr.AssignI(expr.VarE("v:print_:p", Loc(132,23)), expr.BinaryE(expr.VarE("v:print_:p", Loc(132,23)), op.BO_ADD, expr.LitE(1, Loc(132,23)), Loc(132,23)), Loc(132,23)),
-            instr.AssignI(expr.VarE("v:print_:t.2", Loc(132,22)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:print_:t.1", Loc(132,23)), Loc(132,22)), Loc(132,22)),
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(132,7)), [expr.LitE(""" %x""", Loc(132,15)), expr.VarE("v:print_:t.2", Loc(132,22))], Loc(132,7))),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 4, types.UnCondEdge),
-          (3, 2, types.UnCondEdge),
-          (4, 3, types.TrueEdge),
-          (4, 1, types.FalseEdge),
-          (5, 4, types.UnCondEdge),
-          (-1, 5, types.UnCondEdge),
-        }, # bbEdges end
-      ), # f:print_() end. 
-
-    "f:test_compound_with_relocs":
-      obj.Func(
-        name = "f:test_compound_with_relocs",
-        paramNames = [],
-        variadic = False,
-        returnType = types.Void,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          1: [
-            instr.AssignI(expr.VarE("v:test_compound_with_relocs:local_wrap", Loc(191,3)), expr.VarE("v:test_compound_with_relocs:t.1", Loc(191,30)), Loc(191,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:test_compound_with_relocs:t.2", Loc(193,7)), ["func"], Loc(193,7)), expr.FuncE("f:inc_global", Loc(193,7)),
-            instr.AssignI(expr.VarE("v:test_compound_with_relocs:p", Loc(195,3)), expr.VarE("v:test_compound_with_relocs:t.2", Loc(193,7)), Loc(195,3)),
-            instr.AssignI(expr.VarE("v:test_compound_with_relocs:t.3", Loc(196,7)), expr.ArrayE(expr.VarE("v:global_wrap", Loc(196,7)), [expr.LitE(0, Loc(196,19))], Loc(196,7)), Loc(196,7)),
-            instr.AssignI(expr.VarE("v:test_compound_with_relocs:p", Loc(196,3)), expr.MemberE(expr.VarE("v:test_compound_with_relocs:t.3", Loc(196,7)), ["func"], Loc(196,7)), Loc(196,3)),
-            instr.CallI(expr.CallE(expr.VarE("v:test_compound_with_relocs:p", Loc(196,28)), [], Loc(196,28))),
-            instr.AssignI(expr.VarE("v:test_compound_with_relocs:t.4", Loc(197,7)), expr.ArrayE(expr.VarE("v:global_wrap", Loc(197,7)), [expr.LitE(1, Loc(197,19))], Loc(197,7)), Loc(197,7)),
-            instr.AssignI(expr.VarE("v:test_compound_with_relocs:p", Loc(197,3)), expr.MemberE(expr.VarE("v:test_compound_with_relocs:t.4", Loc(197,7)), ["func"], Loc(197,7)), Loc(197,3)),
-            instr.CallI(expr.CallE(expr.VarE("v:test_compound_with_relocs:p", Loc(197,28)), [], Loc(197,28))),
-            instr.AssignI(expr.VarE("v:test_compound_with_relocs:t.5", Loc(198,7)), expr.ArrayE(expr.VarE("v:test_compound_with_relocs:local_wrap", Loc(198,7)), [expr.LitE(0, Loc(198,18))], Loc(198,7)), Loc(198,7)),
-            instr.AssignI(expr.VarE("v:test_compound_with_relocs:p", Loc(198,3)), expr.MemberE(expr.VarE("v:test_compound_with_relocs:t.5", Loc(198,7)), ["func"], Loc(198,7)), Loc(198,3)),
-            instr.CallI(expr.CallE(expr.VarE("v:test_compound_with_relocs:p", Loc(198,27)), [], Loc(198,27))),
-            instr.AssignI(expr.VarE("v:test_compound_with_relocs:t.6", Loc(199,7)), expr.ArrayE(expr.VarE("v:test_compound_with_relocs:local_wrap", Loc(199,7)), [expr.LitE(1, Loc(199,18))], Loc(199,7)), Loc(199,7)),
-            instr.AssignI(expr.VarE("v:test_compound_with_relocs:p", Loc(199,3)), expr.MemberE(expr.VarE("v:test_compound_with_relocs:t.6", Loc(199,7)), ["func"], Loc(199,7)), Loc(199,3)),
-            instr.CallI(expr.CallE(expr.VarE("v:test_compound_with_relocs:p", Loc(199,27)), [], Loc(199,27))),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
-      ), # f:test_compound_with_relocs() end. 
-
-    "f:test_multi_relocs":
-      obj.Func(
-        name = "f:test_multi_relocs",
-        paramNames = [],
-        variadic = False,
-        returnType = types.Void,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          -1: [
-            instr.NopI(),
-          ],
-
-          4: [
-            instr.AssignI(expr.VarE("v:test_multi_relocs:i", Loc(217,8)), expr.LitE(0, Loc(217,12)), Loc(217,8)),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.AssignI(expr.VarE("v:test_multi_relocs:i", Loc(217,51)), expr.BinaryE(expr.VarE("v:test_multi_relocs:i", Loc(217,51)), op.BO_ADD, expr.LitE(1, Loc(217,51)), Loc(217,51)), Loc(217,51)),
-          ],
-
-          2: [
-            instr.AssignI(expr.VarE("v:test_multi_relocs:t.1", Loc(218,5)), expr.ArrayE(expr.VarE("v:table", Loc(218,5)), [expr.VarE("v:test_multi_relocs:i", Loc(218,11))], Loc(218,5)), Loc(218,5)),
-            instr.CallI(expr.CallE(expr.VarE("v:test_multi_relocs:t.1", Loc(218,5)), [], Loc(218,5))),
-          ],
-
-          3: [
-            instr.AssignI(expr.VarE("v:test_multi_relocs:t.2", Loc(217,40)), expr.ArrayE(expr.VarE("v:table", Loc(217,40)), [expr.LitE(0, Loc(217,46))], Loc(217,40)), Loc(217,40)),
-            instr.AssignI(expr.VarE("v:test_multi_relocs:t.3", Loc(217,19)), expr.BinaryE(expr.LitE(24, Loc(217,19)), op.BO_DIV, expr.LitE(8, Loc(217,33))), Loc(217,19)),
-            instr.AssignI(expr.VarE("v:test_multi_relocs:t.4", Loc(217,15)), expr.BinaryE(expr.VarE("v:test_multi_relocs:i", Loc(217,15)), op.BO_LT, expr.VarE("v:test_multi_relocs:t.3", Loc(217,19))), Loc(217,15)),
-            instr.CondI(expr.VarE("v:test_multi_relocs:t.4", Loc(217,15)), Loc(217,3)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 3, types.UnCondEdge),
-          (2, 1, types.UnCondEdge),
-          (3, 2, types.TrueEdge),
-          (3, 0, types.FalseEdge),
-          (4, 3, types.UnCondEdge),
-          (-1, 4, types.UnCondEdge),
-        }, # bbEdges end
-      ), # f:test_multi_relocs() end. 
-
-    "f:sys_two":
-      obj.Func(
-        name = "f:sys_two",
-        paramNames = [],
-        variadic = False,
-        returnType = types.Void,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(204,22)), [expr.LitE("""two
-""", Loc(204,29))], Loc(204,22))),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
-      ), # f:sys_two() end. 
 
     "f:sys_ni":
       obj.Func(
@@ -1044,17 +1106,17 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(202,21)), [expr.LitE("""ni
-""", Loc(202,28))], Loc(202,21))),
+          0: [
+            instr.NopI(),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          0: [
-            instr.NopI(),
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(202,21)), [expr.LitE("""ni
+""", Loc(202,28))], Loc(202,21))),
           ],
 
         }, # basicBlocks end.
@@ -1064,68 +1126,6 @@ irTUnit.TUnit(
           (-1, 1, types.UnCondEdge),
         }, # bbEdges end
       ), # f:sys_ni() end. 
-
-    "f:sys_one":
-      obj.Func(
-        name = "f:sys_one",
-        paramNames = [],
-        variadic = False,
-        returnType = types.Void,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(203,22)), [expr.LitE("""one
-""", Loc(203,29))], Loc(203,22))),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
-      ), # f:sys_one() end. 
-
-    "f:sys_three":
-      obj.Func(
-        name = "f:sys_three",
-        paramNames = [],
-        variadic = False,
-        returnType = types.Void,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(205,24)), [expr.LitE("""three
-""", Loc(205,31))], Loc(205,24))),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
-      ), # f:sys_three() end. 
 
   }, # end allObjs dict
 ) # irTUnit.TUnit() ends

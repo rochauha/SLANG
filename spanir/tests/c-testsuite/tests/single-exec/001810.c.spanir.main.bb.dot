@@ -1,0 +1,35 @@
+digraph {
+  node [shape=box]
+  BB13 [label="[BB13]\li = 0\l"];
+  BB12 [label="[BB12]\lt.4 = i < 4\lif (t.4)\l"];
+  BB11 [label="[BB11]\lt.3 = i + 1\lA[i] = t.3\l"];
+  BB10 [label="[BB10]\li = i + 1\l"];
+  BB9 [label="[BB9]\li = 0\l"];
+  BB8 [label="[BB8]\lt.2 = i < 4\lif (t.2)\l"];
+  BB7 [label="[BB7]\lB[i] = 0\l"];
+  BB6 [label="[BB6]\li = i + 1\l"];
+  BB1 [label="[BB1]\lprintf('Solution of Tower of Hanoi Problem with %d Disks\n\n',4)\lprintf('Starting state:\n')\lPrintAll()\lprintf('\n\nSubsequent states:\n\n')\lHanoi(4,A,B,C)\lreturn 0\l"];
+  START [label="[START]\lnop()\l"];
+  END [label="[END]\lnop()\l"];
+  BB2 [label="[BB2]\li = i + 1\l"];
+  BB3 [label="[BB3]\lC[i] = 0\l"];
+  BB4 [label="[BB4]\lt.1 = i < 4\lif (t.1)\l"];
+  BB5 [label="[BB5]\li = 0\l"];
+  BB4 -> BB3 [color=green, penwidth=2];
+  BB8 -> BB7 [color=green, penwidth=2];
+  BB8 -> BB5 [color=red, penwidth=2];
+  BB12 -> BB11 [color=green, penwidth=2];
+  BB1 -> END;
+  BB5 -> BB4;
+  BB12 -> BB9 [color=red, penwidth=2];
+  BB11 -> BB10;
+  BB10 -> BB12;
+  BB13 -> BB12;
+  BB7 -> BB6;
+  BB6 -> BB8;
+  BB9 -> BB8;
+  START -> BB13;
+  BB3 -> BB2;
+  BB2 -> BB4;
+  BB4 -> BB1 [color=red, penwidth=2];
+}

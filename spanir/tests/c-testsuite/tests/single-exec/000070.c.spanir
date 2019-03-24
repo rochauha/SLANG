@@ -37,48 +37,48 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:main:x", Loc(7,6)), expr.LitE(10, Loc(7,10)), Loc(7,6)),
           ],
 
-          3: [
-            instr.AssignI(expr.VarE("v:main:x", Loc(13,3)), expr.BinaryE(expr.VarE("v:main:x", Loc(13,7)), op.BO_SUB, expr.LitE(1, Loc(13,11))), Loc(13,3)),
-          ],
-
-          2: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.VarE("v:main:x", Loc(14,9)), Loc(14,2)),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          4: [
-            instr.CondI(expr.VarE("v:main:x", Loc(12,8)), Loc(12,2)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          5: [
-            instr.AssignI(expr.VarE("v:main:x", Loc(11,2)), expr.LitE(10, Loc(11,6)), Loc(11,2)),
-          ],
-
-          6: [
-            instr.ReturnI(expr.LitE(1, Loc(10,10)), Loc(10,3)),
-          ],
-
-          7: [
-            instr.CondI(expr.VarE("v:main:x", Loc(9,5)), Loc(9,2)),
+          9: [
+            instr.CondI(expr.VarE("v:main:x", Loc(7,14)), Loc(7,2)),
           ],
 
           8: [
             instr.AssignI(expr.VarE("v:main:x", Loc(7,17)), expr.BinaryE(expr.VarE("v:main:x", Loc(7,21)), op.BO_SUB, expr.LitE(1, Loc(7,25))), Loc(7,17)),
           ],
 
-          9: [
-            instr.CondI(expr.VarE("v:main:x", Loc(7,14)), Loc(7,2)),
+          7: [
+            instr.CondI(expr.VarE("v:main:x", Loc(9,5)), Loc(9,2)),
+          ],
+
+          6: [
+            instr.ReturnI(expr.LitE(1, Loc(10,10)), Loc(10,3)),
+          ],
+
+          1: [
+            instr.ReturnI(expr.VarE("v:main:x", Loc(14,9)), Loc(14,2)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          2: [
+            instr.NopI(),
+          ],
+
+          3: [
+            instr.AssignI(expr.VarE("v:main:x", Loc(13,3)), expr.BinaryE(expr.VarE("v:main:x", Loc(13,7)), op.BO_SUB, expr.LitE(1, Loc(13,11))), Loc(13,3)),
+          ],
+
+          4: [
+            instr.CondI(expr.VarE("v:main:x", Loc(12,8)), Loc(12,2)),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:main:x", Loc(11,2)), expr.LitE(10, Loc(11,6)), Loc(11,2)),
           ],
 
         }, # basicBlocks end.

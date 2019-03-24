@@ -18,10 +18,10 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.4": types.Int32,
+    "v:main:t.3": types.Int32,
+    "v:main:t.2": types.Int32,
     "v:s": types.Ptr(to=types.Struct("s:S")),
     "v:main:t.1": types.Int32,
-    "v:main:t.2": types.Int32,
-    "v:main:t.3": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -46,26 +46,16 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          5: [
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(7,5)), expr.MemberE(expr.VarE("v:s", Loc(7,5)), ["a"], Loc(7,5)), Loc(7,5)),
-            instr.AssignI(expr.VarE("v:main:t.4", Loc(7,5)), expr.BinaryE(expr.VarE("v:main:t.3", Loc(7,5)), op.BO_NE, expr.LitE(1, Loc(7,13))), Loc(7,5)),
-            instr.CondI(expr.VarE("v:main:t.4", Loc(7,5)), Loc(7,2)),
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(11,9)), Loc(11,2)),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          4: [
-            instr.ReturnI(expr.LitE(1, Loc(8,10)), Loc(8,3)),
-          ],
-
           0: [
             instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(11,9)), Loc(11,2)),
           ],
 
           2: [
@@ -76,6 +66,16 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:main:t.1", Loc(9,5)), expr.MemberE(expr.VarE("v:s", Loc(9,5)), ["b"], Loc(9,5)), Loc(9,5)),
             instr.AssignI(expr.VarE("v:main:t.2", Loc(9,5)), expr.BinaryE(expr.VarE("v:main:t.1", Loc(9,5)), op.BO_NE, expr.LitE(2, Loc(9,13))), Loc(9,5)),
             instr.CondI(expr.VarE("v:main:t.2", Loc(9,5)), Loc(9,2)),
+          ],
+
+          4: [
+            instr.ReturnI(expr.LitE(1, Loc(8,10)), Loc(8,3)),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(7,5)), expr.MemberE(expr.VarE("v:s", Loc(7,5)), ["a"], Loc(7,5)), Loc(7,5)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(7,5)), expr.BinaryE(expr.VarE("v:main:t.3", Loc(7,5)), op.BO_NE, expr.LitE(1, Loc(7,13))), Loc(7,5)),
+            instr.CondI(expr.VarE("v:main:t.4", Loc(7,5)), Loc(7,2)),
           ],
 
         }, # basicBlocks end.

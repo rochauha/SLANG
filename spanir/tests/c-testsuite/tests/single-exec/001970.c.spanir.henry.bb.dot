@@ -1,0 +1,13 @@
+digraph {
+  node [shape=box]
+  BB3 [label="[BB3]\lnop()\l"];
+  BB2 [label="[BB2]\lfred = 4567\l"];
+  END [label="[END]\lnop()\l"];
+  START [label="[START]\lnop()\l"];
+  BB1 [label="[BB1]\lprintf('%d\n',fred)\lfred = fred + 1\l"];
+  START -> BB3;
+  BB3 -> BB1;
+  BB1 -> END;
+  BB2 -> BB1;
+  BB3 -> BB2;
+}

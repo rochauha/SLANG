@@ -1,0 +1,22 @@
+digraph {
+  node [shape=box]
+  BB7 [label="[BB7]\la = 1\lif (a)\l"];
+  BB6 [label="[BB6]\lprintf('a is true\n')\l"];
+  BB1 [label="[BB1]\lreturn 0\l"];
+  START [label="[START]\lnop()\l"];
+  END [label="[END]\lnop()\l"];
+  BB2 [label="[BB2]\lprintf('b is false\n')\l"];
+  BB3 [label="[BB3]\lprintf('b is true\n')\l"];
+  BB4 [label="[BB4]\lb = 0\lif (b)\l"];
+  BB5 [label="[BB5]\lprintf('a is false\n')\l"];
+  BB4 -> BB2 [color=red, penwidth=2];
+  BB7 -> BB6 [color=green, penwidth=2];
+  START -> BB7;
+  BB1 -> END;
+  BB2 -> BB1;
+  BB5 -> BB4;
+  BB7 -> BB5 [color=red, penwidth=2];
+  BB3 -> BB1;
+  BB6 -> BB4;
+  BB4 -> BB3 [color=green, penwidth=2];
+}

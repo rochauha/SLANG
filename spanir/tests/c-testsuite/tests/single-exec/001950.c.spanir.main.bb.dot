@@ -1,0 +1,8 @@
+digraph {
+  node [shape=box]
+  END [label="[END]\lnop()\l"];
+  START [label="[START]\lnop()\l"];
+  BB1 [label="[BB1]\lmy_point = 10\lt.1 = point_array[my_point]\lt.1.x = 12.34\lt.2 = point_array[my_point]\lt.2.y = 56.78\lt.5 = point_array[my_point]\lt.6 = t.5.x\lt.3 = point_array[my_point]\lt.4 = t.3.y\lprintf('%f, %f\n',t.6,t.4)\lreturn 0\l"];
+  BB1 -> END;
+  START -> BB1;
+}

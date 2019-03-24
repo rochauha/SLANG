@@ -1,0 +1,25 @@
+digraph {
+  node [shape=box]
+  BB7 [label="[BB7]\lt.9 = 2 == 2\lif (t.9)\l"];
+  BB6 [label="[BB6]\lt.8 = 4 == 4\lif (t.8)\l"];
+  BB1 [label="[BB1]\lt.1 = printf('KO __LP64__\n')\lt.2 = (VOID)t.1\l"];
+  START [label="[START]\lnop()\l"];
+  END [label="[END]\lnop()\l"];
+  BB2 [label="[BB2]\lt.3 = printf('Ok\n')\lt.4 = (VOID)t.3\l"];
+  BB3 [label="[BB3]\lt.5 = 8 == 8\lif (t.5)\l"];
+  BB4 [label="[BB4]\lt.6 = 8 == 8\lif (t.6)\l"];
+  BB5 [label="[BB5]\lt.7 = 8 == 8\lif (t.7)\l"];
+  BB6 -> BB5 [color=green, penwidth=2];
+  BB3 -> BB2 [color=green, penwidth=2];
+  BB5 -> BB4 [color=green, penwidth=2];
+  BB7 -> BB6 [color=green, penwidth=2];
+  BB4 -> BB3 [color=green, penwidth=2];
+  START -> BB7;
+  BB2 -> END;
+  BB5 -> END [color=red, penwidth=2];
+  BB4 -> END [color=red, penwidth=2];
+  BB1 -> END;
+  BB7 -> END [color=red, penwidth=2];
+  BB6 -> END [color=red, penwidth=2];
+  BB3 -> END [color=red, penwidth=2];
+}

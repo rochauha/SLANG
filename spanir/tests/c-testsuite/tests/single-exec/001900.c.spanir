@@ -32,17 +32,17 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:fred", Loc(10,4)), [], Loc(10,4))),
-            instr.ReturnI(expr.LitE(0, Loc(12,11)), Loc(12,4)),
+          0: [
+            instr.NopI(),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          0: [
-            instr.NopI(),
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:fred", Loc(10,4)), [], Loc(10,4))),
+            instr.ReturnI(expr.LitE(0, Loc(12,11)), Loc(12,4)),
           ],
 
         }, # basicBlocks end.
@@ -52,6 +52,37 @@ irTUnit.TUnit(
           (-1, 1, types.UnCondEdge),
         }, # bbEdges end
       ), # f:main() end. 
+
+    "f:fred":
+      obj.Func(
+        name = "f:fred",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(5,4)), [expr.LitE("""yo
+""", Loc(5,11))], Loc(5,4))),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:fred() end. 
 
     "f:printf":
       obj.Func(
@@ -68,37 +99,6 @@ irTUnit.TUnit(
         bbEdges= {
         }, # bbEdges end
       ), # f:printf() end. 
-
-    "f:fred":
-      obj.Func(
-        name = "f:fred",
-        paramNames = [],
-        variadic = False,
-        returnType = types.Void,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(5,4)), [expr.LitE("""yo
-""", Loc(5,11))], Loc(5,4))),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
-      ), # f:fred() end. 
 
   }, # end allObjs dict
 ) # irTUnit.TUnit() ends

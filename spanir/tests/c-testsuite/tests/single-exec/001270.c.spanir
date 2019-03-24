@@ -36,48 +36,48 @@ irTUnit.TUnit(
             instr.CondI(expr.LitE(0, Loc(6,5)), Loc(6,2)),
           ],
 
-          3: [
-            instr.ReturnI(expr.LitE(0, Loc(14,12)), Loc(14,5)),
-          ],
-
-          2: [
-            instr.ReturnI(expr.LitE(1, Loc(16,11)), Loc(16,4)),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(1, Loc(19,9)), Loc(19,2)),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          4: [
-            instr.ReturnI(expr.LitE(1, Loc(12,12)), Loc(12,5)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          5: [
-            instr.CondI(expr.VarE("v:c", Loc(11,7)), Loc(11,4)),
-          ],
-
-          6: [
-            instr.CondI(expr.LitE(1, Loc(10,6)), Loc(10,3)),
-          ],
-
-          7: [
-            instr.NopI(),
+          9: [
+            instr.ReturnI(expr.LitE(1, Loc(7,10)), Loc(7,3)),
           ],
 
           8: [
             instr.CondI(expr.LitE(0, Loc(8,12)), Loc(8,9)),
           ],
 
-          9: [
-            instr.ReturnI(expr.LitE(1, Loc(7,10)), Loc(7,3)),
+          7: [
+            instr.NopI(),
+          ],
+
+          6: [
+            instr.CondI(expr.LitE(1, Loc(10,6)), Loc(10,3)),
+          ],
+
+          1: [
+            instr.ReturnI(expr.LitE(1, Loc(19,9)), Loc(19,2)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          2: [
+            instr.ReturnI(expr.LitE(1, Loc(16,11)), Loc(16,4)),
+          ],
+
+          3: [
+            instr.ReturnI(expr.LitE(0, Loc(14,12)), Loc(14,5)),
+          ],
+
+          4: [
+            instr.ReturnI(expr.LitE(1, Loc(12,12)), Loc(12,5)),
+          ],
+
+          5: [
+            instr.CondI(expr.VarE("v:c", Loc(11,7)), Loc(11,4)),
           ],
 
         }, # basicBlocks end.

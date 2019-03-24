@@ -35,24 +35,16 @@ irTUnit.TUnit(
             instr.NopI(),
           ],
 
-          5: [
-            instr.ReturnI(expr.LitE(1, Loc(6,10)), Loc(6,3)),
+          1: [
+            instr.ReturnI(expr.LitE(1, Loc(12,10)), Loc(12,3)),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          4: [
-            instr.ReturnI(expr.LitE(0, Loc(8,10)), Loc(8,3)),
-          ],
-
           0: [
             instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(1, Loc(12,10)), Loc(12,3)),
           ],
 
           2: [
@@ -61,6 +53,14 @@ irTUnit.TUnit(
 
           3: [
             instr.NopI(),
+          ],
+
+          4: [
+            instr.ReturnI(expr.LitE(0, Loc(8,10)), Loc(8,3)),
+          ],
+
+          5: [
+            instr.ReturnI(expr.LitE(1, Loc(6,10)), Loc(6,3)),
           ],
 
         }, # basicBlocks end.

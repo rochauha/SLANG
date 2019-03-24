@@ -1,0 +1,8 @@
+digraph {
+  node [shape=box]
+  END [label="[END]\lnop()\l"];
+  START [label="[START]\lnop()\l"];
+  BB1 [label="[BB1]\lt.1 = 2 + 2\lt.2 = t.1 * 2\lt.3 = t.2 - 8\lreturn t.3\l"];
+  START -> BB1;
+  BB1 -> END;
+}

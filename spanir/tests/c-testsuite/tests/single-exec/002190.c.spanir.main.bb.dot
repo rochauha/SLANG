@@ -1,0 +1,8 @@
+digraph {
+  node [shape=box]
+  END [label="[END]\lnop()\l"];
+  START [label="[START]\lnop()\l"];
+  BB1 [label="[BB1]\li = 0\ll = 2\li = a_f()\lprintf('%d\n',i)\lt.1 = a_f()\li = t.1 / 2\lprintf('%d\n',i)\li = 20\lprintf('%d\n',i)\li = 123\lprintf('%d\n',i)\li = 2\lprintf('%d\n',i)\li = 0\lprintf('%d\n',i)\li = 5\lprintf('%d\n',i)\li = 1\lprintf('%d\n',i)\li = 2\lprintf('%d\n',i)\li = 3\lprintf('%d\n',i)\li = 4\lprintf('%d\n',i)\lprintf('%s\n','long')\li = 1\lprintf('%d\n',i)\li = 3\lprintf('%d\n',i)\lreturn 0\l"];
+  START -> BB1;
+  BB1 -> END;
+}

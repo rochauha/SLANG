@@ -17,11 +17,11 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.1": types.Int32,
-    "v:printf:__format": types.Ptr(to=types.Int8),
     "v:main:p": types.Int32,
-    "v:main:a": types.Int32,
+    "v:main:t.1": types.Int32,
     "v:main:t": types.Int32,
+    "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:main:a": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -52,27 +52,16 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          5: [
-            instr.AssignI(expr.VarE("v:main:a", Loc(9,4)), expr.LitE(1, Loc(9,8)), Loc(9,4)),
-            instr.AssignI(expr.VarE("v:main:p", Loc(10,4)), expr.LitE(0, Loc(10,8)), Loc(10,4)),
-            instr.AssignI(expr.VarE("v:main:t", Loc(11,4)), expr.LitE(0, Loc(11,8)), Loc(11,4)),
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(21,11)), Loc(21,4)),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          4: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(13,11)), expr.BinaryE(expr.VarE("v:main:a", Loc(13,11)), op.BO_LT, expr.LitE(100, Loc(13,15))), Loc(13,11)),
-            instr.CondI(expr.VarE("v:main:t.1", Loc(13,11)), Loc(13,4)),
-          ],
-
           0: [
             instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(21,11)), Loc(21,4)),
           ],
 
           2: [
@@ -85,6 +74,17 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:main:t", Loc(16,7)), expr.VarE("v:main:a", Loc(16,11)), Loc(16,7)),
             instr.AssignI(expr.VarE("v:main:a", Loc(17,7)), expr.BinaryE(expr.VarE("v:main:t", Loc(17,11)), op.BO_ADD, expr.VarE("v:main:p", Loc(17,15))), Loc(17,7)),
             instr.AssignI(expr.VarE("v:main:p", Loc(18,7)), expr.VarE("v:main:t", Loc(18,11)), Loc(18,7)),
+          ],
+
+          4: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(13,11)), expr.BinaryE(expr.VarE("v:main:a", Loc(13,11)), op.BO_LT, expr.LitE(100, Loc(13,15))), Loc(13,11)),
+            instr.CondI(expr.VarE("v:main:t.1", Loc(13,11)), Loc(13,4)),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:main:a", Loc(9,4)), expr.LitE(1, Loc(9,8)), Loc(9,4)),
+            instr.AssignI(expr.VarE("v:main:p", Loc(10,4)), expr.LitE(0, Loc(10,8)), Loc(10,4)),
+            instr.AssignI(expr.VarE("v:main:t", Loc(11,4)), expr.LitE(0, Loc(11,8)), Loc(11,4)),
           ],
 
         }, # basicBlocks end.

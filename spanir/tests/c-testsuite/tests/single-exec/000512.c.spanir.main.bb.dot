@@ -1,0 +1,35 @@
+digraph {
+  node [shape=box]
+  BB12 [label="[BB12]\lreturn 111\l"];
+  BB11 [label="[BB11]\lreturn 222\l"];
+  BB10 [label="[BB10]\lreturn 333\l"];
+  BB14 [label="[BB14]\lt.3 = x == 10\lif (t.3)\l"];
+  BB9 [label="[BB9]\lx = 10\lt.2 = x == 20\lif (t.2)\l"];
+  BB8 [label="[BB8]\lreturn 444\l"];
+  BB7 [label="[BB7]\lnop()\l"];
+  BB6 [label="[BB6]\lnop()\l"];
+  BB1 [label="[BB1]\lreturn 0\l"];
+  START [label="[START]\lnop()\l"];
+  END [label="[END]\lnop()\l"];
+  BB2 [label="[BB2]\lt.1 = x == 1\lif (t.1)\l"];
+  BB3 [label="[BB3]\lnop()\l"];
+  BB4 [label="[BB4]\lnop()\l"];
+  BB5 [label="[BB5]\lreturn 445\l"];
+  BB5 -> END;
+  BB8 -> END;
+  BB6 -> BB3;
+  BB2 -> BB3 [color=green, penwidth=2];
+  BB1 -> END;
+  BB11 -> END;
+  START -> BB9;
+  BB10 -> END;
+  BB14 -> BB10 [color=red, penwidth=2];
+  BB4 -> BB5;
+  BB14 -> BB12 [color=green, penwidth=2];
+  BB12 -> END;
+  BB3 -> BB4;
+  BB2 -> BB1 [color=red, penwidth=2];
+  BB7 -> BB8;
+  BB9 -> BB14 [color=red, penwidth=2];
+  BB9 -> BB11 [color=green, penwidth=2];
+}

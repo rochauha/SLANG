@@ -17,9 +17,9 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:printf:__format": types.Ptr(to=types.Int8),
     "v:main:a": types.Int32,
     "v:main:b": types.Int32,
-    "v:printf:__format": types.Ptr(to=types.Int8),
   }, # end allVars dict
 
   allObjs = {
@@ -60,26 +60,16 @@ irTUnit.TUnit(
 """, Loc(8,14))], Loc(8,7))),
           ],
 
-          5: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(10,7)), [expr.LitE("""a is false
-""", Loc(10,14))], Loc(10,7))),
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(18,11)), Loc(18,4)),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          4: [
-            instr.AssignI(expr.VarE("v:main:b", Loc(12,4)), expr.LitE(0, Loc(12,12)), Loc(12,4)),
-            instr.CondI(expr.VarE("v:main:b", Loc(13,8)), Loc(13,4)),
-          ],
-
           0: [
             instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(18,11)), Loc(18,4)),
           ],
 
           2: [
@@ -90,6 +80,16 @@ irTUnit.TUnit(
           3: [
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(14,7)), [expr.LitE("""b is true
 """, Loc(14,14))], Loc(14,7))),
+          ],
+
+          4: [
+            instr.AssignI(expr.VarE("v:main:b", Loc(12,4)), expr.LitE(0, Loc(12,12)), Loc(12,4)),
+            instr.CondI(expr.VarE("v:main:b", Loc(13,8)), Loc(13,4)),
+          ],
+
+          5: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(10,7)), [expr.LitE("""a is false
+""", Loc(10,14))], Loc(10,7))),
           ],
 
         }, # basicBlocks end.

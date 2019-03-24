@@ -36,9 +36,20 @@ irTUnit.TUnit(
         name = "u:2",
         fields = [
           ("z", types.Int32),
-          ("F-1", types.Union("u:3")),
+          ("1a", types.Union("u:3")),
         ],
         loc = Loc(7,3),
+      ),
+
+    "s:A":
+      types.Struct(
+        name = "s:A",
+        fields = [
+          ("1a", types.Union("u:1")),
+          ("2a", types.Union("u:2")),
+          ("zz", types.Int32),
+        ],
+        loc = Loc(1,1),
       ),
 
     "u:1":
@@ -49,17 +60,6 @@ irTUnit.TUnit(
           ("y", types.Float32),
         ],
         loc = Loc(2,3),
-      ),
-
-    "s:A":
-      types.Struct(
-        name = "s:A",
-        fields = [
-          ("F-1", types.Union("u:1")),
-          ("F-2", types.Union("u:3")),
-          ("zz", types.Int32),
-        ],
-        loc = Loc(1,1),
       ),
 
 
@@ -73,18 +73,18 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          1: [
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:a", Loc(19,3)), ["F-1", "x"], Loc(19,3)), expr.LitE(10, Loc(19,9)), Loc(19,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:a", Loc(20,3)), ["F-2", "z"], Loc(20,3)), expr.LitE(20, Loc(20,9)), Loc(20,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:a", Loc(21,3)), ["F-2", "F-1", "c"], Loc(21,3)), expr.LitE(10, Loc(21,9)), Loc(21,3)),
+          0: [
+            instr.NopI(),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          0: [
-            instr.NopI(),
+          1: [
+            instr.AssignI(expr.MemberE(expr.VarE("v:main:a", Loc(19,3)), ["1a", "x"], Loc(19,3)), expr.LitE(10, Loc(19,9)), Loc(19,3)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:main:a", Loc(20,3)), ["2a", "z"], Loc(20,3)), expr.LitE(20, Loc(20,9)), Loc(20,3)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:main:a", Loc(21,3)), ["2a", "1a", "c"], Loc(21,3)), expr.LitE(10, Loc(21,9)), Loc(21,3)),
           ],
 
         }, # basicBlocks end.

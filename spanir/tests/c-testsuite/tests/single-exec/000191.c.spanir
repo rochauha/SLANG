@@ -31,17 +31,6 @@ irTUnit.TUnit(
         loc = Loc(9,2),
       ),
 
-    "s:inner_t":
-      types.Struct(
-        name = "s:inner_t",
-        fields = [
-          ("b1", types.Int32),
-          ("b2", types.Int32),
-          ("t", types.Ptr(to=types.Struct("s:inner_t"))),
-        ],
-        loc = Loc(1,1),
-      ),
-
     "s:1":
       types.Struct(
         name = "s:1",
@@ -51,6 +40,17 @@ irTUnit.TUnit(
           ("t1", types.Struct("s:2")),
         ],
         loc = Loc(6,9),
+      ),
+
+    "s:inner_t":
+      types.Struct(
+        name = "s:inner_t",
+        fields = [
+          ("b1", types.Int32),
+          ("b2", types.Int32),
+          ("t", types.Ptr(to=types.Struct("s:inner_t"))),
+        ],
+        loc = Loc(1,1),
       ),
 
 
@@ -64,16 +64,16 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          1: [
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:p", Loc(18,2)), ["a1"], Loc(18,2)), expr.LitE(200, Loc(18,9)), Loc(18,2)),
+          0: [
+            instr.NopI(),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          0: [
-            instr.NopI(),
+          1: [
+            instr.AssignI(expr.MemberE(expr.VarE("v:main:p", Loc(18,2)), ["a1"], Loc(18,2)), expr.LitE(200, Loc(18,9)), Loc(18,2)),
           ],
 
         }, # basicBlocks end.

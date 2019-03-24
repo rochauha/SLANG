@@ -48,6 +48,14 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
           1: [
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(13,5)), [expr.LitE("""abort = %s
 """, Loc(13,12)), expr.LitE("""111""", Loc(13,28))], Loc(13,5))),
@@ -59,14 +67,6 @@ irTUnit.TUnit(
 """, Loc(26,12)), expr.LitE("""222""", Loc(26,28))], Loc(26,5))),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(29,5)), [expr.LitE("""abort = %s
 """, Loc(29,12)), expr.LitE("""111""", Loc(29,28))], Loc(29,5))),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
           ],
 
         }, # basicBlocks end.

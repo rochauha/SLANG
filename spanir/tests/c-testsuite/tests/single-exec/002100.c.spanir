@@ -18,11 +18,11 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.2": types.Ptr(to=types.FuncSig(returnType=types.Int32, paramTypes=[])),
-    "v:main:b": types.Int32,
-    "v:main:a": types.Int32,
     "v:printf:": types.Ptr(to=types.Int8),
+    "v:main:b": types.Int32,
     "v:main:function_pointer": types.Ptr(to=types.Void),
     "v:main:t.1": types.Ptr(to=types.FuncSig(returnType=types.Int32, paramTypes=[])),
+    "v:main:a": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -43,36 +43,6 @@ irTUnit.TUnit(
         }, # bbEdges end
       ), # f:printf() end. 
 
-    "f:actual_function":
-      obj.Func(
-        name = "f:actual_function",
-        paramNames = [],
-        variadic = False,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          1: [
-            instr.ReturnI(expr.LitE(42, Loc(23,10)), Loc(23,3)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
-      ), # f:actual_function() end. 
-
     "f:main":
       obj.Func(
         name = "f:main",
@@ -83,6 +53,14 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
           1: [
             instr.AssignI(expr.VarE("v:main:function_pointer", Loc(29,5)), expr.UnaryE(op.UO_ADDROF, expr.FuncE("f:actual_function", Loc(29,31)), Loc(29,30)), Loc(29,5)),
             instr.AssignI(expr.VarE("v:main:t.1", Loc(31,14)), expr.CastE(expr.VarE("v:main:function_pointer", Loc(31,35)), types.Ptr(to=types.FuncSig(returnType=types.Int32, paramTypes=[])), Loc(31,14)), Loc(31,14)),
@@ -94,14 +72,6 @@ irTUnit.TUnit(
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(37,5)), [expr.LitE("""%i
 """, Loc(37,12)), expr.VarE("v:main:b", Loc(37,20))], Loc(37,5))),
             instr.ReturnI(expr.LitE(0, Loc(39,12)), Loc(39,5)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
           ],
 
         }, # basicBlocks end.
@@ -136,6 +106,36 @@ irTUnit.TUnit(
           (-1, 0, types.UnCondEdge),
         }, # bbEdges end
       ), # f:foo() end. 
+
+    "f:actual_function":
+      obj.Func(
+        name = "f:actual_function",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.ReturnI(expr.LitE(42, Loc(23,10)), Loc(23,3)),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:actual_function() end. 
 
   }, # end allObjs dict
 ) # irTUnit.TUnit() ends

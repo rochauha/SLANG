@@ -1,0 +1,26 @@
+digraph {
+  node [shape=box]
+  BB9 [label="[BB9]\lCount = 1\l"];
+  BB8 [label="[BB8]\lt.5 = Count <= 10\lif (t.5)\l"];
+  BB7 [label="[BB7]\lt.4 = Count * Count\lt.3 = Count - 1\lArray[t.3] = t.4\l"];
+  BB6 [label="[BB6]\lCount = Count + 1\l"];
+  BB1 [label="[BB1]\lreturn 0\l"];
+  START [label="[START]\lnop()\l"];
+  END [label="[END]\lnop()\l"];
+  BB2 [label="[BB2]\lCount = Count + 1\l"];
+  BB3 [label="[BB3]\lt.1 = Array[Count]\lprintf('%d\n',t.1)\l"];
+  BB4 [label="[BB4]\lt.2 = Count < 10\lif (t.2)\l"];
+  BB5 [label="[BB5]\lCount = 0\l"];
+  BB7 -> BB6;
+  BB9 -> BB8;
+  START -> BB9;
+  BB5 -> BB4;
+  BB2 -> BB4;
+  BB4 -> BB3 [color=green, penwidth=2];
+  BB8 -> BB7 [color=green, penwidth=2];
+  BB6 -> BB8;
+  BB1 -> END;
+  BB4 -> BB1 [color=red, penwidth=2];
+  BB8 -> BB5 [color=red, penwidth=2];
+  BB3 -> BB2;
+}

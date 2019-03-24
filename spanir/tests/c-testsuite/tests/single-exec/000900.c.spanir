@@ -18,12 +18,12 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.6": types.Int32,
-    "v:main:t.5": types.Int32,
-    "v:main:t.4": types.Int32,
-    "v:a": types.ConstSizeArray(of=types.Int32, dim=3),
     "v:main:t.1": types.Int32,
-    "v:main:t.2": types.Int32,
+    "v:a": types.ConstSizeArray(of=types.Int32, dim=3),
     "v:main:t.3": types.Int32,
+    "v:main:t.2": types.Int32,
+    "v:main:t.4": types.Int32,
+    "v:main:t.5": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -48,26 +48,16 @@ irTUnit.TUnit(
             instr.ReturnI(expr.LitE(1, Loc(7,10)), Loc(7,3)),
           ],
 
-          5: [
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(8,6)), expr.ArrayE(expr.VarE("v:a", Loc(8,6)), [expr.LitE(1, Loc(8,8))], Loc(8,6)), Loc(8,6)),
-            instr.AssignI(expr.VarE("v:main:t.4", Loc(8,6)), expr.BinaryE(expr.VarE("v:main:t.3", Loc(8,6)), op.BO_NE, expr.LitE(1, Loc(8,14))), Loc(8,6)),
-            instr.CondI(expr.VarE("v:main:t.4", Loc(8,6)), Loc(8,2)),
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(13,9)), Loc(13,2)),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          4: [
-            instr.ReturnI(expr.LitE(2, Loc(9,10)), Loc(9,3)),
-          ],
-
           0: [
             instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(13,9)), Loc(13,2)),
           ],
 
           2: [
@@ -78,6 +68,16 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:main:t.1", Loc(10,6)), expr.ArrayE(expr.VarE("v:a", Loc(10,6)), [expr.LitE(2, Loc(10,8))], Loc(10,6)), Loc(10,6)),
             instr.AssignI(expr.VarE("v:main:t.2", Loc(10,6)), expr.BinaryE(expr.VarE("v:main:t.1", Loc(10,6)), op.BO_NE, expr.LitE(2, Loc(10,14))), Loc(10,6)),
             instr.CondI(expr.VarE("v:main:t.2", Loc(10,6)), Loc(10,2)),
+          ],
+
+          4: [
+            instr.ReturnI(expr.LitE(2, Loc(9,10)), Loc(9,3)),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(8,6)), expr.ArrayE(expr.VarE("v:a", Loc(8,6)), [expr.LitE(1, Loc(8,8))], Loc(8,6)), Loc(8,6)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(8,6)), expr.BinaryE(expr.VarE("v:main:t.3", Loc(8,6)), op.BO_NE, expr.LitE(1, Loc(8,14))), Loc(8,6)),
+            instr.CondI(expr.VarE("v:main:t.4", Loc(8,6)), Loc(8,2)),
           ],
 
         }, # basicBlocks end.

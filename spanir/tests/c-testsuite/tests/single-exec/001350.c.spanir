@@ -17,12 +17,12 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.3": types.UInt32,
     "v:main:t.4": types.UInt32,
-    "v:main:i": types.Int32,
-    "v:main:u": types.UInt32,
+    "v:main:t.3": types.UInt32,
     "v:main:t.1": types.Int32,
+    "v:main:i": types.Int32,
     "v:main:t.2": types.Int32,
+    "v:main:u": types.UInt32,
   }, # end allVars dict
 
   allObjs = {
@@ -37,6 +37,14 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
           1: [
             instr.AssignI(expr.VarE("v:main:i", Loc(7,2)), expr.LitE(1, Loc(7,6)), Loc(7,2)),
             instr.AssignI(expr.VarE("v:main:i", Loc(8,2)), expr.UnaryE(op.UO_MINUS, expr.LitE(1, Loc(8,7)), Loc(8,6)), Loc(8,2)),
@@ -57,14 +65,6 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:main:t.4", Loc(21,6)), expr.UnaryE(op.UO_MINUS, expr.LitE(1, Loc(21,7)), Loc(21,6)), Loc(21,6)),
             instr.AssignI(expr.VarE("v:main:u", Loc(21,2)), expr.BinaryE(expr.VarE("v:main:t.4", Loc(21,6)), op.BO_LT, expr.LitE(0, Loc(21,14))), Loc(21,2)),
             instr.ReturnI(expr.LitE(0, Loc(22,9)), Loc(22,2)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
           ],
 
         }, # basicBlocks end.

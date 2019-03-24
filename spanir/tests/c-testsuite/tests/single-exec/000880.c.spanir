@@ -32,24 +32,24 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(9,9)), Loc(9,2)),
+          3: [
+            instr.CondI(expr.VarE("v:fptr", Loc(7,6)), Loc(7,2)),
           ],
 
           2: [
             instr.ReturnI(expr.LitE(1, Loc(8,10)), Loc(8,3)),
           ],
 
-          3: [
-            instr.CondI(expr.VarE("v:fptr", Loc(7,6)), Loc(7,2)),
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(9,9)), Loc(9,2)),
           ],
 
         }, # basicBlocks end.

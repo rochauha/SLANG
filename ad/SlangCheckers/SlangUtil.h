@@ -75,6 +75,7 @@
 
 namespace slang {
 class Util {
+    static uint32_t id;
   public:
     /** Get the current date-time string.
      *
@@ -101,6 +102,9 @@ class Util {
      * @return zero if failed.
      */
     static int writeToFile(std::string fileName, std::string content);
+
+    static uint32_t getNextUniqueId();
+    static std::string getNextUniqueIdStr();
 
     /** The global level of logging.
      *

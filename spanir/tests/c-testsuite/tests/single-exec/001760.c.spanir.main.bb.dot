@@ -1,0 +1,26 @@
+digraph {
+  node [shape=box]
+  BB9 [label="[BB9]\larray[0] = 62\larray[1] = 83\larray[2] = 4\larray[3] = 89\larray[4] = 36\larray[5] = 21\larray[6] = 74\larray[7] = 37\larray[8] = 65\larray[9] = 33\larray[10] = 96\larray[11] = 38\larray[12] = 53\larray[13] = 16\larray[14] = 74\larray[15] = 55\li = 0\l"];
+  BB8 [label="[BB8]\lt.4 = i < 16\lif (t.4)\l"];
+  BB7 [label="[BB7]\lt.3 = array[i]\lprintf('%d ',t.3)\l"];
+  BB6 [label="[BB6]\li = i + 1\l"];
+  BB1 [label="[BB1]\lprintf('\n')\lreturn 0\l"];
+  START [label="[START]\lnop()\l"];
+  END [label="[END]\lnop()\l"];
+  BB2 [label="[BB2]\li = i + 1\l"];
+  BB3 [label="[BB3]\lt.1 = array[i]\lprintf('%d ',t.1)\l"];
+  BB4 [label="[BB4]\lt.2 = i < 16\lif (t.2)\l"];
+  BB5 [label="[BB5]\lprintf('\n')\lquicksort(0,15)\li = 0\l"];
+  BB4 -> BB1 [color=red, penwidth=2];
+  BB8 -> BB5 [color=red, penwidth=2];
+  BB6 -> BB8;
+  BB7 -> BB6;
+  BB9 -> BB8;
+  START -> BB9;
+  BB2 -> BB4;
+  BB3 -> BB2;
+  BB4 -> BB3 [color=green, penwidth=2];
+  BB5 -> BB4;
+  BB8 -> BB7 [color=green, penwidth=2];
+  BB1 -> END;
+}

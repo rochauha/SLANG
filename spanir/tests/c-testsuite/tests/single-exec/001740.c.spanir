@@ -22,29 +22,29 @@ irTUnit.TUnit(
     "v:main:t.23": types.Float32,
     "v:main:t.22": types.Float32,
     "v:main:t.21": types.Float32,
-    "v:main:t.8": types.Float32,
-    "v:main:t.6": types.Float32,
-    "v:main:t.5": types.Float32,
-    "v:main:t.4": types.Float32,
+    "v:main:t.20": types.Float32,
+    "v:main:t.19": types.Float32,
+    "v:main:t.18": types.Float32,
+    "v:main:t.17": types.Float32,
+    "v:main:t.16": types.Float32,
+    "v:main:t.15": types.Float32,
     "v:main:t.3": types.Float32,
-    "v:main:t.7": types.Float32,
-    "v:main:t.13": types.Float32,
-    "v:main:t.1": types.Float32,
-    "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:sin:__x": types.Float32,
     "v:main:t.2": types.Float32,
+    "v:main:t.1": types.Float32,
+    "v:main:t.4": types.Float32,
+    "v:main:t.5": types.Float32,
+    "v:main:t.6": types.Float32,
+    "v:main:t.7": types.Float32,
+    "v:main:t.8": types.Float32,
     "v:main:t.9": types.Float32,
     "v:main:t.10": types.Float32,
-    "v:main:t.11": types.Float32,
     "v:main:a": types.Float32,
+    "v:main:t.11": types.Float32,
     "v:main:t.12": types.Float32,
-    "v:sin:__x": types.Float32,
+    "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:main:t.13": types.Float32,
     "v:main:t.14": types.Float32,
-    "v:main:t.15": types.Float32,
-    "v:main:t.16": types.Float32,
-    "v:main:t.17": types.Float32,
-    "v:main:t.18": types.Float32,
-    "v:main:t.19": types.Float32,
-    "v:main:t.20": types.Float32,
   }, # end allVars dict
 
   allObjs = {
@@ -65,22 +65,6 @@ irTUnit.TUnit(
         }, # bbEdges end
       ), # f:sin() end. 
 
-    "f:printf":
-      obj.Func(
-        name = "f:printf",
-        paramNames = ["v:printf:__format"],
-        variadic = True,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:printf() end. 
-
     "f:main":
       obj.Func(
         name = "f:main",
@@ -91,6 +75,14 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
           1: [
             instr.AssignI(expr.VarE("v:main:a", Loc(7,4)), expr.BinaryE(expr.LitE(12.340000, Loc(7,14)), op.BO_ADD, expr.LitE(56.780000, Loc(7,22))), Loc(7,4)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(8,4)), [expr.LitE("""%f
@@ -162,14 +154,6 @@ irTUnit.TUnit(
             instr.ReturnI(expr.LitE(0, Loc(47,11)), Loc(47,4)),
           ],
 
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
         }, # basicBlocks end.
 
         bbEdges= {
@@ -177,6 +161,22 @@ irTUnit.TUnit(
           (-1, 1, types.UnCondEdge),
         }, # bbEdges end
       ), # f:main() end. 
+
+    "f:printf":
+      obj.Func(
+        name = "f:printf",
+        paramNames = ["v:printf:__format"],
+        variadic = True,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+        }, # basicBlocks end.
+
+        bbEdges= {
+        }, # bbEdges end
+      ), # f:printf() end. 
 
   }, # end allObjs dict
 ) # irTUnit.TUnit() ends

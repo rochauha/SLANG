@@ -18,14 +18,14 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.5": types.Struct("s:point"),
-    "v:main:t.4": types.Float32,
-    "v:main:t.3": types.Struct("s:point"),
-    "v:main:my_point": types.Int32,
-    "v:main:t.6": types.Float32,
     "v:point_array": types.ConstSizeArray(of=types.Struct("s:point"), dim=100),
+    "v:main:t.6": types.Float32,
     "v:printf:__format": types.Ptr(to=types.Int8),
-    "v:main:t.2": types.Struct("s:point"),
+    "v:main:t.4": types.Float32,
+    "v:main:my_point": types.Int32,
     "v:main:t.1": types.Struct("s:point"),
+    "v:main:t.2": types.Struct("s:point"),
+    "v:main:t.3": types.Struct("s:point"),
   }, # end allVars dict
 
   allObjs = {
@@ -66,6 +66,14 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
           1: [
             instr.AssignI(expr.VarE("v:main:my_point", Loc(13,4)), expr.LitE(10, Loc(13,19)), Loc(13,4)),
             instr.AssignI(expr.VarE("v:main:t.1", Loc(15,4)), expr.ArrayE(expr.VarE("v:point_array", Loc(15,4)), [expr.VarE("v:main:my_point", Loc(15,16))], Loc(15,4)), Loc(15,4)),
@@ -79,14 +87,6 @@ irTUnit.TUnit(
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(18,4)), [expr.LitE("""%f, %f
 """, Loc(18,11)), expr.VarE("v:main:t.6", Loc(18,23)), expr.VarE("v:main:t.4", Loc(18,48))], Loc(18,4))),
             instr.ReturnI(expr.LitE(0, Loc(20,11)), Loc(20,4)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
           ],
 
         }, # basicBlocks end.

@@ -18,12 +18,12 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.4": types.Int32,
-    "v:main:t.3": types.Int32,
-    "v:main:a": types.Int32,
-    "v:printf:__format": types.Ptr(to=types.Int8),
     "v:main:t.2": types.Int8,
-    "v:main:b": types.Int8,
+    "v:printf:__format": types.Ptr(to=types.Int8),
     "v:main:t.1": types.Int8,
+    "v:main:b": types.Int8,
+    "v:main:a": types.Int32,
+    "v:main:t.3": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -58,45 +58,9 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:main:a", Loc(8,4)), expr.LitE(0, Loc(8,8)), Loc(8,4)),
           ],
 
-          3: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(19,7)), [expr.LitE("""e""", Loc(19,14))], Loc(19,7))),
-          ],
-
-          2: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(21,4)), [expr.LitE("""
-""", Loc(21,11))], Loc(21,4))),
-            instr.ReturnI(expr.LitE(0, Loc(23,11)), Loc(23,4)),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          4: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          5: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(17,23)), expr.VarE("v:main:b", Loc(17,23)), Loc(17,23)),
-            instr.AssignI(expr.VarE("v:main:b", Loc(17,23)), expr.BinaryE(expr.VarE("v:main:b", Loc(17,23)), op.BO_ADD, expr.LitE(1, Loc(17,23)), Loc(17,23)), Loc(17,23)),
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(17,10)), [expr.LitE("""%c""", Loc(17,17)), expr.VarE("v:main:t.1", Loc(17,23))], Loc(17,10))),
-          ],
-
-          6: [
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(15,14)), expr.BinaryE(expr.VarE("v:main:b", Loc(15,14)), op.BO_LT, ERROR:convertExpr), Loc(15,14)),
-            instr.CondI(expr.VarE("v:main:t.2", Loc(15,14)), Loc(15,7)),
-          ],
-
-          7: [
-            instr.AssignI(expr.VarE("v:main:b", Loc(14,7)), ERROR:convertExpr, Loc(14,7)),
+          9: [
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(9,11)), expr.BinaryE(expr.VarE("v:main:a", Loc(9,11)), op.BO_LT, expr.LitE(2, Loc(9,15))), Loc(9,11)),
+            instr.CondI(expr.VarE("v:main:t.4", Loc(9,11)), Loc(9,4)),
           ],
 
           8: [
@@ -105,9 +69,45 @@ irTUnit.TUnit(
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(11,7)), [expr.LitE("""%d""", Loc(11,14)), expr.VarE("v:main:t.3", Loc(11,20))], Loc(11,7))),
           ],
 
-          9: [
-            instr.AssignI(expr.VarE("v:main:t.4", Loc(9,11)), expr.BinaryE(expr.VarE("v:main:a", Loc(9,11)), op.BO_LT, expr.LitE(2, Loc(9,15))), Loc(9,11)),
-            instr.CondI(expr.VarE("v:main:t.4", Loc(9,11)), Loc(9,4)),
+          7: [
+            instr.AssignI(expr.VarE("v:main:b", Loc(14,7)), ERROR:convertExpr, Loc(14,7)),
+          ],
+
+          6: [
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(15,14)), expr.BinaryE(expr.VarE("v:main:b", Loc(15,14)), op.BO_LT, ERROR:convertExpr), Loc(15,14)),
+            instr.CondI(expr.VarE("v:main:t.2", Loc(15,14)), Loc(15,7)),
+          ],
+
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(21,4)), [expr.LitE("""
+""", Loc(21,11))], Loc(21,4))),
+            instr.ReturnI(expr.LitE(0, Loc(23,11)), Loc(23,4)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          2: [
+            instr.NopI(),
+          ],
+
+          3: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(19,7)), [expr.LitE("""e""", Loc(19,14))], Loc(19,7))),
+          ],
+
+          4: [
+            instr.NopI(),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(17,23)), expr.VarE("v:main:b", Loc(17,23)), Loc(17,23)),
+            instr.AssignI(expr.VarE("v:main:b", Loc(17,23)), expr.BinaryE(expr.VarE("v:main:b", Loc(17,23)), op.BO_ADD, expr.LitE(1, Loc(17,23)), Loc(17,23)), Loc(17,23)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(17,10)), [expr.LitE("""%c""", Loc(17,17)), expr.VarE("v:main:t.1", Loc(17,23))], Loc(17,10))),
           ],
 
         }, # basicBlocks end.

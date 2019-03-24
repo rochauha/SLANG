@@ -1,0 +1,28 @@
+digraph {
+  node [shape=box]
+  BB10 [label="[BB10]\ltimeout = 2\l"];
+  BB9 [label="[BB9]\lnop()\l"];
+  BB8 [label="[BB8]\lnop()\l"];
+  BB7 [label="[BB7]\lnop()\l"];
+  BB6 [label="[BB6]\lprintf('error\n')\l"];
+  BB1 [label="[BB1]\lif (timeout)\l"];
+  START [label="[START]\lnop()\l"];
+  END [label="[END]\lnop()\l"];
+  BB2 [label="[BB2]\ltimeout = timeout - 1\l"];
+  BB3 [label="[BB3]\lnop()\l"];
+  BB4 [label="[BB4]\lnop()\l"];
+  BB5 [label="[BB5]\lif (1)\l"];
+  BB5 -> BB7 [color=green, penwidth=2];
+  BB5 -> END [color=red, penwidth=2];
+  BB6 -> BB5;
+  START -> BB10;
+  BB1 -> END [color=red, penwidth=2];
+  BB7 -> BB6;
+  BB1 -> BB9 [color=green, penwidth=2];
+  BB8 -> BB3;
+  BB9 -> BB8;
+  BB10 -> BB8;
+  BB3 -> BB2;
+  BB2 -> BB1;
+  BB4 -> BB2;
+}

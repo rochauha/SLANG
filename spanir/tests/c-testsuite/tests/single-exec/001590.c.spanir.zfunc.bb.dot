@@ -1,0 +1,8 @@
+digraph {
+  node [shape=box]
+  END [label="[END]\lnop()\l"];
+  START [label="[START]\lnop()\l"];
+  BB1 [label="[BB1]\lt.1 = (types.Ptr(FUNC_SIG, 1))0\lt.1()\l"];
+  BB1 -> END;
+  START -> BB1;
+}

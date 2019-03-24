@@ -17,10 +17,10 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:foo:t.2": types.Int32,
-    "v:foo:b": types.Int32,
     "v:main:t.1": types.Int32,
+    "v:foo:t.2": types.Int32,
     "v:foo:a": types.Int32,
+    "v:foo:b": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -35,17 +35,17 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          1: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(10,9)), expr.CallE(expr.FuncE("f:foo", Loc(10,9)), [expr.LitE(1, Loc(10,13)), expr.LitE(3, Loc(10,16))], Loc(10,9)), Loc(10,9)),
-            instr.ReturnI(expr.VarE("v:main:t.1", Loc(10,9)), Loc(10,2)),
+          0: [
+            instr.NopI(),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          0: [
-            instr.NopI(),
+          1: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(10,9)), expr.CallE(expr.FuncE("f:foo", Loc(10,9)), [expr.LitE(1, Loc(10,13)), expr.LitE(3, Loc(10,16))], Loc(10,9)), Loc(10,9)),
+            instr.ReturnI(expr.VarE("v:main:t.1", Loc(10,9)), Loc(10,2)),
           ],
 
         }, # basicBlocks end.
@@ -66,18 +66,18 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          1: [
-            instr.AssignI(expr.VarE("v:foo:t.1", Loc(4,9)), expr.BinaryE(expr.LitE(2, Loc(4,9)), op.BO_ADD, expr.VarE("v:foo:a", Loc(4,13))), Loc(4,9)),
-            instr.AssignI(expr.VarE("v:foo:t.2", Loc(4,9)), expr.BinaryE(expr.VarE("v:foo:t.1", Loc(4,9)), op.BO_SUB, expr.VarE("v:foo:b", Loc(4,17))), Loc(4,9)),
-            instr.ReturnI(expr.VarE("v:foo:t.2", Loc(4,9)), Loc(4,2)),
+          0: [
+            instr.NopI(),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          0: [
-            instr.NopI(),
+          1: [
+            instr.AssignI(expr.VarE("v:foo:t.1", Loc(4,9)), expr.BinaryE(expr.LitE(2, Loc(4,9)), op.BO_ADD, expr.VarE("v:foo:a", Loc(4,13))), Loc(4,9)),
+            instr.AssignI(expr.VarE("v:foo:t.2", Loc(4,9)), expr.BinaryE(expr.VarE("v:foo:t.1", Loc(4,9)), op.BO_SUB, expr.VarE("v:foo:b", Loc(4,17))), Loc(4,9)),
+            instr.ReturnI(expr.VarE("v:foo:t.2", Loc(4,9)), Loc(4,2)),
           ],
 
         }, # basicBlocks end.

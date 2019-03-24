@@ -1,0 +1,38 @@
+digraph {
+  node [shape=box]
+  BB13 [label="[BB13]\lt.13 = s.s1.a\lt.14 = t.13 != 1\lif (t.14)\l"];
+  BB12 [label="[BB12]\lreturn 1\l"];
+  BB11 [label="[BB11]\lt.11 = s.s1.b\lt.12 = t.11 != 2\lif (t.12)\l"];
+  BB10 [label="[BB10]\lreturn 2\l"];
+  BB9 [label="[BB9]\lt.9 = s.ps1.a\lt.10 = t.9 != 1\lif (t.10)\l"];
+  BB8 [label="[BB8]\lreturn 3\l"];
+  BB7 [label="[BB7]\lt.7 = s.ps1.b\lt.8 = t.7 != 2\lif (t.8)\l"];
+  BB6 [label="[BB6]\lreturn 4\l"];
+  BB1 [label="[BB1]\lreturn 0\l"];
+  START [label="[START]\lnop()\l"];
+  END [label="[END]\lnop()\l"];
+  BB2 [label="[BB2]\lreturn 6\l"];
+  BB3 [label="[BB3]\lt.1 = s.arr\lt.2 = t.1[1]\lt.3 = t.2 != 2\lif (t.3)\l"];
+  BB4 [label="[BB4]\lreturn 5\l"];
+  BB5 [label="[BB5]\lt.4 = s.arr\lt.5 = t.4[0]\lt.6 = t.5 != 1\lif (t.6)\l"];
+  BB3 -> BB2 [color=green, penwidth=2];
+  BB4 -> END;
+  BB5 -> BB4 [color=green, penwidth=2];
+  BB11 -> BB10 [color=green, penwidth=2];
+  BB5 -> BB3 [color=red, penwidth=2];
+  BB8 -> END;
+  BB9 -> BB7 [color=red, penwidth=2];
+  BB6 -> END;
+  BB7 -> BB6 [color=green, penwidth=2];
+  BB7 -> BB5 [color=red, penwidth=2];
+  BB9 -> BB8 [color=green, penwidth=2];
+  BB10 -> END;
+  BB13 -> BB11 [color=red, penwidth=2];
+  BB13 -> BB12 [color=green, penwidth=2];
+  BB1 -> END;
+  BB3 -> BB1 [color=red, penwidth=2];
+  BB11 -> BB9 [color=red, penwidth=2];
+  BB2 -> END;
+  BB12 -> END;
+  START -> BB13;
+}

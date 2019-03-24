@@ -17,16 +17,16 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:main:t.4": types.Int32,
+    "v:main:t.3": types.Int32,
     "v:three:c": types.Int32,
     "v:three:b": types.Int32,
-    "v:three:a": types.Int32,
-    "v:main:t.2": types.Int32,
-    "v:one:a": types.Int32,
     "v:main:t.1": types.Int32,
-    "v:main:t.4": types.Int32,
     "v:two:a": types.Int32,
-    "v:main:t.3": types.Int32,
     "v:two:b": types.Int32,
+    "v:one:a": types.Int32,
+    "v:main:t.2": types.Int32,
+    "v:three:a": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -41,38 +41,13 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          3: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(51,6)), expr.CallE(expr.FuncE("f:three", Loc(51,6)), [expr.LitE(1, Loc(51,12)), expr.LitE(2, Loc(51,12)), expr.LitE(3, Loc(51,12))], Loc(51,6)), Loc(51,6)),
-            instr.CondI(expr.VarE("v:main:t.1", Loc(51,6)), Loc(51,2)),
+          9: [
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(45,6)), expr.CallE(expr.FuncE("f:none", Loc(45,6)), [], Loc(45,6)), Loc(45,6)),
+            instr.CondI(expr.VarE("v:main:t.4", Loc(45,6)), Loc(45,2)),
           ],
 
-          2: [
-            instr.ReturnI(expr.LitE(4, Loc(52,10)), Loc(52,3)),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(53,9)), Loc(53,2)),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          4: [
-            instr.ReturnI(expr.LitE(3, Loc(50,10)), Loc(50,3)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          5: [
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(49,6)), expr.CallE(expr.FuncE("f:two", Loc(49,6)), [expr.LitE(1, Loc(49,10)), expr.LitE(2, Loc(49,10))], Loc(49,6)), Loc(49,6)),
-            instr.CondI(expr.VarE("v:main:t.2", Loc(49,6)), Loc(49,2)),
-          ],
-
-          6: [
-            instr.ReturnI(expr.LitE(2, Loc(48,10)), Loc(48,3)),
+          8: [
+            instr.ReturnI(expr.LitE(1, Loc(46,10)), Loc(46,3)),
           ],
 
           7: [
@@ -80,13 +55,38 @@ irTUnit.TUnit(
             instr.CondI(expr.VarE("v:main:t.3", Loc(47,6)), Loc(47,2)),
           ],
 
-          8: [
-            instr.ReturnI(expr.LitE(1, Loc(46,10)), Loc(46,3)),
+          6: [
+            instr.ReturnI(expr.LitE(2, Loc(48,10)), Loc(48,3)),
           ],
 
-          9: [
-            instr.AssignI(expr.VarE("v:main:t.4", Loc(45,6)), expr.CallE(expr.FuncE("f:none", Loc(45,6)), [], Loc(45,6)), Loc(45,6)),
-            instr.CondI(expr.VarE("v:main:t.4", Loc(45,6)), Loc(45,2)),
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(53,9)), Loc(53,2)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          2: [
+            instr.ReturnI(expr.LitE(4, Loc(52,10)), Loc(52,3)),
+          ],
+
+          3: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(51,6)), expr.CallE(expr.FuncE("f:three", Loc(51,6)), [expr.LitE(1, Loc(51,12)), expr.LitE(2, Loc(51,12)), expr.LitE(3, Loc(51,12))], Loc(51,6)), Loc(51,6)),
+            instr.CondI(expr.VarE("v:main:t.1", Loc(51,6)), Loc(51,2)),
+          ],
+
+          4: [
+            instr.ReturnI(expr.LitE(3, Loc(50,10)), Loc(50,3)),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(49,6)), expr.CallE(expr.FuncE("f:two", Loc(49,6)), [expr.LitE(1, Loc(49,10)), expr.LitE(2, Loc(49,10))], Loc(49,6)), Loc(49,6)),
+            instr.CondI(expr.VarE("v:main:t.2", Loc(49,6)), Loc(49,2)),
           ],
 
         }, # basicBlocks end.
@@ -109,36 +109,6 @@ irTUnit.TUnit(
         }, # bbEdges end
       ), # f:main() end. 
 
-    "f:none":
-      obj.Func(
-        name = "f:none",
-        paramNames = [],
-        variadic = False,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(6,9)), Loc(6,2)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
-      ), # f:none() end. 
-
     "f:two":
       obj.Func(
         name = "f:two",
@@ -149,25 +119,16 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          5: [
-            instr.AssignI(expr.VarE("v:two:t.2", Loc(21,6)), expr.BinaryE(expr.VarE("v:two:a", Loc(21,6)), op.BO_NE, expr.LitE(1, Loc(21,11))), Loc(21,6)),
-            instr.CondI(expr.VarE("v:two:t.2", Loc(21,6)), Loc(21,2)),
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(26,9)), Loc(26,2)),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          4: [
-            instr.ReturnI(expr.LitE(1, Loc(22,10)), Loc(22,3)),
-          ],
-
           0: [
             instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(26,9)), Loc(26,2)),
           ],
 
           2: [
@@ -177,6 +138,15 @@ irTUnit.TUnit(
           3: [
             instr.AssignI(expr.VarE("v:two:t.1", Loc(23,6)), expr.BinaryE(expr.VarE("v:two:b", Loc(23,6)), op.BO_NE, expr.LitE(2, Loc(23,11))), Loc(23,6)),
             instr.CondI(expr.VarE("v:two:t.1", Loc(23,6)), Loc(23,2)),
+          ],
+
+          4: [
+            instr.ReturnI(expr.LitE(1, Loc(22,10)), Loc(22,3)),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:two:t.2", Loc(21,6)), expr.BinaryE(expr.VarE("v:two:a", Loc(21,6)), op.BO_NE, expr.LitE(1, Loc(21,11))), Loc(21,6)),
+            instr.CondI(expr.VarE("v:two:t.2", Loc(21,6)), Loc(21,2)),
           ],
 
         }, # basicBlocks end.
@@ -193,47 +163,35 @@ irTUnit.TUnit(
         }, # bbEdges end
       ), # f:two() end. 
 
-    "f:one":
+    "f:none":
       obj.Func(
-        name = "f:one",
-        paramNames = ["v:one:a"],
+        name = "f:none",
+        paramNames = [],
         variadic = False,
         returnType = types.Int32,
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          -1: [
-            instr.NopI(),
-          ],
-
           0: [
             instr.NopI(),
           ],
 
+          -1: [
+            instr.NopI(),
+          ],
+
           1: [
-            instr.ReturnI(expr.LitE(0, Loc(15,9)), Loc(15,2)),
-          ],
-
-          2: [
-            instr.ReturnI(expr.LitE(1, Loc(13,10)), Loc(13,3)),
-          ],
-
-          3: [
-            instr.AssignI(expr.VarE("v:one:t.1", Loc(12,6)), expr.BinaryE(expr.VarE("v:one:a", Loc(12,6)), op.BO_NE, expr.LitE(1, Loc(12,11))), Loc(12,6)),
-            instr.CondI(expr.VarE("v:one:t.1", Loc(12,6)), Loc(12,2)),
+            instr.ReturnI(expr.LitE(0, Loc(6,9)), Loc(6,2)),
           ],
 
         }, # basicBlocks end.
 
         bbEdges= {
           (1, 0, types.UnCondEdge),
-          (2, 0, types.UnCondEdge),
-          (3, 2, types.TrueEdge),
-          (3, 1, types.FalseEdge),
-          (-1, 3, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
         }, # bbEdges end
-      ), # f:one() end. 
+      ), # f:none() end. 
 
     "f:three":
       obj.Func(
@@ -254,25 +212,16 @@ irTUnit.TUnit(
             instr.ReturnI(expr.LitE(1, Loc(33,10)), Loc(33,3)),
           ],
 
-          5: [
-            instr.AssignI(expr.VarE("v:three:t.2", Loc(34,6)), expr.BinaryE(expr.VarE("v:three:b", Loc(34,6)), op.BO_NE, expr.LitE(2, Loc(34,11))), Loc(34,6)),
-            instr.CondI(expr.VarE("v:three:t.2", Loc(34,6)), Loc(34,2)),
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(39,9)), Loc(39,2)),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          4: [
-            instr.ReturnI(expr.LitE(1, Loc(35,10)), Loc(35,3)),
-          ],
-
           0: [
             instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(39,9)), Loc(39,2)),
           ],
 
           2: [
@@ -282,6 +231,15 @@ irTUnit.TUnit(
           3: [
             instr.AssignI(expr.VarE("v:three:t.1", Loc(36,6)), expr.BinaryE(expr.VarE("v:three:c", Loc(36,6)), op.BO_NE, expr.LitE(3, Loc(36,11))), Loc(36,6)),
             instr.CondI(expr.VarE("v:three:t.1", Loc(36,6)), Loc(36,2)),
+          ],
+
+          4: [
+            instr.ReturnI(expr.LitE(1, Loc(35,10)), Loc(35,3)),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:three:t.2", Loc(34,6)), expr.BinaryE(expr.VarE("v:three:b", Loc(34,6)), op.BO_NE, expr.LitE(2, Loc(34,11))), Loc(34,6)),
+            instr.CondI(expr.VarE("v:three:t.2", Loc(34,6)), Loc(34,2)),
           ],
 
         }, # basicBlocks end.
@@ -300,6 +258,48 @@ irTUnit.TUnit(
           (-1, 7, types.UnCondEdge),
         }, # bbEdges end
       ), # f:three() end. 
+
+    "f:one":
+      obj.Func(
+        name = "f:one",
+        paramNames = ["v:one:a"],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          3: [
+            instr.AssignI(expr.VarE("v:one:t.1", Loc(12,6)), expr.BinaryE(expr.VarE("v:one:a", Loc(12,6)), op.BO_NE, expr.LitE(1, Loc(12,11))), Loc(12,6)),
+            instr.CondI(expr.VarE("v:one:t.1", Loc(12,6)), Loc(12,2)),
+          ],
+
+          2: [
+            instr.ReturnI(expr.LitE(1, Loc(13,10)), Loc(13,3)),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(15,9)), Loc(15,2)),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (2, 0, types.UnCondEdge),
+          (3, 2, types.TrueEdge),
+          (3, 1, types.FalseEdge),
+          (-1, 3, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:one() end. 
 
   }, # end allObjs dict
 ) # irTUnit.TUnit() ends

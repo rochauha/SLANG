@@ -1,0 +1,23 @@
+digraph {
+  node [shape=box]
+  BB7 [label="[BB7]\lt.3 = 0 != 0\lif (t.3)\l"];
+  BB6 [label="[BB6]\lreturn 1\l"];
+  BB1 [label="[BB1]\le = 0\lreturn e\l"];
+  START [label="[START]\lnop()\l"];
+  END [label="[END]\lnop()\l"];
+  BB2 [label="[BB2]\lreturn 3\l"];
+  BB3 [label="[BB3]\lt.1 = 3 != 3\lif (t.1)\l"];
+  BB4 [label="[BB4]\lreturn 2\l"];
+  BB5 [label="[BB5]\lt.2 = 2 != 2\lif (t.2)\l"];
+  BB1 -> END;
+  BB7 -> BB5 [color=red, penwidth=2];
+  BB5 -> END [color=green, penwidth=2];
+  BB6 -> END;
+  BB3 -> BB1 [color=red, penwidth=2];
+  BB7 -> END [color=green, penwidth=2];
+  BB4 -> END;
+  BB2 -> END;
+  START -> BB7;
+  BB3 -> END [color=green, penwidth=2];
+  BB5 -> BB3 [color=red, penwidth=2];
+}

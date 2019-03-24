@@ -1,0 +1,8 @@
+digraph {
+  node [shape=box]
+  END [label="[END]\lnop()\l"];
+  START [label="[START]\lnop()\l"];
+  BB1 [label="[BB1]\lprintf('abort = %s\n','111')\lprintf('abort = %s\n','222')\lprintf('abort = %s\n','333')\lprintf('abort = %s\n','222')\lprintf('abort = %s\n','111')\l"];
+  BB1 -> END;
+  START -> BB1;
+}

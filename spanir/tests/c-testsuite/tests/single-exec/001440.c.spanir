@@ -17,10 +17,10 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:p": types.Ptr(to=types.Void),
     "v:main:i": types.Int32,
-    "v:main:t.1": types.Int32,
+    "v:main:p": types.Ptr(to=types.Void),
     "v:main:q": types.Ptr(to=types.Int32),
+    "v:main:t.1": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -39,10 +39,6 @@ irTUnit.TUnit(
             instr.NopI(),
           ],
 
-          -1: [
-            instr.NopI(),
-          ],
-
           24: [
             instr.NopI(),
           ],
@@ -55,20 +51,28 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:main:i", Loc(7,2)), ERROR:convertExpr, Loc(7,2)),
           ],
 
-          9: [
+          21: [
             instr.NopI(),
           ],
 
-          8: [
+          20: [
             instr.NopI(),
           ],
 
-          7: [
-            instr.AssignI(expr.VarE("v:main:q", Loc(12,2)), ERROR:convertExpr, Loc(12,2)),
+          19: [
+            instr.AssignI(expr.VarE("v:main:p", Loc(8,2)), ERROR:convertExpr, Loc(8,2)),
           ],
 
-          6: [
+          18: [
             instr.NopI(),
+          ],
+
+          17: [
+            instr.NopI(),
+          ],
+
+          16: [
+            instr.AssignI(expr.VarE("v:main:p", Loc(9,2)), ERROR:convertExpr, Loc(9,2)),
           ],
 
           5: [
@@ -77,6 +81,14 @@ irTUnit.TUnit(
 
           4: [
             instr.AssignI(expr.VarE("v:main:q", Loc(13,2)), ERROR:convertExpr, Loc(13,2)),
+          ],
+
+          3: [
+            instr.NopI(),
+          ],
+
+          2: [
+            instr.NopI(),
           ],
 
           0: [
@@ -89,16 +101,28 @@ irTUnit.TUnit(
             instr.ReturnI(expr.VarE("v:main:t.1", Loc(16,9)), Loc(16,2)),
           ],
 
-          2: [
+          6: [
             instr.NopI(),
           ],
 
-          3: [
+          7: [
+            instr.AssignI(expr.VarE("v:main:q", Loc(12,2)), ERROR:convertExpr, Loc(12,2)),
+          ],
+
+          8: [
+            instr.NopI(),
+          ],
+
+          9: [
             instr.NopI(),
           ],
 
           10: [
             instr.AssignI(expr.VarE("v:main:q", Loc(11,2)), ERROR:convertExpr, Loc(11,2)),
+          ],
+
+          -1: [
+            instr.NopI(),
           ],
 
           11: [
@@ -118,30 +142,6 @@ irTUnit.TUnit(
           ],
 
           15: [
-            instr.NopI(),
-          ],
-
-          16: [
-            instr.AssignI(expr.VarE("v:main:p", Loc(9,2)), ERROR:convertExpr, Loc(9,2)),
-          ],
-
-          17: [
-            instr.NopI(),
-          ],
-
-          18: [
-            instr.NopI(),
-          ],
-
-          19: [
-            instr.AssignI(expr.VarE("v:main:p", Loc(8,2)), ERROR:convertExpr, Loc(8,2)),
-          ],
-
-          20: [
-            instr.NopI(),
-          ],
-
-          21: [
             instr.NopI(),
           ],
 

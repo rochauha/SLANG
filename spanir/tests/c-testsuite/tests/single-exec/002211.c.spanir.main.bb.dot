@@ -1,0 +1,8 @@
+digraph {
+  node [shape=box]
+  END [label="[END]\lnop()\l"];
+  START [label="[START]\lnop()\l"];
+  BB1 [label="[BB1]\lfunc = sum\lfunc = func - 1\lsum(17,13)\lt.1 = func + 1\lt.2 = t.1(10,12)\lreturn t.2\l"];
+  BB1 -> END;
+  START -> BB1;
+}

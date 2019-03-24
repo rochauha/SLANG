@@ -18,12 +18,12 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.4": types.Int32,
-    "v:main:x": types.Int32,
-    "v:main:t.3": types.Int32,
-    "v:main:pp": types.Ptr(to=types.Ptr(to=types.Int32)),
-    "v:main:p": types.Ptr(to=types.Int32),
-    "v:main:t.1": types.Ptr(to=types.Int32),
     "v:main:t.2": types.Ptr(to=types.Int32),
+    "v:main:x": types.Int32,
+    "v:main:pp": types.Ptr(to=types.Ptr(to=types.Int32)),
+    "v:main:t.3": types.Int32,
+    "v:main:t.1": types.Ptr(to=types.Int32),
+    "v:main:p": types.Ptr(to=types.Int32),
   }, # end allVars dict
 
   allObjs = {
@@ -56,25 +56,16 @@ irTUnit.TUnit(
             instr.CondI(expr.VarE("v:main:t.3", Loc(14,5)), Loc(14,2)),
           ],
 
-          5: [
-            instr.ReturnI(expr.LitE(1, Loc(15,10)), Loc(15,3)),
+          1: [
+            instr.ReturnI(expr.LitE(1, Loc(22,10)), Loc(22,3)),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          4: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(17,4)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:pp", Loc(17,5)), Loc(17,4)), Loc(17,4)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:t.1", Loc(17,4)), Loc(17,3)), expr.LitE(1, Loc(17,10)), Loc(17,3)),
-          ],
-
           0: [
             instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(1, Loc(22,10)), Loc(22,3)),
           ],
 
           2: [
@@ -83,6 +74,15 @@ irTUnit.TUnit(
 
           3: [
             instr.CondI(expr.VarE("v:main:x", Loc(19,5)), Loc(19,2)),
+          ],
+
+          4: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(17,4)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:pp", Loc(17,5)), Loc(17,4)), Loc(17,4)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:t.1", Loc(17,4)), Loc(17,3)), expr.LitE(1, Loc(17,10)), Loc(17,3)),
+          ],
+
+          5: [
+            instr.ReturnI(expr.LitE(1, Loc(15,10)), Loc(15,3)),
           ],
 
         }, # basicBlocks end.

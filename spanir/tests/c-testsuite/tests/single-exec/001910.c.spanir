@@ -18,9 +18,9 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.1": types.Int32,
-    "v:main:a": types.Int32,
     "v:main:b": types.Int32,
     "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:main:a": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -51,27 +51,18 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          5: [
-            instr.AssignI(expr.VarE("v:main:a", Loc(7,9)), expr.LitE(0, Loc(7,13)), Loc(7,9)),
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(12,4)), [expr.LitE("""it's all good
+""", Loc(12,11))], Loc(12,4))),
+            instr.ReturnI(expr.LitE(0, Loc(14,11)), Loc(14,4)),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          4: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(7,16)), expr.BinaryE(expr.VarE("v:main:a", Loc(7,16)), op.BO_LT, expr.LitE(2, Loc(7,20))), Loc(7,16)),
-            instr.CondI(expr.VarE("v:main:t.1", Loc(7,16)), Loc(7,4)),
-          ],
-
           0: [
             instr.NopI(),
-          ],
-
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(12,4)), [expr.LitE("""it's all good
-""", Loc(12,11))], Loc(12,4))),
-            instr.ReturnI(expr.LitE(0, Loc(14,11)), Loc(14,4)),
           ],
 
           2: [
@@ -80,6 +71,15 @@ irTUnit.TUnit(
 
           3: [
             instr.AssignI(expr.VarE("v:main:b", Loc(9,7)), expr.VarE("v:main:a", Loc(9,15)), Loc(9,7)),
+          ],
+
+          4: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(7,16)), expr.BinaryE(expr.VarE("v:main:a", Loc(7,16)), op.BO_LT, expr.LitE(2, Loc(7,20))), Loc(7,16)),
+            instr.CondI(expr.VarE("v:main:t.1", Loc(7,16)), Loc(7,4)),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:main:a", Loc(7,9)), expr.LitE(0, Loc(7,13)), Loc(7,9)),
           ],
 
         }, # basicBlocks end.

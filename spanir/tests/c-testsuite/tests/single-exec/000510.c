@@ -4,35 +4,35 @@ int
 main()
 {
 	switch(x)
-		case 0:
+		case 111:
 			;
 	switch(x)
-		case 0:
+		case 112:
 			switch(x) {
-				case 0:
+				case 113:
 					goto next;
 				default:
-					return 1;
+					return 11;
 			}
-	return 1;
+	return 22;
 	next:
 	switch(x)
-		case 1:
-			return 1;
+		case 111:
+			return 33;
 	switch(x) {
 		{
 			x = 1 + 1;
 			foo:
-			case 1:
-				return 1;
+			case 222:
+				return 44;
 		}
 	}
 	switch(x) {
-		case 0:
+		case 333:
 			return x;
-		case 1:
-			return 1;
+		case 444:
+			return 55;
 		default:
-			return 1;
+			return 66;
 	}
 }

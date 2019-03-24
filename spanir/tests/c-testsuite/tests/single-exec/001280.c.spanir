@@ -18,16 +18,16 @@ irTUnit.TUnit(
 
   allVars = {
     "v:k": types.UInt32,
-    "v:d": types.Int8,
-    "v:c": types.Int8,
-    "v:b": types.UInt32,
-    "v:e": types.UInt8,
-    "v:f": types.Int32,
-    "v:g": types.UInt32,
-    "v:h": types.Int32,
     "v:i": types.UInt32,
+    "v:h": types.Int32,
+    "v:g": types.UInt32,
     "v:a": types.Int32,
     "v:j": types.Int32,
+    "v:b": types.UInt32,
+    "v:c": types.Int8,
+    "v:d": types.Int8,
+    "v:e": types.UInt8,
+    "v:f": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -42,6 +42,14 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
           1: [
             instr.AssignI(expr.VarE("v:a", Loc(17,2)), expr.VarE("v:b", Loc(17,6)), Loc(17,2)),
             instr.AssignI(expr.VarE("v:a", Loc(18,2)), expr.VarE("v:c", Loc(18,6)), Loc(18,2)),
@@ -154,14 +162,6 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:k", Loc(135,2)), expr.VarE("v:j", Loc(135,6)), Loc(135,2)),
             instr.AssignI(expr.VarE("v:k", Loc(136,2)), expr.VarE("v:i", Loc(136,6)), Loc(136,2)),
             instr.ReturnI(expr.LitE(0, Loc(138,9)), Loc(138,2)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
           ],
 
         }, # basicBlocks end.

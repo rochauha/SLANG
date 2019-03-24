@@ -17,16 +17,16 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:g": types.Float32,
-    "v:main:c": types.Int8,
     "v:main:f": types.Float32,
-    "v:main:b": types.Int8,
-    "v:charfunc:a": types.Int8,
+    "v:main:g": types.Float32,
+    "v:main:d": types.Int32,
     "v:main:e": types.Int32,
     "v:printf:__format": types.Ptr(to=types.Int8),
-    "v:main:d": types.Int32,
-    "v:floatfunc:a": types.Float32,
     "v:intfunc:a": types.Int32,
+    "v:floatfunc:a": types.Float32,
+    "v:charfunc:a": types.Int8,
+    "v:main:b": types.Int8,
+    "v:main:c": types.Int8,
   }, # end allVars dict
 
   allObjs = {
@@ -41,6 +41,14 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
           1: [
             instr.CallI(expr.CallE(expr.FuncE("f:charfunc", Loc(20,4)), [ERROR:convertExpr], Loc(20,4))),
             instr.CallI(expr.CallE(expr.FuncE("f:charfunc", Loc(21,4)), [expr.LitE(98, Loc(21,13))], Loc(21,4))),
@@ -66,12 +74,35 @@ irTUnit.TUnit(
             instr.ReturnI(expr.LitE(0, Loc(51,11)), Loc(51,4)),
           ],
 
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
+    "f:floatfunc":
+      obj.Func(
+        name = "f:floatfunc",
+        paramNames = ["v:floatfunc:a"],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
           -1: [
             instr.NopI(),
           ],
 
-          0: [
-            instr.NopI(),
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(15,4)), [expr.LitE("""float: %f
+""", Loc(15,11)), expr.VarE("v:floatfunc:a", Loc(15,26))], Loc(15,4))),
           ],
 
         }, # basicBlocks end.
@@ -80,7 +111,7 @@ irTUnit.TUnit(
           (1, 0, types.UnCondEdge),
           (-1, 1, types.UnCondEdge),
         }, # bbEdges end
-      ), # f:main() end. 
+      ), # f:floatfunc() end. 
 
     "f:charfunc":
       obj.Func(
@@ -92,17 +123,17 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(5,4)), [expr.LitE("""char: %c
-""", Loc(5,11)), expr.VarE("v:charfunc:a", Loc(5,25))], Loc(5,4))),
+          0: [
+            instr.NopI(),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          0: [
-            instr.NopI(),
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(5,4)), [expr.LitE("""char: %c
+""", Loc(5,11)), expr.VarE("v:charfunc:a", Loc(5,25))], Loc(5,4))),
           ],
 
         }, # basicBlocks end.
@@ -112,6 +143,37 @@ irTUnit.TUnit(
           (-1, 1, types.UnCondEdge),
         }, # bbEdges end
       ), # f:charfunc() end. 
+
+    "f:intfunc":
+      obj.Func(
+        name = "f:intfunc",
+        paramNames = ["v:intfunc:a"],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          0: [
+            instr.NopI(),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          1: [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(10,4)), [expr.LitE("""int: %d
+""", Loc(10,11)), expr.VarE("v:intfunc:a", Loc(10,24))], Loc(10,4))),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (-1, 1, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:intfunc() end. 
 
     "f:printf":
       obj.Func(
@@ -128,68 +190,6 @@ irTUnit.TUnit(
         bbEdges= {
         }, # bbEdges end
       ), # f:printf() end. 
-
-    "f:intfunc":
-      obj.Func(
-        name = "f:intfunc",
-        paramNames = ["v:intfunc:a"],
-        variadic = False,
-        returnType = types.Void,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(10,4)), [expr.LitE("""int: %d
-""", Loc(10,11)), expr.VarE("v:intfunc:a", Loc(10,24))], Loc(10,4))),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
-      ), # f:intfunc() end. 
-
-    "f:floatfunc":
-      obj.Func(
-        name = "f:floatfunc",
-        paramNames = ["v:floatfunc:a"],
-        variadic = False,
-        returnType = types.Void,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(15,4)), [expr.LitE("""float: %f
-""", Loc(15,11)), expr.VarE("v:floatfunc:a", Loc(15,26))], Loc(15,4))),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
-      ), # f:floatfunc() end. 
 
   }, # end allObjs dict
 ) # irTUnit.TUnit() ends

@@ -17,12 +17,12 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.1": types.Int32,
     "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:main:Buf": types.ConstSizeArray(of=types.Int8, dim=100),
+    "v:sprintf:__format": types.Ptr(to=types.Int8),
+    "v:main:t.1": types.Int32,
     "v:main:Count": types.Int32,
     "v:sprintf:__s": types.Ptr(to=types.Int8),
-    "v:sprintf:__format": types.Ptr(to=types.Int8),
-    "v:main:Buf": types.ConstSizeArray(of=types.Int8, dim=100),
   }, # end allVars dict
 
   allObjs = {
@@ -43,6 +43,60 @@ irTUnit.TUnit(
         }, # bbEdges end
       ), # f:printf() end. 
 
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        basicBlocks = {
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(14,11)), Loc(14,4)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          0: [
+            instr.NopI(),
+          ],
+
+          2: [
+            instr.AssignI(expr.VarE("v:main:Count", Loc(8,33)), expr.BinaryE(expr.VarE("v:main:Count", Loc(8,33)), op.BO_ADD, expr.LitE(1, Loc(8,33)), Loc(8,33)), Loc(8,33)),
+          ],
+
+          3: [
+            instr.CallI(expr.CallE(expr.FuncE("f:sprintf", Loc(10,7)), [expr.VarE("v:main:Buf", Loc(10,15)), expr.LitE("""->%02d<-
+""", Loc(10,20)), expr.VarE("v:main:Count", Loc(10,34))], Loc(10,7))),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(11,7)), [expr.LitE("""%s""", Loc(11,14)), expr.VarE("v:main:Buf", Loc(11,20))], Loc(11,7))),
+          ],
+
+          4: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(8,20)), expr.BinaryE(expr.VarE("v:main:Count", Loc(8,20)), op.BO_LE, expr.LitE(20, Loc(8,29))), Loc(8,20)),
+            instr.CondI(expr.VarE("v:main:t.1", Loc(8,20)), Loc(8,4)),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:main:Count", Loc(8,9)), expr.LitE(1, Loc(8,17)), Loc(8,9)),
+          ],
+
+        }, # basicBlocks end.
+
+        bbEdges= {
+          (1, 0, types.UnCondEdge),
+          (2, 4, types.UnCondEdge),
+          (3, 2, types.UnCondEdge),
+          (4, 3, types.TrueEdge),
+          (4, 1, types.FalseEdge),
+          (5, 4, types.UnCondEdge),
+          (-1, 5, types.UnCondEdge),
+        }, # bbEdges end
+      ), # f:main() end. 
+
     "f:sprintf":
       obj.Func(
         name = "f:sprintf",
@@ -58,60 +112,6 @@ irTUnit.TUnit(
         bbEdges= {
         }, # bbEdges end
       ), # f:sprintf() end. 
-
-    "f:main":
-      obj.Func(
-        name = "f:main",
-        paramNames = [],
-        variadic = False,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          5: [
-            instr.AssignI(expr.VarE("v:main:Count", Loc(8,9)), expr.LitE(1, Loc(8,17)), Loc(8,9)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          4: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(8,20)), expr.BinaryE(expr.VarE("v:main:Count", Loc(8,20)), op.BO_LE, expr.LitE(20, Loc(8,29))), Loc(8,20)),
-            instr.CondI(expr.VarE("v:main:t.1", Loc(8,20)), Loc(8,4)),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(14,11)), Loc(14,4)),
-          ],
-
-          2: [
-            instr.AssignI(expr.VarE("v:main:Count", Loc(8,33)), expr.BinaryE(expr.VarE("v:main:Count", Loc(8,33)), op.BO_ADD, expr.LitE(1, Loc(8,33)), Loc(8,33)), Loc(8,33)),
-          ],
-
-          3: [
-            instr.CallI(expr.CallE(expr.FuncE("f:sprintf", Loc(10,7)), [expr.VarE("v:main:Buf", Loc(10,15)), expr.LitE("""->%02d<-
-""", Loc(10,20)), expr.VarE("v:main:Count", Loc(10,34))], Loc(10,7))),
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(11,7)), [expr.LitE("""%s""", Loc(11,14)), expr.VarE("v:main:Buf", Loc(11,20))], Loc(11,7))),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 4, types.UnCondEdge),
-          (3, 2, types.UnCondEdge),
-          (4, 3, types.TrueEdge),
-          (4, 1, types.FalseEdge),
-          (5, 4, types.UnCondEdge),
-          (-1, 5, types.UnCondEdge),
-        }, # bbEdges end
-      ), # f:main() end. 
 
   }, # end allObjs dict
 ) # irTUnit.TUnit() ends

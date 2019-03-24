@@ -18,8 +18,8 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.1": types.Int32,
-    "v:printf:__format": types.Ptr(to=types.Int8),
     "v:main:Count": types.Int32,
+    "v:printf:__format": types.Ptr(to=types.Int8),
   }, # end allVars dict
 
   allObjs = {
@@ -50,25 +50,16 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
-          5: [
-            instr.AssignI(expr.VarE("v:main:Count", Loc(7,9)), expr.LitE(1, Loc(7,17)), Loc(7,9)),
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(12,11)), Loc(12,4)),
           ],
 
           -1: [
             instr.NopI(),
           ],
 
-          4: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(7,20)), expr.BinaryE(expr.VarE("v:main:Count", Loc(7,20)), op.BO_LE, expr.LitE(10, Loc(7,29))), Loc(7,20)),
-            instr.CondI(expr.VarE("v:main:t.1", Loc(7,20)), Loc(7,4)),
-          ],
-
           0: [
             instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(12,11)), Loc(12,4)),
           ],
 
           2: [
@@ -78,6 +69,15 @@ irTUnit.TUnit(
           3: [
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(9,7)), [expr.LitE("""%d
 """, Loc(9,14)), expr.VarE("v:main:Count", Loc(9,22))], Loc(9,7))),
+          ],
+
+          4: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(7,20)), expr.BinaryE(expr.VarE("v:main:Count", Loc(7,20)), op.BO_LE, expr.LitE(10, Loc(7,29))), Loc(7,20)),
+            instr.CondI(expr.VarE("v:main:t.1", Loc(7,20)), Loc(7,4)),
+          ],
+
+          5: [
+            instr.AssignI(expr.VarE("v:main:Count", Loc(7,9)), expr.LitE(1, Loc(7,17)), Loc(7,9)),
           ],
 
         }, # basicBlocks end.

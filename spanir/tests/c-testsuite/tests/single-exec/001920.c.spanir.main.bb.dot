@@ -1,0 +1,20 @@
+digraph {
+  node [shape=box]
+  BB6 [label="[BB6]\lCount = 0\l"];
+  BB1 [label="[BB1]\lreturn 0\l"];
+  START [label="[START]\lnop()\l"];
+  END [label="[END]\lnop()\l"];
+  BB2 [label="[BB2]\lnop()\l"];
+  BB3 [label="[BB3]\lnop()\l"];
+  BB4 [label="[BB4]\lCount = Count + 1\lprintf('%d\n',Count)\lt.1 = Count >= 10\lif (t.1)\l"];
+  BB5 [label="[BB5]\lif (1)\l"];
+  BB5 -> BB4 [color=green, penwidth=2];
+  START -> BB6;
+  BB1 -> END;
+  BB2 -> BB5;
+  BB4 -> BB2 [color=red, penwidth=2];
+  BB3 -> BB1;
+  BB5 -> END [color=red, penwidth=2];
+  BB6 -> BB5;
+  BB4 -> BB3 [color=green, penwidth=2];
+}

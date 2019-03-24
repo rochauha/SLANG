@@ -47,28 +47,12 @@ irTUnit.TUnit(
             instr.ReturnI(expr.LitE(1, Loc(13,10)), Loc(13,3)),
           ],
 
-          15: [
-            instr.CondI(expr.LitE(0, Loc(14,6)), Loc(14,2)),
+          5: [
+            instr.CondI(expr.LitE(0, Loc(24,6)), Loc(24,2)),
           ],
 
-          14: [
-            instr.ReturnI(expr.LitE(1, Loc(15,10)), Loc(15,3)),
-          ],
-
-          13: [
-            instr.CondI(expr.LitE(0, Loc(16,6)), Loc(16,2)),
-          ],
-
-          12: [
-            instr.ReturnI(expr.LitE(1, Loc(17,10)), Loc(17,3)),
-          ],
-
-          11: [
-            instr.CondI(expr.LitE(0, Loc(18,6)), Loc(18,2)),
-          ],
-
-          10: [
-            instr.ReturnI(expr.LitE(1, Loc(19,10)), Loc(19,3)),
+          4: [
+            instr.ReturnI(expr.LitE(1, Loc(25,10)), Loc(25,3)),
           ],
 
           3: [
@@ -79,24 +63,12 @@ irTUnit.TUnit(
             instr.ReturnI(expr.LitE(1, Loc(27,10)), Loc(27,3)),
           ],
 
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(29,9)), Loc(29,2)),
-          ],
-
           0: [
             instr.NopI(),
           ],
 
-          4: [
-            instr.ReturnI(expr.LitE(1, Loc(25,10)), Loc(25,3)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          5: [
-            instr.CondI(expr.LitE(0, Loc(24,6)), Loc(24,2)),
+          1: [
+            instr.ReturnI(expr.LitE(0, Loc(29,9)), Loc(29,2)),
           ],
 
           6: [
@@ -113,6 +85,34 @@ irTUnit.TUnit(
 
           9: [
             instr.CondI(expr.LitE(0, Loc(20,6)), Loc(20,2)),
+          ],
+
+          10: [
+            instr.ReturnI(expr.LitE(1, Loc(19,10)), Loc(19,3)),
+          ],
+
+          -1: [
+            instr.NopI(),
+          ],
+
+          11: [
+            instr.CondI(expr.LitE(0, Loc(18,6)), Loc(18,2)),
+          ],
+
+          12: [
+            instr.ReturnI(expr.LitE(1, Loc(17,10)), Loc(17,3)),
+          ],
+
+          13: [
+            instr.CondI(expr.LitE(0, Loc(16,6)), Loc(16,2)),
+          ],
+
+          14: [
+            instr.ReturnI(expr.LitE(1, Loc(15,10)), Loc(15,3)),
+          ],
+
+          15: [
+            instr.CondI(expr.LitE(0, Loc(14,6)), Loc(14,2)),
           ],
 
         }, # basicBlocks end.
