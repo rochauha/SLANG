@@ -78,8 +78,10 @@ FLOAT128_TC: TypeCodeT    = 54  # ??
 
 PTR_TC: TypeCodeT         = 100  # pointer type code
 ARR_TC: TypeCodeT         = 101  # array type code
-VAR_ARR_TC: TypeCodeT     = 102  # variable array type code
-INCPL_ARR_TC: TypeCodeT   = 103  # array type code
+CONST_ARR_TC: TypeCodeT   = 102  # const size array type code
+VAR_ARR_TC: TypeCodeT     = 103  # variable array type code
+INCPL_ARR_TC: TypeCodeT   = 104  # array type code
+
 FUNC_TC: TypeCodeT        = 200  # function type code
 FUNC_SIG_TC: TypeCodeT    = 201
 STRUCT_TC: TypeCodeT      = 300  # structure type code
@@ -338,10 +340,9 @@ class ConstSizeArray(ArrayT):
   """
   def __init__(self,
                of: Type,
-               dim: Optional[List[int]] = None,
-               typeCode: TypeCodeT = ARR_TC,
+               dim: Optional[List[int]],
   ) -> None:
-    super().__init__(of, typeCode)
+    super().__init__(of, CONST_ARR_TC)
     self.dim = dim
 
   def __eq__(self,
@@ -413,9 +414,6 @@ class IncompleteArray(ArrayT):
       return False
     if not self.typeCode == other.typeCode:
       if LS: _log.warning("Types Differ: %s, %s", self, other)
-      return False
-    if not self.dim == other.dim:
-      if LS: _log.warning("Dimensions Differ: %s, %s", self, other)
       return False
     if not self.of == other.of:
       if LS: _log.warning("DestType Differs: %s, %s", self, other)
