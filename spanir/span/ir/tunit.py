@@ -19,6 +19,7 @@ from typing import Dict, Set, Tuple
 import io
 
 from span.util.logger import LS
+from span.util.util import AS
 import span.util.messages as msg
 
 import span.ir.types as types
@@ -109,6 +110,7 @@ class OptimizeTUnit:
       if isinstance(func, obj.Func):
         # if here, its a function
         OptimizeTUnit.removeConstIfStmts(func)
+        OptimizeTUnit.removeNopBbs(func)
         OptimizeTUnit.removeUnreachableBbsFromFunc(func)
 
   @staticmethod
@@ -137,7 +139,6 @@ class OptimizeTUnit:
       # go recursive, since there could be new unreachable bb ids
       return OptimizeTUnit.removeUnreachableBbsFromFunc(func)
 
-  # TODO: simplify the if statements on constants, e.g. if (0)
   @staticmethod
   def removeConstIfStmts(func: obj.Func) -> None:
     """Changes if stmt on a const value to a Nop().
@@ -158,9 +159,42 @@ class OptimizeTUnit:
           for bbEdge in func.bbEdges:
             if bbEdge[0] == bbId: # edge source is this bb
               if bbEdge[2] == redundantEdgeLabel: continue
-              bbEdge = (bbId, (bbEdge[2], types.UnCondEdge))
+              bbEdge = (bbId, bbEdge[1], types.UnCondEdge)
             retainedEdges.append(bbEdge)
           func.bbEdges = retainedEdges
+
+  @staticmethod
+  def removeNopBbs(func: obj.Func):
+    """Remove BBs that only have instr.NopI(). Except START and END."""
+
+    bbIds = func.basicBlocks.keys()
+    for bbId in bbIds:
+      if bbId in [-1, 0]: continue # leave START and END BBs as it is.
+
+      onlyNop = True
+      for insn in func.basicBlocks[bbId]:
+        if isinstance(insn, instr.NopI): continue
+        onlyNop = False
+
+      if onlyNop:
+        # then remove this bb and related edges
+        retainedEdges = []
+        predEdges = []
+        succEdges = []
+        for bbEdge in func.bbEdges:
+          if bbEdge[0] == bbId:
+            succEdges.append(bbEdge) # ONLY ONE EDGE
+          elif bbEdge[1] == bbId:
+            predEdges.append(bbEdge)
+          else:
+            retainedEdges.append(bbEdge)
+
+        if AS: assert len(succEdges) == 1, msg.SHOULD_BE_ONLY_ONE_EDGE
+
+        for predEdge in predEdges:
+          newEdge = (predEdge[0], succEdges[0][1], predEdge[2])
+          retainedEdges.append(newEdge)
+        func.bbEdges = retainedEdges
 
   # TODO: simplify constant expressions, e.g. 20 + 30, 20 == 30
 

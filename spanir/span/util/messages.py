@@ -19,3 +19,5 @@ END_BB_ID_NOT_ZERO = (
 
 PTR_INDLEV_INVALID = "Indirection level of pointer is less than 1!"
 TOP_BOT_BOTH = "Are you saying its Top and Bot at the same time?!!!"
+
+SHOULD_BE_ONLY_ONE_EDGE = "There should be only one edge here."
