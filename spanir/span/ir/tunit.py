@@ -100,27 +100,95 @@ class TUnit:
 
     return isEqual
 
+class OptimizeTUnit:
+  """Routines to optimize translation unit."""
+
+  @staticmethod
+  def optimizeO3(tUnit: TUnit) -> None:
+    for name, func in tUnit.allObjs.items():
+      if isinstance(func, obj.Func):
+        # if here, its a function
+        OptimizeTUnit.removeConstIfStmts(func)
+        OptimizeTUnit.removeUnreachableBbsFromFunc(func)
+
+  @staticmethod
+  def removeUnreachableBbsFromFunc(func: obj.Func):
+    """Removes BBs that are not reachable from StartBB."""
+    allBbIds = func.basicBlocks.keys()
+
+    # collect all dest bbIds
+    destBbIds = {-1} # start bbId is always reachable
+    for bbEdge in func.bbEdges:
+      destBbIds.add(bbEdge[1])
+    unreachableBbIds = allBbIds - destBbIds
+
+    # remove all edges going out of reachable bbs
+    takenEdges = []
+    for bbEdge in func.bbEdges:
+      if bbEdge[0] in unreachableBbIds: continue
+      takenEdges.append(bbEdge)
+    func.bbEdges = takenEdges
+
+    # remove unreachableBbIds one by one
+    for bbId in unreachableBbIds:
+      del func.basicBlocks[bbId]
+
+    if unreachableBbIds:
+      # go recursive, since there could be new unreachable bb ids
+      return OptimizeTUnit.removeUnreachableBbsFromFunc(func)
+
+  # TODO: simplify the if statements on constants, e.g. if (0)
+  @staticmethod
+  def removeConstIfStmts(func: obj.Func) -> None:
+    """Changes if stmt on a const value to a Nop().
+    It may lead to some unreachable BBs."""
+
+    for bbId, bbInsns in func.basicBlocks.items():
+      if not bbInsns: continue # if bb is blank
+      if isinstance(bbInsns[-1], instr.CondI):
+        if isinstance(bbInsns[-1].arg, expr.LitE):
+          val: types.NumericT = bbInsns[-1].arg.val
+          redundantEdgeLabel = types.TrueEdge if val == 0 else types.FalseEdge
+
+          # replace instr.CondI with instr.NopI
+          bbInsns[-1] = instr.NopI()
+
+          # remove the redundant edge, and make the other edge unconditional
+          retainedEdges = []
+          for bbEdge in func.bbEdges:
+            if bbEdge[0] == bbId: # edge source is this bb
+              if bbEdge[2] == redundantEdgeLabel: continue
+              bbEdge = (bbId, (bbEdge[2], types.UnCondEdge))
+            retainedEdges.append(bbEdge)
+          func.bbEdges = retainedEdges
+
+  # TODO: simplify constant expressions, e.g. 20 + 30, 20 == 30
+
 # analysis unit name and description
 initialized = False
 
-#BOUND START: given_input; see build()
+#BOUND START: given_input; see buildTUnit()
 unitName: str = None
 unitDescription: str = None
 
 unitVarMap: Dict[types.VarNameT, types.Type] = None
 unitObjMap: Dict[types.FuncNameT, obj.Func] = None
-#BOUND END  : given_input; see build()
+#BOUND END  : given_input; see buildTUnit()
 
 _typeVarMap: Dict[Tuple[types.FuncNameT, types.Type], Set[types.VarNameT]] = None
 _globalVars: Set[types.VarNameT] = None
 _localVars: Dict[types.FuncNameT, Set[types.VarNameT]] = None
 
 def buildTUnit(currTUnit: TUnit) -> None:
-  """Intializes the universe with the given analysis unit."""
+  """Initialize the translation unit info with the given TUnit object."""
   global unitVarMap, unitObjMap
   global unitName, unitDescription
   global initialized
+
   logUsefulInfo(currTUnit)
+
+  # OPTIMIZE
+  OptimizeTUnit.optimizeO3(currTUnit)
 
   unitName = currTUnit.name
   unitDescription = currTUnit.description
@@ -180,14 +248,14 @@ def getLocalVars(funcName: types.FuncNameT
   if funcName in _localVars:
     return _localVars[funcName]
 
-  vnameSet = set()
-  for vname in unitVarMap:
-    count = vname.count(":")
+  vNameSet = set()
+  for vName in unitVarMap:
+    count = vName.count(":")
     if count == 2:
-      sp = vname.split(":")
-      if funcName[2:] == sp[1]: vnameSet.add(vname)
-  _localVars[funcName] = vnameSet
-  return vnameSet
+      sp = vName.split(":")
+      if funcName[2:] == sp[1]: vNameSet.add(vName)
+  _localVars[funcName] = vNameSet
+  return vNameSet
 
 def getGlobalVars() -> Set[types.VarNameT]:
   """Returns set of global variable names."""
@@ -264,9 +332,8 @@ class NumL(lattice.LatticeLT):
     if LS: _log.error(msg)
     raise ValueError(msg)
 
-def inferBasicType(val):
+def inferBasicType(val) -> types.Type:
   """Returns the type for the given value."""
-  global unitVarMap
 
   if type(val) == int: return types.Int
   if type(val) == float: return types.Float
@@ -279,7 +346,7 @@ def inferBasicType(val):
   if LS: _log.error(msg)
   raise ValueError(msg)
 
-def inferExprType(e: expr.ExprET):
+def inferExprType(e: expr.ExprET) -> types.Type:
   """Infer expr type, store the type info in the object and return the type."""
   eType = types.Void
   exprCode = e.exprCode
@@ -316,7 +383,7 @@ def inferExprType(e: expr.ExprET):
   return eType
 
 def inferInstrType(insn: instr.InstrIT):
-  """Infer instruction type automatically."""
+  """Infer instruction type from the type of the expressions."""
   iType = types.Void
   if isinstance(insn, instr.AssignI):
     t1 = inferExprType(insn.lhs)
