@@ -15,7 +15,7 @@ TODO: Add tunit validation check.
 
 import logging
 _log = logging.getLogger(__name__)
-from typing import Dict, Set, Tuple
+from typing import Dict, Set, Tuple, Optional
 import io
 
 from span.util.logger import LS
@@ -202,16 +202,17 @@ class OptimizeTUnit:
 initialized = False
 
 #BOUND START: given_input; see buildTUnit()
-unitName: str = None
-unitDescription: str = None
+unitName: Optional[str] = None
+unitDescription: Optional[str] = None
 
-unitVarMap: Dict[types.VarNameT, types.Type] = None
-unitObjMap: Dict[types.FuncNameT, obj.Func] = None
+unitVarMap: Optional[Dict[types.VarNameT, types.Type]] = None
+unitObjMap: Optional[Dict[types.FuncNameT, obj.Func]] = None
 #BOUND END  : given_input; see buildTUnit()
 
-_typeVarMap: Dict[Tuple[types.FuncNameT, types.Type], Set[types.VarNameT]] = None
-_globalVars: Set[types.VarNameT] = None
-_localVars: Dict[types.FuncNameT, Set[types.VarNameT]] = None
+_typeVarMap: Optional[Dict[Tuple[types.FuncNameT, types.Type],
+                           Set[types.VarNameT]]] = None
+_globalVars: Optional[Set[types.VarNameT]] = None
+_localVars: Optional[Dict[types.FuncNameT, Set[types.VarNameT]]] = None
 
 def buildTUnit(currTUnit: TUnit) -> None:
   """Initialize the translation unit info with the given TUnit object."""
@@ -232,7 +233,6 @@ def buildTUnit(currTUnit: TUnit) -> None:
   initialized = False
   if LS: _log.info("Constructing_TUnit: START.")
   for objName, irObj in unitObjMap.items():
-    irObj: obj.Func = irObj
     if objName.startswith("f:"):
       for _, instrs in irObj.basicBlocks.items():
         for insn in instrs:

@@ -71,6 +71,14 @@ class ExprET(types.AnyT):
   def isCallExpr(self):
     return self.exprCode == CALL_EXPR_EC
 
+  def __eq__(self,
+             other: 'ExprET'
+  ) -> bool:
+    return self.exprCode == other.exprCode and self.type == other.type
+
+  def __hash__(self) -> int:
+    return hash(self.exprCode) + hash(self.type)
+
 class BasicET(ExprET):
   """Basic exprs like a var 'x', a value '12.3', a[10], x.y."""
   def __init__(self,
@@ -110,6 +118,9 @@ class LitE(UnitET):
       return False
     return True
 
+  def __hash__(self) -> int:
+    return hash(self.val) + hash(self.exprCode)
+
   def __str__(self):
     if isinstance(self.val, str):
       #escaped = self.val.encode('unicode_escape')
@@ -144,7 +155,8 @@ class VarE(UnitET):
       return False
     return True
 
-  def __hash__(self): return 10
+  def __hash__(self):
+    return hash(self.name) + hash(self.exprCode)
 
   def __str__(self):
     name = self.name.split(":")[-1]
@@ -157,12 +169,12 @@ class FuncE(VarE):
                loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(FUNC_EXPR_EC, loc)
-    self.name: types.VarNameT = name
+    self.name: types.FuncNameT = name
 
   def __eq__(self,
-             other: 'VarE'
+             other: 'FuncE'
   ) -> bool:
-    if not isinstance(other, VarE):
+    if not isinstance(other, FuncE):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
     if not self.name == other.name:
@@ -173,7 +185,8 @@ class FuncE(VarE):
       return False
     return True
 
-  def __hash__(self): return 10
+  def __hash__(self):
+    return hash(self.name) + hash(self.exprCode)
 
   def __str__(self):
     name = self.name.split(":")[-1]
@@ -209,6 +222,9 @@ class ArrayE(BasicET):
       if LS: _log.warning("Loc Differs: %s, %s", self, other)
       return False
     return True
+
+  def __hash__(self) -> int:
+    return hash(self.var) + hash(self.indexSeq)
 
   def __str__(self):
     indexStr = ""
@@ -251,6 +267,9 @@ class MemberE(BasicET):
       return False
     return True
 
+  def __hash__(self) -> int:
+    return hash(self.var) + hash(self.fields)
+
   def __str__(self):
     members = ".".join(self.fields)
     return f"{self.var}.{members}"
@@ -290,6 +309,9 @@ class BinaryE(ExprET):
       return False
     return True
 
+  def __hash__(self) -> int:
+    return hash(self.arg1) + hash(self.arg2) + hash(self.opr)
+
   def __str__(self): return f"{self.arg1} {self.opr} {self.arg2}"
 
   def __repr__(self): return self.__str__()
@@ -322,6 +344,9 @@ class UnaryE(ExprET):
       return False
     return True
 
+  def __hash__(self) -> int:
+    return hash(self.arg) + hash(self.opr)
+
   def __str__(self): return f"{self.opr}{self.arg}"
 
   def __repr__(self): return self.__str__()
@@ -352,6 +377,9 @@ class AddrOfE(UnaryE):
       return False
     return True
 
+  def __hash__(self) -> int:
+    return hash(self.arg) + hash(self.exprCode)
+
   def __str__(self): return f"{self.opr}{self.arg}"
 
   def __repr__(self): return self.__str__()
@@ -359,11 +387,11 @@ class AddrOfE(UnaryE):
 class SizeOfE(UnaryE):
   """Calculates size of the argument type in bytes at runtime."""
   def __init__(self,
-               arg: types.ArrayT,
-               loc: Optional[types.Loc] = None
+               var: VarE, # var of types.VarArray type only
+               loc: Optional[types.Loc] = None,
   ) -> None:
     super().__init__(SIZEOF_EXPR_EC, loc)
-    self.arg = arg
+    self.var = var
 
   def __eq__(self,
              other: 'SizeOfE'
@@ -371,7 +399,7 @@ class SizeOfE(UnaryE):
     if not isinstance(other, SizeOfE):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
-    if not self.arg == other.arg:
+    if not self.var == other.var:
       if LS: _log.warning("Arg Differs: %s, %s", self, other)
       return False
     if not self.loc == other.loc:
@@ -379,7 +407,10 @@ class SizeOfE(UnaryE):
       return False
     return True
 
-  def __str__(self): return f"{self.opr}{self.arg}"
+  def __hash__(self) -> int:
+    return hash(self.var) + hash(self.exprCode)
+
+  def __str__(self): return f"{self.opr}{self.var}"
 
   def __repr__(self): return self.__str__()
 
@@ -411,6 +442,9 @@ class CastE(UnaryE):
       return False
     return True
 
+  def __hash__(self) -> int:
+    return hash(self.to) + hash(self.arg) + hash(self.exprCode)
+
   def __str__(self): return f"({self.to}){self.arg}"
 
   def __repr__(self): return self.__str__()
@@ -441,6 +475,9 @@ class AllocE(ExprET):
       if LS: _log.warning("Loc Differs: %s, %s", self, other)
       return False
     return True
+
+  def __hash__(self) -> int:
+    return hash(self.size) + hash(self.exprCode)
 
   def __str__(self):
     return f"alloca {self.size}"
@@ -480,6 +517,9 @@ class CallE(ExprET):
       return False
     return True
 
+  def __hash__(self) -> int:
+    return hash(self.callee) + hash(self.exprCode)
+
   def __str__(self):
     if self.args:
       args = [str(arg) for arg in self.args]
@@ -515,6 +555,9 @@ class PhiE(ExprET):
       if LS: _log.warning("Loc Differs: %s, %s", self, other)
       return False
     return True
+
+  def __hash__(self) -> int:
+    return hash(self.args) + hash(self.exprCode)
 
   def __str__(self): return f"phi({self.args})"
 
@@ -552,6 +595,9 @@ class SelectE(ExprET):
       if LS: _log.warning("Loc Differs: %s, %s", self, other)
       return False
     return True
+
+  def __hash__(self) -> int:
+    return hash(self.cond) + hash(self.arg1) + hash(self.arg2)
 
   def __str__(self): return f"{self.cond} ? {self.arg1} : {self.arg2}"
 
