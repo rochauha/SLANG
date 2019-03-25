@@ -17,9 +17,9 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:fred:t.3": types.Int,
     "v:fred:t.2": types.Int,
     "v:fred:t.1": types.Int,
+    "v:fred:t.3": types.Int,
     "v:fred:x": types.Int32,
     "v:printf:__format": types.Ptr(to=types.Int8),
   }, # end allVars dict

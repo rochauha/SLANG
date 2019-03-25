@@ -17,20 +17,23 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.3": types.Int32,
-    "v:main:j": types.Int32,
-    "v:main:i": types.Int32,
-    "v:main:t.2": types.Int32,
-    "v:main:t.6": types.Int32,
-    "v:printf:": types.Ptr(to=types.Int8),
-    "v:main:t.7": types.Int32,
-    "v:kb_wait_1:i": types.Int32,
-    "v:main:t.1": types.Int32,
-    "v:kb_wait_1:timeout": types.UInt32,
-    "v:main:t.5": types.Int32,
-    "v:foo:i": types.Int32,
-    "v:main:t.4": types.Int32,
     "v:global": types.Int32,
+    "v:main:t.1": types.Int,
+    "v:main:t.2": types.Int,
+    "v:printf:p.1": types.Ptr(to=types.Int8),
+    "v:kb_wait_1:timeout": types.UInt32,
+    "v:main:i": types.Int32,
+    "v:main:t.7": types.Int32,
+    "v:main:t.3": types.Int,
+    "v:main:t.4": types.Int32,
+    "v:main:t.5": types.Int32,
+    "v:main:t.10": types.Int32,
+    "v:main:j": types.Int32,
+    "v:foo:i": types.Int32,
+    "v:main:t.6": types.Int32,
+    "v:kb_wait_1:i": types.Int32,
+    "v:main:t.8": types.Int32,
+    "v:main:t.9": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -65,9 +68,9 @@ irTUnit.TUnit(
           ],
 
           42: [
-            instr.AssignI(expr.VarE("v:main:t.7", Loc(71,7)), expr.VarE("v:main:i", Loc(71,7)), Loc(71,7)),
+            instr.AssignI(expr.VarE("v:main:t.10", Loc(71,7)), expr.VarE("v:main:i", Loc(71,7)), Loc(71,7)),
             instr.AssignI(expr.VarE("v:main:i", Loc(71,7)), expr.BinaryE(expr.VarE("v:main:i", Loc(71,7)), op.BO_SUB, expr.LitE(1, Loc(71,7)), Loc(71,7)), Loc(71,7)),
-            instr.CondI(expr.VarE("v:main:t.7", Loc(71,7)), Loc(71,3)),
+            instr.CondI(expr.VarE("v:main:t.10", Loc(71,7)), Loc(71,3)),
           ],
 
           41: [
@@ -80,9 +83,9 @@ irTUnit.TUnit(
           ],
 
           39: [
-            instr.AssignI(expr.VarE("v:main:t.6", Loc(78,14)), expr.VarE("v:main:i", Loc(78,14)), Loc(78,14)),
+            instr.AssignI(expr.VarE("v:main:t.9", Loc(78,14)), expr.VarE("v:main:i", Loc(78,14)), Loc(78,14)),
             instr.AssignI(expr.VarE("v:main:i", Loc(78,14)), expr.BinaryE(expr.VarE("v:main:i", Loc(78,14)), op.BO_SUB, expr.LitE(1, Loc(78,14)), Loc(78,14)), Loc(78,14)),
-            instr.CondI(expr.VarE("v:main:t.6", Loc(78,14)), Loc(78,7)),
+            instr.CondI(expr.VarE("v:main:t.9", Loc(78,14)), Loc(78,7)),
           ],
 
           38: [
@@ -98,18 +101,14 @@ irTUnit.TUnit(
             instr.NopI(),
           ],
 
-          15: [
-            instr.NopI(),
+          35: [
+            instr.AssignI(expr.VarE("v:main:t.8", Loc(84,7)), expr.BinaryE(expr.VarE("v:main:i", Loc(84,7)), op.BO_GE, expr.LitE(0, Loc(84,12))), Loc(84,7)),
+            instr.CondI(expr.VarE("v:main:t.8", Loc(84,7)), Loc(84,3)),
           ],
 
           14: [
             instr.AssignI(expr.VarE("v:main:i", Loc(122,16)), expr.BinaryE(expr.VarE("v:main:i", Loc(122,16)), op.BO_SUB, expr.LitE(1, Loc(122,16)), Loc(122,16)), Loc(122,16)),
             instr.CondI(expr.LitE(1), Loc(118,7)),
-          ],
-
-          13: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(124,7)), expr.BinaryE(expr.VarE("v:main:i", Loc(124,7)), op.BO_GT, expr.LitE(0, Loc(124,11))), Loc(124,7)),
-            instr.CondI(expr.VarE("v:main:t.1", Loc(124,7)), Loc(124,3)),
           ],
 
           12: [
@@ -125,6 +124,11 @@ irTUnit.TUnit(
 """, Loc(132,12))], Loc(132,4))),
           ],
 
+          47: [
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(135,7)), expr.BinaryE(expr.VarE("v:main:i", Loc(130,11)), op.BO_EQ, expr.LitE(42, Loc(133,12)), ), ),
+            instr.CondI(expr.VarE("v:main:t.3", Loc(135,7)), ),
+          ],
+
           9: [
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(134,4)), [expr.LitE("""error2
 """, Loc(134,12))], Loc(134,4))),
@@ -135,8 +139,15 @@ irTUnit.TUnit(
 """, Loc(136,12))], Loc(136,4))),
           ],
 
+          13: [
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(124,7)), expr.BinaryE(expr.VarE("v:main:i", Loc(124,7)), op.BO_GT, expr.LitE(0, Loc(124,11))), Loc(124,7)),
+            instr.CondI(expr.VarE("v:main:t.4", Loc(124,7)), Loc(124,3)),
+          ],
+
           7: [
             instr.AssignI(expr.VarE("v:main:i", Loc(129,3)), expr.LitE(41, Loc(129,7)), Loc(129,3)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(133,7)), expr.BinaryE(expr.VarE("v:main:i", Loc(130,11)), op.BO_EQ, expr.LitE(41, Loc(135,12)), ), ),
+            instr.CondI(expr.VarE("v:main:t.2", Loc(133,7)), ),
           ],
 
           6: [
@@ -154,6 +165,8 @@ irTUnit.TUnit(
 
           2: [
             instr.AssignI(expr.VarE("v:main:i", Loc(140,3)), expr.LitE(41, Loc(140,7)), Loc(140,3)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(147,7)), expr.BinaryE(expr.VarE("v:main:i", Loc(141,11)), op.BO_EQ, expr.LitE(42, Loc(147,12)), ), ),
+            instr.CondI(expr.VarE("v:main:t.1", Loc(147,7)), ),
           ],
 
           3: [
@@ -169,6 +182,10 @@ irTUnit.TUnit(
           5: [
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(143,4)), [expr.LitE("""error3
 """, Loc(143,12))], Loc(143,4))),
+          ],
+
+          15: [
+            instr.NopI(),
           ],
 
           16: [
@@ -190,8 +207,8 @@ irTUnit.TUnit(
           ],
 
           20: [
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(113,7)), expr.BinaryE(expr.VarE("v:main:i", Loc(113,7)), op.BO_GT, expr.LitE(0, Loc(113,11))), Loc(113,7)),
-            instr.CondI(expr.VarE("v:main:t.2", Loc(113,7)), Loc(113,3)),
+            instr.AssignI(expr.VarE("v:main:t.5", Loc(113,7)), expr.BinaryE(expr.VarE("v:main:i", Loc(113,7)), op.BO_GT, expr.LitE(0, Loc(113,11))), Loc(113,7)),
+            instr.CondI(expr.VarE("v:main:t.5", Loc(113,7)), Loc(113,3)),
           ],
 
           21: [
@@ -227,8 +244,8 @@ irTUnit.TUnit(
           ],
 
           28: [
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(100,11)), expr.BinaryE(expr.VarE("v:main:j", Loc(100,11)), op.BO_GE, expr.LitE(0, Loc(100,16))), Loc(100,11)),
-            instr.CondI(expr.VarE("v:main:t.3", Loc(100,11)), Loc(100,7)),
+            instr.AssignI(expr.VarE("v:main:t.6", Loc(100,11)), expr.BinaryE(expr.VarE("v:main:j", Loc(100,11)), op.BO_GE, expr.LitE(0, Loc(100,16))), Loc(100,11)),
+            instr.CondI(expr.VarE("v:main:t.6", Loc(100,11)), Loc(100,7)),
           ],
 
           29: [
@@ -245,9 +262,9 @@ irTUnit.TUnit(
           ],
 
           32: [
-            instr.AssignI(expr.VarE("v:main:t.4", Loc(94,11)), expr.VarE("v:main:j", Loc(94,11)), Loc(94,11)),
+            instr.AssignI(expr.VarE("v:main:t.7", Loc(94,11)), expr.VarE("v:main:j", Loc(94,11)), Loc(94,11)),
             instr.AssignI(expr.VarE("v:main:j", Loc(94,11)), expr.BinaryE(expr.VarE("v:main:j", Loc(94,11)), op.BO_SUB, expr.LitE(1, Loc(94,11)), Loc(94,11)), Loc(94,11)),
-            instr.CondI(expr.VarE("v:main:t.4", Loc(94,11)), Loc(94,4)),
+            instr.CondI(expr.VarE("v:main:t.7", Loc(94,11)), Loc(94,4)),
           ],
 
           33: [
@@ -259,22 +276,21 @@ irTUnit.TUnit(
             instr.NopI(),
           ],
 
-          35: [
-            instr.AssignI(expr.VarE("v:main:t.5", Loc(84,7)), expr.BinaryE(expr.VarE("v:main:i", Loc(84,7)), op.BO_GE, expr.LitE(0, Loc(84,12))), Loc(84,7)),
-            instr.CondI(expr.VarE("v:main:t.5", Loc(84,7)), Loc(84,3)),
-          ],
-
         }, # basicBlocks end.
 
         bbEdges= {
           (1, 0, types.UnCondEdge),
-          (-605018968, 4, types.FalseEdge),
+          (2, 3, types.TrueEdge),
+          (2, 4, types.FalseEdge),
           (3, 1, types.UnCondEdge),
           (4, 1, types.UnCondEdge),
           (5, 4, types.UnCondEdge),
           (6, 0, types.TrueEdge),
           (6, 1, types.FalseEdge),
-          (-605018968, 2, types.FalseEdge),
+          (7, 8, types.TrueEdge),
+          (47, 9, types.TrueEdge),
+          (7, 47, types.FalseEdge),
+          (47, 2, types.FalseEdge),
           (8, 2, types.UnCondEdge),
           (9, 8, types.UnCondEdge),
           (10, 9, types.UnCondEdge),
@@ -566,7 +582,7 @@ irTUnit.TUnit(
     "f:printf":
       obj.Func(
         name = "f:printf",
-        paramNames = ["v:printf:"],
+        paramNames = ["v:printf:p.1"],
         variadic = True,
         returnType = types.Int32,
 

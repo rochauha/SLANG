@@ -17,6 +17,7 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:main:t.5": types.Ptr(to=types.Int32),
     "v:main:t.4": types.Ptr(to=types.Void),
     "v:main:t.3": types.Int32,
     "v:main:c": types.Ptr(to=types.Int32),
@@ -24,7 +25,6 @@ irTUnit.TUnit(
     "v:main:t.1": types.Ptr(to=types.Void),
     "v:main:t.2": types.Ptr(to=types.Int32),
     "v:main:a": types.Int32,
-    "v:main:t.5": types.Ptr(to=types.Int32),
     "v:main:b": types.Ptr(to=types.Int32),
   }, # end allVars dict
 

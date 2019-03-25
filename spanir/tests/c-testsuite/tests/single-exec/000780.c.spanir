@@ -20,9 +20,9 @@ irTUnit.TUnit(
     "v:main:t.3": types.Int32,
     "v:main:t.1": types.Ptr(to=types.Int8),
     "v:f1:p": types.Ptr(to=types.Int8),
-    "v:main:t.2": types.Int32,
     "v:main:s": types.Int8,
-    "v:f1:": types.Ptr(to=types.Int8),
+    "v:f1:p.1": types.Ptr(to=types.Int8),
+    "v:main:t.2": types.Int32,
     "v:main:v": types.ConstSizeArray(of=types.Int32, dim=1000),
   }, # end allVars dict
 
@@ -31,7 +31,7 @@ irTUnit.TUnit(
     "f:f1":
       obj.Func(
         name = "f:f1",
-        paramNames = ["v:f1:"],
+        paramNames = ["v:f1:p.1"],
         variadic = False,
         returnType = types.Int32,
 

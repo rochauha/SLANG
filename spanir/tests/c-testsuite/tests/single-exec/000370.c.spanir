@@ -21,10 +21,10 @@ irTUnit.TUnit(
     "v:main:t.5": types.Int32,
     "v:main:t.1": types.Ptr(to=types.Int32),
     "v:main:x": types.ConstSizeArray(of=types.Int32, dim=2),
-    "v:main:t.2": types.Ptr(to=types.Int32),
-    "v:main:p": types.Ptr(to=types.Int32),
-    "v:main:t.3": types.Ptr(to=types.Int32),
     "v:main:t.4": types.Ptr(to=types.Int32),
+    "v:main:t.2": types.Ptr(to=types.Int32),
+    "v:main:t.3": types.Ptr(to=types.Int32),
+    "v:main:p": types.Ptr(to=types.Int32),
   }, # end allVars dict
 
   allObjs = {

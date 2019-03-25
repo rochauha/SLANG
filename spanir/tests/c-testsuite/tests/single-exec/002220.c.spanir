@@ -17,8 +17,8 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.1": types.Ptr(to=types.Void),
     "v:dummy_malloc:size": types.UInt32,
+    "v:main:t.1": types.Ptr(to=types.Void),
     "v:main:x": types.Ptr(to=types.Int32),
   }, # end allVars dict
 

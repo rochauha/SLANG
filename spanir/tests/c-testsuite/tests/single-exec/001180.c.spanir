@@ -52,8 +52,8 @@ irTUnit.TUnit(
           ],
 
           1: [
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.1", Loc(4,24)), ["x"], Loc(4,24)), expr.LitE(0, Loc(4,26))),
-            instr.AssignI(expr.VarE("v:main:s", Loc(4,20)), expr.VarE("v:main:t.1", Loc(4,24)), Loc(4,20)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.1", Loc(4,20)), ["x"], Loc(4,20)), expr.LitE(0, Loc(4,26))),
+            instr.AssignI(expr.VarE("v:main:s", Loc(4,20)), expr.VarE("v:main:t.1", Loc(4,20)), Loc(4,20)),
             instr.AssignI(expr.VarE("v:main:t.2", Loc(5,9)), expr.MemberE(expr.VarE("v:main:s", Loc(5,9)), ["x"], Loc(5,9)), Loc(5,9)),
             instr.ReturnI(expr.VarE("v:main:t.2", Loc(5,9)), Loc(5,2)),
           ],

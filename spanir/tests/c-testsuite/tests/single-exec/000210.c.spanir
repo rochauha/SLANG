@@ -17,8 +17,8 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.1": types.Int32,
     "v:foo:t.2": types.Int32,
+    "v:main:t.1": types.Int32,
     "v:foo:a": types.Int32,
     "v:foo:b": types.Int32,
   }, # end allVars dict

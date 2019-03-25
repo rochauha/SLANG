@@ -20,8 +20,8 @@ irTUnit.TUnit(
     "v:printf:__format": types.Ptr(to=types.Int8),
     "v:main:Buf": types.ConstSizeArray(of=types.Int8, dim=100),
     "v:sprintf:__format": types.Ptr(to=types.Int8),
-    "v:main:t.1": types.Int32,
     "v:main:Count": types.Int32,
+    "v:main:t.1": types.Int32,
     "v:sprintf:__s": types.Ptr(to=types.Int8),
   }, # end allVars dict
 

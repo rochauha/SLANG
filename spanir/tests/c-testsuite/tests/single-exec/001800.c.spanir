@@ -18,9 +18,9 @@ irTUnit.TUnit(
 
   allVars = {
     "v:strcpy:__src": types.Ptr(to=types.Int8),
-    "v:main:t.1": types.Ptr(to=types.Int8),
     "v:printf:__format": types.Ptr(to=types.Int8),
     "v:main:a": types.ConstSizeArray(of=types.Int8, dim=10),
+    "v:main:t.1": types.Ptr(to=types.Int8),
     "v:strcpy:__dest": types.Ptr(to=types.Int8),
   }, # end allVars dict
 

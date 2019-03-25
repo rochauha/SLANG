@@ -20,10 +20,10 @@ irTUnit.TUnit(
     "v:printf:__format": types.Ptr(to=types.Int8),
     "v:fred:p": types.Int32,
     "v:fprintfptr": types.Ptr(to=types.FuncSig(returnType=types.Int32, paramTypes=[types.Ptr(to=types.Struct("s:_IO_FILE")), types.Ptr(to=types.Int8)], variadic=True)),
-    "v:main:t.2": types.Int32,
     "v:stdout": types.Ptr(to=types.Struct("s:_IO_FILE")),
-    "v:f": types.Ptr(to=types.FuncSig(returnType=types.Int32, paramTypes=[types.Int32])),
     "v:main:t.1": UnknownType.,
+    "v:main:t.2": types.Int32,
+    "v:f": types.Ptr(to=types.FuncSig(returnType=types.Int32, paramTypes=[types.Int32])),
   }, # end allVars dict
 
   allObjs = {

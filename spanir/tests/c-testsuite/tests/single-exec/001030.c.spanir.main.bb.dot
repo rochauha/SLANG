@@ -1,8 +1,0 @@
-digraph {
-  node [shape=box]
-  END [label="[END]\lnop()\l"];
-  START [label="[START]\lnop()\l"];
-  BB1 [label="[BB1]\lx = 0\lt.1 = &x\lfoo = (types.Ptr(VOID, 1))t.1\lbar = &foo\lt.2 = (types.Ptr(INT32, 2))bar\lt.3 = *t.2\lt.4 = *t.3\lreturn t.4\l"];
-  START -> BB1;
-  BB1 -> END;
-}

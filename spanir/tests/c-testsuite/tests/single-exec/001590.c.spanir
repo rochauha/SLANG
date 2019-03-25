@@ -18,9 +18,9 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.2": types.Int32,
+    "v:vfunc:a": types.Int32,
     "v:printf:__format": types.Ptr(to=types.Int8),
     "v:myfunc:x": types.Int32,
-    "v:vfunc:a": types.Int32,
     "v:main:t.1": types.Int32,
   }, # end allVars dict
 

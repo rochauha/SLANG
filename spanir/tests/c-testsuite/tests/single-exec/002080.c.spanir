@@ -17,19 +17,19 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:main:t.6": types.ConstSizeArray(of=types.Int8, dim=1),
+    "v:main:t.5": types.Struct("s:wchar"),
     "v:main:t.4": types.Int32,
     "v:printf:__format": types.Ptr(to=types.Int8),
-    "v:main:t.5": types.Struct("s:wchar"),
     "v:main:s": types.ConstSizeArray(of=types.Int8, dim=9),
-    "v:f1int:q": types.Struct("s:wint"),
     "v:f1char:q": types.Struct("s:wchar"),
     "v:f1char:s": types.ConstSizeArray(of=types.Int8, dim=9),
-    "v:main:t.3": types.Int32,
-    "v:main:t.6": types.ConstSizeArray(of=types.Int8, dim=1),
     "v:f1int:s": types.ConstSizeArray(of=types.Int8, dim=9),
-    "v:q": types.Struct("s:wchar"),
+    "v:f1int:q": types.Struct("s:wint"),
     "v:main:t.1": types.Int8,
     "v:main:t.2": types.Int8,
+    "v:q": types.Struct("s:wchar"),
+    "v:main:t.3": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -122,9 +122,9 @@ irTUnit.TUnit(
           ],
 
           5: [
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.5", Loc(20,28)), ["data"], Loc(20,28)), ERROR:convertExpr),
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.5", Loc(20,28)), ["mem"], Loc(20,28)), expr.VarE("v:main:t.6", Loc(20,37))),
-            instr.AssignI(expr.VarE("v:q", Loc(20,4)), expr.VarE("v:main:t.5", Loc(20,28)), Loc(20,4)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.5", Loc(20,4)), ["data"], Loc(20,4)), ERROR:convertExpr),
+            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.5", Loc(20,4)), ["mem"], Loc(20,4)), expr.VarE("v:main:t.6", Loc(20,37))),
+            instr.AssignI(expr.VarE("v:q", Loc(20,4)), expr.VarE("v:main:t.5", Loc(20,4)), Loc(20,4)),
           ],
 
         }, # basicBlocks end.
@@ -163,9 +163,9 @@ irTUnit.TUnit(
 
           1: [
             instr.AssignI(expr.VarE("v:f1char:s", Loc(9,5)), expr.LitE("""nonono""", Loc(9,15)), Loc(9,5)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:f1char:t.1", Loc(10,22)), ["data"], Loc(10,22)), expr.LitE("""bugs""", Loc(10,23))),
-            instr.AssignI(expr.MemberE(expr.VarE("v:f1char:t.1", Loc(10,22)), ["mem"], Loc(10,22)), ERROR:convertExpr),
-            instr.AssignI(expr.VarE("v:f1char:q", Loc(10,5)), expr.VarE("v:f1char:t.1", Loc(10,22)), Loc(10,5)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:f1char:t.1", Loc(10,5)), ["data"], Loc(10,5)), expr.LitE("""bugs""", Loc(10,23))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:f1char:t.1", Loc(10,5)), ["mem"], Loc(10,5)), ERROR:convertExpr),
+            instr.AssignI(expr.VarE("v:f1char:q", Loc(10,5)), expr.VarE("v:f1char:t.1", Loc(10,5)), Loc(10,5)),
             instr.AssignI(expr.VarE("v:f1char:t.2", Loc(11,13)), expr.ArrayE(expr.VarE("v:f1char:s", Loc(11,13)), [expr.LitE(0, Loc(11,15))], Loc(11,13)), Loc(11,13)),
             instr.AssignI(expr.VarE("v:f1char:t.3", Loc(11,12)), expr.UnaryE(op.UO_NOT, expr.VarE("v:f1char:t.2", Loc(11,13)), Loc(11,12)), Loc(11,12)),
             instr.ReturnI(expr.VarE("v:f1char:t.3", Loc(11,12)), Loc(11,5)),
@@ -199,9 +199,9 @@ irTUnit.TUnit(
 
           1: [
             instr.AssignI(expr.VarE("v:f1int:s", Loc(14,5)), expr.LitE("""nonono""", Loc(14,15)), Loc(14,5)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:f1int:t.1", Loc(15,21)), ["data"], Loc(15,21)), expr.LitE("""bugs""", Loc(15,22))),
-            instr.AssignI(expr.MemberE(expr.VarE("v:f1int:t.1", Loc(15,21)), ["mem"], Loc(15,21)), ERROR:convertExpr),
-            instr.AssignI(expr.VarE("v:f1int:q", Loc(15,5)), expr.VarE("v:f1int:t.1", Loc(15,21)), Loc(15,5)),
+            instr.AssignI(expr.MemberE(expr.VarE("v:f1int:t.1", Loc(15,5)), ["data"], Loc(15,5)), expr.LitE("""bugs""", Loc(15,22))),
+            instr.AssignI(expr.MemberE(expr.VarE("v:f1int:t.1", Loc(15,5)), ["mem"], Loc(15,5)), ERROR:convertExpr),
+            instr.AssignI(expr.VarE("v:f1int:q", Loc(15,5)), expr.VarE("v:f1int:t.1", Loc(15,5)), Loc(15,5)),
             instr.AssignI(expr.VarE("v:f1int:t.2", Loc(16,13)), expr.ArrayE(expr.VarE("v:f1int:s", Loc(16,13)), [expr.LitE(0, Loc(16,15))], Loc(16,13)), Loc(16,13)),
             instr.AssignI(expr.VarE("v:f1int:t.3", Loc(16,12)), expr.UnaryE(op.UO_NOT, expr.VarE("v:f1int:t.2", Loc(16,13)), Loc(16,12)), Loc(16,12)),
             instr.ReturnI(expr.VarE("v:f1int:t.3", Loc(16,12)), Loc(16,5)),

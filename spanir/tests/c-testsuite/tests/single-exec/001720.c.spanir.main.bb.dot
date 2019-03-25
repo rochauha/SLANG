@@ -1,8 +1,0 @@
-digraph {
-  node [shape=box]
-  END [label="[END]\lnop()\l"];
-  START [label="[START]\lnop()\l"];
-  BB1 [label="[BB1]\ld = &a\le = &b\la = 12\lb = 34\lt.1 = *d\lprintf('%d\n',t.1)\lt.2 = *e\lprintf('%d\n',t.2)\lt.3 = d == e\lprintf('%d\n',t.3)\lt.4 = d != e\lprintf('%d\n',t.4)\ld = e\lt.5 = d == e\lprintf('%d\n',t.5)\lt.6 = d != e\lprintf('%d\n',t.6)\lreturn 0\l"];
-  BB1 -> END;
-  START -> BB1;
-}

@@ -17,13 +17,15 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:f3:t.4": types.Int32,
+    "v:f3:t.3": types.Int32,
     "v:f2:b": types.ConstSizeArray(of=types.Int32, dim=1),
-    "v:f1:t.1": types.Int32,
+    "v:f3:t.1": types.Int32,
     "v:f2:c": types.ConstSizeArray(of=types.Int32, dim=1),
     "v:f1:argc": types.Int32,
-    "v:f2:a": types.ConstSizeArray(of=types.Int32, dim=1),
     "v:printf:__format": types.Ptr(to=types.Int8),
-    "v:f1:t.2": types.Int32,
+    "v:f2:a": types.ConstSizeArray(of=types.Int32, dim=1),
+    "v:f3:t.2": types.Int32,
     "v:f1:test": types.VarArray(of=types.Int8),
   }, # end allVars dict
 
@@ -182,7 +184,10 @@ irTUnit.TUnit(
           ],
 
           8: [
-            instr.CallI(expr.CallE(NullStmt, [NullStmt, ERROR:convertExpr], Loc(32,5))),
+            instr.AssignI(expr.VarE("v:f3:t.3", Loc(32,24)), expr.CallE(expr.FuncE("f:printf", Loc(32,24)), [expr.LitE("""x1
+""", Loc(32,31))], Loc(32,24)), Loc(32,24)),
+            instr.AssignI(expr.VarE("v:f3:t.4", Loc(32,20)), expr.SelectE(expr.LitE(0, Loc(32,20)), expr.VarE("v:f3:t.3", Loc(32,24)), expr.LitE(11, Loc(32,41)), Loc(32,20)), Loc(32,20)),
+            instr.CallI(expr.CallE(NullStmt, [NullStmt, expr.VarE("v:f3:t.4", Loc(32,20))], Loc(32,5))),
           ],
 
           7: [
@@ -221,7 +226,10 @@ irTUnit.TUnit(
           ],
 
           5: [
-            instr.CallI(expr.CallE(NullStmt, [NullStmt, ERROR:convertExpr], Loc(33,5))),
+            instr.AssignI(expr.VarE("v:f3:t.1", Loc(33,29)), expr.CallE(expr.FuncE("f:printf", Loc(33,29)), [expr.LitE("""x2
+""", Loc(33,36))], Loc(33,29)), Loc(33,29)),
+            instr.AssignI(expr.VarE("v:f3:t.2", Loc(33,20)), expr.SelectE(expr.LitE(1, Loc(33,20)), expr.LitE(12, Loc(33,24)), expr.VarE("v:f3:t.1", Loc(33,29)), Loc(33,20)), Loc(33,20)),
+            instr.CallI(expr.CallE(NullStmt, [NullStmt, expr.VarE("v:f3:t.2", Loc(33,20))], Loc(33,5))),
             instr.CondI(expr.LitE(0, Loc(34,20)), Loc(34,20)),
           ],
 
@@ -240,7 +248,7 @@ irTUnit.TUnit(
           (8, 6, types.UnCondEdge),
           (9, 8, types.UnCondEdge),
           (10, 8, types.UnCondEdge),
-          (11, 10, types.UnCondEdge),
+          (11, 0, types.UnCondEdge),
           (-1, 11, types.UnCondEdge),
         }, # bbEdges end
       ), # f:f3() end. 

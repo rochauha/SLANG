@@ -1,8 +1,0 @@
-digraph {
-  node [shape=box]
-  END [label="[END]\lnop()\l"];
-  START [label="[START]\lnop()\l"];
-  BB1 [label="[BB1]\lt.1 = myfunc(3)\lprintf('%d\n',t.1)\lt.2 = myfunc(4)\lprintf('%d\n',t.2)\lvfunc(1234)\lqfunc()\lreturn 0\l"];
-  BB1 -> END;
-  START -> BB1;
-}

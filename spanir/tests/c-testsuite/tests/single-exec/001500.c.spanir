@@ -17,6 +17,7 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:main:t.14": types.Int32,
     "v:main:t.13": types.Int32,
     "v:main:t.12": types.Int32,
     "v:main:t.11": types.Int32,
@@ -26,7 +27,6 @@ irTUnit.TUnit(
     "v:main:t.7": types.Int32,
     "v:main:t.6": types.Int32,
     "v:main:t.1": types.ConstSizeArray(of=types.Int32, dim=2),
-    "v:main:t.14": types.Int32,
     "v:s": types.Ptr(to=types.Struct("s:S2")),
     "v:main:t.4": types.ConstSizeArray(of=types.Int32, dim=2),
     "v:main:t.2": types.Int32,

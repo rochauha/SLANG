@@ -1,8 +1,0 @@
-digraph {
-  node [shape=box]
-  END [label="[END]\lnop()\l"];
-  START [label="[START]\lnop()\l"];
-  BB1 [label="[BB1]\lt.1 = dummy_malloc(5)\lx = (types.Ptr(INT32, 1))t.1\lx = x + 5\l"];
-  START -> BB1;
-  BB1 -> END;
-}

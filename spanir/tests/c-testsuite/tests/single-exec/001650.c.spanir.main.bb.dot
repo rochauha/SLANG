@@ -1,8 +1,0 @@
-digraph {
-  node [shape=box]
-  END [label="[END]\lnop()\l"];
-  START [label="[START]\lnop()\l"];
-  BB1 [label="[BB1]\lprintf('%d\n',12)\lt.3 = 12 * 1\lt.2 = 12 * 2\lt.1 = 12 * 3\lprintf('%d, %d, %d\n',t.3,t.2,t.1)\lreturn 0\l"];
-  START -> BB1;
-  BB1 -> END;
-}

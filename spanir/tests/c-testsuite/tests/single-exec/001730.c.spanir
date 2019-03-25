@@ -17,24 +17,24 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:y": types.Int8,
-    "v:main:t.2": types.Ptr(to=types.Int8),
     "v:main:t.1": types.Ptr(to=types.Int8),
     "v:main:src": types.Ptr(to=types.Int8),
+    "v:main:t.2": types.Ptr(to=types.Int8),
     "v:main:destarray": types.ConstSizeArray(of=types.Int8, dim=10),
     "v:main:c": types.Int32,
     "v:main:dest": types.Ptr(to=types.Int8),
-    "v:main:b": types.Ptr(to=types.Int8),
-    "v:main:t.5": types.Int8,
+    "v:main:t.6": types.Int8,
     "v:main:t.3": types.Int8,
+    "v:main:x": types.Int32,
+    "v:main:y": types.Int8,
     "v:main:t.4": types.Int8,
     "v:printf:__format": types.Ptr(to=types.Int8),
     "v:main:a": types.Ptr(to=types.Int8),
-    "v:main:t.6": types.Int8,
+    "v:main:t.5": types.Int8,
     "v:main:t.7": types.Int8,
     "v:main:t.8": types.Int8,
+    "v:main:b": types.Ptr(to=types.Int8),
     "v:main:t.9": types.Int8,
-    "v:main:x": types.Int32,
   }, # end allVars dict
 
   allObjs = {

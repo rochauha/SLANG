@@ -19,13 +19,13 @@ irTUnit.TUnit(
   allVars = {
     "v:main:t.8": types.Int8,
     "v:main:t.7": types.Int8,
-    "v:main:t.6": types.Int8,
     "v:main:t.1": types.Int8,
-    "v:main:t.5": types.Int8,
+    "v:main:t.6": types.Int8,
     "v:s": types.ConstSizeArray(of=types.Int8, dim=4),
     "v:main:t.2": types.Int8,
     "v:main:t.3": types.Int8,
     "v:main:t.4": types.Int8,
+    "v:main:t.5": types.Int8,
   }, # end allVars dict
 
   allObjs = {

@@ -22,8 +22,8 @@ irTUnit.TUnit(
     "v:main:i": types.Int32,
     "v:foo:i": types.Int32,
     "v:main:titi": types.Struct("s:b"),
-    "v:main:t.1": types.Int32,
     "v:main:ptr": types.Ptr(to=types.Int32),
+    "v:main:t.1": types.Int32,
     "v:main:l": types.Int32,
     "v:main:ti": types.Ptr(to=types.Int8),
   }, # end allVars dict

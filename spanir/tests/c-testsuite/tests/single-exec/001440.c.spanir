@@ -17,10 +17,13 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:main:t.4": types.Ptr(to=types.Void),
     "v:main:i": types.Int32,
-    "v:main:p": types.Ptr(to=types.Void),
     "v:main:q": types.Ptr(to=types.Int32),
+    "v:main:p": types.Ptr(to=types.Void),
     "v:main:t.1": types.Int32,
+    "v:main:t.2": types.Ptr(to=types.Void),
+    "v:main:t.3": types.Ptr(to=types.Void),
   }, # end allVars dict
 
   allObjs = {
@@ -48,7 +51,7 @@ irTUnit.TUnit(
           ],
 
           22: [
-            instr.AssignI(expr.VarE("v:main:i", Loc(7,2)), ERROR:convertExpr, Loc(7,2)),
+            instr.AssignI(expr.VarE("v:main:i", Loc(7,2)), expr.SelectE(expr.VarE("v:main:i", Loc(7,6)), expr.LitE(0, Loc(7,10)), expr.LitE(0, Loc(7,14)), Loc(7,6)), Loc(7,2)),
           ],
 
           21: [
@@ -60,7 +63,8 @@ irTUnit.TUnit(
           ],
 
           19: [
-            instr.AssignI(expr.VarE("v:main:p", Loc(8,2)), ERROR:convertExpr, Loc(8,2)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(8,10)), expr.CastE(expr.LitE(0, Loc(8,19)), types.Ptr(to=types.Void), Loc(8,10)), Loc(8,10)),
+            instr.AssignI(expr.VarE("v:main:p", Loc(8,2)), expr.SelectE(expr.VarE("v:main:i", Loc(8,6)), expr.VarE("v:main:t.4", Loc(8,10)), expr.LitE(0, Loc(8,23)), Loc(8,6)), Loc(8,2)),
           ],
 
           18: [
@@ -72,7 +76,8 @@ irTUnit.TUnit(
           ],
 
           16: [
-            instr.AssignI(expr.VarE("v:main:p", Loc(9,2)), ERROR:convertExpr, Loc(9,2)),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(9,14)), expr.CastE(expr.LitE(0, Loc(9,23)), types.Ptr(to=types.Void), Loc(9,14)), Loc(9,14)),
+            instr.AssignI(expr.VarE("v:main:p", Loc(9,2)), expr.SelectE(expr.VarE("v:main:i", Loc(9,6)), expr.LitE(0, Loc(9,10)), expr.VarE("v:main:t.3", Loc(9,14)), Loc(9,6)), Loc(9,2)),
           ],
 
           5: [
@@ -80,7 +85,7 @@ irTUnit.TUnit(
           ],
 
           4: [
-            instr.AssignI(expr.VarE("v:main:q", Loc(13,2)), ERROR:convertExpr, Loc(13,2)),
+            instr.AssignI(expr.VarE("v:main:q", Loc(13,2)), expr.SelectE(expr.VarE("v:main:i", Loc(13,6)), expr.VarE("v:main:q", Loc(13,10)), expr.LitE(0, Loc(13,14)), Loc(13,6)), Loc(13,2)),
           ],
 
           3: [
@@ -96,7 +101,7 @@ irTUnit.TUnit(
           ],
 
           1: [
-            instr.AssignI(expr.VarE("v:main:q", Loc(14,2)), ERROR:convertExpr, Loc(14,2)),
+            instr.AssignI(expr.VarE("v:main:q", Loc(14,2)), expr.SelectE(expr.VarE("v:main:i", Loc(14,6)), expr.LitE(0, Loc(14,10)), expr.VarE("v:main:q", Loc(14,14)), Loc(14,6)), Loc(14,2)),
             instr.AssignI(expr.VarE("v:main:t.1", Loc(16,9)), expr.CastE(expr.VarE("v:main:q", Loc(16,15)), types.Int32, Loc(16,9)), Loc(16,9)),
             instr.ReturnI(expr.VarE("v:main:t.1", Loc(16,9)), Loc(16,2)),
           ],
@@ -106,7 +111,7 @@ irTUnit.TUnit(
           ],
 
           7: [
-            instr.AssignI(expr.VarE("v:main:q", Loc(12,2)), ERROR:convertExpr, Loc(12,2)),
+            instr.AssignI(expr.VarE("v:main:q", Loc(12,2)), expr.SelectE(expr.VarE("v:main:i", Loc(12,6)), expr.VarE("v:main:p", Loc(12,10)), expr.LitE(0, Loc(12,14)), Loc(12,6)), Loc(12,2)),
           ],
 
           8: [
@@ -118,7 +123,7 @@ irTUnit.TUnit(
           ],
 
           10: [
-            instr.AssignI(expr.VarE("v:main:q", Loc(11,2)), ERROR:convertExpr, Loc(11,2)),
+            instr.AssignI(expr.VarE("v:main:q", Loc(11,2)), expr.SelectE(expr.VarE("v:main:i", Loc(11,6)), expr.LitE(0, Loc(11,10)), expr.VarE("v:main:p", Loc(11,14)), Loc(11,6)), Loc(11,2)),
           ],
 
           -1: [
@@ -134,7 +139,8 @@ irTUnit.TUnit(
           ],
 
           13: [
-            instr.AssignI(expr.VarE("v:main:p", Loc(10,2)), ERROR:convertExpr, Loc(10,2)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(10,14)), expr.CastE(expr.LitE(0, Loc(10,29)), types.Ptr(to=types.Void), Loc(10,14)), Loc(10,14)),
+            instr.AssignI(expr.VarE("v:main:p", Loc(10,2)), expr.SelectE(expr.VarE("v:main:i", Loc(10,6)), expr.LitE(0, Loc(10,10)), expr.VarE("v:main:t.2", Loc(10,14)), Loc(10,6)), Loc(10,2)),
           ],
 
           14: [
@@ -152,35 +158,27 @@ irTUnit.TUnit(
           (2, 1, types.UnCondEdge),
           (3, 1, types.UnCondEdge),
           (4, 2, types.UnCondEdge),
-          (4, 3, types.UnCondEdge),
           (5, 4, types.UnCondEdge),
           (6, 4, types.UnCondEdge),
           (7, 5, types.UnCondEdge),
-          (7, 6, types.UnCondEdge),
           (8, 7, types.UnCondEdge),
           (9, 7, types.UnCondEdge),
           (10, 8, types.UnCondEdge),
-          (10, 9, types.UnCondEdge),
           (11, 10, types.UnCondEdge),
           (12, 10, types.UnCondEdge),
           (13, 11, types.UnCondEdge),
-          (13, 12, types.UnCondEdge),
           (14, 13, types.UnCondEdge),
           (15, 13, types.UnCondEdge),
           (16, 14, types.UnCondEdge),
-          (16, 15, types.UnCondEdge),
           (17, 16, types.UnCondEdge),
           (18, 16, types.UnCondEdge),
           (19, 17, types.UnCondEdge),
-          (19, 18, types.UnCondEdge),
           (20, 19, types.UnCondEdge),
           (21, 19, types.UnCondEdge),
           (22, 20, types.UnCondEdge),
-          (22, 21, types.UnCondEdge),
           (23, 22, types.UnCondEdge),
           (24, 22, types.UnCondEdge),
           (25, 23, types.UnCondEdge),
-          (25, 24, types.UnCondEdge),
           (-1, 25, types.UnCondEdge),
         }, # bbEdges end
       ), # f:main() end. 

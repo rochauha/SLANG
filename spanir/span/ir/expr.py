@@ -42,6 +42,7 @@ CALL_EXPR_EC: ExprCodeT       = 40
 PTRCALL_EXPR_EC: ExprCodeT    = 41
 MEMBER_EXPR_EC: ExprCodeT     = 45
 PHI_EXPR_EC: ExprCodeT        = 50
+SELECT_EXPR_EC: ExprCodeT     = 60
 
 ################################################
 #BOUND END  : expr_codes
@@ -519,3 +520,39 @@ class PhiE(ExprET):
 
   def __repr__(self): return self.__str__()
 
+class SelectE(ExprET):
+  """Ternary operator."""
+  def __init__(self,
+               cond: UnitET, # use as a boolean value
+               arg1: UnitET,
+               arg2: UnitET,
+               loc: Optional[types.Loc] = None,
+  ) -> None:
+    super().__init__(SELECT_EXPR_EC, loc)
+    self.cond = cond
+    self.arg1 = arg1
+    self.arg2 = arg2
+
+  def __eq__(self,
+             other: 'SelectE'
+  ) -> bool:
+    if not isinstance(other, SelectE):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.cond == other.cond:
+      if LS: _log.warning("CondVar Differs: %s, %s", self, other)
+      return False
+    if not self.arg1 == other.arg1:
+      if LS: _log.warning("Arg1 Differs: %s, %s", self, other)
+      return False
+    if not self.arg2 == other.arg2:
+      if LS: _log.warning("Arg2 Differs: %s, %s", self, other)
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __str__(self): return f"{self.cond} ? {self.arg1} : {self.arg2}"
+
+  def __repr__(self): return self.__str__()

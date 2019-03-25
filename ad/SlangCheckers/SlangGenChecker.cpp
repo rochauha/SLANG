@@ -108,6 +108,7 @@ class SlangGenChecker : public Checker<check::ASTCodeBody, check::EndOfTranslati
     SlangExpr convertUnaryExprOrTypeTraitExpr(const UnaryExprOrTypeTraitExpr *stmt,
                                               bool compound_receiver) const;
     SlangExpr convertCStyleCastExpr(const CStyleCastExpr *cCast, bool compound_receiver) const;
+    SlangExpr convertConditionalOp(const ConditionalOperator *condOp, bool compound_receiver) const;
 
     // type_conversion_routines
     std::string convertClangType(QualType qt) const;
@@ -134,6 +135,7 @@ class SlangGenChecker : public Checker<check::ASTCodeBody, check::EndOfTranslati
     void adjustDirtyVar(SlangExpr &slangExpr, std::string &locStr) const;
     bool isIncompleteType(const Type *type) const;
     void genStmtVectorFromAST(const Stmt *stmt, StmtVector &stmtVec) const;
+    QualType getCleanedQualType(QualType qt) const;
 
 }; // class SlangGenChecker
 } // anonymous namespace
@@ -206,7 +208,7 @@ void SlangGenChecker::handleCfg(const CFG *cfg) const {
     stu.setNextBbId(cfg->size() - 1);
     for (const CFGBlock *bb : *cfg) {
         handleBbInfo(bb, cfg);
-        stu.clearMainStack(); // FIXME: a hack
+        stu.clearMainStack(); // IMPORTANT (necessary when conditional operator)
         handleBbStmts(bb);
     }
 } // handleCfg()
@@ -240,10 +242,15 @@ void SlangGenChecker::handleBbInfo(const CFGBlock *bb, const CFG *cfg) const {
     }
 
     // access and record successor blocks
-    const Stmt *stmt = (bb->getTerminator()).getStmt();
-    if (stmt &&
-        (isa<IfStmt>(stmt) || isa<WhileStmt>(stmt) || isa<ForStmt>(stmt) || isa<DoStmt>(stmt) ||
-         (isa<BinaryOperator>(stmt) && cast<BinaryOperator>(stmt)->isLogicalOp()))) {
+    const Stmt *terminator = (bb->getTerminator()).getStmt();
+    if (terminator
+             && (isa<IfStmt>(terminator)
+                 || isa<WhileStmt>(terminator)
+                 || isa<ConditionalOperator>(terminator)
+                 || isa<ForStmt>(terminator) || isa<DoStmt>(terminator)
+                 || (isa<BinaryOperator>(terminator)
+                     && cast<BinaryOperator>(terminator)->isLogicalOp()
+                    ))) {
         // if here, then only conditional edges are present
         bool trueEdge = true;
         if (bb->succ_size() > 2) {
@@ -260,6 +267,12 @@ void SlangGenChecker::handleBbInfo(const CFGBlock *bb, const CFG *cfg) const {
                 }
             } else {
                 succId = 0;
+            }
+
+            if (isa<ConditionalOperator>(terminator)) {
+                // in case of a conditional terminator just record the first edge as uncoditional and done.
+                stu.addBbEdge(std::make_pair(bbId, std::make_pair(succId, UnCondEdge)));
+                break; // important
             }
 
             if (trueEdge) {
@@ -311,7 +324,9 @@ void SlangGenChecker::handleBbStmts(const CFGBlock *bb) const {
     // get terminator
     const Stmt *terminator = (bb->getTerminator()).getStmt();
     if (terminator) {
-        handleStmt(terminator);
+        if (! isa<ConditionalOperator>(terminator)) {
+            handleStmt(terminator);
+        }
     }
 
 } // handleBbStmts()
@@ -393,6 +408,7 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
     case Stmt::WhileStmtClass: // same as Stmt::IfStmtClass
     case Stmt::ForStmtClass:   // same as Stmt::IfStmtClass
     case Stmt::IfStmtClass:
+
         handleIfStmt(locStr);
         break;
 
@@ -752,6 +768,9 @@ SlangExpr SlangGenChecker::convertExpr(bool compound_receiver) const {
     case Stmt::CStyleCastExprClass:
         return convertCStyleCastExpr(cast<CStyleCastExpr>(stmt), compound_receiver);
 
+    case Stmt::ConditionalOperatorClass:
+        return convertConditionalOp(cast<ConditionalOperator>(stmt), compound_receiver);
+
     default: {
         // error state
         SLANG_ERROR("UnknownStmt: " << stmt->getStmtClassName())
@@ -817,9 +836,9 @@ SlangExpr SlangGenChecker::convertStringLiteral(const StringLiteral *sl) const {
 
     std::string locStr = getLocationString(sl);
 
-    ss << "expr.LitE(\"\"\"" << sl->getString().str() << "\"\"\"";
+    ss << "expr.LitE(\"\"\"" << sl->getBytes().str() << "\"\"\"";
     ss << ", " << locStr << ")";
-    SLANG_TRACE(ss.str() << "---- " << sl->getByteLength() << " -- " << sl->getString())
+    SLANG_TRACE(ss.str() << "---- " << sl->getByteLength())
 
     return SlangExpr(ss.str(), false, sl->getType());
 } // convertStringLiteral()
@@ -1185,7 +1204,7 @@ SlangExpr SlangGenChecker::convertArraySubscript(const ArraySubscriptExpr *array
     SlangExpr arrExpr = convertExpr(true); // extracts the `arr` part
 
     // get the type (depends on the number of indexes)
-    qualType = arrExpr.qualType;
+    qualType = getCleanedQualType(arrExpr.qualType);
     for (auto _ : indexExprs) {
         auto type = qualType.getTypePtr();
         if (type->isArrayType()) {
@@ -1260,7 +1279,11 @@ SlangExpr SlangGenChecker::convertUnaryOp(const UnaryOperator *unOp, bool compou
     }
 
     adjustDirtyVar(exprArg, locStr);
-    qualType = exprArg.qualType;
+    llvm::errs() << "********************" << exprArg.expr << "\n"; //delit
+    exprArg.qualType.dump();
+    exprArg.qualType = qualType = getCleanedQualType(exprArg.qualType);
+    llvm::errs() << "****************\n"; //delit
+    qualType.dump();
 
     switch (unOp->getOpcode()) {
     default: {
@@ -1269,14 +1292,21 @@ SlangExpr SlangGenChecker::convertUnaryOp(const UnaryOperator *unOp, bool compou
     }
 
     case UO_AddrOf: {
-        qualType = FD->getASTContext().getPointerType(exprArg.qualType);
+        qualType = FD->getASTContext().getPointerType(qualType);
         op = "op.UO_ADDROF";
         break;
     }
 
     case UO_Deref: {
-        auto ptr_type = cast<PointerType>(exprArg.qualType.getTypePtr());
-        qualType = ptr_type->getPointeeType();
+        const Type *type = qualType.getTypePtr();
+        if (type->isArrayType()) {
+            qualType = type->getAsArrayTypeUnsafe()->getElementType();
+        } else if(type->isPointerType()) {
+            auto ptrType = cast<PointerType>(qualType.getTypePtr());
+            qualType = ptrType->getPointeeType();
+        } else {
+            SLANG_ERROR("Unhandled_TYPE_UO_Deref");
+        }
         op = "op.UO_DEREF";
         break;
     }
@@ -1500,8 +1530,10 @@ std::string SlangGenChecker::convertClangType(QualType qt) const {
     std::stringstream ss;
 
     if (qt.isNull()) {
-        return "types.Int"; // the default type
+        return "types.Int32"; // the default type
     }
+
+    qt = getCleanedQualType(qt);
 
     const Type *type = qt.getTypePtr();
 
@@ -1850,6 +1882,57 @@ SlangExpr SlangGenChecker::convertCStyleCastExpr(const CStyleCastExpr *cCast,
     return varExpr;
 } // convertCStyleCastExpr()
 
+SlangExpr SlangGenChecker::convertConditionalOp(const ConditionalOperator *condOp,
+        bool compound_receiver) const {
+    // assumed compound_receiver is true, hence not as parameter
+    std::stringstream ss;
+    SlangExpr slangExpr;
+    std::vector<const Stmt*> stmts;
+
+    std::string locStr = getLocationString(condOp);
+
+    for (auto it = condOp->child_begin(); it != condOp->child_end(); ++it) {
+        // there should be only three children
+        stmts.push_back(*it);
+    }
+
+    if (stmts.size() != 3) {
+        SLANG_ERROR("ConditionalOp: There should be three children. Found: " << stmts.size())
+    }
+
+    handleAstStmts(stmts[0]);
+    SlangExpr condExpr = convertExpr(true);
+    handleAstStmts(stmts[1]);
+    SlangExpr arg1 = convertExpr(true);
+    handleAstStmts(stmts[2]);
+    SlangExpr arg2 = convertExpr(true);
+
+    if (compound_receiver) {
+        slangExpr = genTmpVariable(condOp->getType(), locStr);
+        ss << "instr.AssignI(" << slangExpr.expr;
+        ss << ", ";
+    }
+
+    slangExpr.addSlangStmtsBack(condExpr.slangStmts);
+    slangExpr.addSlangStmtsBack(arg1.slangStmts);
+    slangExpr.addSlangStmtsBack(arg2.slangStmts);
+
+    ss << "expr.SelectE(";
+    ss << condExpr.expr;
+    ss << ", " << arg1.expr;
+    ss << ", " << arg2.expr;
+    ss << ", " << locStr << ")"; // close expr.SelectE(...
+
+    if (compound_receiver) {
+        ss << ", " << locStr << ")"; // close instr.AssignI(...
+        slangExpr.addSlangStmtBack(ss.str());
+    } else {
+        slangExpr.expr = ss.str();
+    }
+
+    return slangExpr;
+}
+
 // BOUND END  : conversion_routines to SlangExpr
 
 // BOUND START: helper_functions
@@ -1875,6 +1958,8 @@ void SlangGenChecker::genStmtVectorFromAST(const Stmt *stmt, StmtVector &stmtVec
 void SlangGenChecker::getCaseExpr(std::vector<StmtVector> &stmtVecVec,
                                   std::vector<std::string> &locStrs, const Stmt *stmt) const {
     StmtVector stmts;
+
+    if (! stmt) return;
 
     if (isa<CaseStmt>(stmt)) {
         auto caseStmt = cast<CaseStmt>(stmt);
@@ -2166,6 +2251,16 @@ bool SlangGenChecker::isIncompleteType(const Type *type) const {
     }
 
     return retVal;
+}
+
+// Remove qualifiers and typedefs
+QualType SlangGenChecker::getCleanedQualType(QualType qt) const {
+    if (qt.isNull()) return qt;
+    qt = qt.getCanonicalType();
+    qt.removeLocalConst();
+    qt.removeLocalRestrict();
+    qt.removeLocalVolatile();
+    return qt;
 }
 
 // BOUND END  : helper_functions

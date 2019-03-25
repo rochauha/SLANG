@@ -18,11 +18,11 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.1": types.Int32,
-    "v:main:t.4": types.Int32,
     "v:p": types.Ptr(to=types.Int32),
     "v:main:t.2": types.Int32,
     "v:y": types.Int32,
     "v:main:t.3": types.Int32,
+    "v:main:t.4": types.Int32,
     "v:x": types.Int32,
   }, # end allVars dict
 

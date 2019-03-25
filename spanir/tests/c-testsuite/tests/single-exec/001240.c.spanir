@@ -17,14 +17,14 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:main:t.4": types.Int32,
     "v:main:t.3": UnknownType.,
     "v:main:t.2": types.Ptr(to=types.FuncSig(returnType=types.Int32, paramTypes=[types.Int32, types.Int32])),
     "v:f2:c": types.Int32,
-    "v:main:t.1": UnknownType.,
     "v:f1:a": types.Int32,
-    "v:main:t.4": types.Int32,
     "v:main:p": types.Ptr(to=types.FuncSig(returnType=types.Ptr(to=types.FuncSig(returnType=types.Int32, paramTypes=[types.Int32, types.Int32])), paramTypes=[types.Int32, types.Int32])),
     "v:f2:b": types.Int32,
+    "v:main:t.1": UnknownType.,
     "v:f1:b": types.Int32,
   }, # end allVars dict
 

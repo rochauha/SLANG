@@ -1,8 +1,0 @@
-digraph {
-  node [shape=box]
-  END [label="[END]\lnop()\l"];
-  START [label="[START]\lnop()\l"];
-  BB1 [label="[BB1]\ldata = t\lr = 4\la = 5\lb = 12\lt.1 = a - b\lt.4 = *t.3\lt.5 = t.4 + t.1\lt.2 = data + r\lt.3 = (types.Ptr(UINT32, 1))t.2\l*t.3 = t.5\lprintf('data = "%s"\n',data)\lreturn 0\l"];
-  START -> BB1;
-  BB1 -> END;
-}

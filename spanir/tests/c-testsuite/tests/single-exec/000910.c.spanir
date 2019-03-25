@@ -24,10 +24,10 @@ irTUnit.TUnit(
     "v:main:t.7": types.Int32,
     "v:main:t.6": types.ConstSizeArray(of=types.Int32, dim=2),
     "v:main:t.1": types.Struct("s:1"),
-    "v:main:t.2": types.ConstSizeArray(of=types.Int32, dim=2),
-    "v:main:t.3": types.Int32,
     "v:a": types.ConstSizeArray(of=types.Struct("s:1"), dim=1),
     "v:main:t.4": types.Int32,
+    "v:main:t.2": types.ConstSizeArray(of=types.Int32, dim=2),
+    "v:main:t.3": types.Int32,
     "v:main:t.5": types.Struct("s:1"),
   }, # end allVars dict
 

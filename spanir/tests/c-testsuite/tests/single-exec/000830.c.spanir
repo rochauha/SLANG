@@ -21,11 +21,11 @@ irTUnit.TUnit(
     "v:three:c": types.Int32,
     "v:three:b": types.Int32,
     "v:main:t.1": types.Int32,
+    "v:two:a": types.Int32,
     "v:main:t.4": types.Int32,
     "v:one:a": types.Int32,
-    "v:two:a": types.Int32,
-    "v:main:t.2": types.Int32,
     "v:two:b": types.Int32,
+    "v:main:t.2": types.Int32,
     "v:three:a": types.Int32,
   }, # end allVars dict
 

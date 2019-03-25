@@ -1,8 +1,0 @@
-digraph {
-  node [shape=box]
-  END [label="[END]\lnop()\l"];
-  START [label="[START]\lnop()\l"];
-  BB1 [label="[BB1]\lepos = 1\lprintf('%d %d %d %d %d %d %d %d\n',0,1,2,3,54,73,74,75)\lfrod = 12\lprintf('%d\n',frod)\lfrod = 54\lprintf('%d\n',frod)\lt.1 = &epos\lt.2 = deref_uintptr(t.1)\lprintf('enum to int: %u\n',t.2)\lreturn 0\l"];
-  BB1 -> END;
-  START -> BB1;
-}

@@ -66,7 +66,7 @@ irTUnit.TUnit(
         # Note: 0 is always end/exit BB (REQUIRED)
         basicBlocks = {
           9: [
-            instr.AssignI(expr.VarE("v:main:Array", Loc(7,4)), expr.VarE("v:main:t.6", Loc(7,20)), Loc(7,4)),
+            instr.AssignI(expr.VarE("v:main:Array", Loc(7,4)), expr.VarE("v:main:t.6", Loc(7,4)), Loc(7,4)),
             instr.AssignI(expr.VarE("v:main:Count", Loc(9,9)), expr.LitE(0, Loc(9,17)), Loc(9,9)),
           ],
 
@@ -113,7 +113,7 @@ irTUnit.TUnit(
           ],
 
           5: [
-            instr.AssignI(expr.VarE("v:main:Array2", Loc(12,4)), expr.VarE("v:main:t.3", Loc(12,21)), Loc(12,4)),
+            instr.AssignI(expr.VarE("v:main:Array2", Loc(12,4)), expr.VarE("v:main:t.3", Loc(12,4)), Loc(12,4)),
             instr.AssignI(expr.VarE("v:main:Count", Loc(14,9)), expr.LitE(0, Loc(14,17)), Loc(14,9)),
           ],
 

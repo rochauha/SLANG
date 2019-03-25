@@ -22,13 +22,13 @@ irTUnit.TUnit(
     "v:main:t.15": types.Struct("s:1"),
     "v:main:t.14": types.Int32,
     "v:main:t.13": types.ConstSizeArray(of=types.Int32, dim=4),
-    "v:main:t.2": types.Int32,
     "v:main:t.1": types.Struct("s:1"),
+    "v:main:t.2": types.Int32,
     "v:cases": types.ConstSizeArray(of=types.Struct("s:1"), dim=9),
     "v:main:j": types.Int32,
     "v:printf:__format": types.Ptr(to=types.Int8),
     "v:main:i": types.Int32,
-    "v:main:t.12": types.ConstSizeArray(of=types.Int32, dim=4),
+    "v:main:t.10": types.ConstSizeArray(of=types.Int32, dim=4),
     "v:main:t.3": types.Struct("s:1"),
     "v:main:t.4": types.Int32,
     "v:main:t.5": types.Struct("s:1"),
@@ -36,8 +36,8 @@ irTUnit.TUnit(
     "v:main:t.7": types.Struct("s:1"),
     "v:main:t.8": types.ConstSizeArray(of=types.Int32, dim=4),
     "v:main:t.9": types.Int32,
-    "v:main:t.10": types.ConstSizeArray(of=types.Int32, dim=4),
     "v:main:t.11": types.Int32,
+    "v:main:t.12": types.ConstSizeArray(of=types.Int32, dim=4),
   }, # end allVars dict
 
   allObjs = {

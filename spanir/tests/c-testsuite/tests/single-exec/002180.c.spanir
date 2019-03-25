@@ -18,12 +18,12 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:convs": types.Union("u:tree_node"),
-    "v:printf:": types.Ptr(to=types.Int8),
-    "v:convert_like_real:t.4": types.Int32,
     "v:convert_like_real:convs": types.Ptr(to=types.Union("u:tree_node")),
+    "v:printf:p.1": types.Ptr(to=types.Int8),
     "v:main:t.1": types.Ptr(to=types.Union("u:tree_node")),
     "v:convert_like_real:t.2": types.Int32,
     "v:convert_like_real:t.3": types.Int,
+    "v:convert_like_real:t.4": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -85,7 +85,7 @@ irTUnit.TUnit(
     "f:printf":
       obj.Func(
         name = "f:printf",
-        paramNames = ["v:printf:"],
+        paramNames = ["v:printf:p.1"],
         variadic = True,
         returnType = types.Int32,
 

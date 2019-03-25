@@ -6,6 +6,7 @@ int main()
 {
     wchar_t s[] = L"hello$$你好¢¢世界€€world";
     wchar_t *p;
+    printf("%lu\n", sizeof(s));
     for (p = s; *p; p++) printf("%04X ", (unsigned) *p);
     printf("\n");
     return 0;

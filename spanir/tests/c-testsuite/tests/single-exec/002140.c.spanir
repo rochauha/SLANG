@@ -17,32 +17,32 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:chk:ret": types.UInt32,
     "v:chk:size": types.UInt32,
+    "v:chk:addr": types.UInt32,
     "v:bla:t.9": types.Int32,
     "v:bla:t.8": types.Int32,
+    "v:bla:t.7": types.Int32,
+    "v:bla:t.6": types.Int32,
     "v:bla:__ret": types.Int32,
     "v:main:t.1": types.Ptr(to=types.Void),
-    "v:chk:t.2": types.UInt32,
-    "v:main:r": types.Ptr(to=types.Void),
-    "v:_brk_end": types.UInt32,
-    "v:bla:t.6": types.Int32,
-    "v:extend_brk:mask": types.UInt32,
-    "v:extend_brk:size": types.UInt32,
-    "v:chk:addr": types.UInt32,
-    "v:bla:t.5": types.Int32,
     "v:chk:limit": types.UInt32,
     "v:extend_brk:ret": types.Ptr(to=types.Void),
-    "v:__builtin_expect:": types.Int32,
-    "v:bla:t.7": types.Int32,
+    "v:__builtin_expect:p.2": types.Int32,
+    "v:chk:t.3": types.UInt32,
+    "v:main:r": types.Ptr(to=types.Void),
+    "v:_brk_end": types.UInt32,
+    "v:extend_brk:mask": types.UInt32,
+    "v:extend_brk:size": types.UInt32,
     "v:bla:x": types.Int32,
     "v:get_args:a": types.Int32,
     "v:extend_brk:align": types.UInt32,
-    "v:printf:": types.Ptr(to=types.Int8),
-    "v:__builtin_expect:": types.Int32,
+    "v:printf:p.1": types.Ptr(to=types.Int8),
+    "v:__builtin_expect:p.3": types.Int32,
     "v:_brk_start": types.UInt32,
-    "v:chk:ret": types.UInt32,
-    "v:chk:t.3": types.UInt32,
+    "v:chk:t.2": types.UInt32,
     "v:chk:t.4": types.UInt32,
+    "v:bla:t.5": types.Int32,
     "v:get_args:b": types.Int32,
   }, # end allVars dict
 
@@ -104,7 +104,7 @@ irTUnit.TUnit(
     "f:printf":
       obj.Func(
         name = "f:printf",
-        paramNames = ["v:printf:"],
+        paramNames = ["v:printf:p.1"],
         variadic = True,
         returnType = types.Int32,
 
@@ -301,7 +301,7 @@ irTUnit.TUnit(
     "f:__builtin_expect":
       obj.Func(
         name = "f:__builtin_expect",
-        paramNames = ["v:__builtin_expect:", "v:__builtin_expect:"],
+        paramNames = ["v:__builtin_expect:p.2", "v:__builtin_expect:p.3"],
         variadic = False,
         returnType = types.Int32,
 

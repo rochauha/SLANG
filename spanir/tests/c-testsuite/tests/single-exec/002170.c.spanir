@@ -18,16 +18,16 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.4": types.UInt32,
-    "v:main:t.3": types.Ptr(to=types.UInt32),
     "v:main:t.2": types.Ptr(to=types.Int8),
-    "v:t": types.ConstSizeArray(of=types.Int8, dim=10),
     "v:main:t.5": types.UInt32,
+    "v:t": types.ConstSizeArray(of=types.Int8, dim=10),
+    "v:main:t.3": types.Ptr(to=types.UInt32),
     "v:main:data": types.Ptr(to=types.Int8),
     "v:main:a": types.UInt32,
     "v:main:r": types.UInt32,
-    "v:printf:": types.Ptr(to=types.Int8),
-    "v:main:b": types.UInt32,
     "v:main:t.1": types.UInt32,
+    "v:printf:p.1": types.Ptr(to=types.Int8),
+    "v:main:b": types.UInt32,
   }, # end allVars dict
 
   allObjs = {
@@ -35,7 +35,7 @@ irTUnit.TUnit(
     "f:printf":
       obj.Func(
         name = "f:printf",
-        paramNames = ["v:printf:"],
+        paramNames = ["v:printf:p.1"],
         variadic = True,
         returnType = types.Int32,
 

@@ -20,11 +20,11 @@ irTUnit.TUnit(
     "v:main:t.7": types.Int,
     "v:main:t.6": types.Int,
     "v:main:t.1": types.Int,
+    "v:x": types.Int32,
+    "v:main:t.5": types.Int,
     "v:main:t.2": types.Int,
     "v:main:t.3": types.Int,
     "v:main:t.4": types.Int,
-    "v:x": types.Int32,
-    "v:main:t.5": types.Int,
   }, # end allVars dict
 
   allObjs = {

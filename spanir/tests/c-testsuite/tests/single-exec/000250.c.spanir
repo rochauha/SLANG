@@ -18,8 +18,8 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.2": types.Int32,
-    "v:main:p": types.Ptr(to=types.Int8),
     "v:main:t.1": types.Int32,
+    "v:main:p": types.Ptr(to=types.Int8),
     "v:strlen:p.1": types.Ptr(to=types.Int8),
   }, # end allVars dict
 

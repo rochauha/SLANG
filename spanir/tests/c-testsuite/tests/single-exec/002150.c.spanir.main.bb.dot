@@ -1,8 +1,0 @@
-digraph {
-  node [shape=box]
-  END [label="[END]\lnop()\l"];
-  START [label="[START]\lnop()\l"];
-  BB1 [label="[BB1]\lprintf('begin\n')\lkb_wait_1()\lkb_wait_2()\lkb_wait_2_1()\lkb_wait_2_2()\lkb_wait_3()\lkb_wait_4()\lprintf('end\n')\lreturn 0\l"];
-  START -> BB1;
-  BB1 -> END;
-}

@@ -17,10 +17,10 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:s": types.Int32,
     "v:main:t.3": types.Int32,
     "v:main:t.2": types.Int32,
     "v:main:s": types.Struct("s:s"),
+    "v:main:s": types.Int32,
     "v:main:t.1": types.Int32,
   }, # end allVars dict
 

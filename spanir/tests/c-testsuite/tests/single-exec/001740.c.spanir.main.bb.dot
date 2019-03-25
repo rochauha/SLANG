@@ -1,8 +1,0 @@
-digraph {
-  node [shape=box]
-  END [label="[END]\lnop()\l"];
-  START [label="[START]\lnop()\l"];
-  BB1 [label="[BB1]\la = 12.34 + 56.78\lprintf('%f\n',a)\lt.1 = 12.34 + 56.78\lprintf('%f\n',t.1)\lt.2 = 12.34 - 56.78\lprintf('%f\n',t.2)\lt.3 = 12.34 * 56.78\lprintf('%f\n',t.3)\lt.4 = 12.34 / 56.78\lprintf('%f\n',t.4)\lt.10 = 12.34 < 56.78\lt.9 = 12.34 <= 56.78\lt.8 = 12.34 == 56.78\lt.7 = 12.34 >= 56.78\lt.6 = 12.34 > 56.78\lt.5 = 12.34 != 56.78\lprintf('%d %d %d %d %d %d\n',t.10,t.9,t.8,t.7,t.6,t.5)\lt.16 = 12.34 < 12.34\lt.15 = 12.34 <= 12.34\lt.14 = 12.34 == 12.34\lt.13 = 12.34 >= 12.34\lt.12 = 12.34 > 12.34\lt.11 = 12.34 != 12.34\lprintf('%d %d %d %d %d %d\n',t.16,t.15,t.14,t.13,t.12,t.11)\lt.22 = 56.78 < 12.34\lt.21 = 56.78 <= 12.34\lt.20 = 56.78 == 12.34\lt.19 = 56.78 >= 12.34\lt.18 = 56.78 > 12.34\lt.17 = 56.78 != 12.34\lprintf('%d %d %d %d %d %d\n',t.22,t.21,t.20,t.19,t.18,t.17)\la = 12.34\la = a + 56.78\lprintf('%f\n',a)\la = 12.34\la = a - 56.78\lprintf('%f\n',a)\la = 12.34\la = a * 56.78\lprintf('%f\n',a)\la = 12.34\la = a / 56.78\lprintf('%f\n',a)\lt.23 = -12.34\lprintf('%f\n',t.23)\lt.24 = -12.34\lprintf('%f\n',t.24)\la = 2.0\lprintf('%f\n',a)\lt.25 = sin(2.0)\lprintf('%f\n',t.25)\lreturn 0\l"];
-  START -> BB1;
-  BB1 -> END;
-}

@@ -17,9 +17,9 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:main:t.4": types.Int32,
     "v:main:t.3": types.Ptr(to=types.FuncSig(returnType=types.Int32)),
     "v:main:t.2": types.Ptr(to=types.Struct("s:S")),
-    "v:main:t.4": types.Int32,
     "v:s": types.Struct("s:S"),
     "v:main:t.1": types.Ptr(to=types.FuncSig(returnType=types.Int32)),
   }, # end allVars dict
