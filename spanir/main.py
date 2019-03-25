@@ -14,6 +14,8 @@ import logging
 _log: logging.Logger = None
 import time
 
+OPTIMIZE = True
+
 def initialize():
   global _log
   # FIXME: (@PRODUCTION) change logging level to INFO.
@@ -115,6 +117,8 @@ def genNodeDotGraph():
   fileContent = util.readFromFile(fileName)
   tUnit = eval(fileContent)
 
+  if OPTIMIZE: irTUnit.OptimizeTUnit.optimizeO3(tUnit)
+
   for objName, obj in tUnit.allObjs.items():
     if objName.startswith("f:"):
       cfg = graph.Cfg(obj.name, obj.basicBlocks, obj.bbEdges)
@@ -127,6 +131,8 @@ def genBbDotGraph():
   fileName = sys.argv[2]
   fileContent = util.readFromFile(fileName)
   tUnit = eval(fileContent)
+
+  if OPTIMIZE: irTUnit.OptimizeTUnit.optimizeO3(tUnit)
 
   for objName, object in tUnit.allObjs.items():
     if objName.startswith("f:"):

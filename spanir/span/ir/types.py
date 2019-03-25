@@ -384,15 +384,12 @@ class VarArray(ArrayT):
     if not self.typeCode == other.typeCode:
       if LS: _log.warning("Types Differ: %s, %s", self, other)
       return False
-    if not self.dim == other.dim:
-      if LS: _log.warning("Dimensions Differ: %s, %s", self, other)
-      return False
     if not self.of == other.of:
       if LS: _log.warning("DestType Differs: %s, %s", self, other)
       return False
     return True
 
-  def __hash__(self): return hash(self.of)
+  def __hash__(self): return hash(self.of) * self.typeCode
 
   def __str__(self): return self.__repr__()
 
@@ -420,7 +417,7 @@ class IncompleteArray(ArrayT):
       return False
     return True
 
-  def __hash__(self): return hash(self.of)
+  def __hash__(self): return hash(self.of) * self.typeCode
 
   def __str__(self): return self.__repr__()
 
@@ -467,7 +464,9 @@ class FuncSig(Type):
     return hsh
 
 class Struct(Type):
-  """A structure type."""
+  """A structure type.
+  Anonymous structs are also given a unique name."""
+
   def __init__(self,
                name: StructNameT,
                fields: List[Tuple[str, Type]] = None,
@@ -496,10 +495,12 @@ class Struct(Type):
     return True
 
   def __hash__(self):
-    return hash(self.structName) + STRUCT_TC
+    return hash(self.name) + STRUCT_TC
 
 class Union(Type):
-  """A union type."""
+  """A union type.
+  Anonymous unions are also given a unique name."""
+
   def __init__(self,
                name: UnionNameT,
                fields: List[Tuple[str, Type]] = None,
