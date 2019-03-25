@@ -39,9 +39,7 @@ std::string slang::SlangExpr::toString() {
     return ss.str();
 }
 
-void slang::SlangExpr::addSlangStmtBack(std::string slangStmt) {
-    slangStmts.push_back(slangStmt);
-}
+void slang::SlangExpr::addSlangStmtBack(std::string slangStmt) { slangStmts.push_back(slangStmt); }
 
 void slang::SlangExpr::addSlangStmtsBack(std::vector<std::string> &slangStmts) {
     for (std::string &slangStmt : slangStmts) {
@@ -51,8 +49,7 @@ void slang::SlangExpr::addSlangStmtsBack(std::vector<std::string> &slangStmts) {
 
 void slang::SlangExpr::addSlangStmtsFront(std::vector<std::string> &slangStmts) {
     std::vector<std::string>::iterator it1;
-    for (auto it2 = slangStmts.end() - 1; it2 != slangStmts.begin() - 1;
-            --it2) {
+    for (auto it2 = slangStmts.end() - 1; it2 != slangStmts.begin() - 1; --it2) {
         it1 = this->slangStmts.begin();
         this->slangStmts.insert(it1, (*it2));
     }

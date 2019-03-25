@@ -92,4 +92,3 @@ std::string slang::Util::getNextUniqueIdStr() {
     ss << getNextUniqueId();
     return ss.str();
 }
-

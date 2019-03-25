@@ -79,6 +79,7 @@ class SlangFunc {
     int32_t currBbId;
     int32_t nextBbId;
     const CFGBlock *currBb; // the current bb being converted
+    const Stmt *lastDeclStmt;
 
     // stores bbEdges(s); entry bb id is mapped to -1
     std::vector<std::pair<int32_t, std::pair<int32_t, EdgeLabel>>> bbEdges;
@@ -191,6 +192,10 @@ class SlangTranslationUnit {
     int32_t getCurrBbId();
     void setCurrBb(const CFGBlock *bb);
     const CFGBlock *getCurrBb();
+
+    // for handling locations for temporaries in InitListExprs
+    void setLastDeclStmtTo(const Stmt *declStmt);
+    const Stmt *getLastDeclStmt() const;
 
     // record_related_routines
     bool isRecordPresent(uint64_t recordAddr);

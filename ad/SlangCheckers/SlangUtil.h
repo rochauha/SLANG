@@ -76,6 +76,7 @@
 namespace slang {
 class Util {
     static uint32_t id;
+
   public:
     /** Get the current date-time string.
      *

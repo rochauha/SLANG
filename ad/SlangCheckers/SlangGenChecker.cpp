@@ -449,8 +449,10 @@ void SlangGenChecker::handleVariable(const ValueDecl *valueDecl, std::string fun
 
 void SlangGenChecker::handleDeclStmt(const DeclStmt *declStmt) const {
     // assumes there is only single decl inside (the likely case).
-    std::stringstream ss;
+    stu.setLastDeclStmtTo(declStmt);
+    SLANG_DEBUG("Set last DeclStmt to DeclStmt at " << (uint64_t)(declStmt));
 
+    std::stringstream ss;
     std::string locStr = getLocationString(declStmt);
 
     const VarDecl *varDecl = cast<VarDecl>(declStmt->getSingleDecl());
@@ -592,7 +594,7 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switchStmt) const {
     SlangExpr caseCondVar;
     SlangExpr newIfCondVar;
 
-    switchStmt->dump(); //delit
+    switchStmt->dump(); // delit
 
     switchCondVar = convertExpr(true);
     stu.addBbStmts(switchCondVar.slangStmts);
@@ -621,7 +623,7 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switchStmt) const {
 
     // Get all case statements inside switch.
     if (switchStmt->getBody()) {
-        switchStmt->getBody()->dump(); //delit
+        switchStmt->getBody()->dump(); // delit
         getCaseExpr(stmtVecVec, locStrs, switchStmt->getBody());
     } else {
         for (auto it = switchStmt->child_begin(); it != switchStmt->child_end(); ++it) {
@@ -1414,7 +1416,22 @@ SlangExpr SlangGenChecker::convertVarDecl(const VarDecl *varDecl, std::string &l
 
 SlangExpr SlangGenChecker::convertInitListExpr(const InitListExpr *initListExpr) const {
     QualType qualType = initListExpr->getType();
-    std::string locStr = getLocationString(initListExpr);
+
+    std::string locStr;
+    const Stmt *lastDeclStmt = stu.getLastDeclStmt();
+    SLANG_DEBUG("Fetched last DeclStmt");
+
+    if (lastDeclStmt) {
+        // for top level InitListExpr
+        SLANG_DEBUG("Last DeclStmt at " << (uint64_t)lastDeclStmt);
+        locStr = getLocationString(lastDeclStmt);
+        stu.setLastDeclStmtTo(nullptr);
+        SLANG_DEBUG("Set last DeclStmt to nullptr");
+    } else {
+        SLANG_DEBUG("Last DeclStmt is nullptr");
+        locStr = getLocationString(initListExpr);
+    }
+
     SlangExpr tmp = genTmpVariable(qualType, locStr); // store it into temp
 
     const Type *typePtr = qualType.getTypePtr();
@@ -1443,8 +1460,7 @@ SlangExpr SlangGenChecker::convertInitListExpr(const InitListExpr *initListExpr)
         tmp.addSlangStmtsBack(currentStmt.slangStmts);
         ss << "instr.AssignI("
            << "expr.MemberE(" << tmp.expr << ", [\"" << recordFields[i].getName() << "\"], "
-           << locStr << "), " << currentStmt.expr
-           << ")"; // close instr.AssignI(...
+           << locStr << "), " << currentStmt.expr << ")"; // close instr.AssignI(...
         slangStmtStack.pop();
         tmp.addSlangStmtBack(ss.str());
         ss.str("");
@@ -1857,8 +1873,7 @@ void SlangGenChecker::genStmtVectorFromAST(const Stmt *stmt, StmtVector &stmtVec
 
 // get all case statements recursively (case stmts can be hierarchical)
 void SlangGenChecker::getCaseExpr(std::vector<StmtVector> &stmtVecVec,
-                                  std::vector<std::string> &locStrs,
-                                  const Stmt *stmt) const {
+                                  std::vector<std::string> &locStrs, const Stmt *stmt) const {
     StmtVector stmts;
 
     if (isa<CaseStmt>(stmt)) {
@@ -1878,8 +1893,7 @@ void SlangGenChecker::getCaseExpr(std::vector<StmtVector> &stmtVecVec,
 
     } else if (isa<CompoundStmt>(stmt)) {
         const CompoundStmt *compoundStmt = cast<CompoundStmt>(stmt);
-        for (auto it = compoundStmt->body_begin(); it != compoundStmt->body_end();
-                ++it) {
+        for (auto it = compoundStmt->body_begin(); it != compoundStmt->body_end(); ++it) {
             getCaseExpr(stmtVecVec, locStrs, (*it));
         }
     } else if (isa<SwitchStmt>(stmt)) {

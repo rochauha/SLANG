@@ -102,6 +102,12 @@ SlangVar &slang::SlangTranslationUnit::getVar(uint64_t varAddr) {
     return varMap[varAddr];
 }
 
+void slang::SlangTranslationUnit::setLastDeclStmtTo(const Stmt *declStmt) {
+    currFunc->lastDeclStmt = declStmt;
+}
+
+const Stmt *slang::SlangTranslationUnit::getLastDeclStmt() const { return currFunc->lastDeclStmt; }
+
 bool slang::SlangTranslationUnit::isNewVar(uint64_t varAddr) {
     return varMap.find(varAddr) == varMap.end();
 }
