@@ -1700,7 +1700,7 @@ std::string SlangGenChecker::convertClangArrayType(QualType qt) const {
         ss << convertClangType(arrayType->getElementType());
         ss << ", ";
         auto constArrType = cast<ConstantArrayType>(arrayType);
-        ss << "dim=" << constArrType->getSize().toString(10, true);
+        ss << "size=" << constArrType->getSize().toString(10, true);
         ss << ")";
 
     } else if (isa<VariableArrayType>(arrayType)) {

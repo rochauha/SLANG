@@ -340,10 +340,10 @@ class ConstSizeArray(ArrayT):
   """
   def __init__(self,
                of: Type,
-               dim: Optional[List[int]],
+               size: Optional[List[int]],
   ) -> None:
     super().__init__(of, CONST_ARR_TC)
-    self.dim = dim
+    self.size = size
 
   def __eq__(self,
              other: 'ConstSizeArray'
@@ -354,7 +354,7 @@ class ConstSizeArray(ArrayT):
     if not self.typeCode == other.typeCode:
       if LS: _log.warning("Types Differ: %s, %s", self, other)
       return False
-    if not self.dim == other.dim:
+    if not self.size == other.size:
       if LS: _log.warning("Dimensions Differ: %s, %s", self, other)
       return False
     if not self.of == other.of:
@@ -362,11 +362,11 @@ class ConstSizeArray(ArrayT):
       return False
     return True
 
-  def __hash__(self): return hash(self.of) * len(self.dim)
+  def __hash__(self): return hash(self.of) * len(self.size)
 
   def __str__(self): return self.__repr__()
 
-  def __repr__(self): return f"types.Array({self.of}, {self.dim})"
+  def __repr__(self): return f"types.Array({self.of}, {self.size})"
 
 class VarArray(ArrayT):
   """an array with variable size: e.g. int arr[x*20+y];"""
