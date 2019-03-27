@@ -1,4 +1,4 @@
-.PHONY: replace format test ast-dump cfg-dump gen_replace simple_replace
+.PHONY: replace format test ast-dump cfg-dump gen_replace simple_replace br_replace br_test
 
 replace:
 	cp CFG-plugin/MyDebugCheckers.cpp \
@@ -7,6 +7,7 @@ replace:
 format:
 	clang-format --style="{BasedOnStyle: llvm, IndentWidth: 4, ColumnLimit: 100, SortIncludes: false}" -i ad/SlangCheckers/*.cpp
 	clang-format --style="{BasedOnStyle: llvm, IndentWidth: 4, ColumnLimit: 100, SortIncludes: false}" -i ad/SlangCheckers/*.h
+	clang-format --style="{BasedOnStyle: llvm, IndentWidth: 4, ColumnLimit: 100, SortIncludes: false}" -i rc/*
 	clang-format --style="{BasedOnStyle: llvm, IndentWidth: 4, ColumnLimit: 100, SortIncludes: false}" -i CFG-plugin/SlangGenChecker.cpp
 	clang-format --style="{BasedOnStyle: llvm, IndentWidth: 4, ColumnLimit: 100, SortIncludes: false}" -i CFG-plugin/MyDebugCheckers.cpp
 test:
@@ -31,3 +32,10 @@ simple_test:
 simple_replace:
 		cp ad/MyTraverseAST.cpp \
 ~/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/MyTraverseAST.cpp
+
+br_test:
+	scan-build -V -enable-checker debug.SlangBugReport gcc -std=c99 tests/test.c	
+
+br_replace:
+	cp rc/SlangBugReporterChecker.cpp \
+~/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangBugReporterChecker.cpp
