@@ -1,0 +1,27 @@
+BUG_START
+BUG_NAME SlangTest 1 : unsorted sequence
+BUG_CATEGORY SlangBug
+
+LINE 12
+COLUMN 9
+BUG_MSG reporting use of variable x.
+
+LINE 11
+COLUMN 5
+BUG_MSG reporting assignment of variable x.
+
+BUG_END
+
+BUG_START
+BUG_NAME SlangTest 2 : sorted sequence
+BUG_CATEGORY SlangBug
+
+LINE 12
+COLUMN 5
+BUG_MSG reporting assignment of variable y.
+
+LINE 13
+COLUMN 9
+BUG_MSG reporting use of variable y.
+
+BUG_END

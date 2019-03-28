@@ -30,12 +30,12 @@ simple_test:
 	clang -cc1 -analyze -analyzer-checker=debug.TraverseAST -std=c99 tests/test.c
 
 simple_replace:
-		cp ad/MyTraverseAST.cpp \
+	cp ad/MyTraverseAST.cpp \
 ~/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/MyTraverseAST.cpp
 
 br_test:
-	scan-build -V -enable-checker debug.SlangBugReport gcc -std=c99 tests/test.c	
-
+	scan-build -V -enable-checker debug.SlangBugReport clang -std=c99 tests/test.c	
+# 	clang -cc1 -analyze -analyzer-checker=debug.SlangBugReport -std=c99 tests/test.c
 br_replace:
-	cp rc/SlangBugReporterChecker.cpp \
+	cp ad/SlangCheckers/SlangBugReporterChecker.cpp \
 ~/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangBugReporterChecker.cpp
