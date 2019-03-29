@@ -17,14 +17,14 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:f3:t.4": types.Int32,
     "v:f3:t.3": types.Int32,
-    "v:f2:b": types.ConstSizeArray(of=types.Int32, dim=1),
+    "v:f2:b": types.ConstSizeArray(of=types.Int32, size=1),
     "v:f3:t.1": types.Int32,
-    "v:f2:c": types.ConstSizeArray(of=types.Int32, dim=1),
+    "v:f3:t.4": types.Int32,
+    "v:f2:c": types.ConstSizeArray(of=types.Int32, size=1),
     "v:f1:argc": types.Int32,
     "v:printf:__format": types.Ptr(to=types.Int8),
-    "v:f2:a": types.ConstSizeArray(of=types.Int32, dim=1),
+    "v:f2:a": types.ConstSizeArray(of=types.Int32, size=1),
     "v:f3:t.2": types.Int32,
     "v:f1:test": types.VarArray(of=types.Int8),
   }, # end allVars dict

@@ -1,0 +1,16 @@
+digraph {
+  node [shape=box]
+  BB4 [label="[BB4]\lx = 4\lif (x)\l"];
+  BB3 [label="[BB3]\lif (y)\l"];
+  BB2 [label="[BB2]\lx = 111\l"];
+  END [label="[END]\lnop()\l"];
+  START [label="[START]\lnop()\l"];
+  BB1 [label="[BB1]\lreturn x\l"];
+  BB1 -> END;
+  BB4 -> BB1 [color=red, penwidth=2];
+  BB3 -> BB1 [color=red, penwidth=2];
+  BB2 -> BB1;
+  START -> BB4;
+  BB4 -> BB3 [color=green, penwidth=2];
+  BB3 -> BB2 [color=green, penwidth=2];
+}
