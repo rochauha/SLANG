@@ -218,7 +218,7 @@ class BugRepo {
 
     bool isBugHeader(std::string line) { return line == "BUG_START"; }
 
-    bool isBugEnd(std::string &line) { return line == "BUG_END"; }
+    bool isBugEnd(std::string &line) { return line == "BUG_END" || line == ""; }
 
     BugMessage parseSingleBugMessage(std::ifstream &inputTextFile) {
         uint32_t line;
