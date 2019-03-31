@@ -181,13 +181,6 @@ class BugRepo {
         }
 
         llvm::errs() << "SLANG: Total bugs loaded: " << bugVector.size() << "\n";
-
-        // for each bug, sort the messages w.r.t line and col num, and set it's starting statement
-        for (int i = 0; i < bugVector.size(); ++i) {
-            Bug currentBug = bugVector[i];
-            sort(currentBug.messages.begin(), currentBug.messages.end());
-            bugVector[i] = currentBug;
-        }
     }
 
     // trim spaces
@@ -394,6 +387,10 @@ void SlangBugReporterChecker::generateSingleBugReport(Bug &bug) const {
         PathDiagnosticLocation::createBegin(bug.messages[0].getStmt(), BR->getSourceManager(), AC);
     auto R = llvm::make_unique<BugReport>(*bt, llvm::StringRef(description), startLoc);
     llvm::errs() << "SLANG : BugReport initialized\n";
+
+    // Sort before generating 'notes'
+    // This doesn't change how the report looks. Only changes the order of notes in the summary
+    sort(bug.messages.begin(), bug.messages.end());
 
     for (int i = 0; i < bug.messages.size(); ++i) {
         Stmt *currentStmt = bug.messages[i].getStmt();
