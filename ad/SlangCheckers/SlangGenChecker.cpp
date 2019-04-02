@@ -82,7 +82,7 @@ class SlangGenChecker : public Checker<check::ASTCodeBody, check::EndOfTranslati
     void handleCStyleCastExpr(const CStyleCastExpr *cCast) const;
     void handleCallExpr(const CallExpr *callExpr) const;
     void handleReturnStmt(std::string &locStr) const;
-    void handleIfStmt(std::string &locStr) const;
+    void handleIfStmt(const Stmt *stmt, std::string &locStr) const;
     void handleSwitchStmt(const SwitchStmt *switchStmt) const;
 
     // conversion_routines
@@ -103,6 +103,7 @@ class SlangGenChecker : public Checker<check::ASTCodeBody, check::EndOfTranslati
                                     bool compound_receiver) const;
     SlangExpr convertUnaryIncDec(const UnaryOperator *unOp, bool compound_receiver) const;
     SlangExpr convertBinaryOp(const BinaryOperator *binOp, bool compound_receiver) const;
+    SlangExpr convertBinaryLogicalOp(const BinaryOperator *binOp, bool compound_receiver) const;
     SlangExpr convertEnumConst(const EnumConstantDecl *ecd, std::string &locStr) const;
     SlangExpr convertCallExpr(const CallExpr *callExpr, bool compound_receiver) const;
     SlangExpr convertUnaryExprOrTypeTraitExpr(const UnaryExprOrTypeTraitExpr *stmt,
@@ -269,7 +270,10 @@ void SlangGenChecker::handleBbInfo(const CFGBlock *bb, const CFG *cfg) const {
                 succId = 0;
             }
 
-            if (isa<ConditionalOperator>(terminator)) {
+            if (isa<ConditionalOperator>(terminator)
+                || (isa<BinaryOperator>(terminator)
+                    && cast<BinaryOperator>(terminator)->isLogicalOp()
+                    )) {
                 // in case of a conditional terminator just record the first edge as uncoditional and done.
                 stu.addBbEdge(std::make_pair(bbId, std::make_pair(succId, UnCondEdge)));
                 break; // important
@@ -344,6 +348,7 @@ void SlangGenChecker::handleAstStmts(const Stmt *stmt) const {
             auto rhs = *(++firstChild);
             handleAstStmts(rhs);
             handleAstStmts(lhs);
+
         } else {
             // usual order: left-to-right
             for (auto iter = firstChild; iter != lastChild; ++iter) {
@@ -375,16 +380,13 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
 
     case Stmt::UnaryOperatorClass:
         SLANG_DEBUG("here handleStmt")
-        handleUnaryOperator(cast<UnaryOperator>(stmt));
-        break;
+        handleUnaryOperator(cast<UnaryOperator>(stmt)); break;
 
     case Stmt::CStyleCastExprClass:
-        handleCStyleCastExpr(cast<CStyleCastExpr>(stmt));
-        break;
+        handleCStyleCastExpr(cast<CStyleCastExpr>(stmt)); break;
 
     case Stmt::DeclRefExprClass:
-        handleDeclRefExpr(cast<DeclRefExpr>(stmt));
-        break;
+        handleDeclRefExpr(cast<DeclRefExpr>(stmt)); break;
 
     case Stmt::DeclStmtClass:
         handleDeclStmt(cast<DeclStmt>(stmt));
@@ -392,8 +394,7 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
         break;
 
     case Stmt::InitListExprClass:
-        handleInitListExpr(cast<InitListExpr>(stmt));
-        break;
+        handleInitListExpr(cast<InitListExpr>(stmt)); break;
 
     case Stmt::CompoundAssignOperatorClass:
     case Stmt::BinaryOperatorClass:
@@ -401,24 +402,19 @@ void SlangGenChecker::handleStmt(const Stmt *stmt) const {
         break;
 
     case Stmt::ReturnStmtClass:
-        handleReturnStmt(locStr);
-        break;
+        handleReturnStmt(locStr); break;
 
     case Stmt::DoStmtClass:    // same as Stmt::IfStmtClass
     case Stmt::WhileStmtClass: // same as Stmt::IfStmtClass
     case Stmt::ForStmtClass:   // same as Stmt::IfStmtClass
     case Stmt::IfStmtClass:
-
-        handleIfStmt(locStr);
-        break;
+        handleIfStmt(stmt, locStr); break;
 
     case Stmt::SwitchStmtClass:
-        handleSwitchStmt(cast<SwitchStmt>(stmt));
-        break;
+        handleSwitchStmt(cast<SwitchStmt>(stmt)); break;
 
     case Stmt::CallExprClass:
-        handleCallExpr(cast<CallExpr>(stmt));
-        break;
+        handleCallExpr(cast<CallExpr>(stmt)); break;
 
     case Stmt::ParenExprClass:
     case Stmt::BreakStmtClass:
@@ -494,10 +490,11 @@ void SlangGenChecker::handleDeclStmt(const DeclStmt *declStmt) const {
     }
 } // handleDeclStmt()
 
-void SlangGenChecker::handleIfStmt(std::string &locStr) const {
+void SlangGenChecker::handleIfStmt(const Stmt *stmt, std::string &locStr) const {
     std::stringstream ss;
 
-    auto exprArg = convertExpr(true);
+    SlangExpr exprArg = convertAstExpr(stmt, true);
+
     ss << "instr.CondI(";
     if (exprArg.expr == "NullStmt") {
         // only for for(;;) stmt
@@ -556,10 +553,10 @@ void SlangGenChecker::handleBinaryOperator(const BinaryOperator *binOp) const {
         }
         SlangExpr slangExpr = convertAssignment(false, compoundAssignOp, locStr);
         stu.addBbStmts(slangExpr.slangStmts);
-    } else if (binOp->isLogicalOp()) {
-        // for logical ops: && and ||, do the same as done with a if stmt
-        std::string locStr = getLocationString(binOp);
-        handleIfStmt(locStr);
+    // } else if (binOp->isLogicalOp()) {
+    //     // for logical ops: && and ||, do the same as done with a if stmt
+    //     std::string locStr = getLocationString(binOp);
+    //     handleIfStmt(locStr);
     } else {
         stu.pushToMainStack(binOp);
     }
@@ -574,7 +571,6 @@ void SlangGenChecker::handleUnaryOperator(const UnaryOperator *unOp) const {
         case UO_PreDec:
         case UO_PostInc:
         case UO_PostDec: {
-            SLANG_DEBUG("herehere")
             SlangExpr slangExpr = convertExpr(false); // top level is never compound
             stu.addBbStmts(slangExpr.slangStmts);
         }
@@ -648,8 +644,6 @@ void SlangGenChecker::handleSwitchStmt(const SwitchStmt *switchStmt) const {
             }
         }
     }
-
-    llvm::errs() << "\n*******CaseExprs_Count: " << locStrs.size() << "\n";
 
     // start creating and adding if-condition blocks for each case stmt
     int32_t ifBbId;
@@ -820,11 +814,38 @@ SlangExpr SlangGenChecker::convertIntegerLiteral(const IntegerLiteral *il) const
 
 SlangExpr SlangGenChecker::convertFloatingLiteral(const FloatingLiteral *fl) const {
     std::stringstream ss;
+    bool toInt = false;
 
     std::string locStr = getLocationString(fl);
 
-    ss << "expr.LitE(" << std::fixed << fl->getValue().convertToDouble();
-    ;
+    // check if float is implicitly casted to int
+    const auto &parents = FD->getASTContext().getParents(*fl);
+    if (!parents.empty()) {
+        const Stmt *stmt1 = parents[0].get<Stmt>();
+        if (stmt1) {
+            switch (stmt1->getStmtClass()) {
+                default:
+                    break;
+                case Stmt::ImplicitCastExprClass: {
+                    const ImplicitCastExpr *ice = cast<ImplicitCastExpr>(stmt1);
+                    switch (ice->getCastKind()) {
+                        default:
+                            break;
+                        case CastKind::CK_FloatingToIntegral:
+                            toInt = true;
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    ss << "expr.LitE(";
+    if (toInt) {
+        ss << (int64_t)fl->getValue().convertToDouble();
+    } else {
+        ss << std::fixed << fl->getValue().convertToDouble();
+    }
     ss << ", " << locStr << ")";
     SLANG_TRACE(ss.str())
 
@@ -1077,6 +1098,16 @@ SlangExpr SlangGenChecker::convertBinaryOp(const BinaryOperator *binOp,
 
     std::string locStr = getLocationString(binOp);
 
+    // convert logical ops separately, since they are converted to
+    // `select` expressions.
+    switch (binOp->getOpcode()) {
+        case BO_LAnd:
+        case BO_LOr:
+            return convertBinaryLogicalOp(binOp, compound_receiver);
+        default:
+            break;
+    }
+
     if (binOp->isAssignmentOp() || binOp->isCompoundAssignmentOp()) {
         std::string compoundAssignOp = "";
         if (binOp->isCompoundAssignmentOp()) {
@@ -1279,10 +1310,8 @@ SlangExpr SlangGenChecker::convertUnaryOp(const UnaryOperator *unOp, bool compou
     }
 
     adjustDirtyVar(exprArg, locStr);
-    llvm::errs() << "********************" << exprArg.expr << "\n"; //delit
     exprArg.qualType.dump();
     exprArg.qualType = qualType = getCleanedQualType(exprArg.qualType);
-    llvm::errs() << "****************\n"; //delit
     qualType.dump();
 
     switch (unOp->getOpcode()) {
@@ -1931,7 +1960,69 @@ SlangExpr SlangGenChecker::convertConditionalOp(const ConditionalOperator *condO
     }
 
     return slangExpr;
-}
+} // convertConditionalOp()
+
+// only to handle && and || operators
+// since they are converted to `select` expressions.
+SlangExpr SlangGenChecker::convertBinaryLogicalOp(const BinaryOperator *binOp,
+        bool compound_receiver) const {
+    std::stringstream ss;
+    std::stringstream ss1;
+    // expr1 && expr2 or expr1 || expr2
+    SlangExpr slangExpr;
+    SlangExpr expr1;
+    SlangExpr expr2;
+    SlangExpr expr2Select;
+    std::vector<const Stmt*> stmts;
+
+    std::string locStr = getLocationString(binOp);
+
+    for (auto it = binOp->child_begin(); it != binOp->child_end(); ++it) {
+        // there should be two children only
+        stmts.push_back(*it);
+    }
+
+    if (stmts.size() != 2) {
+        SLANG_ERROR("BinaryLogicalOp: There should be two children. Found: " << stmts.size())
+    }
+
+    handleAstStmts(stmts[0]);
+    expr1 = convertExpr(true);
+    handleAstStmts(stmts[1]);
+    expr2 = convertExpr(true);
+
+    if (compound_receiver) {
+        slangExpr = genTmpVariable(binOp->getType(), locStr);
+        ss << "instr.AssignI(";
+        ss << slangExpr.expr << ", ";
+    }
+
+    slangExpr.addSlangStmtsBack(expr1.slangStmts);
+    slangExpr.addSlangStmtsBack(expr2.slangStmts);
+
+    ss << "expr.SelectE(";
+    ss << expr1.expr;
+    if (binOp->getOpcode() == BO_LAnd) {
+        ss << ", " << expr2.expr;
+        ss << ", expr.Lit(0)";
+    } else if (binOp->getOpcode() == BO_LOr){
+        ss << ", expr.Lit(1)";
+        ss << ", " << expr2.expr;
+    } else {
+        SLANG_ERROR("Wrong_operator: " << binOp->getStmtClassName())
+    }
+    ss << ", " << locStr << ")"; // close expr.SelectE(...
+
+    if (compound_receiver) {
+        ss << ", " << locStr << ")"; // close instr.AssignI(...
+        slangExpr.addSlangStmtBack(ss.str());
+    } else {
+        slangExpr.expr = ss.str();
+        slangExpr.qualType = binOp->getType();
+    }
+
+    return slangExpr;
+} // convertBinaryLogicalOp()
 
 // BOUND END  : conversion_routines to SlangExpr
 

@@ -3,6 +3,7 @@
 # Copies the following files (as of now)
 # SlangCheckers/MyScratchpadChecker.cpp  #AD
 # SlangCheckers/SlangGenChecker.cpp  #AD
+# SlangCheckers/SlangGenAstChecker.cpp  #AD
 # SlangCheckers/SlangBugReporterChecker.cpp  #AD
 # SlangCheckers/MyOwnChecker.cpp  #AD
 # SlangCheckers/MyTraverseAST.cpp  #AD

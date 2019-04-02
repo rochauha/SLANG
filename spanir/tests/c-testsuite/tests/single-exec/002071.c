@@ -1,6 +1,6 @@
 int main() {
   int x = 4, y;
-  x = x && 5;
+  x = x && (y || 0);
 
   // if (x && y || x) {
   //   x = 111;
