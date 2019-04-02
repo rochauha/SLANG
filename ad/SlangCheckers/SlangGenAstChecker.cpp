@@ -35,6 +35,7 @@
 
 #include "SlangUtil.h"
 
+using namespace slang;
 using namespace clang;
 using namespace ento;
 
@@ -61,169 +62,31 @@ namespace {
   enum EdgeLabel { FalseEdge = 0, TrueEdge = 1, UnCondEdge = 2 };
   enum SlangRecordKind { Struct = 0, Union = 1 };
 
-  // earlier it was named SlangExpr
-  class SlangBB {
+  class SlangExpr {
   public:
-    std::string label;
-    std::vector<std::string> slangStmts;
-
-    std::string trueLabel;
-    std::string falseLabel;
-    std::string unCondLabel;
-
-    SlangBB(): slangStmts{} {
-      label = "";
-      trueLabel = falseLabel = unCondLabel = "";
-    }
-
-    SlangBB(std::string e, bool compnd, QualType qt) {
-      expr = e;
-      compound = compnd;
-      qualType = qt;
-    }
-
-    // is this object empty?
-    bool isEmpty() {
-      return slangStmts.empty();
-    }
-
-    std::string toString() {
-      std::stringstream ss;
-      ss << "SlangBB: [" << label << "]\n";
-      ss << "Succ: " << trueLabel << ", " << falseLabel;
-      ss << ", " << unCondLabel << "\n";
-
-      if(!slangStmts.empty()) {
-        for (auto& slangStmt: slangStmts) {
-          ss << slangStmt << "\n";
-        }
-      }
-
-      ss << "\n";
-      return ss.str();
-    }
-
-    void addSlangStmtBack(std::string slangStmt) { slangStmts.push_back(slangStmt); }
-
-    void addSlangStmtsBack(std::vector<std::string> &slangStmts) {
-      for (std::string &slangStmt : slangStmts) {
-        this->slangStmts.push_back(slangStmt);
-      }
-    }
-
-    void addSlangStmtsFront(std::vector<std::string> &slangStmts) {
-      std::vector<std::string>::iterator it1;
-      for (auto it2 = slangStmts.end() - 1; it2 != slangStmts.begin() - 1; --it2) {
-        it1 = this->slangStmts.begin();
-        this->slangStmts.insert(it1, (*it2));
-      }
-    }
-
-    void addSlangStmtFront(std::string slangStmt) {
-      std::vector<std::string>::iterator it;
-      it = slangStmts.begin();
-      slangStmts.insert(it, slangStmt);
-    }
-  }; // class SlangBB
-
-  // Graph of SlangBB
-  class SlangGraph {
-    // each graph has to have a unique start and a unique end bb
-    // or no bb at all
-  public:
-    bool inOpen;
-    bool outOpen;
-    std::string label; // label of the entry bb
-    uint32_t totalBlocks;
-    SlangBB *entry;
-    SlangBB *exit;
-    std::vector<SlangBB*> basicBlocks;
-
     std::string expr;
-    std::string locStr;
     bool compound;
+    std::string locStr;
     QualType qualType;
     bool nonTmpVar;
     uint64_t varId;
 
-    SlangGraph() {
-      inOpen = outOpen = true;
-      label = "";
-      totalBlocks = 0;
-      entry = exit = nullptr;
+    SlangExpr() {
       expr = "";
-      locStr = "";
       compound = false;
+      locStr = "";
       qualType = QualType();
       nonTmpVar = false;
       varId = 0;
     };
 
-    void copyGraph(SlangGraph& slangGraph) {
-      inOpen = slangGraph.inOpen;
-      outOpen = slangGraph.outOpen;
-      label = slangGraph.label;
-      totalBlocks = slangGraph.totalBlocks;
-      entry = slangGraph.entry;
-      exit = slangGraph.exit;
-      qualType = slangGraph.qualType;
-      nonTmpVar = slangGraph.nonTmpVar;
-      varId = slangGraph.varId;
-    }
-
-    // is it just an expression
-    bool isExpr() {
-      if (expr != "") {
-        return true;
-      }
-      return false;
-    }
-
-    bool mergeGraph(SlangGraph &slangGraph) {
-      bool merged = false;
-
-      if (outOpen) {
-        if (!slangGraph.isExpr()) {
-          if (exit == nullptr) {
-            // i.e. current graph object is empty, just copy
-            copyGraph(slangGraph);
-          } else {
-            exit->unCondLabel = slangGraph.label;
-            totalBlocks += slangGraph.totalBlocks;
-          }
-        }
-        merged = true;
-      }
-
-      return merged;
-    }
-
     std::string toString() {
       std::stringstream ss;
-      ss << "SlangGraph [" << label << "]\n";
-
-      // expression part
-      if (isExpr()) {
-        ss << "  Expr     : " << expr << "\n";
-        ss << "  ExprType : " << qualType.getAsString() << "\n";
-        ss << "  Compound : " << (compound ? "true" : "false") << "\n";
-        ss << "  NonTmpVar: " << (nonTmpVar ? "true" : "false") << "\n";
-        ss << "  VarId    : " << varId << "\n";
-      }
-
-      // basic block part
-      if (entry != nullptr) {
-        ss << "  OutOpen  : " << (outOpen ? "true" : "false") << "\n";
-        ss << "  Blocks   : " << totalBlocks << "\n";
-        for (auto slangBB : basicBlocks) {
-          if (slangBB == entry) {
-            ss << "ENTRY BB\n";
-          } else if (slangBB == exit) {
-            ss << "EXIT BB\n";
-          }
-          ss << slangBB->toString();
-        }
-      }
+      ss << "SlangExpr:\n";
+      ss << "  Expr     : " << expr << "\n";
+      ss << "  ExprType : " << qualType.getAsString() << "\n";
+      ss << "  NonTmpVar: " << (nonTmpVar ? "true" : "false") << "\n";
+      ss << "  VarId    : " << varId << "\n";
 
       return ss.str();
     }
@@ -272,21 +135,14 @@ namespace {
     bool variadic;
 
     uint32_t tmpVarCount;
-    int32_t currBbId;
-    int32_t nextBbId;
-    const CFGBlock *currBb; // the current bb being converted
     const Stmt *lastDeclStmt;
 
-    // stores bbEdges(s); entry bb id is mapped to -1
-    std::vector<std::pair<int32_t, std::pair<int32_t, EdgeLabel>>> bbEdges;
-    // stmts in bb; entry bb id is mapped to -1, others remain the same
-    std::unordered_map<int32_t, std::vector<std::string>> bbStmts;
+    std::vector<std::string> spanStmts;
 
     SlangFunc() {
+      variadic = false;
       paramNames = std::vector<std::string>{};
       tmpVarCount = 0;
-      currBbId = 0;
-      nextBbId = 0;
     }
   }; // class SlangFunc
 
@@ -399,46 +255,23 @@ namespace {
     // contains structs
     std::unordered_map<uint64_t, SlangRecord> recordMap;
 
-    // stack to help convert ast structure to 3-address code.
-    std::vector<const Stmt *> mainStack;
     // tracks variables that become dirty in an expression
-    std::unordered_map<uint64_t, SlangBB> dirtyVars;
-
-    // the sequence of graphs to be merged from entry and exits.
-    std::vector<SlangGraph> slangGraphs;
-    std::unordered_map<std::string, SlangBB> slangBbMap;
-
-    std::vector<std::string> edgeLabels;
+    std::unordered_map<uint64_t, SlangExpr> dirtyVars;
 
     SlangTranslationUnit()
-        : currFunc{nullptr}, varMap{}, funcMap{},
-        mainStack{}, dirtyVars{}, edgeLabels{3} {
-      fileName = "";
-      edgeLabels[FalseEdge] = "FalseEdge";
-      edgeLabels[TrueEdge] = "TrueEdge";
-      edgeLabels[UnCondEdge] = "UnCondEdge";
+        : fileName{}, currFunc{nullptr}, recordId{0}, varMap{}, varNameMap{}, funcMap{},
+        dirtyVars{} {
     }
-
-    void clearMainStack() { mainStack.clear(); }
 
     // clear the buffer for the next function.
     void clear() {
       varMap.clear();
       dirtyVars.clear();
-      clearMainStack();
-      slangGraphs.clear();
-      slangExprMap.clear();
+      varNameMap.clear();
     } // clear()
 
-    SlangBB *createSlangBb(std::string label = "") {
-      SlangBB slangBb;
-      if (label == "") {
-        slangBb.label = genNextBbIdStr();
-      }
-
-      slangBb.label = label;
-      slangBbMap[label] = slangBb;
-      return &slangBbMap[label];
+    void addStmt(std::string spanStmt) {
+      currFunc->spanStmts.push_back(spanStmt);
     }
 
     void pushBackFuncParams(std::string paramName) {
@@ -456,30 +289,7 @@ namespace {
       return currFunc->name; // not fullName
     }
 
-    void setCurrBb(const CFGBlock *bb) {
-      currFunc->currBbId = bb->getBlockID();
-      currFunc->currBb = bb;
-    }
-
-    int32_t getCurrBbId() { return currFunc->currBbId; }
-
-    void setNextBbId(int32_t nextBbId) { currFunc->nextBbId = nextBbId; }
-
-    int32_t genNextBbId() {
-      // zero is reserved for the exit bb
-      currFunc->nextBbId += 1;
-      return currFunc->nextBbId;
-    }
-
-    std::string genNextBbIdStr() {
-      std::stringstream ss;
-      ss << genNextBbId();
-      return ss.str();
-    }
-
-    const CFGBlock *getCurrBb() { return currFunc->currBb; }
-
-    SlangVar &getVar(uint64_t varAddr) {
+    SlangVar& getVar(uint64_t varAddr) {
       // FIXME: there is no check
       return varMap[varAddr];
     }
@@ -497,43 +307,6 @@ namespace {
     uint32_t nextTmpId() {
       currFunc->tmpVarCount += 1;
       return currFunc->tmpVarCount;
-    }
-
-    /// Add a new basic block with the given bbId
-    void addBb(int32_t bbId) {
-      std::vector<std::string> emptyVector;
-      currFunc->bbStmts[bbId] = emptyVector;
-    }
-
-    void setCurrBbId(int32_t bbId) { currFunc->currBbId = bbId; }
-
-    // bb must already be added
-    void addBbStmt(std::string stmt) {
-      currFunc->bbStmts[currFunc->currBbId].push_back(stmt);
-    }
-
-    // bb must already be added
-    void addBbStmts(std::vector<std::string> &slangStmts) {
-      for (std::string slangStmt : slangStmts) {
-        currFunc->bbStmts[currFunc->currBbId].push_back(slangStmt);
-      }
-    }
-
-    // bb must already be added
-    void addBbStmt(int32_t bbId, std::string slangStmt) {
-      currFunc->bbStmts[bbId].push_back(slangStmt);
-    }
-
-    // bb must already be added
-    void addBbStmts(int32_t bbId, std::vector<std::string> &slangStmts) {
-      for (std::string slangStmt : slangStmts) {
-        currFunc->bbStmts[bbId].push_back(slangStmt);
-      }
-    }
-
-    void addBbEdge(
-        std::pair<int32_t, std::pair<int32_t, EdgeLabel>> bbEdge) {
-      currFunc->bbEdges.push_back(bbEdge);
     }
 
     void addVar(uint64_t varId, SlangVar &slangVar) {
@@ -563,15 +336,15 @@ namespace {
 
     // BOUND START: dirtyVars_logic
 
-    void setDirtyVar(uint64_t varId, SlangBB slangExpr) {
-      // Clear the value for varId to an empty SlangBB.
+    void setDirtyVar(uint64_t varId, SlangExpr slangExpr) {
+      // Clear the value for varId to an empty SlangExpr.
       // This forces the creation of a new tmp var,
       // whenever getTmpVarForDirtyVar() is called.
       dirtyVars[varId] = slangExpr;
     }
 
     // If this function is called dirtyVar dict should already have the entry.
-    SlangBB getTmpVarForDirtyVar(uint64_t varId) {
+    SlangExpr getTmpVarForDirtyVar(uint64_t varId) {
       return dirtyVars[varId];
     }
 
@@ -582,8 +355,6 @@ namespace {
     void clearDirtyVars() { dirtyVars.clear(); }
 
     // BOUND END  : dirtyVars_logic
-
-    // BOUND START: dump_routines (to SPAN Strings)
 
     std::string convertFuncName(std::string funcName) {
       std::stringstream ss;
@@ -601,53 +372,7 @@ namespace {
       return ss.str();
     }
 
-    std::string convertBbEdges(SlangFunc &slangFunc) {
-      std::stringstream ss;
-
-      for (auto p : slangFunc.bbEdges) {
-        ss << NBSP10 << "(" << std::to_string(p.first);
-        ss << ", " << std::to_string(p.second.first) << ", ";
-        ss << "types." << edgeLabels[p.second.second] << "),\n";
-      }
-
-      return ss.str();
-    } // convertBbEdges()
-
-    // BOUND END  : dump_routines (to SPAN Strings)
-
-    // BOUND START: helper_functions
-
-    // used only for debugging purposes
-    void printMainStack() const {
-      std::stringstream ss;
-      ss << "MAIN_STACK: [";
-      for (const Stmt *stmt : mainStack) {
-        ss << stmt->getStmtClassName() << ", ";
-      }
-      ss << "]\n";
-      SLANG_DEBUG(ss.str());
-    } // printMainStack()
-
-    void pushToMainStack(const Stmt *stmt) {
-      mainStack.push_back(stmt);
-    } // pushToMainStack()
-
-    const Stmt *popFromMainStack() {
-      if (mainStack.size()) {
-        auto stmt = mainStack[mainStack.size() - 1];
-        mainStack.pop_back();
-        return stmt;
-      }
-      return nullptr;
-    } // popFromMainStack()
-
-    bool isMainStackEmpty() const {
-      return mainStack.empty();
-    } // isMainStackEmpty()
-
-    // BOUND END  : helper_functions
-
-    // BOUND START: dumping_routines
+    // BOUND START: dump_routines (to SPAN Strings)
 
     // dump entire span ir module for the translation unit.
     void dumpSlangIr() {
@@ -745,32 +470,19 @@ namespace {
         ss << "\n";
         ss << NBSP8 << "# Note: -1 is always start/entry BB. (REQUIRED)\n";
         ss << NBSP8 << "# Note: 0 is always end/exit BB (REQUIRED)\n";
-        ss << NBSP8 << "basicBlocks = {\n";
-        for (auto bb : slangFunc.second.bbStmts) {
-          ss << NBSP10 << bb.first << ": [\n";
-          if (bb.second.size()) {
-            for (auto &stmt : bb.second) {
-              ss << NBSP12 << stmt << ",\n";
-            }
-          } else {
-            ss << NBSP12 << "instr.NopI()"
-               << ",\n";
-          }
-          ss << NBSP10 << "],\n";
-          ss << "\n";
+        ss << NBSP8 << "instrSeq = [\n";
+        for (auto insn : slangFunc.second.spanStmts) {
+            ss << NBSP12 << insn << ",\n";
         }
-        ss << NBSP8 << "}, # basicBlocks end.\n";
-
-        // fields: bbEdges
-        ss << "\n";
-        ss << NBSP8 << "bbEdges= {\n";
-        ss << convertBbEdges(slangFunc.second);
-        ss << NBSP8 << "}, # bbEdges end\n";
+        ss << NBSP8 << "], # instrSeq end.\n";
 
         // close this function object
         ss << NBSP6 << "), # " << slangFunc.second.fullName << "() end. \n\n";
       }
     } // dumpFunctions()
+
+    // BOUND END  : dump_routines (to SPAN Strings)
+
   }; // class SlangTranslationUnit
 
   class SlangGenAstChecker :
@@ -794,8 +506,8 @@ namespace {
       }
 
       FD = dyn_cast<FunctionDecl>(D);
-      handleFunction(funcDecl);
-      stu.currFunc = &stu.funcMap[(uint64_t)funcDecl];
+      handleFunction(FD);
+      stu.currFunc = &stu.funcMap[(uint64_t)FD];
     } // checkASTCodeBody()
 
     // invoked when the whole translation unit has been processed
@@ -815,7 +527,7 @@ namespace {
 
       const Stmt *body = funcDecl->getBody();
       if (body) {
-        handleFunctionBody(body);
+        convertStmt(body);
       } else {
         SLANG_ERROR("No body for function: " << funcDecl->getNameAsString())
       }
@@ -847,14 +559,6 @@ namespace {
       }
     } // handleFunction()
 
-    void handleFunctionBody(const Stmt *body) const {
-      SlangGraph slangGraph;
-
-      slangGraph = convertStmt(false, body);
-
-      correctGraph(slangGraph);
-    } // handleFunctionBody()
-
     // record the variable name and type
     void handleVariable(const ValueDecl *valueDecl, std::string funcName) const {
       uint64_t varAddr = (uint64_t)valueDecl;
@@ -868,6 +572,7 @@ namespace {
         if (varDecl) {
           varName = valueDecl->getNameAsString();
           if (varName == "") {
+            // useful to name unnamed function parameters
             varName = "p." + Util::getNextUniqueIdStr();
           }
 
@@ -905,44 +610,18 @@ namespace {
       const VarDecl *varDecl = cast<VarDecl>(declStmt->getSingleDecl());
       handleVariable(varDecl, stu.getCurrFuncName());
 
-      if (!stu.isMainStackEmpty()) {
-        // there is smth on the stack, hence on the rhs.
-        SlangExpr slangExpr{};
-        auto exprLhs = convertVarDecl(varDecl, locStr);
-        exprLhs.locId = getLocationId(declStmt);
-        auto exprRhs = convertExpr(exprLhs.compound);
-
-        // order_correction for DeclStmt
-        slangExpr.addSlangStmtsBack(exprRhs.slangStmts);
-        slangExpr.addSlangStmtsBack(exprLhs.slangStmts);
-
-        // slangExpr.qualType = exprLhs.qualType;
-        ss << "instr.AssignI(" << exprLhs.expr << ", " << exprRhs.expr;
-        ss << ", " << locStr << ")"; // close instr.AssignI(...
-        slangExpr.addSlangStmtBack(ss.str());
-
-        stu.addBbStmts(slangExpr.slangStmts);
-      }
     } // handleDeclStmt()
 
     // BOUND END  : handling_routines
 
-    // records the control flow graph
-    void correctGraph(SlangGraph& slangGraph) {
-      // TODO
-    }
-
     // BOUND START: conversion_routines
 
     // stmtconversion
-    SlangGraph convertStmt(bool compound_receiver,
-        const Stmt *stmt,
-        std::unique_ptr<SlangBB> slangExpr) const {
-      SlangGraph slangGraph;
+    SlangExpr convertStmt(const Stmt *stmt) const {
+      SlangExpr slangExpr;
 
       if (!stmt) {
-        return std::move(std::unique_ptr<SlangBB>(
-            new SlangBB(NULL_STMT, false, QualType())));
+        return slangExpr;
       }
 
       switch (stmt->getStmtClass()) {
@@ -950,15 +629,13 @@ namespace {
           return convertLabel(cast<LabelStmt>(stmt));
 
         case Stmt::BinaryOperatorClass:
-          return convertBinaryOperator(compound_receiver,
-              cast<BinaryOperator>(stmt));
+          return convertBinaryOperator(cast<BinaryOperator>(stmt));
 
         case Stmt::CompoundStmtClass:
-          return convertCompoundStmt(compound_receiver,
-              cast<CompoundStmt>(stmt));
+          return convertCompoundStmt(cast<CompoundStmt>(stmt));
 
         case Stmt::DeclStmtClass:
-          handleDeclStmt(cast<DeclStmt>(stmt));
+          handleDeclStmt(cast<DeclStmt>(stmt)); break;
 
         case Stmt::DeclRefExprClass:
           return convertDeclRefExpr(cast<DeclRefExpr>(stmt));
@@ -967,26 +644,42 @@ namespace {
           SLANG_ERROR("Unhandled_Stmt: " << stmt->getStmtClassName())
       }
 
-      return slangGraph;
+      return slangExpr;
     } // convertStmt()
 
-    SlangGraph convertVarDecl(const VarDecl *varDecl, std::string &locStr) const {
+    SlangExpr convertVarDecl(const VarDecl *varDecl, std::string &locStr) const {
       std::stringstream ss;
-      SlangGraph slangGraph;
+      SlangExpr slangExpr;
 
       ss << "expr.VarE(\"" << stu.convertVarExpr((uint64_t)varDecl) << "\"";
       ss << ", " << locStr << ")";
-      slangGraph.expr = ss.str();
-      slangGraph.compound = false;
-      slangGraph.qualType = varDecl->getType();
-      slangGraph.nonTmpVar = true;
-      slangGraph.varId = (uint64_t)varDecl;
+      slangExpr.expr = ss.str();
+      slangExpr.compound = false;
+      slangExpr.qualType = varDecl->getType();
+      slangExpr.nonTmpVar = true;
+      slangExpr.varId = (uint64_t)varDecl;
 
-      return slangGraph;
+      return slangExpr;
     } // convertVarDecl()
 
-    SlangGraph convertDeclRefExpr(const DeclRefExpr *dre) const {
-      SlangGraph slangGraph;
+    SlangExpr convertEnumConst(const EnumConstantDecl *ecd,
+                               std::string &locStr) const {
+      SlangExpr slangExpr;
+
+      std::stringstream ss;
+      ss << "expr.LitE(" << (ecd->getInitVal()).toString(10);
+      ss << ", " << locStr << ")";
+
+      slangExpr.expr = ss.str();
+      slangExpr.compound = false;
+      slangExpr.locStr = locStr;
+      slangExpr.qualType = ecd->getType();
+
+      return slangExpr;
+    }
+
+    SlangExpr convertDeclRefExpr(const DeclRefExpr *dre) const {
+      SlangExpr slangExpr;
       std::stringstream ss;
 
       std::string locStr = getLocationString(dre);
@@ -994,9 +687,9 @@ namespace {
       const ValueDecl *valueDecl = dre->getDecl();
       if (isa<VarDecl>(valueDecl)) {
         auto varDecl = cast<VarDecl>(valueDecl);
-        slangGraph = convertVarDecl(varDecl, locStr);
-        slangGraph.locStr = getLocationString(dre);
-        return slangGraph;
+        slangExpr = convertVarDecl(varDecl, locStr);
+        slangExpr.locStr = getLocationString(dre);
+        return slangExpr;
 
       } else if (isa<EnumConstantDecl>(valueDecl)) {
         auto ecd = cast<EnumConstantDecl>(valueDecl);
@@ -1007,30 +700,29 @@ namespace {
         std::string funcName = funcDecl->getNameInfo().getAsString();
         ss << "expr.FuncE(\"" << stu.convertFuncName(funcName) << "\"";
         ss << ", " << locStr << ")";
-        slangGraph.expr = ss.str();
-        slangGraph.qualType = funcDecl->getType();
-        slangGraph.locStr = locStr;
-        return slangGraph;
+        slangExpr.expr = ss.str();
+        slangExpr.qualType = funcDecl->getType();
+        slangExpr.locStr = locStr;
+        return slangExpr;
 
       } else {
         SLANG_ERROR("Not_a_VarDecl.")
-        slangGraph.expr = "ERROR:convertDeclRefExpr";
-        return slangGraph;
+        slangExpr.expr = "ERROR:convertDeclRefExpr";
+        return slangExpr;
       }
     } // convertDeclRefExpr()
 
-    SlangGraph convertBinaryOperator(bool compound_receiver,
-        const BinaryOperator *binOp) {
-      SlangGraph slangGraph;
+    SlangExpr convertBinaryOperator(const BinaryOperator *binOp) const {
+      SlangExpr slangExpr;
 
       if (binOp->isAssignmentOp()) {
-        return convertAssignmentOp(compound_receiver, binOp);
+        return convertAssignmentOp(binOp);
       } else if (binOp->isCompoundAssignmentOp()) {
-        return slangGraph;
-        // return convertCompoundAssignmentOp(compound_receiver, binOp);
+        return slangExpr;
+        // return convertCompoundAssignmentOp(binOp);
       } else if (binOp->isLogicalOp()) {
-        return slangGraph;
-        // return convertLogicalOp(compound_receiver, binOp);
+        return slangExpr;
+        // return convertLogicalOp(binOp);
       }
 
       switch(binOp->getOpcode()) {
@@ -1040,52 +732,47 @@ namespace {
           break;
       }
 
-      return slangGraph;
+      return slangExpr;
     } // convertBinaryOperator()
 
-    SlangGraph convertAssignmentOp(bool compound_receiver,
-        const BinaryOperator *binOp) const {
-      SlangGraph lhsGraph, rhsGraph;
+    SlangExpr convertAssignmentOp(const BinaryOperator *binOp) const {
+      SlangExpr lhsExpr, rhsExpr;
+      std::stringstream ss;
 
       auto it = binOp->child_begin();
       const Stmt *lhs = *it;
       const Stmt *rhs = *(++it);
 
-      lhsGraph = convertStmt(false, lhs);
-      rhsGraph = convertStmt(lhsGraph.compound, rhs);
+      rhsExpr = convertStmt(rhs);
+      lhsExpr = convertStmt(lhs);
 
-      bool merged = lhsGraph.mergeGraph(rhsGraph);
+      ss << "instr.AssignI(" << lhsExpr.expr << ", " << rhsExpr.expr << ")";
+      stu.addStmt(ss.str());
 
-      return lhsGraph;
+      return lhsExpr;
     } // convertAssignmentOp()
 
-    SlangGraph convertCompoundStmt(bool compound_receiver,
-        const CompoundStmt *compoundStmt) const {
-      SlangGraph slangGraph;
-      SlangGraph currSlangGraph;
-      bool merged;
+    SlangExpr convertCompoundStmt(const CompoundStmt *compoundStmt) const {
+      SlangExpr slangExpr;
 
       for (auto it = compoundStmt->body_begin();
             it != compoundStmt->body_end();
             ++it) {
-        currSlangGraph = convertStmt(*it);
-        merged = slangGraph.mergeGraph(currSlangGraph);
-
-        if(!merged) {
-          stu.slangGraphs.push_back(slangGraph);
-          slangGraph = currSlangGraph;
-        }
+        // don't care about the return value
+        convertStmt(*it);
       }
+
+      return slangExpr;
     } // convertCompoundStmt()
 
-    SlangGraph convertLabel(const LabelStmt *labelStmt) {
-      SlangGraph slangGraph;
+    SlangExpr convertLabel(const LabelStmt *labelStmt) const {
+      SlangExpr slangExpr;
+      std::stringstream ss;
 
-      slangGraph.label = labelStmt->getName();
-      slangGraph.entry = slangGraph.exit = stu.createSlangBb(slangGraph.label);
-      slangGraph.totalBlocks = 1;
+      ss << "instr.LabelI(\"" << labelStmt->getName() << "\")";
+      stu.addStmt(ss.str());
 
-      return slangGraph;
+      return slangExpr;
     } // convertLabel()
 
     // BOUND START: type_conversion_routines
@@ -1381,3 +1068,5 @@ namespace {
 SlangTranslationUnit SlangGenAstChecker::stu = SlangTranslationUnit();
 const FunctionDecl *SlangGenAstChecker::FD = nullptr;
 
+// Register the Checker
+void ento::registerSlangGenAstChecker(CheckerManager &mgr) { mgr.registerChecker<SlangGenAstChecker>(); }
