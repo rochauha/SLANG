@@ -1,11 +1,5 @@
 int main() {
-  int z = 0;
-
-  switch(z) {
-    case 10 && 20:
-      z = 30;
-      break;
-    default:
-      z = 20;
-  }
+  int x = 0, y;
+  label1:
+  x = y;
 }

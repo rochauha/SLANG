@@ -76,7 +76,7 @@ namespace {
       compound = false;
       locStr = "";
       qualType = QualType();
-      nonTmpVar = false;
+      nonTmpVar = true;
       varId = 0;
     };
 
@@ -506,8 +506,10 @@ namespace {
       }
 
       FD = dyn_cast<FunctionDecl>(D);
-      handleFunction(FD);
+      handleFuncNameAndType(FD);
       stu.currFunc = &stu.funcMap[(uint64_t)FD];
+      SLANG_DEBUG(stu.currFunc->name)
+      handleFunctionBody(FD);
     } // checkASTCodeBody()
 
     // invoked when the whole translation unit has been processed
@@ -522,9 +524,7 @@ namespace {
 
     // BOUND START: handling_routines
 
-    void handleFunction(const FunctionDecl *funcDecl) const {
-      handleFuncNameAndType(funcDecl);
-
+    void handleFunctionBody(const FunctionDecl *funcDecl) const {
       const Stmt *body = funcDecl->getBody();
       if (body) {
         convertStmt(body);
@@ -607,9 +607,13 @@ namespace {
       std::stringstream ss;
       std::string locStr = getLocationString(declStmt);
 
-      const VarDecl *varDecl = cast<VarDecl>(declStmt->getSingleDecl());
-      handleVariable(varDecl, stu.getCurrFuncName());
-
+      for (auto it = declStmt->decl_begin();
+            it != declStmt->decl_end();
+            ++it) {
+        if (isa<VarDecl>(*it)) {
+          handleVariable(cast<ValueDecl>(*it), stu.currFunc->name);
+        }
+      }
     } // handleDeclStmt()
 
     // BOUND END  : handling_routines
@@ -619,6 +623,9 @@ namespace {
     // stmtconversion
     SlangExpr convertStmt(const Stmt *stmt) const {
       SlangExpr slangExpr;
+
+      SLANG_DEBUG("ConvertingStmt : " << stmt->getStmtClassName() << "\n")
+      stmt->dump();
 
       if (!stmt) {
         return slangExpr;
@@ -640,12 +647,129 @@ namespace {
         case Stmt::DeclRefExprClass:
           return convertDeclRefExpr(cast<DeclRefExpr>(stmt));
 
+        case Stmt::IntegerLiteralClass:
+          return convertIntegerLiteral(cast<IntegerLiteral>(stmt));
+
+        case Stmt::FloatingLiteralClass:
+          return convertFloatingLiteral(cast<FloatingLiteral>(stmt));
+
+        case Stmt::StringLiteralClass:
+          return convertStringLiteral(cast<StringLiteral>(stmt));
+
+        case Stmt::ImplicitCastExprClass:
+          return convertImplicitCastExpr(cast<ImplicitCastExpr>(stmt));
+
         default:
           SLANG_ERROR("Unhandled_Stmt: " << stmt->getStmtClassName())
       }
 
       return slangExpr;
     } // convertStmt()
+
+    SlangExpr convertImplicitCastExpr(const ImplicitCastExpr *stmt) const {
+      // only one child is expected
+      auto it = stmt->child_begin();
+      return convertStmt(*it);
+    }
+
+    SlangExpr convertIntegerLiteral(const IntegerLiteral *il) const {
+      std::stringstream ss;
+      std::string suffix = ""; // helps make int appear float
+
+      std::string locStr = getLocationString(il);
+
+      // check if int is implicitly casted to floating
+      const auto &parents = FD->getASTContext().getParents(*il);
+      if (!parents.empty()) {
+        const Stmt *stmt1 = parents[0].get<Stmt>();
+        if (stmt1) {
+          switch (stmt1->getStmtClass()) {
+            default:
+              break;
+            case Stmt::ImplicitCastExprClass: {
+              const ImplicitCastExpr *ice = cast<ImplicitCastExpr>(stmt1);
+              switch (ice->getCastKind()) {
+                default:
+                  break;
+                case CastKind::CK_IntegralToFloating:
+                  suffix = ".0";
+                  break;
+              }
+            }
+          }
+        }
+      }
+
+      bool is_signed = il->getType()->isSignedIntegerType();
+      ss << "expr.LitE(" << il->getValue().toString(10, is_signed);
+      ss << suffix;
+      ss << ", " << locStr << ")";
+      SLANG_TRACE(ss.str())
+
+      SlangExpr slangExpr;
+      slangExpr.expr = ss.str();
+      slangExpr.qualType = il->getType();
+
+      return slangExpr;
+    } // convertIntegerLiteral()
+
+    SlangExpr convertFloatingLiteral(const FloatingLiteral *fl) const {
+      std::stringstream ss;
+      bool toInt = false;
+
+      std::string locStr = getLocationString(fl);
+
+      // check if float is implicitly casted to int
+      const auto &parents = FD->getASTContext().getParents(*fl);
+      if (!parents.empty()) {
+        const Stmt *stmt1 = parents[0].get<Stmt>();
+        if (stmt1) {
+          switch (stmt1->getStmtClass()) {
+            default:
+              break;
+            case Stmt::ImplicitCastExprClass: {
+              const ImplicitCastExpr *ice = cast<ImplicitCastExpr>(stmt1);
+              switch (ice->getCastKind()) {
+                default:
+                  break;
+                case CastKind::CK_FloatingToIntegral:
+                  toInt = true;
+                  break;
+              }
+            }
+          }
+        }
+      }
+
+      ss << "expr.LitE(";
+      if (toInt) {
+        ss << (int64_t)fl->getValue().convertToDouble();
+      } else {
+        ss << std::fixed << fl->getValue().convertToDouble();
+      }
+      ss << ", " << locStr << ")";
+      SLANG_TRACE(ss.str())
+
+      SlangExpr slangExpr;
+      slangExpr.expr = ss.str();
+      slangExpr.qualType = fl->getType();
+
+      return slangExpr;
+    } // convertFloatingLiteral()
+
+    SlangExpr convertStringLiteral(const StringLiteral *sl) const {
+      SlangExpr slangExpr;
+      std::stringstream ss;
+
+      std::string locStr = getLocationString(sl);
+
+      ss << "expr.LitE(\"\"\"" << sl->getBytes().str() << "\"\"\"";
+      ss << ", " << locStr << ")";
+      slangExpr.expr = ss.str();
+      slangExpr.locStr = locStr;
+
+      return slangExpr;
+    } // convertStringLiteral()
 
     SlangExpr convertVarDecl(const VarDecl *varDecl, std::string &locStr) const {
       std::stringstream ss;
@@ -654,9 +778,7 @@ namespace {
       ss << "expr.VarE(\"" << stu.convertVarExpr((uint64_t)varDecl) << "\"";
       ss << ", " << locStr << ")";
       slangExpr.expr = ss.str();
-      slangExpr.compound = false;
       slangExpr.qualType = varDecl->getType();
-      slangExpr.nonTmpVar = true;
       slangExpr.varId = (uint64_t)varDecl;
 
       return slangExpr;
@@ -671,7 +793,6 @@ namespace {
       ss << ", " << locStr << ")";
 
       slangExpr.expr = ss.str();
-      slangExpr.compound = false;
       slangExpr.locStr = locStr;
       slangExpr.qualType = ecd->getType();
 
@@ -739,6 +860,8 @@ namespace {
       SlangExpr lhsExpr, rhsExpr;
       std::stringstream ss;
 
+      std::string locStr = getLocationString(binOp);
+
       auto it = binOp->child_begin();
       const Stmt *lhs = *it;
       const Stmt *rhs = *(++it);
@@ -746,7 +869,8 @@ namespace {
       rhsExpr = convertStmt(rhs);
       lhsExpr = convertStmt(lhs);
 
-      ss << "instr.AssignI(" << lhsExpr.expr << ", " << rhsExpr.expr << ")";
+      ss << "instr.AssignI(" << lhsExpr.expr << ", " << rhsExpr.expr;
+      ss << ", " << locStr << ")"; // close instr.AssignI(...
       stu.addStmt(ss.str());
 
       return lhsExpr;
@@ -769,8 +893,17 @@ namespace {
       SlangExpr slangExpr;
       std::stringstream ss;
 
-      ss << "instr.LabelI(\"" << labelStmt->getName() << "\")";
+      std::string locStr = getLocationString(labelStmt);
+
+      ss << "instr.LabelI(\"" << labelStmt->getName() << "\"";
+      ss << ", " << locStr << ")"; // close instr.LabelI(...
       stu.addStmt(ss.str());
+
+      for (auto it = labelStmt->child_begin();
+            it != labelStmt->child_end();
+            ++it) {
+        convertStmt(*it);
+      }
 
       return slangExpr;
     } // convertLabel()

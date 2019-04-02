@@ -1,9 +1,118 @@
-Writing '/tmp/CFG-7de4be.dot'...  done. 
-Trying 'xdg-open' program... Remember to erase graph file: /tmp/CFG-7de4be.dot
-delit.c:6:7: warning: Anshuman: Value stored to 'z' is never read
-      z = 30;
-      ^   ~~
-delit.c:9:7: warning: Anshuman: Value stored to 'z' is never read
-      z = 20;
-      ^   ~~
+
+  03-04-2019 04:03:28: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkASTCodeBody():501:
+BOUND START: SLANG_Generated_Output.
+
+  03-04-2019 04:03:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleFuncNameAndType():543:
+AddingFunction: main
+  03-04-2019 04:03:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkASTCodeBody():511:
+main
+  03-04-2019 04:03:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():627:
+ConvertingStmt : CompoundStmt
+CompoundStmt 0x55f4edeec3d0
+|-DeclStmt 0x55f4edeec2c8
+| |-VarDecl 0x55f4edeec1b8  used x 'int' cinit
+| | `-IntegerLiteral 0x55f4edeec218 'int' 0
+| `-VarDecl 0x55f4edeec250  used y 'int'
+`-LabelStmt 0x55f4edeec3b8 'label1'
+  `-BinaryOperator 0x55f4edeec348 'int' '='
+    |-DeclRefExpr 0x55f4edeec2e0 'int' lvalue Var 0x55f4edeec1b8 'x' 'int'
+    `-ImplicitCastExpr 0x55f4edeec330 'int' <LValueToRValue>
+      `-DeclRefExpr 0x55f4edeec308 'int' lvalue Var 0x55f4edeec250 'y' 'int'
+
+  03-04-2019 04:03:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():627:
+ConvertingStmt : DeclStmt
+DeclStmt 0x55f4edeec2c8
+|-VarDecl 0x55f4edeec1b8  used x 'int' cinit
+| `-IntegerLiteral 0x55f4edeec218 'int' 0
+`-VarDecl 0x55f4edeec250  used y 'int'
+
+  03-04-2019 04:03:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleDeclStmt():605:
+Set last DeclStmt to DeclStmt at 94510452228808
+  03-04-2019 04:03:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleVariable():595:
+NEW_VAR: "v:main:x": types.Int32,
+  03-04-2019 04:03:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleVariable():595:
+NEW_VAR: "v:main:y": types.Int32,
+  03-04-2019 04:03:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():627:
+ConvertingStmt : LabelStmt
+LabelStmt 0x55f4edeec3b8 'label1'
+`-BinaryOperator 0x55f4edeec348 'int' '='
+  |-DeclRefExpr 0x55f4edeec2e0 'int' lvalue Var 0x55f4edeec1b8 'x' 'int'
+  `-ImplicitCastExpr 0x55f4edeec330 'int' <LValueToRValue>
+    `-DeclRefExpr 0x55f4edeec308 'int' lvalue Var 0x55f4edeec250 'y' 'int'
+
+  03-04-2019 04:03:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():627:
+ConvertingStmt : BinaryOperator
+BinaryOperator 0x55f4edeec348 'int' '='
+|-DeclRefExpr 0x55f4edeec2e0 'int' lvalue Var 0x55f4edeec1b8 'x' 'int'
+`-ImplicitCastExpr 0x55f4edeec330 'int' <LValueToRValue>
+  `-DeclRefExpr 0x55f4edeec308 'int' lvalue Var 0x55f4edeec250 'y' 'int'
+
+  03-04-2019 04:03:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():627:
+ConvertingStmt : ImplicitCastExpr
+ImplicitCastExpr 0x55f4edeec330 'int' <LValueToRValue>
+`-DeclRefExpr 0x55f4edeec308 'int' lvalue Var 0x55f4edeec250 'y' 'int'
+
+  03-04-2019 04:03:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():627:
+ConvertingStmt : DeclRefExpr
+DeclRefExpr 0x55f4edeec308 'int' lvalue Var 0x55f4edeec250 'y' 'int'
+
+  03-04-2019 04:03:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():627:
+ConvertingStmt : DeclRefExpr
+DeclRefExpr 0x55f4edeec2e0 'int' lvalue Var 0x55f4edeec1b8 'x' 'int'
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "delit.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:y": types.Int32,
+    "v:main:x": types.Int32,
+  }, # end allVars dict
+
+  allObjs = {
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        instrSeq = [
+            instr.LabelI("label1", Loc(3,3)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(4,3)), expr.VarE("v:main:y", Loc(4,7)), Loc(4,3)),
+        ], # instrSeq end.
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.
+
+  03-04-2019 04:03:28: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkEndOfTranslationUnit():519:
+Translation Unit Ended.
+
+  03-04-2019 04:03:28: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkEndOfTranslationUnit():520:
+BOUND END  : SLANG_Generated_Output.
+delit.c:4:3: warning: Anshuman: Value stored to 'x' is never read
+  x = y;
+  ^   ~
+delit.c:4:5: warning: Assigned value is garbage or undefined
+  x = y;
+    ^ ~
 2 warnings generated.
