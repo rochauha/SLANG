@@ -1,6 +1,15 @@
-void *dummy_malloc(unsigned size);
+// MIT License.
+// Copyright (c) 2019 The SLANG Authors.
 
-int main() {
-	int *x = (int *) dummy_malloc(5);
-	x = x + 40;
+// test1.c: A sample test program. (This file)
+// test1.py: SPAN IR module for this file.
+
+int g;
+
+int main(int argc, char **argv) {
+    int x, y, z;
+    x = 10;
+    y = x;
+    z = y;
+    g = z;
 }
