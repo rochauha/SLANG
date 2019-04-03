@@ -17,11 +17,8 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:z": types.Int32,
-    "v:main:argv": types.Ptr(to=types.Ptr(to=types.Int8)),
     "v:main:x": types.Int32,
-    "v:main:argc": types.Int32,
-    "v:main:y": types.Int32,
+    "v:main:t.1": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -29,17 +26,15 @@ irTUnit.TUnit(
     "f:main":
       obj.Func(
         name = "f:main",
-        paramNames = ["v:main:argc", "v:main:argv"],
+        paramNames = [],
         variadic = False,
         returnType = types.Int32,
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         instrSeq = [
-            instr.AssignI(expr.VarE("v:main:x", Loc(11,5)), expr.LitE(10, Loc(11,9)), Loc(11,5)),
-            instr.AssignI(expr.VarE("v:main:y", Loc(12,5)), expr.BinaryE(expr.VarE("v:main:x", Loc(12,9)), op.BO_ADD, expr.LitE(10, Loc(12,13)), Loc(12,9)), Loc(12,5)),
-            instr.AssignI(expr.VarE("v:main:z", Loc(13,5)), expr.BinaryE(expr.LitE(10, Loc(13,9)), op.BO_DIV, expr.LitE(400, Loc(13,14)), Loc(13,9)), Loc(13,5)),
-            instr.AssignI(expr.VarE("v:main:x", Loc(14,5)), expr.BinaryE(expr.LitE(30, Loc(14,9)), op.BO_LOGICAL_AND, expr.LitE(50, Loc(14,15)), Loc(14,9)), Loc(14,5)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(11,22)), expr.BinaryE(expr.LitE(0, Loc(11,22)), op.BO_ADD, expr.LitE(1, Loc(11,33)), Loc(11,22)), Loc(11,22)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(11,5)), expr.BinaryE(expr.VarE("v:main:t.1", Loc(11,22)), op.BO_ADD, expr.LitE(2, Loc(11,41)), Loc(11,22)), Loc(11,5)),
         ], # instrSeq end.
       ), # f:main() end. 
 
