@@ -8,5 +8,14 @@
 enum my_type {ANSHUMAN, RONAK, RESHABH};
 
 int main() {
-    enum my_type x = ANSHUMAN + RONAK + RESHABH;
+	int x = 400, y = 3400, z = 0;
+	
+	if (x) {
+		y = 400;
+	}
+
+	while (x > 54) {
+		x = 300 + x;
+	}
+	z = x + y;
 }

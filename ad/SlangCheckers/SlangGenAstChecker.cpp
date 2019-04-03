@@ -56,6 +56,9 @@ typedef std::vector<const Stmt *> StmtVector;
 #define DONT_PRINT "DONT_PRINT"
 #define NULL_STMT "NULL_STMT"
 
+#define LABEL_PREFIX "instr.LabelI(\""
+#define LABEL_SUFFIX "\")"
+
 // Generate the SPAN IR from Clang AST.
 namespace {
 // the numbering 0,1,2 is important.
@@ -241,6 +244,19 @@ public:
   std::string fileName; // the current translation unit file name
   SlangFunc *currFunc;  // the current function being translated
 
+  uint64_t trueLabelCount;
+  uint64_t falseLabelCount;
+  uint64_t startConditionLabelCount;
+  uint64_t endConditionLabelCount;
+
+  uint64_t nextTrueLabelCount() { return ++trueLabelCount; }
+
+  uint64_t nextFalseLabelCount() { return ++falseLabelCount; }
+
+  uint64_t nextStartConditionLabelCount() { return ++startConditionLabelCount; }
+
+  uint64_t nextEndConditionLabelCount() { return ++endConditionLabelCount; }
+
   // to uniquely name anonymous records (see getNextRecordId())
   int32_t recordId;
 
@@ -259,6 +275,9 @@ public:
 
   SlangTranslationUnit()
       : fileName{}, currFunc{nullptr}, recordId{0}, varMap{}, varNameMap{}, funcMap{}, dirtyVars{} {
+    trueLabelCount = 0;
+    falseLabelCount = 0;
+    endConditionLabelCount = 0;
   }
 
   // clear the buffer for the next function.
@@ -629,6 +648,12 @@ public:
     case Stmt::LabelStmtClass:
       return convertLabel(cast<LabelStmt>(stmt));
 
+    case Stmt::IfStmtClass:
+      return convertIfStmt(cast<IfStmt>(stmt));
+
+    case Stmt::WhileStmtClass:
+      return convertWhileStmt(cast<WhileStmt>(stmt));
+
     case Stmt::UnaryOperatorClass:
       return convertUnaryOperator(cast<UnaryOperator>(stmt));
 
@@ -663,6 +688,109 @@ public:
 
     return slangExpr;
   } // convertStmt()
+
+  SlangExpr convertIfStmt(const IfStmt *ifStmt) const {
+    std::stringstream ss;
+
+    ss << "StartOfCondition : " << stu.nextStartConditionLabelCount();
+    std::string startConditionLabel = ss.str();
+    ss.str("");
+
+    ss << "True : " << stu.nextTrueLabelCount();
+    std::string trueLabel = ss.str();
+    ss.str("");
+
+    ss << "False : " << stu.nextFalseLabelCount();
+    std::string falseLabel = ss.str();
+    ss.str("");
+
+    ss << "EndOfCondition : " << stu.nextEndConditionLabelCount();
+    std::string endConditionLabel = ss.str();
+    ss.str("");
+
+    stu.addStmt(LABEL_PREFIX + startConditionLabel + LABEL_SUFFIX);
+
+    const Stmt *condition = ifStmt->getCond();
+    SlangExpr conditionExpr = convertStmt(condition);
+    std::string locStr = getLocationString(condition);
+    SlangExpr tempExpr = genTmpVariable(conditionExpr.qualType, locStr);
+
+    ss << "instr.AssignI(" << tempExpr.expr << ", " << conditionExpr.expr << ")";
+    stu.addStmt(ss.str());
+    ss.str("");
+
+    ss << "instr.CondI(" << tempExpr.expr << ", \"" << trueLabel << "\""
+       << ", "
+       << "\"" << falseLabel
+       << "\""
+          ")";
+    stu.addStmt(ss.str());
+    ss.str("");
+
+    stu.addStmt(LABEL_PREFIX + trueLabel + LABEL_SUFFIX);
+    const Stmt *thenBody = ifStmt->getThen();
+    if (thenBody)
+      convertStmt(thenBody);
+
+    stu.addStmt(LABEL_PREFIX + falseLabel + LABEL_SUFFIX);
+    const Stmt *elseBody = ifStmt->getElse();
+    if (elseBody)
+      convertStmt(elseBody);
+
+    stu.addStmt(LABEL_PREFIX + endConditionLabel + LABEL_SUFFIX);
+    return SlangExpr{}; // return empty expression
+
+  } // convertIfStmt()
+
+  SlangExpr convertWhileStmt(const WhileStmt *whileStmt) const {
+    std::stringstream ss;
+
+    ss << "StartOfCondition : " << stu.nextStartConditionLabelCount();
+    std::string startConditionLabel = ss.str();
+    ss.str("");
+
+    ss << "True : " << stu.nextTrueLabelCount();
+    std::string trueLabel = ss.str();
+    ss.str("");
+
+    ss << "False : " << stu.nextFalseLabelCount();
+    std::string falseLabel = ss.str();
+    ss.str("");
+
+    ss << "EndOfCondition : " << stu.nextEndConditionLabelCount();
+    std::string endConditionLabel = ss.str();
+    ss.str("");
+
+    stu.addStmt(LABEL_PREFIX + startConditionLabel + LABEL_SUFFIX);
+
+    const Stmt *condition = whileStmt->getCond();
+    SlangExpr conditionExpr = convertStmt(condition);
+    std::string locStr = getLocationString(condition);
+    SlangExpr tempExpr = genTmpVariable(conditionExpr.qualType, locStr);
+
+    ss << "instr.AssignI(" << tempExpr.expr << ", " << conditionExpr.expr << ")";
+    stu.addStmt(ss.str());
+    ss.str("");
+
+    ss << "instr.CondI(" << tempExpr.expr << ", \"" << trueLabel << "\""
+       << ", "
+       << "\"" << falseLabel
+       << "\""
+          ")";
+    stu.addStmt(ss.str());
+    ss.str("");
+
+    stu.addStmt(LABEL_PREFIX + trueLabel + LABEL_SUFFIX);
+    const Stmt *thenBody = whileStmt->getBody();
+    if (thenBody)
+      convertStmt(thenBody);
+
+    // while has no else block but we keep the label for appropriate jumps
+    stu.addStmt(LABEL_PREFIX + falseLabel + LABEL_SUFFIX);
+    stu.addStmt(LABEL_PREFIX + endConditionLabel + LABEL_SUFFIX);
+    return SlangExpr{}; // return empty expression
+
+  } // convertWhileStmt()
 
   SlangExpr convertImplicitCastExpr(const ImplicitCastExpr *stmt) const {
     // only one child is expected
@@ -859,11 +987,11 @@ public:
     case BO_Sub:
       op = "op.BO_SUB";
       break;
-    
+
     case BO_Mul:
       op = "op.BO_MUL";
       break;
-    
+
     case BO_Div:
       op = "op.BO_DIV";
       break;
@@ -914,7 +1042,7 @@ public:
     case BO_LAnd:
       op = "op.BO_LOGICAL_AND";
       break;
-      
+
     default:
       op = "ERROR:binOp";
       break;

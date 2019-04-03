@@ -18,6 +18,9 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:x": types.Int32,
+    "v:main:y": types.Int32,
+    "v:main:t.2": types.Int32,
+    "v:main:z": types.Int32,
     "v:main:t.1": types.Int32,
   }, # end allVars dict
 
@@ -33,8 +36,24 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         instrSeq = [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(11,22)), expr.BinaryE(expr.LitE(0, Loc(11,22)), op.BO_ADD, expr.LitE(1, Loc(11,33)), Loc(11,22)), Loc(11,22)),
-            instr.AssignI(expr.VarE("v:main:x", Loc(11,5)), expr.BinaryE(expr.VarE("v:main:t.1", Loc(11,22)), op.BO_ADD, expr.LitE(2, Loc(11,41)), Loc(11,22)), Loc(11,5)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(11,2)), expr.LitE(400, Loc(11,10)), Loc(11,2)),
+            instr.AssignI(expr.VarE("v:main:y", Loc(11,2)), expr.LitE(3400, Loc(11,19)), Loc(11,2)),
+            instr.AssignI(expr.VarE("v:main:z", Loc(11,2)), expr.LitE(0, Loc(11,29)), Loc(11,2)),
+            instr.LabelI("StartOfCondition : 1"),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(13,6)), expr.VarE("v:main:x", Loc(13,6))),
+            instr.CondI(expr.VarE("v:main:t.1", Loc(13,6)), "True : 1", "False : 1"),
+            instr.LabelI("True : 1"),
+            instr.AssignI(expr.VarE("v:main:y", Loc(14,3)), expr.LitE(400, Loc(14,7)), Loc(14,3)),
+            instr.LabelI("False : 1"),
+            instr.LabelI("EndOfCondition : 1"),
+            instr.LabelI("StartOfCondition : 2"),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(17,9)), expr.BinaryE(expr.VarE("v:main:x", Loc(17,9)), op.BO_GT, expr.LitE(54, Loc(17,13)), Loc(17,9))),
+            instr.CondI(expr.VarE("v:main:t.2", Loc(17,9)), "True : 2", "False : 2"),
+            instr.LabelI("True : 2"),
+            instr.AssignI(expr.VarE("v:main:x", Loc(18,3)), expr.BinaryE(expr.LitE(300, Loc(18,7)), op.BO_ADD, expr.VarE("v:main:x", Loc(18,13)), Loc(18,7)), Loc(18,3)),
+            instr.LabelI("False : 2"),
+            instr.LabelI("EndOfCondition : 2"),
+            instr.AssignI(expr.VarE("v:main:z", Loc(20,2)), expr.BinaryE(expr.VarE("v:main:x", Loc(20,6)), op.BO_ADD, expr.VarE("v:main:y", Loc(20,10)), Loc(20,6)), Loc(20,2)),
         ], # instrSeq end.
       ), # f:main() end. 
 
