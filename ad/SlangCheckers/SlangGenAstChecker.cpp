@@ -657,6 +657,9 @@ public:
     case Stmt::WhileStmtClass:
       return convertWhileStmt(cast<WhileStmt>(stmt));
 
+    case Stmt::DoStmtClass:
+      return convertDoStmt(cast<DoStmt>(stmt));
+
     case Stmt::ForStmtClass:
       return convertForStmt(cast<ForStmt>(stmt));
 
@@ -802,6 +805,61 @@ public:
     return SlangExpr{}; // return empty expression
 
   } // convertWhileStmt()
+
+  SlangExpr convertDoStmt(const DoStmt *doStmt) const {
+    std::stringstream ss;
+
+    // use normal label in this case for true
+    ss << "NormalLabel : " << stu.nextNormalLabelCount();
+    std::string normalLabel = ss.str();
+    ss.str("");
+
+    ss << "StartOfCondition : " << stu.nextStartConditionLabelCount();
+    std::string startConditionLabel = ss.str();
+    ss.str("");
+
+    ss << "False : " << stu.nextFalseLabelCount();
+    std::string falseLabel = ss.str();
+    ss.str("");
+
+    ss << "EndOfCondition : " << stu.nextEndConditionLabelCount();
+    std::string endConditionLabel = ss.str();
+    ss.str("");
+
+    stu.addStmt(LABEL_PREFIX + normalLabel + LABEL_SUFFIX);
+    const Stmt *body = doStmt->getBody();
+    if (body) {
+      convertStmt(body);
+    }
+    // unconditional jump to startConditionLabel
+    ss << "instr.GotoI(\"" + startConditionLabel + "\")";
+    stu.addStmt(ss.str());
+    ss.str("");
+
+    stu.addStmt(LABEL_PREFIX + startConditionLabel + LABEL_SUFFIX);
+    const Stmt *condition = doStmt->getCond();
+    SlangExpr conditionExpr = convertStmt(condition);
+    std::string locStr = getLocationString(condition);
+    SlangExpr tempExpr = genTmpVariable(conditionExpr.qualType, locStr);
+
+    ss << "instr.AssignI(" << tempExpr.expr << ", " << conditionExpr.expr << ")";
+    stu.addStmt(ss.str());
+    ss.str("");
+
+    ss << "instr.CondI(" << tempExpr.expr << ", \"" << normalLabel << "\""
+       << ", "
+       << "\"" << falseLabel
+       << "\""
+          ")";
+    stu.addStmt(ss.str());
+    ss.str("");
+
+    // do has no else block but we keep the label for appropriate jumps
+    stu.addStmt(LABEL_PREFIX + falseLabel + LABEL_SUFFIX);
+    stu.addStmt(LABEL_PREFIX + endConditionLabel + LABEL_SUFFIX);
+    return SlangExpr{}; // return empty expression
+
+  } // convertDoStmt()
 
   SlangExpr convertForStmt(const ForStmt *forStmt) const {
     std::stringstream ss;

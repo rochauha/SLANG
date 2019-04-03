@@ -4,11 +4,12 @@
 // test1.c: A sample test program. (This file)
 // test1.py: SPAN IR module for this file.
 
-int main() {
-	int x = 30;
-	for (int i = 0, j = 340; i < 5 && x; i = i + 3) {
-		x = 11111111111;
-	}
 
-	x = 999 + x * 5;
+int main() {
+	int x, y = 300, z = 0;	
+	do {
+		x = 300;
+		x = x + y;
+		z = z - x;
+	} while (z > 0);
 }

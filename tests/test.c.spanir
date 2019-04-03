@@ -17,12 +17,10 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.2": types.Int32,
-    "v:main:t.3": types.Int32,
-    "v:main:x": types.Int32,
-    "v:main:i": types.Int32,
     "v:main:t.1": types.Int32,
-    "v:main:j": types.Int32,
+    "v:main:z": types.Int32,
+    "v:main:y": types.Int32,
+    "v:main:x": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -37,25 +35,18 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         instrSeq = [
-            instr.AssignI(expr.VarE("v:main:x", Loc(8,2)), expr.LitE(30, Loc(8,10)), Loc(8,2)),
+            instr.AssignI(expr.VarE("v:main:y", Loc(9,2)), expr.LitE(300, Loc(9,13)), Loc(9,2)),
+            instr.AssignI(expr.VarE("v:main:z", Loc(9,2)), expr.LitE(0, Loc(9,22)), Loc(9,2)),
             instr.LabelI("NormalLabel : 1"),
-            instr.AssignI(expr.VarE("v:main:i", Loc(9,7)), expr.LitE(0, Loc(9,15)), Loc(9,7)),
-            instr.AssignI(expr.VarE("v:main:j", Loc(9,7)), expr.LitE(340, Loc(9,22)), Loc(9,7)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(11,3)), expr.LitE(300, Loc(11,7)), Loc(11,3)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(12,3)), expr.BinaryE(expr.VarE("v:main:x", Loc(12,7)), op.BO_ADD, expr.VarE("v:main:y", Loc(12,11)), Loc(12,7)), Loc(12,3)),
+            instr.AssignI(expr.VarE("v:main:z", Loc(13,3)), expr.BinaryE(expr.VarE("v:main:z", Loc(13,7)), op.BO_SUB, expr.VarE("v:main:x", Loc(13,11)), Loc(13,7)), Loc(13,3)),
             instr.GotoI("StartOfCondition : 1"),
             instr.LabelI("StartOfCondition : 1"),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(9,27)), expr.BinaryE(expr.VarE("v:main:i", Loc(9,27)), op.BO_LT, expr.LitE(5, Loc(9,31)), Loc(9,27)), Loc(9,27)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(9,27)), expr.BinaryE(expr.VarE("v:main:t.1", Loc(9,27)), op.BO_LOGICAL_AND, expr.VarE("v:main:x", Loc(9,36)), Loc(9,27))),
-            instr.CondI(expr.VarE("v:main:t.2", Loc(9,27)), "True : 1", "False : 1"),
-            instr.LabelI("True : 1"),
-            instr.AssignI(expr.VarE("v:main:x", Loc(10,3)), expr.LitE(11111111111, Loc(10,7)), Loc(10,3)),
-            instr.GotoI("NormalLabel : 2"),
-            instr.LabelI("NormalLabel : 2"),
-            instr.AssignI(expr.VarE("v:main:i", Loc(9,39)), expr.BinaryE(expr.VarE("v:main:i", Loc(9,43)), op.BO_ADD, expr.LitE(3, Loc(9,47)), Loc(9,43)), Loc(9,39)),
-            instr.GotoI("StartOfCondition : 1"),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(14,11)), expr.BinaryE(expr.VarE("v:main:z", Loc(14,11)), op.BO_GT, expr.LitE(0, Loc(14,15)), Loc(14,11))),
+            instr.CondI(expr.VarE("v:main:t.1", Loc(14,11)), "NormalLabel : 1", "False : 1"),
             instr.LabelI("False : 1"),
             instr.LabelI("EndOfCondition : 1"),
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(13,12)), expr.BinaryE(expr.VarE("v:main:x", Loc(13,12)), op.BO_MUL, expr.LitE(5, Loc(13,16)), Loc(13,12)), Loc(13,12)),
-            instr.AssignI(expr.VarE("v:main:x", Loc(13,2)), expr.BinaryE(expr.LitE(999, Loc(13,6)), op.BO_ADD, expr.VarE("v:main:t.3", Loc(13,12)), Loc(13,6)), Loc(13,2)),
         ], # instrSeq end.
       ), # f:main() end. 
 
