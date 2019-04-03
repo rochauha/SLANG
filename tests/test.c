@@ -9,7 +9,7 @@ int g;
 int main(int argc, char **argv) {
     int x, y, z;
     x = 10;
-    y = x;
-    z = y;
-    g = z;
+    y = x + 10;
+    z = 10 / 400;
+    x = 30 && 50;
 }
