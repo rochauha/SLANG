@@ -249,6 +249,18 @@ public:
   uint64_t falseLabelCount;
   uint64_t startConditionLabelCount;
   uint64_t endConditionLabelCount;
+  uint32_t labelCount;
+
+  uint32_t genNextLabelCount() {
+    labelCount += 1;
+    return labelCount;
+  }
+
+  std::string genNextLabelCountStr() {
+    std::stringstream ss;
+    ss << genNextLabelCount();
+    return ss.str();
+  }
 
   uint64_t nextNormalLabelCount() { return ++normalLabelCount; }
 
@@ -651,6 +663,9 @@ public:
     case Stmt::LabelStmtClass:
       return convertLabel(cast<LabelStmt>(stmt));
 
+    case Stmt::ConditionalOperatorClass:
+      return convertConditionalOp(cast<ConditionalOperator>(stmt));
+
     case Stmt::IfStmtClass:
       return convertIfStmt(cast<IfStmt>(stmt));
 
@@ -673,8 +688,7 @@ public:
       return convertCompoundStmt(cast<CompoundStmt>(stmt));
 
     case Stmt::DeclStmtClass:
-      handleDeclStmt(cast<DeclStmt>(stmt));
-      break;
+      handleDeclStmt(cast<DeclStmt>(stmt)); break;
 
     case Stmt::DeclRefExprClass:
       return convertDeclRefExpr(cast<DeclRefExpr>(stmt));
@@ -691,6 +705,9 @@ public:
     case Stmt::ImplicitCastExprClass:
       return convertImplicitCastExpr(cast<ImplicitCastExpr>(stmt));
 
+    case Stmt::ReturnStmtClass:
+      return convertReturnStmt(cast<ReturnStmt>(stmt));
+
     default:
       SLANG_ERROR("Unhandled_Stmt: " << stmt->getStmtClassName())
     }
@@ -698,255 +715,153 @@ public:
     return slangExpr;
   } // convertStmt()
 
-  SlangExpr convertIfStmt(const IfStmt *ifStmt) const {
+  SlangExpr convertReturnStmt(const ReturnStmt *returnStmt) const {
+    const Expr *retVal = returnStmt->getRetValue();
+
+    SlangExpr retExpr = convertToTmp(convertStmt(retVal));
+
     std::stringstream ss;
+    ss << "instr.ReturnI(" << retExpr.expr << ")";
+    stu.addStmt(ss.str());
 
-    ss << "StartOfCondition : " << stu.nextStartConditionLabelCount();
-    std::string startConditionLabel = ss.str();
-    ss.str("");
+    return SlangExpr{};
+  }
 
-    ss << "True : " << stu.nextTrueLabelCount();
-    std::string trueLabel = ss.str();
-    ss.str("");
+  SlangExpr convertConditionalOp(const ConditionalOperator *condOp) const {
+    const Expr *condition = condOp->getCond();
 
-    ss << "False : " << stu.nextFalseLabelCount();
-    std::string falseLabel = ss.str();
-    ss.str("");
+    SlangExpr cond = convertToTmp(convertStmt(condition));
+    SlangExpr trueExpr = convertToTmp(convertStmt(condOp->getTrueExpr()));
+    SlangExpr falseExpr = convertToTmp(convertStmt(condOp->getFalseExpr()));
 
-    ss << "EndOfCondition : " << stu.nextEndConditionLabelCount();
-    std::string endConditionLabel = ss.str();
-    ss.str("");
+    SlangExpr slangExpr;
+    std::stringstream ss;
+    ss << "expr.SelectE(" << cond.expr;
+    ss << ", " << trueExpr.expr;
+    ss << ", " << falseExpr.expr;
+    ss << ", " << getLocationString(condition) << ")";
+    slangExpr.expr = ss.str();
+    slangExpr.compound = true;
+    slangExpr.qualType = condition->getType();
 
-    stu.addStmt(LABEL_PREFIX + startConditionLabel + LABEL_SUFFIX);
+    return slangExpr;
+  } // convertConditionalOp()
+
+  SlangExpr convertIfStmt(const IfStmt *ifStmt) const {
+    std::string id = stu.genNextLabelCountStr();
+    std::string ifTrueLabel = "IfTrue" + id;
+    std::string ifFalseLabel = "IfFalse" + id;
+    std::string ifExitLabel = "IfExit" + id;
 
     const Stmt *condition = ifStmt->getCond();
     SlangExpr conditionExpr = convertStmt(condition);
-    std::string locStr = getLocationString(condition);
-    SlangExpr tempExpr = genTmpVariable(conditionExpr.qualType, locStr);
+    conditionExpr = convertToTmp(conditionExpr);
 
-    ss << "instr.AssignI(" << tempExpr.expr << ", " << conditionExpr.expr << ")";
-    stu.addStmt(ss.str());
-    ss.str("");
+    addCondInstr(conditionExpr.expr,
+        ifTrueLabel, ifFalseLabel, getLocationString(condition));
 
-    ss << "instr.CondI(" << tempExpr.expr << ", \"" << trueLabel << "\""
-       << ", "
-       << "\"" << falseLabel
-       << "\""
-          ")";
-    stu.addStmt(ss.str());
-    ss.str("");
+    addLabelInstr(ifTrueLabel);
 
-    stu.addStmt(LABEL_PREFIX + trueLabel + LABEL_SUFFIX);
-    const Stmt *thenBody = ifStmt->getThen();
-    if (thenBody)
-      convertStmt(thenBody);
+    const Stmt *body = ifStmt->getThen();
+    if (body) { convertStmt(body); }
 
-    stu.addStmt(LABEL_PREFIX + falseLabel + LABEL_SUFFIX);
+    addGotoInstr(ifExitLabel);
+    addLabelInstr(ifFalseLabel);
+
     const Stmt *elseBody = ifStmt->getElse();
-    if (elseBody)
+    if (elseBody) {
       convertStmt(elseBody);
+    }
 
-    stu.addStmt(LABEL_PREFIX + endConditionLabel + LABEL_SUFFIX);
+    addLabelInstr(ifExitLabel);
+
     return SlangExpr{}; // return empty expression
-
   } // convertIfStmt()
 
   SlangExpr convertWhileStmt(const WhileStmt *whileStmt) const {
-    std::stringstream ss;
+    std::string id = stu.genNextLabelCountStr();
+    std::string whileCondLabel = "WhileCond" + id;
+    std::string whileBodyLabel = "WhileBody" + id;
+    std::string whileExitLabel = "WhileExit" + id;
 
-    ss << "StartOfCondition : " << stu.nextStartConditionLabelCount();
-    std::string startConditionLabel = ss.str();
-    ss.str("");
-
-    ss << "True : " << stu.nextTrueLabelCount();
-    std::string trueLabel = ss.str();
-    ss.str("");
-
-    ss << "False : " << stu.nextFalseLabelCount();
-    std::string falseLabel = ss.str();
-    ss.str("");
-
-    ss << "EndOfCondition : " << stu.nextEndConditionLabelCount();
-    std::string endConditionLabel = ss.str();
-    ss.str("");
-
-    stu.addStmt(LABEL_PREFIX + startConditionLabel + LABEL_SUFFIX);
+    addLabelInstr(whileCondLabel);
 
     const Stmt *condition = whileStmt->getCond();
     SlangExpr conditionExpr = convertStmt(condition);
-    std::string locStr = getLocationString(condition);
-    SlangExpr tempExpr = genTmpVariable(conditionExpr.qualType, locStr);
+    conditionExpr = convertToTmp(conditionExpr);
 
-    ss << "instr.AssignI(" << tempExpr.expr << ", " << conditionExpr.expr << ")";
-    stu.addStmt(ss.str());
-    ss.str("");
+    addCondInstr(conditionExpr.expr,
+        whileBodyLabel, whileExitLabel, getLocationString(condition));
 
-    ss << "instr.CondI(" << tempExpr.expr << ", \"" << trueLabel << "\""
-       << ", "
-       << "\"" << falseLabel
-       << "\""
-          ")";
-    stu.addStmt(ss.str());
-    ss.str("");
+    addLabelInstr(whileBodyLabel);
 
-    stu.addStmt(LABEL_PREFIX + trueLabel + LABEL_SUFFIX);
-    const Stmt *thenBody = whileStmt->getBody();
-    if (thenBody)
-      convertStmt(thenBody);
+    const Stmt *body = whileStmt->getBody();
+    if (body) { convertStmt(body); }
 
     // unconditional jump to startConditionLabel
-    ss << "instr.GotoI(\"" + startConditionLabel + "\")";
-    stu.addStmt(ss.str());
-    ss.str("");
+    addGotoInstr(whileCondLabel);
 
-    // while has no else block but we keep the label for appropriate jumps
-    stu.addStmt(LABEL_PREFIX + falseLabel + LABEL_SUFFIX);
-    stu.addStmt(LABEL_PREFIX + endConditionLabel + LABEL_SUFFIX);
+    addLabelInstr(whileExitLabel);
+
     return SlangExpr{}; // return empty expression
-
   } // convertWhileStmt()
 
   SlangExpr convertDoStmt(const DoStmt *doStmt) const {
-    std::stringstream ss;
+    std::string id = stu.genNextLabelCountStr();
+    std::string doEntry = "DoEntry" + id;
+    std::string doExit = "DoExit" + id;
 
-    // use normal label in this case for true
-    ss << "NormalLabel : " << stu.nextNormalLabelCount();
-    std::string normalLabel = ss.str();
-    ss.str("");
+    addLabelInstr(doEntry);
 
-    ss << "StartOfCondition : " << stu.nextStartConditionLabelCount();
-    std::string startConditionLabel = ss.str();
-    ss.str("");
-
-    ss << "False : " << stu.nextFalseLabelCount();
-    std::string falseLabel = ss.str();
-    ss.str("");
-
-    ss << "EndOfCondition : " << stu.nextEndConditionLabelCount();
-    std::string endConditionLabel = ss.str();
-    ss.str("");
-
-    stu.addStmt(LABEL_PREFIX + normalLabel + LABEL_SUFFIX);
     const Stmt *body = doStmt->getBody();
-    if (body) {
-      convertStmt(body);
-    }
-    // unconditional jump to startConditionLabel
-    ss << "instr.GotoI(\"" + startConditionLabel + "\")";
-    stu.addStmt(ss.str());
-    ss.str("");
+    if (body) { convertStmt(body); }
 
-    stu.addStmt(LABEL_PREFIX + startConditionLabel + LABEL_SUFFIX);
     const Stmt *condition = doStmt->getCond();
-    SlangExpr conditionExpr = convertStmt(condition);
-    std::string locStr = getLocationString(condition);
-    SlangExpr tempExpr = genTmpVariable(conditionExpr.qualType, locStr);
+    SlangExpr conditionExpr = convertToTmp(convertStmt(condition));
 
-    ss << "instr.AssignI(" << tempExpr.expr << ", " << conditionExpr.expr << ")";
-    stu.addStmt(ss.str());
-    ss.str("");
+    addCondInstr(conditionExpr.expr,
+        doEntry, doExit, getLocationString(condition));
 
-    ss << "instr.CondI(" << tempExpr.expr << ", \"" << normalLabel << "\""
-       << ", "
-       << "\"" << falseLabel
-       << "\""
-          ")";
-    stu.addStmt(ss.str());
-    ss.str("");
+    addLabelInstr(doExit);
 
-    // do has no else block but we keep the label for appropriate jumps
-    stu.addStmt(LABEL_PREFIX + falseLabel + LABEL_SUFFIX);
-    stu.addStmt(LABEL_PREFIX + endConditionLabel + LABEL_SUFFIX);
     return SlangExpr{}; // return empty expression
-
   } // convertDoStmt()
 
   SlangExpr convertForStmt(const ForStmt *forStmt) const {
-    std::stringstream ss;
+    std::string id = stu.genNextLabelCountStr();
+    std::string forCondLabel = "ForCond" + id;
+    std::string forBodyLabel = "ForBody" + id;
+    std::string forExitLabel = "ForExit" + id;
 
-    // init and update part go under normal label
-    ss << "NormalLabel : " << stu.nextNormalLabelCount();
-    std::string normalLabelInit = ss.str();
-    ss.str("");
-
-    ss << "NormalLabel : " << stu.nextNormalLabelCount();
-    std::string normalLabelUpdate = ss.str();
-    ss.str("");
-
-    ss << "StartOfCondition : " << stu.nextStartConditionLabelCount();
-    std::string startConditionLabel = ss.str();
-    ss.str("");
-
-    ss << "True : " << stu.nextTrueLabelCount();
-    std::string trueLabel = ss.str();
-    ss.str("");
-
-    ss << "False : " << stu.nextFalseLabelCount();
-    std::string falseLabel = ss.str();
-    ss.str("");
-
-    ss << "EndOfCondition : " << stu.nextEndConditionLabelCount();
-    std::string endConditionLabel = ss.str();
-    ss.str("");
-
-    // init
-    stu.addStmt(LABEL_PREFIX + normalLabelInit + LABEL_SUFFIX);
+    // for init
     const Stmt *init = forStmt->getInit();
-    if (init) {
-      convertStmt(init);
-    }
-    ss << "instr.GotoI(\"" + startConditionLabel + "\")";
-    stu.addStmt(ss.str());
-    ss.str("");
+    if (init) { convertStmt(init); }
 
-    // condition
-    stu.addStmt(LABEL_PREFIX + startConditionLabel + LABEL_SUFFIX);
+    // for condition
     const Stmt *condition = forStmt->getCond();
+
+    addLabelInstr(forCondLabel);
+
     if (condition) {
-      SlangExpr conditionExpr = convertStmt(condition);
-      std::string locStr = getLocationString(condition);
-      SlangExpr tempExpr = genTmpVariable(conditionExpr.qualType, locStr);
+      SlangExpr conditionExpr = convertToTmp(convertStmt(condition));
 
-      ss << "instr.AssignI(" << tempExpr.expr << ", " << conditionExpr.expr << ")";
-      stu.addStmt(ss.str());
-      ss.str("");
-
-      ss << "instr.CondI(" << tempExpr.expr << ", \"" << trueLabel << "\""
-         << ", "
-         << "\"" << falseLabel
-         << "\""
-            ")";
-      stu.addStmt(ss.str());
-      ss.str("");
+      addCondInstr(conditionExpr.expr,
+          forBodyLabel, forExitLabel, getLocationString(condition));
     }
 
-    // body
-    stu.addStmt(LABEL_PREFIX + trueLabel + LABEL_SUFFIX);
-    const Stmt *thenBody = forStmt->getBody();
-    if (thenBody) {
-      convertStmt(thenBody);
-    }
-    // unconditional jump to update
-    ss << "instr.GotoI(\"" + normalLabelUpdate + "\")";
-    stu.addStmt(ss.str());
-    ss.str("");
+    // for body
+    addLabelInstr(forBodyLabel);
 
-    // increment/update
-    stu.addStmt(LABEL_PREFIX + normalLabelUpdate + LABEL_SUFFIX);
+    const Stmt *body = forStmt->getBody();
+    if (body) { convertStmt(body); }
+
     const Stmt *inc = forStmt->getInc();
-    if (inc) {
-      convertStmt(inc);
-    }
-    // unconditional jump to startConditionLabel
-    ss << "instr.GotoI(\"" + startConditionLabel + "\")";
-    stu.addStmt(ss.str());
-    ss.str("");
+    if (inc) { convertStmt(inc); }
 
-    // for has no else block but we keep the label for appropriate jumps
-    stu.addStmt(LABEL_PREFIX + falseLabel + LABEL_SUFFIX);
-    stu.addStmt(LABEL_PREFIX + endConditionLabel + LABEL_SUFFIX);
+    addGotoInstr(forCondLabel); // jump to for cond
+    addLabelInstr(forExitLabel); // for exit
+
     return SlangExpr{}; // return empty expression
-
   } // convertForStmt()
 
   SlangExpr convertImplicitCastExpr(const ImplicitCastExpr *stmt) const {
@@ -992,6 +907,7 @@ public:
     SlangExpr slangExpr;
     slangExpr.expr = ss.str();
     slangExpr.qualType = il->getType();
+    slangExpr.locStr = getLocationString(il);
 
     return slangExpr;
   } // convertIntegerLiteral()
@@ -1036,6 +952,7 @@ public:
     SlangExpr slangExpr;
     slangExpr.expr = ss.str();
     slangExpr.qualType = fl->getType();
+    slangExpr.locStr = getLocationString(fl);
 
     return slangExpr;
   } // convertFloatingLiteral()
@@ -1115,6 +1032,68 @@ public:
     }
   } // convertDeclRefExpr()
 
+  // a || b , a && b
+  SlangExpr convertLogicalOp(const BinaryOperator *binOp) const {
+    std::string nextCheck;
+    std::string tmpReAssign;
+    std::string exitLabel;
+
+    std::string op;
+    std::string id = stu.genNextLabelCountStr();
+    switch(binOp->getOpcode()) {
+      case BO_LOr:
+        op = "||";
+        nextCheck = "NextCheckLor" + id;
+        tmpReAssign = "TmpAssignLor" + id;
+        exitLabel = "ExitLor" + id;
+        break;
+      case BO_LAnd:
+        op = "&&";
+        nextCheck = "NextCheckLand" + id;
+        tmpReAssign = "TmpAssignLand" + id;
+        exitLabel = "ExitLand" + id;
+        break;
+      default: SLANG_ERROR("ERROR:unknownLogicalOp"); break;
+    }
+
+    auto it = binOp->child_begin();
+    const Stmt *leftOprStmt = *it;
+    ++it;
+    const Stmt *rightOprStmt = *it;
+
+    SlangExpr trueValue;
+    SlangExpr falseValue;
+    trueValue.expr = "expr.LitE(1, " + getLocationString(binOp) + ")";
+    falseValue.expr = "expr.LitE(0, " + getLocationString(binOp) + ")";
+    trueValue.locStr = falseValue.locStr = getLocationString(binOp);
+
+    // assign tmp = 1
+    SlangExpr tmpVar = genTmpVariable("types.Int32", getLocationString(binOp));
+    addAssignInstr(tmpVar, trueValue, getLocationString(binOp));
+
+    // check first part a ||, a &&
+    SlangExpr leftOprExpr = convertStmt(leftOprStmt);
+    if (op == "||") {
+      addCondInstr(leftOprExpr.expr, exitLabel, nextCheck, leftOprExpr.locStr);
+    } else {
+      addCondInstr(leftOprExpr.expr, nextCheck, tmpReAssign, leftOprExpr.locStr);
+    }
+
+    // check second part || b, && b
+    addLabelInstr(nextCheck);
+    SlangExpr rightOprExpr = convertStmt(rightOprStmt);
+    addCondInstr(rightOprExpr.expr, exitLabel, tmpReAssign, leftOprExpr.locStr);
+
+    // assigne tmp = 0
+    addLabelInstr(tmpReAssign);
+    addAssignInstr(tmpVar, falseValue, getLocationString(binOp));
+
+    // exit label
+    addLabelInstr(exitLabel);
+
+    return tmpVar;
+  } // convertLogicalOp()
+
   SlangExpr convertUnaryOperator(const UnaryOperator *unOp) const {
     SlangExpr slangExpr;
 
@@ -1126,83 +1105,36 @@ public:
   SlangExpr convertBinaryOperator(const BinaryOperator *binOp) const {
     SlangExpr slangExpr;
 
-    std::string locStr = getLocationString(binOp);
-
     if (binOp->isAssignmentOp()) {
       return convertAssignmentOp(binOp);
     } else if (binOp->isCompoundAssignmentOp()) {
-      return slangExpr;
-      // return convertCompoundAssignmentOp(binOp);
+      return convertCompoundAssignmentOp(binOp);
+    } else if (binOp->isLogicalOp()) {
+      return convertLogicalOp(binOp);
     }
 
     std::string op;
     switch (binOp->getOpcode()) {
-    case BO_Add:
-      op = "op.BO_ADD";
-      break;
+    // NOTE : && and || are handled in convertConditionalOp()
 
-    case BO_Sub:
-      op = "op.BO_SUB";
-      break;
+    case BO_Add: op = "op.BO_ADD"; break;
+    case BO_Sub: op = "op.BO_SUB"; break;
+    case BO_Mul: op = "op.BO_MUL"; break;
+    case BO_Div: op = "op.BO_DIV"; break;
+    case BO_Rem: op = "op.BO_MOD"; break;
 
-    case BO_Mul:
-      op = "op.BO_MUL";
-      break;
+    case BO_LT: op = "op.BO_LT"; break;
+    case BO_LE: op = "op.BO_LE"; break;
+    case BO_EQ: op = "op.BO_EQ"; break;
+    case BO_NE: op = "op.BO_NE"; break;
+    case BO_GE: op = "op.BO_GE"; break;
+    case BO_GT: op = "op.BO_GT"; break;
 
-    case BO_Div:
-      op = "op.BO_DIV";
-      break;
+    case BO_Or: op = "op.BO_BIT_OR"; break;
+    case BO_And: op = "op.BO_BIT_AND"; break;
+    case BO_Xor: op = "op.BO_BIT_XOR"; break;
 
-    case BO_Rem:
-      op = "op.BO_MOD";
-      break;
-
-    case BO_LT:
-      op = "op.BO_LT";
-      break;
-
-    case BO_LE:
-      op = "op.BO_LE";
-      break;
-
-    case BO_EQ:
-      op = "op.BO_EQ";
-      break;
-
-    case BO_NE:
-      op = "op.BO_NE";
-      break;
-
-    case BO_GE:
-      op = "op.BO_GE";
-      break;
-
-    case BO_GT:
-      op = "op.BO_GT";
-      break;
-
-    case BO_Or:
-      op = "op.BO_BIT_OR";
-      break;
-    case BO_And:
-      op = "op.BO_BIT_AND";
-      break;
-
-    case BO_Xor:
-      op = "op.BO_BIT_XOR";
-      break;
-
-    case BO_LOr:
-      op = "op.BO_LOGICAL_OR";
-      break;
-
-    case BO_LAnd:
-      op = "op.BO_LOGICAL_AND";
-      break;
-
-    default:
-      op = "ERROR:binOp";
-      break;
+    default: op = "ERROR:binOp"; break;
     }
 
     auto it = binOp->child_begin();
@@ -1210,48 +1142,78 @@ public:
     ++it;
     const Stmt *rightOprStmt = *it;
 
-    SlangExpr rightOprExpr = convertStmt(rightOprStmt);
     SlangExpr leftOprExpr = convertStmt(leftOprStmt);
+    SlangExpr rightOprExpr = convertStmt(rightOprStmt);
 
-    if (rightOprExpr.compound) {
-      rightOprExpr = convertToTmpAssignment(rightOprExpr);
-    }
-
-    if (leftOprExpr.compound) {
-      leftOprExpr = convertToTmpAssignment(leftOprExpr);
-    }
-
-    std::stringstream ss;
-    ss << "expr.BinaryE(" << leftOprExpr.expr;
-    ss << ", " << op;
-    ss << ", " << rightOprExpr.expr;
-    ss << ", " << locStr << ")"; // close expr.BinaryE(...
-
-    slangExpr.expr = ss.str();
-    slangExpr.qualType = binOp->getType();
-    slangExpr.locStr = locStr;
-    slangExpr.compound = true;
+    slangExpr = createBinaryExpr(leftOprExpr,
+        op, rightOprExpr, getLocationString(binOp));
 
     return slangExpr;
   } // convertBinaryOperator()
 
   // stores the given expression into a tmp variable
-  SlangExpr convertToTmpAssignment(const SlangExpr slangExpr) const {
-    SlangExpr tmpExpr = genTmpVariable(slangExpr.qualType, slangExpr.locStr);
-    std::stringstream ss;
+  SlangExpr convertToTmp(SlangExpr slangExpr) const {
+    if (slangExpr.compound) {
+      SlangExpr tmpExpr;
+      if (slangExpr.qualType.isNull()) {
+        tmpExpr = genTmpVariable("types.Int32", slangExpr.locStr);
+      } else {
+        tmpExpr = genTmpVariable(slangExpr.qualType, slangExpr.locStr);
+      }
+      std::stringstream ss;
 
-    ss << "instr.AssignI(" << tmpExpr.expr << ", " << slangExpr.expr;
-    ss << ", " << slangExpr.locStr << ")"; // close instr.AssignI(...
-    stu.addStmt(ss.str());
+      ss << "instr.AssignI(" << tmpExpr.expr << ", " << slangExpr.expr;
+      ss << ", " << slangExpr.locStr << ")"; // close instr.AssignI(...
+      stu.addStmt(ss.str());
 
-    return tmpExpr;
+      return tmpExpr;
+    } else {
+      return slangExpr;
+    }
   } // convertToTmpAssignment()
+
+  SlangExpr convertCompoundAssignmentOp(const BinaryOperator *binOp) const {
+    SlangExpr slangExpr;
+
+    auto it = binOp->child_begin();
+    const Stmt *lhs = *it;
+    const Stmt *rhs = *(++it);
+
+    SlangExpr rhsExpr = convertStmt(rhs);
+    SlangExpr lhsExpr = convertStmt(lhs);
+
+    if (lhsExpr.compound && rhsExpr.compound) {
+      rhsExpr = convertToTmp(rhsExpr);
+    }
+
+    std::string op;
+    switch(binOp->getOpcode()) {
+      case BO_ShlAssign: op = "BO_LSHIFT"; break;
+      case BO_ShrAssign: op = "BO_RSHIFT"; break;
+
+      case BO_OrAssign: op = "BO_BIT_OR"; break;
+      case BO_AndAssign: op = "BO_BIT_AND"; break;
+      case BO_XorAssign: op = "BO_BIT_XOR"; break;
+
+      case BO_AddAssign: op = "BO_ADD"; break;
+      case BO_SubAssign: op = "BO_SUB"; break;
+      case BO_MulAssign: op = "BO_MUL"; break;
+      case BO_DivAssign: op = "BO_DIV"; break;
+      case BO_RemAssign: op = "BO_MOD"; break;
+
+      default: op = "ERROR:compoundAssignOp"; break;
+    }
+
+    SlangExpr newRhsExpr = convertToTmp(createBinaryExpr(
+        lhsExpr, op, rhsExpr, getLocationString(binOp)));
+
+    addAssignInstr(lhsExpr, newRhsExpr, getLocationString(binOp));
+
+    return slangExpr;
+  } // convertCompoundAssignmentOp()
 
   SlangExpr convertAssignmentOp(const BinaryOperator *binOp) const {
     SlangExpr lhsExpr, rhsExpr;
-    std::stringstream ss;
-
-    std::string locStr = getLocationString(binOp);
 
     auto it = binOp->child_begin();
     const Stmt *lhs = *it;
@@ -1261,12 +1223,10 @@ public:
     lhsExpr = convertStmt(lhs);
 
     if (lhsExpr.compound && rhsExpr.compound) {
-      rhsExpr = convertToTmpAssignment(rhsExpr);
+      rhsExpr = convertToTmp(rhsExpr);
     }
 
-    ss << "instr.AssignI(" << lhsExpr.expr << ", " << rhsExpr.expr;
-    ss << ", " << locStr << ")"; // close instr.AssignI(...
-    stu.addStmt(ss.str());
+    addAssignInstr(lhsExpr, rhsExpr, getLocationString(binOp));
 
     return lhsExpr;
   } // convertAssignmentOp()
@@ -1543,6 +1503,34 @@ public:
 
   // BOUND START: helper_routines
 
+  SlangExpr genTmpVariable(std::string typeStr, std::string locStr) const {
+    std::stringstream ss;
+    SlangExpr slangExpr{};
+
+    // STEP 1: Populate a SlangVar object with unique name.
+    SlangVar slangVar{};
+    slangVar.id = stu.nextTmpId();
+    ss << "t." << slangVar.id;
+    slangVar.setLocalVarName(ss.str(), stu.getCurrFuncName());
+    slangVar.typeStr = typeStr;
+
+    // STEP 2: Add to the var map.
+    // FIXME: The var's 'id' here should be small enough to not interfere with uint64_t addresses.
+    stu.addVar(slangVar.id, slangVar);
+
+    // STEP 3: generate var expression.
+    ss.str(""); // empty the stream
+    ss << "expr.VarE(\"" << slangVar.name << "\"";
+    ss << ", " << locStr << ")";
+
+    slangExpr.expr = ss.str();
+    slangExpr.locStr = locStr;
+    // slangExpr.qualType = qt;
+    slangExpr.nonTmpVar = false;
+
+    return slangExpr;
+  } // genTmpVariable()
+
   SlangExpr genTmpVariable(QualType qt, std::string locStr) const {
     std::stringstream ss;
     SlangExpr slangExpr{};
@@ -1624,6 +1612,79 @@ public:
     qt.removeLocalVolatile();
     return qt;
   }
+
+  void addGotoInstr(std::string& label) const {
+    std::stringstream ss;
+    ss << "instr.GotoI(\"" << label << "\")";
+    stu.addStmt(ss.str());
+  }
+
+  void addLabelInstr(std::string& label) const {
+    std::stringstream ss;
+    ss << "instr.LabelI(\"" << label << "\")";
+    stu.addStmt(ss.str());
+  }
+
+  void addCondInstr(std::string& expr,
+      std::string& trueLabel, std::string& falseLabel, std::string locStr) const {
+    std::stringstream ss;
+    ss << "instr.CondI(" << expr;
+    ss << ", \"" << trueLabel << "\"";
+    ss << ", \"" << falseLabel << "\"";
+    ss << ", " << locStr << ")";
+    stu.addStmt(ss.str());
+  }
+
+  void addAssignInstr(SlangExpr& lhs, SlangExpr rhs, std::string locStr) const {
+    std::stringstream ss;
+    if (lhs.compound && rhs.compound) {
+      rhs = convertToTmp(rhs);
+    }
+    ss << "instr.AssignI(" << lhs.expr;
+    ss << ", " << rhs.expr << ", " << locStr << ")";
+    stu.addStmt(ss.str());
+  }
+
+  // Note: unlike createBinaryExpr, createUnaryExpr doesn't convert its expr to tmp expr.
+  SlangExpr createUnaryExpr(std::string op,
+      SlangExpr expr, std::string locStr, QualType qt) const {
+    SlangExpr unaryExpr;
+
+    // expr = convertToTmp(expr); // NO CONVERSION TO TMP
+
+    std::stringstream ss;
+    ss << "expr.UnaryE(" << op;
+    ss << ", " << expr.expr;
+    ss << ", " << locStr << ")";
+
+    unaryExpr.expr = ss.str();
+    unaryExpr.qualType = qt;
+    unaryExpr.compound = true;
+    unaryExpr.locStr = locStr;
+
+    return unaryExpr;
+  } // createBinaryExpr()
+
+  SlangExpr createBinaryExpr(SlangExpr lhsExpr,
+      std::string op, SlangExpr rhsExpr, std::string locStr) const {
+    SlangExpr binaryExpr;
+
+    lhsExpr = convertToTmp(lhsExpr);
+    rhsExpr = convertToTmp(rhsExpr);
+
+    std::stringstream ss;
+    ss << "expr.BinaryE(" << lhsExpr.expr;
+    ss << ", " << op;
+    ss << ", " << rhsExpr.expr;
+    ss << ", " << locStr << ")";
+
+    binaryExpr.expr = ss.str();
+    binaryExpr.qualType = lhsExpr.qualType;
+    binaryExpr.compound = true;
+    binaryExpr.locStr = locStr;
+
+    return binaryExpr;
+  } // createBinaryExpr()
 
   // BOUND END  : helper_routines
 };

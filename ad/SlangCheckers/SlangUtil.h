@@ -30,7 +30,7 @@
         llvm::errs() << "\n  " << slang::Util::getDateTimeString() << ": TRACE ("                  \
                      << SLANG_TRACE_LEVEL << "):" << __FILE__ << ":" << __func__                   \
                      << "():" << __LINE__ << ":\n"                                                 \
-                     << XX;                                                                        \
+                     << XX << "\n";                                                                        \
     }
 
 #define SLANG_DEBUG(XX)                                                                            \
@@ -38,7 +38,7 @@
         llvm::errs() << "\n  " << slang::Util::getDateTimeString() << ": DEBUG ("                  \
                      << SLANG_DEBUG_LEVEL << "):" << __FILE__ << ":" << __func__                   \
                      << "():" << __LINE__ << ":\n"                                                 \
-                     << XX;                                                                        \
+                     << XX << "\n";                                                                        \
     }
 
 #define SLANG_INFO(XX)                                                                             \
@@ -46,7 +46,7 @@
         llvm::errs() << "\n  " << slang::Util::getDateTimeString() << ": INFO  ("                  \
                      << SLANG_INFO_LEVEL << "):" << __FILE__ << ":" << __func__                    \
                      << "():" << __LINE__ << ":\n"                                                 \
-                     << XX;                                                                        \
+                     << XX << "\n";                                                                        \
     }
 
 #define SLANG_EVENT(XX)                                                                            \
@@ -54,7 +54,7 @@
         llvm::errs() << "\n  " << slang::Util::getDateTimeString() << ": EVENT ("                  \
                      << SLANG_EVENT_LEVEL << "):" << __FILE__ << ":" << __func__                   \
                      << "():" << __LINE__ << ":\n"                                                 \
-                     << XX;                                                                        \
+                     << XX << "\n";                                                                        \
     }
 
 #define SLANG_ERROR(XX)                                                                            \
@@ -62,7 +62,7 @@
         llvm::errs() << "\n  " << slang::Util::getDateTimeString() << ": ERROR ("                  \
                      << SLANG_ERROR_LEVEL << "):" << __FILE__ << ":" << __func__                   \
                      << "():" << __LINE__ << ":\n"                                                 \
-                     << XX;                                                                        \
+                     << XX << "\n";                                                                        \
     }
 
 #define SLANG_FATAL(XX)                                                                            \
@@ -70,7 +70,7 @@
         llvm::errs() << "\n  " << slang::Util::getDateTimeString() << ": FATAL ("                  \
                      << SLANG_FATAL_LEVEL << "):" << __FILE__ << ":" << __func__                   \
                      << "():" << __LINE__ << ":\n"                                                 \
-                     << XX;                                                                        \
+                     << XX << "\n";                                                                        \
     }
 
 namespace slang {

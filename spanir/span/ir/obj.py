@@ -72,7 +72,7 @@ class Func (ObjT):
     self.bbEdges = bbEdges if bbEdges else []
     self.instrSeq = instrSeq
     if instrSeq:
-      basicBlocks, bbEdges = self.genBasicBlocks(instrSeq)
+      self.basicBlocks, self.bbEdges = self.genBasicBlocks(instrSeq)
     self.loc = loc
 
   def hasBody(self) -> bool: return bool(self.basicBlocks)
@@ -91,7 +91,7 @@ class Func (ObjT):
     bbEdges: List[Tuple[BasicBlockIdT, BasicBlockIdT], EdgeLabelT] = []
     bbMap: Dict[BasicBlockIdT, List[InstrIT]] = {}
     labelRenaming: Dict[LabelNameT, BasicBlockIdT] = {}
-    currBbId = 0
+    maxBbId = 0
 
     # STEP 0: Record all target labels
     validTargets: Set[LabelNameT] = set()
@@ -102,46 +102,67 @@ class Func (ObjT):
         validTargets.add(insn.trueLabel)
         validTargets.add(insn.falseLabel)
 
-    # STEP 1: Record all leaders
-
     # put at least one instruction after the last LabelI
     if isinstance(instrSeq[-1], LabelI):
       instrSeq.append(NopI())
 
+    # STEP 1: Record all leaders and allocate them bb ids
     currLabelSet: Set[LabelNameT] = set()
     for index, insn in enumerate(instrSeq):
       if isinstance(insn, LabelI):
-        if insn.label not in validTargets: continue
         currLabelSet.add(insn.label)
         # assuming there is a next instruction
         if isinstance(instrSeq[index+1], LabelI):
           # don't add this instruction
           continue
         leaders.add(index+1) # add the non-label instr as target
-        currBbId += 1
+        maxBbId += 1
         for label in currLabelSet:
-          labelRenaming[label] = currBbId
+          if label not in validTargets: continue
+          labelRenaming[label] = maxBbId # allocate bb id
         currLabelSet.clear()
 
-    print(labelRenaming)
-
+    # divide into basic blocks
     instrs = []
     bbId = -1 # start block id
-    print(instrSeq)
+    # print(instrSeq)
     for insn in instrSeq:
+      # print(bbId, insn, instrs)
       if not isinstance(insn, (LabelI, GotoI, CondI, ReturnI)):
         instrs.append(insn)
         continue
 
+      if isinstance(insn, ReturnI):
+        instrs.append(insn)
+        bbMap[bbId] = instrs
+        instrs = []
+        bbId = None
+        continue
+
       if isinstance(insn, LabelI):
-        if insn.label not in validTargets: continue
-        bbId = labelRenaming[insn.label] # here bbId is set
+        if insn.label in validTargets:
+          oldBbId = bbId
+          bbId = labelRenaming[insn.label] # here bbId is set
+          if oldBbId is not None and oldBbId != bbId:
+            bbMap[oldBbId] = instrs
+            instrs = []
+            bbEdge = (oldBbId, bbId, UnCondEdge)
+            bbEdges.append(bbEdge)
         continue
 
       if isinstance(insn, GotoI):
-        bbEdge = (bbId, labelRenaming[insn.label], UnCondEdge)
+        if bbId is None:
+          maxBbId += 1
+          gotoBbId = maxBbId
+          bbMap[gotoBbId] = [] # an empty block
+        else: # a valid bb
+          gotoBbId = bbId
+          bbMap[gotoBbId] = instrs
+          instrs = []
+          bbId = None
+        bbEdge = (gotoBbId, labelRenaming[insn.label], UnCondEdge)
         bbEdges.append(bbEdge)
-        bbMap[bbId] = instrs
+        continue
 
       if isinstance(insn, CondI):
         bbEdge = (bbId, labelRenaming[insn.trueLabel], TrueEdge)
@@ -149,8 +170,14 @@ class Func (ObjT):
         bbEdge = (bbId, labelRenaming[insn.falseLabel], FalseEdge)
         bbEdges.append(bbEdge)
 
+        insn.trueLabel = "BB" + str(labelRenaming[insn.trueLabel])
+        insn.falseLabel = "BB" + str(labelRenaming[insn.falseLabel])
+
         instrs.append(insn)
         bbMap[bbId] = instrs
+        instrs = []
+        bbId = None
+        continue
 
       if isinstance(insn, ReturnI):
         bbEdge = (bbId, 0, UnCondEdge)
@@ -158,9 +185,8 @@ class Func (ObjT):
 
         instrs.append(insn)
         bbMap[bbId] = instrs
-
-      bbId = 0
-      instrs = []
+        bbId = None
+        continue
 
     if instrs: bbMap[bbId] = instrs
     bbMap[0] = [NopI()]  # end bb
@@ -170,11 +196,13 @@ class Func (ObjT):
     for bbEdge in bbEdges:
       bbIdsWithoutEdge.add(bbEdge[0])
 
-    for bbId in range(1, currBbId+1):
+    for bbId in range(1, maxBbId+1):
       if bbId not in bbIdsWithoutEdge:
         bbEdge = (bbId, 0, UnCondEdge) # connect to end bb
         bbEdges.append(bbEdge)
 
+    bbEdges = list(set(bbEdges))
+    # print(bbMap, bbEdges)
     return bbMap, bbEdges
 
   def __eq__(self,

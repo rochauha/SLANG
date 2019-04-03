@@ -1,5 +1,7 @@
 int main() {
-  int x = 0 + 5, y;
-  label1:
-  x = y;
+  int y = 10;
+  int x = y && y || y;
+  int z = y ? x : y;
+  return 0;
+  z = y;
 }

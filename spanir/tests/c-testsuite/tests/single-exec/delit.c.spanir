@@ -17,8 +17,11 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:y": types.Int32,
     "v:main:x": types.Int32,
+    "v:main:t.2": types.Int32,
+    "v:main:y": types.Int32,
+    "v:main:z": types.Int32,
+    "v:main:t.1": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -33,9 +36,25 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         instrSeq = [
-            instr.AssignI(expr.VarE("v:main:x", Loc(2,3)), expr.BinaryE(expr.LitE(0, Loc(2,11)), op.BO_ADD, expr.LitE(5, Loc(2,15)), Loc(2,11)), Loc(2,3)),
-            instr.LabelI("label1", Loc(3,3)),
-            instr.AssignI(expr.VarE("v:main:x", Loc(4,3)), expr.VarE("v:main:y", Loc(4,7)), Loc(4,3)),
+            instr.AssignI(expr.VarE("v:main:y", Loc(2,3)), expr.LitE(10, Loc(2,11)), Loc(2,3)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(3,11)), expr.LitE(1, Loc(3,11)), Loc(3,11)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(3,11)), expr.LitE(1, Loc(3,11)), Loc(3,11)),
+            instr.CondI(expr.VarE("v:main:y", Loc(3,11)), "NextCheckLand2", "TmpAssignLand2", Loc(3,11)),
+            instr.LabelI("NextCheckLand2"),
+            instr.CondI(expr.VarE("v:main:y", Loc(3,16)), "ExitLand2", "TmpAssignLand2", Loc(3,11)),
+            instr.LabelI("TmpAssignLand2"),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(3,11)), expr.LitE(0, Loc(3,11)), Loc(3,11)),
+            instr.LabelI("ExitLand2"),
+            instr.CondI(expr.VarE("v:main:t.2", Loc(3,11)), "ExitLor1", "NextCheckLor1", Loc(3,11)),
+            instr.LabelI("NextCheckLor1"),
+            instr.CondI(expr.VarE("v:main:y", Loc(3,21)), "ExitLor1", "TmpAssignLor1", Loc(3,11)),
+            instr.LabelI("TmpAssignLor1"),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(3,11)), expr.LitE(0, Loc(3,11)), Loc(3,11)),
+            instr.LabelI("ExitLor1"),
+            instr.AssignI(expr.VarE("v:main:x", Loc(3,3)), expr.VarE("v:main:t.1", Loc(3,11)), Loc(3,3)),
+            instr.AssignI(expr.VarE("v:main:z", Loc(4,3)), expr.SelectE(expr.VarE("v:main:y", Loc(4,11)), expr.VarE("v:main:x", Loc(4,15)), expr.VarE("v:main:y", Loc(4,19)), Loc(4,11)), Loc(4,3)),
+            instr.ReturnI(expr.LitE(0, Loc(5,10))),
+            instr.AssignI(expr.VarE("v:main:z", Loc(6,3)), expr.VarE("v:main:y", Loc(6,7)), Loc(6,3)),
         ], # instrSeq end.
       ), # f:main() end. 
 

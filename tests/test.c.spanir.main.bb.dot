@@ -1,0 +1,9 @@
+digraph {
+  node [shape=box]
+  START [label="[START]\ly = 300\lz = 0\l"];
+  BB1 [label="[BB1]\lx = 300\lx = x + y\lz = z - x\lt.1 = z > 0\lif (t.1) DoEntry1 DoExit1\l"];
+  END [label="[END]\lnop()\l"];
+  START -> BB1;
+  BB1 -> BB1 [color=green, penwidth=2];
+  BB1 -> END [color=red, penwidth=2];
+}
