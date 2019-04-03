@@ -33,8 +33,8 @@ OpNameT = str
 NumericT = TypeVar('NumericT', int, float)
 LitT = TypeVar('LitT', int, float, str)
 
-CfgNodeId = int
-BasicBlockId = int
+CfgNodeIdT = int
+BasicBlockIdT = int
 EdgeLabelT = str
 
 # edge labels

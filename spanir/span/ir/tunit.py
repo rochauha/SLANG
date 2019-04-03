@@ -42,7 +42,23 @@ class TUnit:
     self.description = description
     self.allVars = allVars
     self.allObjs = allObjs
-    
+    self.completeTheVarRecordTypes()
+
+  def completeTheVarRecordTypes(self):
+    """converts: "v:main:x": types.Struct("s:node") to
+
+    "v:main:x": types.Struct("s:node", [("val", types.Int)...])
+
+    It uses self.allObjs to complete the record types.
+    """
+
+    # TODO: FIXME
+    for vName in self.allVars.keys():
+      varType = self.allVars[vName]
+      if isinstance(varType, (types.Struct, types.Union)):
+        self.allVars[vName] = self.allObjs[varType.name]
+
+
   def __eq__(self,
              other: 'TUnit'
   ) -> bool:

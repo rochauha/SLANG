@@ -12,10 +12,11 @@ import io
 
 from span.util.logger import LS
 from span.ir.types import StructNameT, UnionNameT, FieldNameT, FuncNameT, VarNameT,\
-  EdgeLabelT, BasicBlockId, Void,\
-  Type, FuncSig, Loc
-from span.ir.instr import InstrIT
-from span.ir.types import BasicBlockId, FalseEdge, TrueEdge, UnCondEdge
+  EdgeLabelT, BasicBlockIdT, Void,\
+  Type, FuncSig, Loc, LabelNameT
+import span.ir.instr as instr
+from span.ir.instr import InstrIT, LabelI, GotoI, CondI, NopI, ReturnI
+from span.ir.types import BasicBlockIdT, FalseEdge, TrueEdge, UnCondEdge
 
 # object names: var name, func name, struct name, union name.
 ObjNamesT = str
@@ -58,9 +59,10 @@ class Func (ObjT):
                returnType: Type = Void,
                paramTypes: Optional[List[Type]] = None,
                variadic: bool = False,
-               basicBlocks: Optional[Dict[BasicBlockId, List[InstrIT]]] = None,
-               bbEdges: Optional[Set[Tuple[BasicBlockId, BasicBlockId, EdgeLabelT]]] =
+               basicBlocks: Optional[Dict[BasicBlockIdT, List[InstrIT]]] = None,
+               bbEdges: Optional[List[Tuple[BasicBlockIdT, BasicBlockIdT, EdgeLabelT]]] =
                None,
+               instrSeq: Optional[List[InstrIT]] = None,
                loc: Optional[Loc] = None
   ) -> None:
     self.name = name
@@ -68,9 +70,112 @@ class Func (ObjT):
     self.sig = FuncSig(returnType, paramTypes, variadic)
     self.basicBlocks = basicBlocks if basicBlocks else dict()
     self.bbEdges = bbEdges if bbEdges else []
+    self.instrSeq = instrSeq
+    if instrSeq:
+      basicBlocks, bbEdges = self.genBasicBlocks(instrSeq)
     self.loc = loc
 
   def hasBody(self) -> bool: return bool(self.basicBlocks)
+
+  @staticmethod
+  def genBasicBlocks(instrSeq: List[InstrIT]
+  ) -> Tuple[Dict[BasicBlockIdT, List[InstrIT]],
+             List[Tuple[BasicBlockIdT, BasicBlockIdT, EdgeLabelT]]]:
+    """Divides list of instructions into basic blocks.
+    Assumption: every target except the first instruction must have a label.
+    """
+
+    if not instrSeq: return dict(), set()
+
+    leaders: Set[int] = {0} # first instr is leader
+    bbEdges: List[Tuple[BasicBlockIdT, BasicBlockIdT], EdgeLabelT] = []
+    bbMap: Dict[BasicBlockIdT, List[InstrIT]] = {}
+    labelRenaming: Dict[LabelNameT, BasicBlockIdT] = {}
+    currBbId = 0
+
+    # STEP 0: Record all target labels
+    validTargets: Set[LabelNameT] = set()
+    for insn in instrSeq:
+      if isinstance(insn, GotoI):
+        validTargets.add(insn.label)
+      if isinstance(insn, CondI):
+        validTargets.add(insn.trueLabel)
+        validTargets.add(insn.falseLabel)
+
+    # STEP 1: Record all leaders
+
+    # put at least one instruction after the last LabelI
+    if isinstance(instrSeq[-1], LabelI):
+      instrSeq.append(NopI())
+
+    currLabelSet: Set[LabelNameT] = set()
+    for index, insn in enumerate(instrSeq):
+      if isinstance(insn, LabelI):
+        if insn.label not in validTargets: continue
+        currLabelSet.add(insn.label)
+        # assuming there is a next instruction
+        if isinstance(instrSeq[index+1], LabelI):
+          # don't add this instruction
+          continue
+        leaders.add(index+1) # add the non-label instr as target
+        currBbId += 1
+        for label in currLabelSet:
+          labelRenaming[label] = currBbId
+        currLabelSet.clear()
+
+    print(labelRenaming)
+
+    instrs = []
+    bbId = -1 # start block id
+    print(instrSeq)
+    for insn in instrSeq:
+      if not isinstance(insn, (LabelI, GotoI, CondI, ReturnI)):
+        instrs.append(insn)
+        continue
+
+      if isinstance(insn, LabelI):
+        if insn.label not in validTargets: continue
+        bbId = labelRenaming[insn.label] # here bbId is set
+        continue
+
+      if isinstance(insn, GotoI):
+        bbEdge = (bbId, labelRenaming[insn.label], UnCondEdge)
+        bbEdges.append(bbEdge)
+        bbMap[bbId] = instrs
+
+      if isinstance(insn, CondI):
+        bbEdge = (bbId, labelRenaming[insn.trueLabel], TrueEdge)
+        bbEdges.append(bbEdge)
+        bbEdge = (bbId, labelRenaming[insn.falseLabel], FalseEdge)
+        bbEdges.append(bbEdge)
+
+        instrs.append(insn)
+        bbMap[bbId] = instrs
+
+      if isinstance(insn, ReturnI):
+        bbEdge = (bbId, 0, UnCondEdge)
+        bbEdges.append(bbEdge)
+
+        instrs.append(insn)
+        bbMap[bbId] = instrs
+
+      bbId = 0
+      instrs = []
+
+    if instrs: bbMap[bbId] = instrs
+    bbMap[0] = [NopI()]  # end bb
+
+    # Connect all leaf bbs to end bb with unconditional edge
+    bbIdsWithoutEdge: Set[BasicBlockIdT] = set()
+    for bbEdge in bbEdges:
+      bbIdsWithoutEdge.add(bbEdge[0])
+
+    for bbId in range(1, currBbId+1):
+      if bbId not in bbIdsWithoutEdge:
+        bbEdge = (bbId, 0, UnCondEdge) # connect to end bb
+        bbEdges.append(bbEdge)
+
+    return bbMap, bbEdges
 
   def __eq__(self,
              other: 'Func'
@@ -119,7 +224,7 @@ class Func (ObjT):
     return True
 
   def genDotBbLabel(self,
-                    bbId: BasicBlockId
+                    bbId: BasicBlockIdT
   ) -> str:
     """Generate BB label to be used in printing dot graph."""
     bbLabel: str = ""
@@ -163,3 +268,13 @@ class Func (ObjT):
       ret = sio.getvalue()
     return ret
 
+
+import span.ir.expr as expr
+if __name__ == "__main__":
+  instrs = [
+    instr.AssignI(expr.VarE("v:main:x"), expr.LitE(10)),
+    instr.CondI(expr.VarE("v:main:x"), "True", "False"),
+    instr.LabelI("True"),
+    instr.LabelI("False"),
+  ]
+  print(Func.genBasicBlocks(instrs))
