@@ -33,6 +33,7 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         instrSeq = [
+            instr.AssignI(expr.VarE("v:main:x", Loc(2,3)), expr.BinaryE(expr.LitE(0, Loc(2,11)), op.BO_ADD, expr.LitE(5, Loc(2,15)), Loc(2,11)), Loc(2,3)),
             instr.LabelI("label1", Loc(3,3)),
             instr.AssignI(expr.VarE("v:main:x", Loc(4,3)), expr.VarE("v:main:y", Loc(4,7)), Loc(4,3)),
         ], # instrSeq end.

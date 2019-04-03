@@ -572,7 +572,7 @@ namespace {
         if (varDecl) {
           varName = valueDecl->getNameAsString();
           if (varName == "") {
-            // useful to name unnamed function parameters
+            // used only to name anonymous function parameters
             varName = "p." + Util::getNextUniqueIdStr();
           }
 
@@ -586,6 +586,19 @@ namespace {
             SLANG_ERROR("Unknown variable storage.")
           }
 
+          // check if it has a initialization body
+          if (varDecl->hasInit()) {
+            // yes it has, so initialize it
+            SlangExpr slangExpr = convertStmt(varDecl->getInit());
+            std::string locStr = getLocationString(valueDecl);
+            std::stringstream ss;
+            ss << "instr.AssignI(";
+            ss << "expr.VarE(\"" << slangVar.name << "\"";
+            ss << ", " << locStr << ")"; // close expr.VarE(...
+            ss << ", " << slangExpr.expr;
+            ss << ", " << locStr << ")"; // close instr.AssignI(...
+            stu.addStmt(ss.str());
+          }
         } else {
           SLANG_ERROR("ValueDecl not a VarDecl!")
         }
@@ -634,6 +647,9 @@ namespace {
       switch (stmt->getStmtClass()) {
         case Stmt::LabelStmtClass:
           return convertLabel(cast<LabelStmt>(stmt));
+
+        case Stmt::UnaryOperatorClass:
+          return convertUnaryOperator(cast<UnaryOperator>(stmt));
 
         case Stmt::BinaryOperatorClass:
           return convertBinaryOperator(cast<BinaryOperator>(stmt));
@@ -833,8 +849,18 @@ namespace {
       }
     } // convertDeclRefExpr()
 
+    SlangExpr convertUnaryOperator(const UnaryOperator *unOp) const {
+      SlangExpr slangExpr;
+
+      std::string locStr = getLocationString(unOp);
+
+      return slangExpr;
+    } // convertUnaryOperator()
+
     SlangExpr convertBinaryOperator(const BinaryOperator *binOp) const {
       SlangExpr slangExpr;
+
+      std::string locStr = getLocationString(binOp);
 
       if (binOp->isAssignmentOp()) {
         return convertAssignmentOp(binOp);
@@ -846,15 +872,59 @@ namespace {
         // return convertLogicalOp(binOp);
       }
 
+      std::string op;
       switch(binOp->getOpcode()) {
-        case BO_Add:
-          break;
-        default:
-          break;
+        case BO_Add: op = "op.BO_ADD"; break;
+        case BO_Sub: op = "op.BO_SUB"; break;
+        case BO_Mul: op = "op.BO_MUL"; break;
+
+        case BO_LOr:
+        case BO_LAnd:
+          //return convertLogicalOps(binOp);
+        default: op = "ERROR:binOp"; break;
       }
+
+      auto it = binOp->child_begin();
+      const Stmt *leftOprStmt = *it;
+      ++it;
+      const Stmt *rightOprStmt = *it;
+
+      SlangExpr rightOprExpr = convertStmt(rightOprStmt);
+      SlangExpr leftOprExpr = convertStmt(leftOprStmt);
+
+      if (rightOprExpr.compound) {
+        rightOprExpr = convertToTmpAssignment(rightOprExpr);
+      }
+
+      if (leftOprExpr.compound) {
+        leftOprExpr = convertToTmpAssignment(leftOprExpr);
+      }
+
+      std::stringstream ss;
+      ss << "expr.BinaryE(" << leftOprExpr.expr;
+      ss << ", " << op;
+      ss << ", " << rightOprExpr.expr;
+      ss << ", " << locStr << ")"; // close expr.BinaryE(...
+
+      slangExpr.expr = ss.str();
+      slangExpr.qualType = binOp->getType();
+      slangExpr.locStr = locStr;
+      slangExpr.compound = true;
 
       return slangExpr;
     } // convertBinaryOperator()
+
+    // stores the given expression into a tmp variable
+    SlangExpr convertToTmpAssignment(const SlangExpr slangExpr) const {
+      SlangExpr tmpExpr = genTmpVariable(slangExpr.qualType, slangExpr.locStr);
+      std::stringstream ss;
+
+      ss << "instr.AssignI(" << tmpExpr.expr << ", " << slangExpr.expr;
+      ss << ", " << slangExpr.locStr << ")"; // close instr.AssignI(...
+      stu.addStmt(ss.str());
+
+      return tmpExpr;
+    } // convertToTmpAssignment()
 
     SlangExpr convertAssignmentOp(const BinaryOperator *binOp) const {
       SlangExpr lhsExpr, rhsExpr;
@@ -868,6 +938,10 @@ namespace {
 
       rhsExpr = convertStmt(rhs);
       lhsExpr = convertStmt(lhs);
+
+      if (lhsExpr.compound && rhsExpr.compound) {
+        rhsExpr = convertToTmpAssignment(rhsExpr);
+      }
 
       ss << "instr.AssignI(" << lhsExpr.expr << ", " << rhsExpr.expr;
       ss << ", " << locStr << ")"; // close instr.AssignI(...
@@ -1152,6 +1226,34 @@ namespace {
 
     // BOUND START: helper_routines
 
+    SlangExpr genTmpVariable(QualType qt, std::string locStr) const {
+      std::stringstream ss;
+      SlangExpr slangExpr{};
+
+      // STEP 1: Populate a SlangVar object with unique name.
+      SlangVar slangVar{};
+      slangVar.id = stu.nextTmpId();
+      ss << "t." << slangVar.id;
+      slangVar.setLocalVarName(ss.str(), stu.getCurrFuncName());
+      slangVar.typeStr = convertClangType(qt);
+
+      // STEP 2: Add to the var map.
+      // FIXME: The var's 'id' here should be small enough to not interfere with uint64_t addresses.
+      stu.addVar(slangVar.id, slangVar);
+
+      // STEP 3: generate var expression.
+      ss.str(""); // empty the stream
+      ss << "expr.VarE(\"" << slangVar.name << "\"";
+      ss << ", " << locStr << ")";
+
+      slangExpr.expr = ss.str();
+      slangExpr.locStr = locStr;
+      slangExpr.qualType = qt;
+      slangExpr.nonTmpVar = false;
+
+      return slangExpr;
+    } // genTmpVariable()
+
     std::string getLocationString(const Stmt *stmt) const {
       std::stringstream ss;
       uint32_t line = 0;
@@ -1176,6 +1278,21 @@ namespace {
       ss << line << ",";
       col =
           FD->getASTContext().getSourceManager().getExpansionColumnNumber(recordDecl->getLocStart());
+      ss << col << ")";
+
+      return ss.str();
+    }
+
+    std::string getLocationString(const ValueDecl *valueDecl) const {
+      std::stringstream ss;
+      uint32_t line = 0;
+      uint32_t col = 0;
+
+      ss << "Loc(";
+      line = FD->getASTContext().getSourceManager().getExpansionLineNumber(valueDecl->getLocStart());
+      ss << line << ",";
+      col =
+          FD->getASTContext().getSourceManager().getExpansionColumnNumber(valueDecl->getLocStart());
       ss << col << ")";
 
       return ss.str();
