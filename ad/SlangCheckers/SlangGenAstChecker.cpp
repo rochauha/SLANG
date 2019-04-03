@@ -785,6 +785,11 @@ public:
     if (thenBody)
       convertStmt(thenBody);
 
+    // unconditional jump to trueLabel
+    ss << "instr.GotoI(\"" + startConditionLabel + "\")";
+    stu.addStmt(ss.str());
+    ss.str("");
+
     // while has no else block but we keep the label for appropriate jumps
     stu.addStmt(LABEL_PREFIX + falseLabel + LABEL_SUFFIX);
     stu.addStmt(LABEL_PREFIX + endConditionLabel + LABEL_SUFFIX);

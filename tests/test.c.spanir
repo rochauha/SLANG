@@ -17,9 +17,9 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:main:t.2": types.Int32,
     "v:main:x": types.Int32,
     "v:main:y": types.Int32,
-    "v:main:t.2": types.Int32,
     "v:main:z": types.Int32,
     "v:main:t.1": types.Int32,
   }, # end allVars dict
@@ -51,6 +51,7 @@ irTUnit.TUnit(
             instr.CondI(expr.VarE("v:main:t.2", Loc(17,9)), "True : 2", "False : 2"),
             instr.LabelI("True : 2"),
             instr.AssignI(expr.VarE("v:main:x", Loc(18,3)), expr.BinaryE(expr.LitE(300, Loc(18,7)), op.BO_ADD, expr.VarE("v:main:x", Loc(18,13)), Loc(18,7)), Loc(18,3)),
+            instr.GotoI("StartOfCondition : 2"),
             instr.LabelI("False : 2"),
             instr.LabelI("EndOfCondition : 2"),
             instr.AssignI(expr.VarE("v:main:z", Loc(20,2)), expr.BinaryE(expr.VarE("v:main:x", Loc(20,6)), op.BO_ADD, expr.VarE("v:main:y", Loc(20,10)), Loc(20,6)), Loc(20,2)),
