@@ -244,10 +244,13 @@ public:
   std::string fileName; // the current translation unit file name
   SlangFunc *currFunc;  // the current function being translated
 
+  uint64_t normalLabelCount;
   uint64_t trueLabelCount;
   uint64_t falseLabelCount;
   uint64_t startConditionLabelCount;
   uint64_t endConditionLabelCount;
+
+  uint64_t nextNormalLabelCount() { return ++normalLabelCount; }
 
   uint64_t nextTrueLabelCount() { return ++trueLabelCount; }
 
@@ -654,6 +657,9 @@ public:
     case Stmt::WhileStmtClass:
       return convertWhileStmt(cast<WhileStmt>(stmt));
 
+    case Stmt::ForStmtClass:
+      return convertForStmt(cast<ForStmt>(stmt));
+
     case Stmt::UnaryOperatorClass:
       return convertUnaryOperator(cast<UnaryOperator>(stmt));
 
@@ -785,7 +791,7 @@ public:
     if (thenBody)
       convertStmt(thenBody);
 
-    // unconditional jump to trueLabel
+    // unconditional jump to startConditionLabel
     ss << "instr.GotoI(\"" + startConditionLabel + "\")";
     stu.addStmt(ss.str());
     ss.str("");
@@ -796,6 +802,94 @@ public:
     return SlangExpr{}; // return empty expression
 
   } // convertWhileStmt()
+
+  SlangExpr convertForStmt(const ForStmt *forStmt) const {
+    std::stringstream ss;
+
+    // init and update part go under normal label
+    ss << "NormalLabel : " << stu.nextNormalLabelCount();
+    std::string normalLabelInit = ss.str();
+    ss.str("");
+
+    ss << "NormalLabel : " << stu.nextNormalLabelCount();
+    std::string normalLabelUpdate = ss.str();
+    ss.str("");
+
+    ss << "StartOfCondition : " << stu.nextStartConditionLabelCount();
+    std::string startConditionLabel = ss.str();
+    ss.str("");
+
+    ss << "True : " << stu.nextTrueLabelCount();
+    std::string trueLabel = ss.str();
+    ss.str("");
+
+    ss << "False : " << stu.nextFalseLabelCount();
+    std::string falseLabel = ss.str();
+    ss.str("");
+
+    ss << "EndOfCondition : " << stu.nextEndConditionLabelCount();
+    std::string endConditionLabel = ss.str();
+    ss.str("");
+
+    // init
+    stu.addStmt(LABEL_PREFIX + normalLabelInit + LABEL_SUFFIX);
+    const Stmt *init = forStmt->getInit();
+    if (init) {
+      convertStmt(init);
+    }
+    ss << "instr.GotoI(\"" + startConditionLabel + "\")";
+    stu.addStmt(ss.str());
+    ss.str("");
+
+    // condition
+    stu.addStmt(LABEL_PREFIX + startConditionLabel + LABEL_SUFFIX);
+    const Stmt *condition = forStmt->getCond();
+    if (condition) {
+      SlangExpr conditionExpr = convertStmt(condition);
+      std::string locStr = getLocationString(condition);
+      SlangExpr tempExpr = genTmpVariable(conditionExpr.qualType, locStr);
+
+      ss << "instr.AssignI(" << tempExpr.expr << ", " << conditionExpr.expr << ")";
+      stu.addStmt(ss.str());
+      ss.str("");
+
+      ss << "instr.CondI(" << tempExpr.expr << ", \"" << trueLabel << "\""
+         << ", "
+         << "\"" << falseLabel
+         << "\""
+            ")";
+      stu.addStmt(ss.str());
+      ss.str("");
+    }
+
+    // body
+    stu.addStmt(LABEL_PREFIX + trueLabel + LABEL_SUFFIX);
+    const Stmt *thenBody = forStmt->getBody();
+    if (thenBody) {
+      convertStmt(thenBody);
+    }
+    // unconditional jump to update
+    ss << "instr.GotoI(\"" + normalLabelUpdate + "\")";
+    stu.addStmt(ss.str());
+    ss.str("");
+
+    // increment/update
+    stu.addStmt(LABEL_PREFIX + normalLabelUpdate + LABEL_SUFFIX);
+    const Stmt *inc = forStmt->getInc();
+    if (inc) {
+      convertStmt(inc);
+    }
+    // unconditional jump to startConditionLabel
+    ss << "instr.GotoI(\"" + startConditionLabel + "\")";
+    stu.addStmt(ss.str());
+    ss.str("");
+
+    // for has no else block but we keep the label for appropriate jumps
+    stu.addStmt(LABEL_PREFIX + falseLabel + LABEL_SUFFIX);
+    stu.addStmt(LABEL_PREFIX + endConditionLabel + LABEL_SUFFIX);
+    return SlangExpr{}; // return empty expression
+
+  } // convertForStmt()
 
   SlangExpr convertImplicitCastExpr(const ImplicitCastExpr *stmt) const {
     // only one child is expected

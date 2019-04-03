@@ -18,10 +18,11 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.2": types.Int32,
+    "v:main:t.3": types.Int32,
     "v:main:x": types.Int32,
-    "v:main:y": types.Int32,
-    "v:main:z": types.Int32,
+    "v:main:i": types.Int32,
     "v:main:t.1": types.Int32,
+    "v:main:j": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -36,25 +37,25 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         instrSeq = [
-            instr.AssignI(expr.VarE("v:main:x", Loc(11,2)), expr.LitE(400, Loc(11,10)), Loc(11,2)),
-            instr.AssignI(expr.VarE("v:main:y", Loc(11,2)), expr.LitE(3400, Loc(11,19)), Loc(11,2)),
-            instr.AssignI(expr.VarE("v:main:z", Loc(11,2)), expr.LitE(0, Loc(11,29)), Loc(11,2)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(8,2)), expr.LitE(30, Loc(8,10)), Loc(8,2)),
+            instr.LabelI("NormalLabel : 1"),
+            instr.AssignI(expr.VarE("v:main:i", Loc(9,7)), expr.LitE(0, Loc(9,15)), Loc(9,7)),
+            instr.AssignI(expr.VarE("v:main:j", Loc(9,7)), expr.LitE(340, Loc(9,22)), Loc(9,7)),
+            instr.GotoI("StartOfCondition : 1"),
             instr.LabelI("StartOfCondition : 1"),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(13,6)), expr.VarE("v:main:x", Loc(13,6))),
-            instr.CondI(expr.VarE("v:main:t.1", Loc(13,6)), "True : 1", "False : 1"),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(9,27)), expr.BinaryE(expr.VarE("v:main:i", Loc(9,27)), op.BO_LT, expr.LitE(5, Loc(9,31)), Loc(9,27)), Loc(9,27)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(9,27)), expr.BinaryE(expr.VarE("v:main:t.1", Loc(9,27)), op.BO_LOGICAL_AND, expr.VarE("v:main:x", Loc(9,36)), Loc(9,27))),
+            instr.CondI(expr.VarE("v:main:t.2", Loc(9,27)), "True : 1", "False : 1"),
             instr.LabelI("True : 1"),
-            instr.AssignI(expr.VarE("v:main:y", Loc(14,3)), expr.LitE(400, Loc(14,7)), Loc(14,3)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(10,3)), expr.LitE(11111111111, Loc(10,7)), Loc(10,3)),
+            instr.GotoI("NormalLabel : 2"),
+            instr.LabelI("NormalLabel : 2"),
+            instr.AssignI(expr.VarE("v:main:i", Loc(9,39)), expr.BinaryE(expr.VarE("v:main:i", Loc(9,43)), op.BO_ADD, expr.LitE(3, Loc(9,47)), Loc(9,43)), Loc(9,39)),
+            instr.GotoI("StartOfCondition : 1"),
             instr.LabelI("False : 1"),
             instr.LabelI("EndOfCondition : 1"),
-            instr.LabelI("StartOfCondition : 2"),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(17,9)), expr.BinaryE(expr.VarE("v:main:x", Loc(17,9)), op.BO_GT, expr.LitE(54, Loc(17,13)), Loc(17,9))),
-            instr.CondI(expr.VarE("v:main:t.2", Loc(17,9)), "True : 2", "False : 2"),
-            instr.LabelI("True : 2"),
-            instr.AssignI(expr.VarE("v:main:x", Loc(18,3)), expr.BinaryE(expr.LitE(300, Loc(18,7)), op.BO_ADD, expr.VarE("v:main:x", Loc(18,13)), Loc(18,7)), Loc(18,3)),
-            instr.GotoI("StartOfCondition : 2"),
-            instr.LabelI("False : 2"),
-            instr.LabelI("EndOfCondition : 2"),
-            instr.AssignI(expr.VarE("v:main:z", Loc(20,2)), expr.BinaryE(expr.VarE("v:main:x", Loc(20,6)), op.BO_ADD, expr.VarE("v:main:y", Loc(20,10)), Loc(20,6)), Loc(20,2)),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(13,12)), expr.BinaryE(expr.VarE("v:main:x", Loc(13,12)), op.BO_MUL, expr.LitE(5, Loc(13,16)), Loc(13,12)), Loc(13,12)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(13,2)), expr.BinaryE(expr.LitE(999, Loc(13,6)), op.BO_ADD, expr.VarE("v:main:t.3", Loc(13,12)), Loc(13,6)), Loc(13,2)),
         ], # instrSeq end.
       ), # f:main() end. 
 
