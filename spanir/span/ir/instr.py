@@ -71,7 +71,7 @@ class InstrIT(types.AnyT):
 
 class AssignI(InstrIT):
   """Assignment statement.
-  Two forms only:
+  Two forms only: (runtime checked)
     VarE = ExprET
       or
     DerefE/ArrayE/MemberE = UnitET
@@ -97,9 +97,68 @@ class AssignI(InstrIT):
     if not self.rhs == other.rhs:
       if LS: _log.warning("Rhs doesn't match: %s, %s", self, other)
       return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc doesn't match: %s, %s", self, other)
+      return False
     return True
 
   def __str__(self): return f"{self.lhs} = {self.rhs}"
+
+  def __repr__(self): return self.__str__()
+
+class GotoI(InstrIT):
+  """goto xyz; instruction"""
+  def __init__(self,
+               label: types.LabelNameT = None,
+               loc: Optional[types.Loc] = None
+  ) -> None:
+    super().__init__(GOTO_INSTR_IC, loc)
+    self.label = label
+
+  def __eq__(self,
+             other: 'GotoI'
+  ) -> bool:
+    if not isinstance(other, GotoI):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.label == other.label:
+      if LS: _log.warning("Arg doesn't match: %s, %s", self, other)
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc doesn't match: %s, %s", self, other)
+      return False
+    return True
+
+  def __str__(self):
+    return f"goto self.label"
+
+  def __repr__(self): return self.__str__()
+
+class LabelI(InstrIT):
+  """label xyz: instruction"""
+  def __init__(self,
+               label: types.LabelNameT = None,
+               loc: Optional[types.Loc] = None
+  ) -> None:
+    super().__init__(GOTO_INSTR_IC, loc)
+    self.label = label
+
+  def __eq__(self,
+             other: 'LabelI'
+  ) -> bool:
+    if not isinstance(other, LabelI):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.label == other.label:
+      if LS: _log.warning("Arg doesn't match: %s, %s", self, other)
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc doesn't match: %s, %s", self, other)
+      return False
+    return True
+
+  def __str__(self):
+    return f"label {self.label}"
 
   def __repr__(self): return self.__str__()
 
@@ -107,10 +166,14 @@ class CondI(InstrIT):
   """A conditional instruction."""
   def __init__(self,
                arg: expr.UnitET,
+               trueLabel: types.LabelNameT = None,
+               falseLabel: types.LabelNameT = None,
                loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(COND_INSTR_IC, loc)
     self.arg = arg
+    self.trueLabel = trueLabel
+    self.falseLabel = falseLabel
 
   def __eq__(self,
              other: 'CondI'
@@ -121,10 +184,13 @@ class CondI(InstrIT):
     if not self.arg == other.arg:
       if LS: _log.warning("Arg doesn't match: %s, %s", self, other)
       return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc doesn't match: %s, %s", self, other)
+      return False
     return True
 
   def __str__(self):
-    return f"if ({self.arg})"
+    return f"if ({self.arg}) {self.trueLabel} {self.falseLabel}"
 
   def __repr__(self): return self.__str__()
 
@@ -145,6 +211,9 @@ class ReturnI(InstrIT):
       return False
     if not self.arg == other.arg:
       if LS: _log.warning("Arg doesn't match: %s, %s", self, other)
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc doesn't match: %s, %s", self, other)
       return False
     return True
 
@@ -167,6 +236,9 @@ class CallI(InstrIT):
       return False
     if not self.arg == other.arg:
       if LS: _log.warning("Arg doesn't match: %s, %s", self, other)
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc doesn't match: %s, %s", self, other)
       return False
     return True
 
@@ -196,6 +268,9 @@ class UseI(InstrIT):
     if not self.vars == other.vars:
       if LS: _log.warning("Vars Differ: %s, %s", self, other)
       return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc doesn't match: %s, %s", self, other)
+      return False
     return True
 
   def __str__(self): return f"use({self.vars})"
@@ -222,6 +297,9 @@ class ExReadI(InstrIT):
       return False
     if not self.vars == other.vars:
       if LS: _log.warning("Vars Differ: %s, %s", self, other)
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc doesn't match: %s, %s", self, other)
       return False
     return True
 
@@ -256,6 +334,9 @@ class CondReadI(InstrIT):
     if not self.rhs == other.rhs:
       if LS: _log.warning("Rhs Differs: %s, %s", self, other)
       return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc doesn't match: %s, %s", self, other)
+      return False
     return True
 
   def __str__(self): return f"condRead({self.lhs}, {self.rhs})"
@@ -279,6 +360,9 @@ class LiveI(InstrIT):
       return False
     if not self.vars == other.vars:
       if LS: _log.warning("Vars Differs: %s, %s", self, other)
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc doesn't match: %s, %s", self, other)
       return False
     return True
 
@@ -304,6 +388,9 @@ class UnDefValI(InstrIT):
     if not self.lhs == other.lhs:
       if LS: _log.warning("Var Differs: %s, %s", self, other)
       return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc doesn't match: %s, %s", self, other)
+      return False
     return True
 
   def __str__(self): return f"input({self.lhs})"
@@ -323,6 +410,9 @@ class BlockInfoI(InstrIT):
   ) -> bool:
     if not isinstance(other, BlockInfoI):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc doesn't match: %s, %s", self, other)
       return False
     return True
 
@@ -345,6 +435,9 @@ class NopI(InstrIT):
   ) -> bool:
     if not isinstance(other, NopI):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc doesn't match: %s, %s", self, other)
       return False
     return True
 

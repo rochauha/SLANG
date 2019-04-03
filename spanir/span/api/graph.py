@@ -12,7 +12,7 @@ import io
 
 from span.util.logger import LS
 import span.ir.instr as instr
-from span.ir.types import EdgeLabelT, FalseEdge, TrueEdge, UnCondEdge, BasicBlockId
+from span.ir.types import EdgeLabelT, FalseEdge, TrueEdge, UnCondEdge, BasicBlockIdT
 import span.ir.types as types
 import span.ir.obj as obj
 
@@ -105,11 +105,11 @@ class BbEdge:
 class BB:
   """A Basic Block."""
   def __init__(self,
-               id: BasicBlockId = 0,
+               id: BasicBlockIdT = 0,
                instrSeq: List[instr.InstrIT] = None,
-               predEdges: Optional[List[BbEdge]] = None, # predecessor basic blocks
-               succEdges: Optional[List[BbEdge]] = None, # successor basic blocks
-  ) -> None:
+               predEdges: Optional[List[BbEdge]] = None,  # predecessor basic blocks
+               succEdges: Optional[List[BbEdge]] = None,  # successor basic blocks
+               ) -> None:
     self.id = id  # id is user defined (unique within func)
     self.instrSeq = instrSeq
     self.cfgNodeSeq: List[CfgNode] = self.genCfgNodeSeq(instrSeq)
@@ -154,9 +154,9 @@ class Cfg(object):
   """A Cfg (body of a function)"""
   def __init__(self,
                funcName: types.FuncNameT,
-               inputBbMap: Dict[BasicBlockId, List[instr.InstrIT]],
-               inputBbEdges: List[Tuple[BasicBlockId, BasicBlockId, EdgeLabelT]]
-  ) -> None:
+               inputBbMap: Dict[BasicBlockIdT, List[instr.InstrIT]],
+               inputBbEdges: List[Tuple[BasicBlockIdT, BasicBlockIdT, EdgeLabelT]]
+               ) -> None:
     self.funcName = funcName
     self.inputBbMap = inputBbMap
     self.inputBbEdges = inputBbEdges
@@ -167,7 +167,7 @@ class Cfg(object):
     self.start: CfgNode = None
     self.end: CfgNode = None
 
-    self.bbMap: Dict[BasicBlockId, BB] = dict()
+    self.bbMap: Dict[BasicBlockIdT, BB] = dict()
     self.nodeMap: Dict[CfgNodeId, CfgNode] = dict()
     self.revPostOrder: List[CfgNode] = []
 
@@ -175,9 +175,9 @@ class Cfg(object):
     self.buildCfgStructure(inputBbMap, inputBbEdges)
 
   def buildCfgStructure(self,
-                        inputBbMap: Dict[BasicBlockId, List[instr.InstrIT]],
-                        inputBbEdges: List[Tuple[BasicBlockId, BasicBlockId, EdgeLabelT]]
-  ) -> None:
+                        inputBbMap: Dict[BasicBlockIdT, List[instr.InstrIT]],
+                        inputBbEdges: List[Tuple[BasicBlockIdT, BasicBlockIdT, EdgeLabelT]]
+                        ) -> None:
     """Builds the complete Cfg structure."""
     if not inputBbMap: return
 
@@ -210,9 +210,9 @@ class Cfg(object):
       self.nodeMap[newId] = node
 
   def connectNodes(self,
-                   bbMap: Dict[BasicBlockId, BB],
-                   inputBbEdges: List[Tuple[BasicBlockId, BasicBlockId, EdgeLabelT]]
-  ) -> None:
+                   bbMap: Dict[BasicBlockIdT, BB],
+                   inputBbEdges: List[Tuple[BasicBlockIdT, BasicBlockIdT, EdgeLabelT]]
+                   ) -> None:
     """Interconnects basic blocks and cfg nodes."""
     for startBbId, endBbId, edgeLabel in inputBbEdges:
       #STEP 2.1: Interconnect BBs with read ids.
