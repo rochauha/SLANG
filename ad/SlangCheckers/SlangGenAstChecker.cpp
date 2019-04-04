@@ -718,12 +718,74 @@ public:
     case Stmt::ArraySubscriptExprClass:
       return convertArraySubscriptExpr(cast<ArraySubscriptExpr>(stmt));
 
+    case Stmt::CallExprClass:
+      return convertCallExpr(cast<CallExpr>(stmt));
+
     default:
       SLANG_ERROR("Unhandled_Stmt: " << stmt->getStmtClassName())
     }
 
     return slangExpr;
   } // convertStmt()
+
+  // guaranteed to be a comma operator
+  SlangExpr convertBinaryCommaOp(const BinaryOperator *binOp) const {
+    auto it = binOp->child_begin();
+    const Stmt *leftOprnd = *it;
+    ++it;
+    const Stmt *rightOprnd = *it;
+
+    convertStmt(leftOprnd);
+
+    SlangExpr rightExpr = convertToTmp(convertStmt(rightOprnd));
+
+    return rightExpr;
+  } // convertBinaryCommaOp()
+
+  SlangExpr convertCallExpr(const CallExpr *callExpr) const {
+    SlangExpr slangExpr;
+
+    auto it = callExpr->child_begin();
+
+    const Stmt *callee = *it;
+    SlangExpr calleeExpr = convertToTmp(convertStmt(callee));
+
+    std::vector<const Stmt*> args;
+    ++it; // skip the callee expression
+    for (; it != callExpr->child_end(); ++it) {
+      args.push_back(*it);
+    }
+
+    std::stringstream ss;
+    ss << "expr.CallE(" << calleeExpr.expr;
+    if (args.size()) {
+      std::string prefix = "";
+      ss << ", [";
+      for (auto argIter = args.begin(); argIter != args.end(); ++argIter) {
+        SlangExpr tmpExpr = convertToTmp(convertStmt(*argIter));
+        ss << prefix << tmpExpr.expr;
+        if (prefix == "") {
+          prefix = ", ";
+        }
+      }
+      ss << "]";
+    }
+    ss << ", " << getLocationString(callExpr) <<  ")"; // close expr.CallE(...
+
+    slangExpr.expr = ss.str();
+    slangExpr.qualType = callExpr->getType();
+    slangExpr.locStr = getLocationString(callExpr);
+    slangExpr.compound = true;
+    ss.str("");
+
+    if (isTopLevel(callExpr)) {
+      ss << "instr.CallI(" << slangExpr.expr << ", " << slangExpr.locStr << ")";
+      stu.addStmt(ss.str());
+      return SlangExpr{}; // return empty expression
+    }
+
+    return slangExpr;
+  }
 
   SlangExpr convertArraySubscriptExpr(const ArraySubscriptExpr *arrayExpr) const {
     SlangExpr slangExpr;
@@ -1507,6 +1569,8 @@ public:
     case BO_Or: op = "op.BO_BIT_OR"; break;
     case BO_And: op = "op.BO_BIT_AND"; break;
     case BO_Xor: op = "op.BO_BIT_XOR"; break;
+
+    case BO_Comma: return convertBinaryCommaOp(binOp);
 
     default: op = "ERROR:binOp"; break;
     }

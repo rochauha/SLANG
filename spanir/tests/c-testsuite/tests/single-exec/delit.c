@@ -5,12 +5,26 @@ struct node {
   int x;
   struct val v;
 };
+int sum(int a, int b) {
+  return a + b;
+}
+
 int main() {
-  int arr[2][3];
-  arr[0][1] = 2;
-  int *x;
-  x = &(arr+1)[0][1];
-  int y = x[2];
+  int x, y;
+  x = 10;
+
+  y = 1 ,2, 3, ++x, 5;
+
+  return x + y;
+
+//  sum(10, 20);
+//  ---------
+//  int arr[2][3];
+//  arr[0][1] = 2;
+//  int *x;
+//  x = &(arr+1)[0][1];
+//  int y = x[2];
+//  ---------
 //  struct node n;
 //  struct node *n1;
 //  n1 = &n;

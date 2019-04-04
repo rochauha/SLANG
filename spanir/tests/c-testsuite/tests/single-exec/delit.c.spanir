@@ -17,10 +17,12 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:main:t.2": types.Int32,
+    "v:main:t.1": types.Int32,
+    "v:main:x": types.Int32,
+    "v:sum:a": types.Int32,
     "v:main:y": types.Int32,
-    "v:main:t.1": types.ConstSizeArray(of=types.ConstSizeArray(of=types.Int32, size=3), size=2),
-    "v:main:arr": types.ConstSizeArray(of=types.ConstSizeArray(of=types.Int32, size=3), size=2),
-    "v:main:x": types.Ptr(to=types.Int32),
+    "v:sum:b": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -35,12 +37,29 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         instrSeq = [
-            instr.AssignI(expr.ArrayE(expr.LitE(1, Loc(10,10)), expr.ArrayE(expr.LitE(0, Loc(10,7)), expr.VarE("v:main:arr", Loc(10,3)), Loc(10,3)), Loc(10,3)), expr.LitE(2, Loc(10,15)), Loc(10,3)),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(12,9)), expr.BinaryE(expr.VarE("v:main:arr", Loc(12,9)), op.BO_ADD, expr.LitE(1, Loc(12,13)), Loc(12,9)), Loc(12,9)),
-            instr.AssignI(expr.VarE("v:main:x", Loc(12,3)), expr.UnaryE(op.UO_ADDROF, expr.ArrayE(expr.LitE(1, Loc(12,19)), expr.ArrayE(expr.LitE(0, Loc(12,16)), expr.VarE("v:main:t.1", Loc(12,9)), Loc(12,8)), Loc(12,8)), Loc(12,7)), Loc(12,3)),
-            instr.AssignI(expr.VarE("v:main:y", Loc(13,3)), expr.ArrayE(expr.LitE(2, Loc(13,13)), expr.VarE("v:main:x", Loc(13,11)), Loc(13,11)), Loc(13,3)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(14,3)), expr.LitE(10, Loc(14,7)), Loc(14,3)),
+            instr.AssignI(expr.VarE("v:main:y", Loc(16,3)), expr.LitE(1, Loc(16,7)), Loc(16,3)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(16,18)), expr.BinaryE(expr.VarE("v:main:x", Loc(16,18)), op.BO_ADD, expr.LitE(1, Loc(16,16)), Loc(16,16)), Loc(16,16)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(16,18)), expr.VarE("v:main:x", Loc(16,18)), Loc(16,18)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(18,10)), expr.BinaryE(expr.VarE("v:main:x", Loc(18,10)), op.BO_ADD, expr.VarE("v:main:y", Loc(18,14)), Loc(18,10)), Loc(18,10)),
+            instr.ReturnI(expr.VarE("v:main:t.2", Loc(18,10))),
         ], # instrSeq end.
       ), # f:main() end. 
+
+    "f:sum":
+      obj.Func(
+        name = "f:sum",
+        paramNames = ["v:sum:a", "v:sum:b"],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        instrSeq = [
+            instr.AssignI(expr.VarE("v:sum:t.1", Loc(9,10)), expr.BinaryE(expr.VarE("v:sum:a", Loc(9,10)), op.BO_ADD, expr.VarE("v:sum:b", Loc(9,14)), Loc(9,10)), Loc(9,10)),
+            instr.ReturnI(expr.VarE("v:sum:t.1", Loc(9,10))),
+        ], # instrSeq end.
+      ), # f:sum() end. 
 
   }, # end allObjs dict
 ) # irTUnit.TUnit() ends
