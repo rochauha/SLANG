@@ -1,264 +1,242 @@
 
-  04-04-2019 06:48:07: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkASTCodeBody():524:
+  04-04-2019 10:26:33: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkASTCodeBody():506:
 BOUND START: SLANG_Generated_Output.
 
 
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleFuncNameAndType():566:
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleFuncNameAndType():548:
 AddingFunction: main
 
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkASTCodeBody():534:
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkASTCodeBody():516:
 main
 
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
 ConvertingStmt : CompoundStmt
 
-CompoundStmt 0x559e9bbe87e8
-|-DeclStmt 0x559e9bbe8428
-| `-VarDecl 0x559e9bbe83a8  used x 'int' cinit
-|   `-IntegerLiteral 0x559e9bbe8408 'int' 10
-`-SwitchStmt 0x559e9bbe8480
-  |-<<<NULL>>>
-  |-<<<NULL>>>
-  |-ImplicitCastExpr 0x559e9bbe8468 'int' <LValueToRValue>
-  | `-DeclRefExpr 0x559e9bbe8440 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-  `-CompoundStmt 0x559e9bbe87d0
-    `-CompoundStmt 0x559e9bbe87b8
-      `-IfStmt 0x559e9bbe8780
-        |-<<<NULL>>>
-        |-<<<NULL>>>
-        |-ImplicitCastExpr 0x559e9bbe84d8 'int' <LValueToRValue>
-        | `-DeclRefExpr 0x559e9bbe84b0 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-        |-CompoundStmt 0x559e9bbe8748
-        | |-CaseStmt 0x559e9bbe8510
-        | | |-IntegerLiteral 0x559e9bbe84f0 'int' 10
-        | | |-<<<NULL>>>
-        | | `-CompoundStmt 0x559e9bbe85c0
-        | |   |-BinaryOperator 0x559e9bbe8590 'int' '='
-        | |   | |-DeclRefExpr 0x559e9bbe8548 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-        | |   | `-IntegerLiteral 0x559e9bbe8570 'int' 2
-        | |   `-BreakStmt 0x559e9bbe85b8
-        | |-CaseStmt 0x559e9bbe8600
-        | | |-IntegerLiteral 0x559e9bbe85e0 'int' 30
-        | | |-<<<NULL>>>
-        | | `-BinaryOperator 0x559e9bbe8680 'int' '='
-        | |   |-DeclRefExpr 0x559e9bbe8638 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-        | |   `-IntegerLiteral 0x559e9bbe8660 'int' 3
-        | |-BreakStmt 0x559e9bbe86a8
-        | |-DefaultStmt 0x559e9bbe8720
-        | | `-BinaryOperator 0x559e9bbe86f8 'int' '='
-        | |   |-DeclRefExpr 0x559e9bbe86b0 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-        | |   `-IntegerLiteral 0x559e9bbe86d8 'int' 20
-        | `-BreakStmt 0x559e9bbe8740
-        `-<<<NULL>>>
+CompoundStmt 0x55a0a45548f0
+|-DeclStmt 0x55a0a4554548
+| |-VarDecl 0x55a0a4554428  used x 'int'
+| `-VarDecl 0x55a0a45544d0  used y 'int *'
+|-BinaryOperator 0x55a0a45545d0 'int *' '='
+| |-DeclRefExpr 0x55a0a4554560 'int *' lvalue Var 0x55a0a45544d0 'y' 'int *'
+| `-UnaryOperator 0x55a0a45545b0 'int *' prefix '&'
+|   `-DeclRefExpr 0x55a0a4554588 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+|-BinaryOperator 0x55a0a45546e8 'int' '='
+| |-DeclRefExpr 0x55a0a45545f8 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+| `-UnaryOperator 0x55a0a45546c8 'int' prefix '-'
+|   `-ParenExpr 0x55a0a45546a8 'int'
+|     `-BinaryOperator 0x55a0a4554680 'int' '+'
+|       |-ImplicitCastExpr 0x55a0a4554668 'int' <LValueToRValue>
+|       | `-DeclRefExpr 0x55a0a4554620 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+|       `-IntegerLiteral 0x55a0a4554648 'int' 10
+|-BinaryOperator 0x55a0a4554758 'int' '='
+| |-DeclRefExpr 0x55a0a4554710 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+| `-IntegerLiteral 0x55a0a4554738 'int' 10
+`-BinaryOperator 0x55a0a45548c8 'int' '='
+  |-DeclRefExpr 0x55a0a4554780 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+  `-BinaryOperator 0x55a0a45548a0 'int' '+'
+    |-BinaryOperator 0x55a0a4554838 'int' '+'
+    | |-UnaryOperator 0x55a0a45547d0 'int' postfix '++'
+    | | `-DeclRefExpr 0x55a0a45547a8 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+    | `-UnaryOperator 0x55a0a4554818 'int' prefix '--'
+    |   `-DeclRefExpr 0x55a0a45547f0 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+    `-ImplicitCastExpr 0x55a0a4554888 'int' <LValueToRValue>
+      `-DeclRefExpr 0x55a0a4554860 'int' lvalue Var 0x55a0a4554428 'x' 'int'
 
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
 ConvertingStmt : DeclStmt
 
-DeclStmt 0x559e9bbe8428
-`-VarDecl 0x559e9bbe83a8  used x 'int' cinit
-  `-IntegerLiteral 0x559e9bbe8408 'int' 10
+DeclStmt 0x55a0a4554548
+|-VarDecl 0x55a0a4554428  used x 'int'
+`-VarDecl 0x55a0a45544d0  used y 'int *'
 
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleDeclStmt():641:
-Set last DeclStmt to DeclStmt at 94139706147880
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleDeclStmt():623:
+Set last DeclStmt to DeclStmt at 94148440180040
 
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
-ConvertingStmt : IntegerLiteral
-
-IntegerLiteral 0x559e9bbe8408 'int' 10
-
-  04-04-2019 06:48:07: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertIntegerLiteral():1140:
-expr.LitE(10, Loc(2,11))
-
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleVariable():631:
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleVariable():613:
 NEW_VAR: "v:main:x": types.Int32,
 
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
-ConvertingStmt : SwitchStmt
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleVariable():613:
+NEW_VAR: "v:main:y": types.Ptr(to=types.Int32),
 
-SwitchStmt 0x559e9bbe8480
-|-<<<NULL>>>
-|-<<<NULL>>>
-|-ImplicitCastExpr 0x559e9bbe8468 'int' <LValueToRValue>
-| `-DeclRefExpr 0x559e9bbe8440 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-`-CompoundStmt 0x559e9bbe87d0
-  `-CompoundStmt 0x559e9bbe87b8
-    `-IfStmt 0x559e9bbe8780
-      |-<<<NULL>>>
-      |-<<<NULL>>>
-      |-ImplicitCastExpr 0x559e9bbe84d8 'int' <LValueToRValue>
-      | `-DeclRefExpr 0x559e9bbe84b0 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-      |-CompoundStmt 0x559e9bbe8748
-      | |-CaseStmt 0x559e9bbe8510
-      | | |-IntegerLiteral 0x559e9bbe84f0 'int' 10
-      | | |-<<<NULL>>>
-      | | `-CompoundStmt 0x559e9bbe85c0
-      | |   |-BinaryOperator 0x559e9bbe8590 'int' '='
-      | |   | |-DeclRefExpr 0x559e9bbe8548 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-      | |   | `-IntegerLiteral 0x559e9bbe8570 'int' 2
-      | |   `-BreakStmt 0x559e9bbe85b8
-      | |-CaseStmt 0x559e9bbe8600
-      | | |-IntegerLiteral 0x559e9bbe85e0 'int' 30
-      | | |-<<<NULL>>>
-      | | `-BinaryOperator 0x559e9bbe8680 'int' '='
-      | |   |-DeclRefExpr 0x559e9bbe8638 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-      | |   `-IntegerLiteral 0x559e9bbe8660 'int' 3
-      | |-BreakStmt 0x559e9bbe86a8
-      | |-DefaultStmt 0x559e9bbe8720
-      | | `-BinaryOperator 0x559e9bbe86f8 'int' '='
-      | |   |-DeclRefExpr 0x559e9bbe86b0 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-      | |   `-IntegerLiteral 0x559e9bbe86d8 'int' 20
-      | `-BreakStmt 0x559e9bbe8740
-      `-<<<NULL>>>
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
+ConvertingStmt : BinaryOperator
 
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
+BinaryOperator 0x55a0a45545d0 'int *' '='
+|-DeclRefExpr 0x55a0a4554560 'int *' lvalue Var 0x55a0a45544d0 'y' 'int *'
+`-UnaryOperator 0x55a0a45545b0 'int *' prefix '&'
+  `-DeclRefExpr 0x55a0a4554588 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
+ConvertingStmt : UnaryOperator
+
+UnaryOperator 0x55a0a45545b0 'int *' prefix '&'
+`-DeclRefExpr 0x55a0a4554588 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
+ConvertingStmt : DeclRefExpr
+
+DeclRefExpr 0x55a0a4554588 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
+ConvertingStmt : DeclRefExpr
+
+DeclRefExpr 0x55a0a4554560 'int *' lvalue Var 0x55a0a45544d0 'y' 'int *'
+
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
+ConvertingStmt : BinaryOperator
+
+BinaryOperator 0x55a0a45546e8 'int' '='
+|-DeclRefExpr 0x55a0a45545f8 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+`-UnaryOperator 0x55a0a45546c8 'int' prefix '-'
+  `-ParenExpr 0x55a0a45546a8 'int'
+    `-BinaryOperator 0x55a0a4554680 'int' '+'
+      |-ImplicitCastExpr 0x55a0a4554668 'int' <LValueToRValue>
+      | `-DeclRefExpr 0x55a0a4554620 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+      `-IntegerLiteral 0x55a0a4554648 'int' 10
+
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
+ConvertingStmt : UnaryOperator
+
+UnaryOperator 0x55a0a45546c8 'int' prefix '-'
+`-ParenExpr 0x55a0a45546a8 'int'
+  `-BinaryOperator 0x55a0a4554680 'int' '+'
+    |-ImplicitCastExpr 0x55a0a4554668 'int' <LValueToRValue>
+    | `-DeclRefExpr 0x55a0a4554620 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+    `-IntegerLiteral 0x55a0a4554648 'int' 10
+
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
+ConvertingStmt : ParenExpr
+
+ParenExpr 0x55a0a45546a8 'int'
+`-BinaryOperator 0x55a0a4554680 'int' '+'
+  |-ImplicitCastExpr 0x55a0a4554668 'int' <LValueToRValue>
+  | `-DeclRefExpr 0x55a0a4554620 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+  `-IntegerLiteral 0x55a0a4554648 'int' 10
+
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
+ConvertingStmt : BinaryOperator
+
+BinaryOperator 0x55a0a4554680 'int' '+'
+|-ImplicitCastExpr 0x55a0a4554668 'int' <LValueToRValue>
+| `-DeclRefExpr 0x55a0a4554620 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+`-IntegerLiteral 0x55a0a4554648 'int' 10
+
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
 ConvertingStmt : ImplicitCastExpr
 
-ImplicitCastExpr 0x559e9bbe8468 'int' <LValueToRValue>
-`-DeclRefExpr 0x559e9bbe8440 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
+ImplicitCastExpr 0x55a0a4554668 'int' <LValueToRValue>
+`-DeclRefExpr 0x55a0a4554620 'int' lvalue Var 0x55a0a4554428 'x' 'int'
 
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
 ConvertingStmt : DeclRefExpr
 
-DeclRefExpr 0x559e9bbe8440 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-CompoundStmt 0x559e9bbe87d0
-`-CompoundStmt 0x559e9bbe87b8
-  `-IfStmt 0x559e9bbe8780
-    |-<<<NULL>>>
-    |-<<<NULL>>>
-    |-ImplicitCastExpr 0x559e9bbe84d8 'int' <LValueToRValue>
-    | `-DeclRefExpr 0x559e9bbe84b0 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-    |-CompoundStmt 0x559e9bbe8748
-    | |-CaseStmt 0x559e9bbe8510
-    | | |-IntegerLiteral 0x559e9bbe84f0 'int' 10
-    | | |-<<<NULL>>>
-    | | `-CompoundStmt 0x559e9bbe85c0
-    | |   |-BinaryOperator 0x559e9bbe8590 'int' '='
-    | |   | |-DeclRefExpr 0x559e9bbe8548 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-    | |   | `-IntegerLiteral 0x559e9bbe8570 'int' 2
-    | |   `-BreakStmt 0x559e9bbe85b8
-    | |-CaseStmt 0x559e9bbe8600
-    | | |-IntegerLiteral 0x559e9bbe85e0 'int' 30
-    | | |-<<<NULL>>>
-    | | `-BinaryOperator 0x559e9bbe8680 'int' '='
-    | |   |-DeclRefExpr 0x559e9bbe8638 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-    | |   `-IntegerLiteral 0x559e9bbe8660 'int' 3
-    | |-BreakStmt 0x559e9bbe86a8
-    | |-DefaultStmt 0x559e9bbe8720
-    | | `-BinaryOperator 0x559e9bbe86f8 'int' '='
-    | |   |-DeclRefExpr 0x559e9bbe86b0 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-    | |   `-IntegerLiteral 0x559e9bbe86d8 'int' 20
-    | `-BreakStmt 0x559e9bbe8740
-    `-<<<NULL>>>
-CASE-CASE-CASE
-IntegerLiteral 0x559e9bbe84f0 'int' 10
+DeclRefExpr 0x55a0a4554620 'int' lvalue Var 0x55a0a4554428 'x' 'int'
 
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
 ConvertingStmt : IntegerLiteral
 
-IntegerLiteral 0x559e9bbe84f0 'int' 10
+IntegerLiteral 0x55a0a4554648 'int' 10
 
-  04-04-2019 06:48:07: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertIntegerLiteral():1140:
-expr.LitE(10, Loc(5,10))
+  04-04-2019 10:26:33: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertIntegerLiteral():1123:
+expr.LitE(10, Loc(4,13))
 
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
-ConvertingStmt : IntegerLiteral
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
+ConvertingStmt : DeclRefExpr
 
-IntegerLiteral 0x559e9bbe84f0 'int' 10
+DeclRefExpr 0x55a0a45545f8 'int' lvalue Var 0x55a0a4554428 'x' 'int'
 
-  04-04-2019 06:48:07: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertIntegerLiteral():1140:
-expr.LitE(10, Loc(5,10))
-
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
-ConvertingStmt : CompoundStmt
-
-CompoundStmt 0x559e9bbe85c0
-|-BinaryOperator 0x559e9bbe8590 'int' '='
-| |-DeclRefExpr 0x559e9bbe8548 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-| `-IntegerLiteral 0x559e9bbe8570 'int' 2
-`-BreakStmt 0x559e9bbe85b8
-
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
 ConvertingStmt : BinaryOperator
 
-BinaryOperator 0x559e9bbe8590 'int' '='
-|-DeclRefExpr 0x559e9bbe8548 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-`-IntegerLiteral 0x559e9bbe8570 'int' 2
+BinaryOperator 0x55a0a4554758 'int' '='
+|-DeclRefExpr 0x55a0a4554710 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+`-IntegerLiteral 0x55a0a4554738 'int' 10
 
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
 ConvertingStmt : IntegerLiteral
 
-IntegerLiteral 0x559e9bbe8570 'int' 2
+IntegerLiteral 0x55a0a4554738 'int' 10
 
-  04-04-2019 06:48:07: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertIntegerLiteral():1140:
-expr.LitE(2, Loc(6,11))
+  04-04-2019 10:26:33: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertIntegerLiteral():1123:
+expr.LitE(10, Loc(5,7))
 
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
 ConvertingStmt : DeclRefExpr
 
-DeclRefExpr 0x559e9bbe8548 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
+DeclRefExpr 0x55a0a4554710 'int' lvalue Var 0x55a0a4554428 'x' 'int'
 
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
-ConvertingStmt : BreakStmt
-
-BreakStmt 0x559e9bbe85b8
-CASE-CASE-CASE
-IntegerLiteral 0x559e9bbe85e0 'int' 30
-
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
-ConvertingStmt : IntegerLiteral
-
-IntegerLiteral 0x559e9bbe85e0 'int' 30
-
-  04-04-2019 06:48:07: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertIntegerLiteral():1140:
-expr.LitE(30, Loc(9,10))
-
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
-ConvertingStmt : IntegerLiteral
-
-IntegerLiteral 0x559e9bbe85e0 'int' 30
-
-  04-04-2019 06:48:07: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertIntegerLiteral():1140:
-expr.LitE(30, Loc(9,10))
-
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
 ConvertingStmt : BinaryOperator
 
-BinaryOperator 0x559e9bbe8680 'int' '='
-|-DeclRefExpr 0x559e9bbe8638 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-`-IntegerLiteral 0x559e9bbe8660 'int' 3
+BinaryOperator 0x55a0a45548c8 'int' '='
+|-DeclRefExpr 0x55a0a4554780 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+`-BinaryOperator 0x55a0a45548a0 'int' '+'
+  |-BinaryOperator 0x55a0a4554838 'int' '+'
+  | |-UnaryOperator 0x55a0a45547d0 'int' postfix '++'
+  | | `-DeclRefExpr 0x55a0a45547a8 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+  | `-UnaryOperator 0x55a0a4554818 'int' prefix '--'
+  |   `-DeclRefExpr 0x55a0a45547f0 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+  `-ImplicitCastExpr 0x55a0a4554888 'int' <LValueToRValue>
+    `-DeclRefExpr 0x55a0a4554860 'int' lvalue Var 0x55a0a4554428 'x' 'int'
 
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
-ConvertingStmt : IntegerLiteral
-
-IntegerLiteral 0x559e9bbe8660 'int' 3
-
-  04-04-2019 06:48:07: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertIntegerLiteral():1140:
-expr.LitE(3, Loc(10,18))
-
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
-ConvertingStmt : DeclRefExpr
-
-DeclRefExpr 0x559e9bbe8638 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
 ConvertingStmt : BinaryOperator
 
-BinaryOperator 0x559e9bbe86f8 'int' '='
-|-DeclRefExpr 0x559e9bbe86b0 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
-`-IntegerLiteral 0x559e9bbe86d8 'int' 20
+BinaryOperator 0x55a0a45548a0 'int' '+'
+|-BinaryOperator 0x55a0a4554838 'int' '+'
+| |-UnaryOperator 0x55a0a45547d0 'int' postfix '++'
+| | `-DeclRefExpr 0x55a0a45547a8 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+| `-UnaryOperator 0x55a0a4554818 'int' prefix '--'
+|   `-DeclRefExpr 0x55a0a45547f0 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+`-ImplicitCastExpr 0x55a0a4554888 'int' <LValueToRValue>
+  `-DeclRefExpr 0x55a0a4554860 'int' lvalue Var 0x55a0a4554428 'x' 'int'
 
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
-ConvertingStmt : IntegerLiteral
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
+ConvertingStmt : BinaryOperator
 
-IntegerLiteral 0x559e9bbe86d8 'int' 20
+BinaryOperator 0x55a0a4554838 'int' '+'
+|-UnaryOperator 0x55a0a45547d0 'int' postfix '++'
+| `-DeclRefExpr 0x55a0a45547a8 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+`-UnaryOperator 0x55a0a4554818 'int' prefix '--'
+  `-DeclRefExpr 0x55a0a45547f0 'int' lvalue Var 0x55a0a4554428 'x' 'int'
 
-  04-04-2019 06:48:07: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertIntegerLiteral():1140:
-expr.LitE(20, Loc(13,11))
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
+ConvertingStmt : UnaryOperator
 
-  04-04-2019 06:48:07: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():665:
+UnaryOperator 0x55a0a45547d0 'int' postfix '++'
+`-DeclRefExpr 0x55a0a45547a8 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
 ConvertingStmt : DeclRefExpr
 
-DeclRefExpr 0x559e9bbe86b0 'int' lvalue Var 0x559e9bbe83a8 'x' 'int'
+DeclRefExpr 0x55a0a45547a8 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
+ConvertingStmt : UnaryOperator
+
+UnaryOperator 0x55a0a4554818 'int' prefix '--'
+`-DeclRefExpr 0x55a0a45547f0 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
+ConvertingStmt : DeclRefExpr
+
+DeclRefExpr 0x55a0a45547f0 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
+ConvertingStmt : ImplicitCastExpr
+
+ImplicitCastExpr 0x55a0a4554888 'int' <LValueToRValue>
+`-DeclRefExpr 0x55a0a4554860 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
+ConvertingStmt : DeclRefExpr
+
+DeclRefExpr 0x55a0a4554860 'int' lvalue Var 0x55a0a4554428 'x' 'int'
+
+  04-04-2019 10:26:33: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():645:
+ConvertingStmt : DeclRefExpr
+
+DeclRefExpr 0x55a0a4554780 'int' lvalue Var 0x55a0a4554428 'x' 'int'
 
 # START: A_SPAN_translation_unit.
 
@@ -278,9 +256,12 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:main:t.4": types.Int32,
+    "v:main:t.3": types.Int32,
     "v:main:t.2": types.Int32,
-    "v:main:x": types.Int32,
     "v:main:t.1": types.Int32,
+    "v:main:x": types.Int32,
+    "v:main:y": types.Ptr(to=types.Int32),
   }, # end allVars dict
 
   allObjs = {
@@ -295,23 +276,16 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         instrSeq = [
-            instr.AssignI(expr.VarE("v:main:x", Loc(2,3)), expr.LitE(10, Loc(2,11)), Loc(2,3)),
-            instr.LabelI("CaseCond1-0"),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(5,5)), expr.BinaryE(expr.VarE("v:main:x", Loc(3,10)), op.BO_EQ, expr.LitE(10, Loc(5,10)), Loc(5,5)), Loc(5,5)),
-            instr.CondI(expr.VarE("v:main:t.1", Loc(5,5)), "CaseBody1-0", "CaseCond1-1", Loc(5,5)),
-            instr.LabelI("CaseBody1-0"),
-            instr.AssignI(expr.VarE("v:main:x", Loc(6,7)), expr.LitE(2, Loc(6,11)), Loc(6,7)),
-            instr.GotoI("SwitchExit1"),
-            instr.LabelI("CaseCond1-1"),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(9,5)), expr.BinaryE(expr.VarE("v:main:x", Loc(3,10)), op.BO_EQ, expr.LitE(30, Loc(9,10)), Loc(9,5)), Loc(9,5)),
-            instr.CondI(expr.VarE("v:main:t.2", Loc(9,5)), "CaseBody1-1", "Default1", Loc(9,5)),
-            instr.LabelI("CaseBody1-1"),
-            instr.AssignI(expr.VarE("v:main:x", Loc(10,14)), expr.LitE(3, Loc(10,18)), Loc(10,14)),
-            instr.GotoI("SwitchExit1"),
-            instr.LabelI("CaseCond1-2"),
-            instr.LabelI("Default1"),
-            instr.AssignI(expr.VarE("v:main:x", Loc(13,7)), expr.LitE(20, Loc(13,11)), Loc(13,7)),
-            instr.LabelI("SwitchExit1"),
+            instr.AssignI(expr.VarE("v:main:y", Loc(3,3)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:main:x", Loc(3,8)), Loc(3,7)), Loc(3,3)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(4,9)), expr.BinaryE(expr.VarE("v:main:x", Loc(4,9)), op.BO_ADD, expr.LitE(10, Loc(4,13)), Loc(4,9)), Loc(4,9)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(4,3)), expr.UnaryE(op.UO_MINUS, expr.VarE("v:main:t.1", Loc(4,9)), Loc(4,7)), Loc(4,3)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(5,3)), expr.LitE(10, Loc(5,7)), Loc(5,3)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(6,7)), expr.VarE("v:main:x", Loc(6,7)), Loc(6,7)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(6,7)), expr.BinaryE(expr.VarE("v:main:x", Loc(6,7)), op.BO_ADD, expr.LitE(1, Loc(6,7)), Loc(6,7)), Loc(6,7)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(6,15)), expr.BinaryE(expr.VarE("v:main:x", Loc(6,15)), op.BO_SUB, expr.LitE(1, Loc(6,13)), Loc(6,13)), Loc(6,13)),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(6,15)), expr.VarE("v:main:x", Loc(6,15)), Loc(6,15)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(6,7)), expr.BinaryE(expr.VarE("v:main:t.2", Loc(6,7)), op.BO_ADD, expr.VarE("v:main:t.3", Loc(6,15)), Loc(6,7)), Loc(6,7)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(6,3)), expr.BinaryE(expr.VarE("v:main:t.4", Loc(6,7)), op.BO_ADD, expr.VarE("v:main:x", Loc(6,19)), Loc(6,7)), Loc(6,3)),
         ], # instrSeq end.
       ), # f:main() end. 
 
@@ -320,20 +294,17 @@ irTUnit.TUnit(
 
 # END  : A_SPAN_translation_unit.
 
-  04-04-2019 06:48:07: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkEndOfTranslationUnit():542:
+  04-04-2019 10:26:33: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkEndOfTranslationUnit():524:
 Translation Unit Ended.
 
 
-  04-04-2019 06:48:07: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkEndOfTranslationUnit():543:
+  04-04-2019 10:26:33: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkEndOfTranslationUnit():525:
 BOUND END  : SLANG_Generated_Output.
 
-delit.c:6:7: warning: Anshuman: Value stored to 'x' is never read
-      x = 2;
-      ^   ~
-delit.c:10:14: warning: Anshuman: Value stored to 'x' is never read
-             x = 3;
-             ^   ~
-delit.c:13:7: warning: Anshuman: Value stored to 'x' is never read
-      x = 20;
-      ^   ~~
-3 warnings generated.
+delit.c:3:3: warning: Anshuman: Value stored to 'y' is never read
+  y = &x;
+  ^   ~~
+delit.c:4:11: warning: The left operand of '+' is a garbage value
+  x = -(x + 10);
+        ~ ^
+2 warnings generated.

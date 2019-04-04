@@ -1,17 +1,4 @@
 digraph {
   node [shape=box]
-  START [label="[START]\lx = 10\lt.1 = x == 10\lif (t.1) BB2 BB3\l"];
-  BB2 [label="[BB2]\lx = 2\l"];
-  BB3 [label="[BB3]\lt.2 = x == 30\lif (t.2) BB4 BB5\l"];
-  BB4 [label="[BB4]\lx = 3\l"];
-  BB5 [label="[BB5]\lx = 20\l"];
-  END [label="[END]\lnop()\l"];
-  BB3 -> BB5 [color=red, penwidth=2];
-  START -> BB2 [color=green, penwidth=2];
-  START -> BB3 [color=red, penwidth=2];
-  BB1 -> END;
-  BB3 -> BB4 [color=green, penwidth=2];
-  BB4 -> END;
-  BB2 -> END;
-  BB5 -> END;
+  START [label="[START]\ly = &x\lt.1 = x + 10\lx = -t.1\lx = 10\lt.2 = x\lx = x + 1\lx = x - 1\lt.3 = x\lt.4 = t.2 + t.3\lx = t.4 + x\l"];
 }

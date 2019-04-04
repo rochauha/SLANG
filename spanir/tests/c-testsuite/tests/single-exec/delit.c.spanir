@@ -17,9 +17,12 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:main:t.4": types.Int32,
+    "v:main:t.3": types.Int32,
     "v:main:t.2": types.Int32,
-    "v:main:x": types.Int32,
     "v:main:t.1": types.Int32,
+    "v:main:x": types.Int32,
+    "v:main:y": types.Ptr(to=types.Int32),
   }, # end allVars dict
 
   allObjs = {
@@ -34,23 +37,16 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         instrSeq = [
-            instr.AssignI(expr.VarE("v:main:x", Loc(2,3)), expr.LitE(10, Loc(2,11)), Loc(2,3)),
-            instr.LabelI("CaseCond1-0"),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(5,5)), expr.BinaryE(expr.VarE("v:main:x", Loc(3,10)), op.BO_EQ, expr.LitE(10, Loc(5,10)), Loc(5,5)), Loc(5,5)),
-            instr.CondI(expr.VarE("v:main:t.1", Loc(5,5)), "CaseBody1-0", "CaseCond1-1", Loc(5,5)),
-            instr.LabelI("CaseBody1-0"),
-            instr.AssignI(expr.VarE("v:main:x", Loc(6,7)), expr.LitE(2, Loc(6,11)), Loc(6,7)),
-            instr.GotoI("SwitchExit1"),
-            instr.LabelI("CaseCond1-1"),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(9,5)), expr.BinaryE(expr.VarE("v:main:x", Loc(3,10)), op.BO_EQ, expr.LitE(30, Loc(9,10)), Loc(9,5)), Loc(9,5)),
-            instr.CondI(expr.VarE("v:main:t.2", Loc(9,5)), "CaseBody1-1", "Default1", Loc(9,5)),
-            instr.LabelI("CaseBody1-1"),
-            instr.AssignI(expr.VarE("v:main:x", Loc(10,14)), expr.LitE(3, Loc(10,18)), Loc(10,14)),
-            instr.GotoI("SwitchExit1"),
-            instr.LabelI("CaseCond1-2"),
-            instr.LabelI("Default1"),
-            instr.AssignI(expr.VarE("v:main:x", Loc(13,7)), expr.LitE(20, Loc(13,11)), Loc(13,7)),
-            instr.LabelI("SwitchExit1"),
+            instr.AssignI(expr.VarE("v:main:y", Loc(3,3)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:main:x", Loc(3,8)), Loc(3,7)), Loc(3,3)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(4,9)), expr.BinaryE(expr.VarE("v:main:x", Loc(4,9)), op.BO_ADD, expr.LitE(10, Loc(4,13)), Loc(4,9)), Loc(4,9)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(4,3)), expr.UnaryE(op.UO_MINUS, expr.VarE("v:main:t.1", Loc(4,9)), Loc(4,7)), Loc(4,3)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(5,3)), expr.LitE(10, Loc(5,7)), Loc(5,3)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(6,7)), expr.VarE("v:main:x", Loc(6,7)), Loc(6,7)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(6,7)), expr.BinaryE(expr.VarE("v:main:x", Loc(6,7)), op.BO_ADD, expr.LitE(1, Loc(6,7)), Loc(6,7)), Loc(6,7)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(6,15)), expr.BinaryE(expr.VarE("v:main:x", Loc(6,15)), op.BO_SUB, expr.LitE(1, Loc(6,13)), Loc(6,13)), Loc(6,13)),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(6,15)), expr.VarE("v:main:x", Loc(6,15)), Loc(6,15)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(6,7)), expr.BinaryE(expr.VarE("v:main:t.2", Loc(6,7)), op.BO_ADD, expr.VarE("v:main:t.3", Loc(6,15)), Loc(6,7)), Loc(6,7)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(6,3)), expr.BinaryE(expr.VarE("v:main:t.4", Loc(6,7)), op.BO_ADD, expr.VarE("v:main:x", Loc(6,19)), Loc(6,7)), Loc(6,3)),
         ], # instrSeq end.
       ), # f:main() end. 
 
