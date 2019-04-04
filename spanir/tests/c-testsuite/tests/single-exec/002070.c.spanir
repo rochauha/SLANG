@@ -17,16 +17,17 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:f3:t.6": types.Int32,
+    "v:f3:t.5": types.Int32,
     "v:f3:t.3": types.Int32,
-    "v:f2:b": types.ConstSizeArray(of=types.Int32, size=1),
-    "v:f3:t.1": types.Int32,
-    "v:f3:t.4": types.Int32,
+    "v:f1:test": types.VarArray(of=types.Int8),
     "v:f2:c": types.ConstSizeArray(of=types.Int32, size=1),
     "v:f1:argc": types.Int32,
-    "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:f3:t.1": types.Int32,
+    "v:f3:t.4": types.Int32,
     "v:f2:a": types.ConstSizeArray(of=types.Int32, size=1),
     "v:f3:t.2": types.Int32,
-    "v:f1:test": types.VarArray(of=types.Int8),
+    "v:f2:b": types.ConstSizeArray(of=types.Int32, size=1),
   }, # end allVars dict
 
   allObjs = {
@@ -40,126 +41,13 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:f1", Loc(40,3)), [expr.LitE(2, Loc(40,6))], Loc(40,3))),
-            instr.CallI(expr.CallE(expr.FuncE("f:f2", Loc(41,3)), [], Loc(41,3))),
-            instr.CallI(expr.CallE(expr.FuncE("f:f3", Loc(42,3)), [], Loc(42,3))),
-            instr.ReturnI(expr.LitE(0, Loc(44,10)), Loc(44,3)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+        instrSeq = [
+            instr.CallI(expr.CallE(expr.FuncE("f:f1", Loc(40,3)), [expr.LitE(2, Loc(40,6))], Loc(40,3)), Loc(40,3)),
+            instr.CallI(expr.CallE(expr.FuncE("f:f2", Loc(41,3)), Loc(41,3)), Loc(41,3)),
+            instr.CallI(expr.CallE(expr.FuncE("f:f3", Loc(42,3)), Loc(42,3)), Loc(42,3)),
+            instr.ReturnI(expr.LitE(0, Loc(44,10))),
+        ], # instrSeq end.
       ), # f:main() end. 
-
-    "f:f2":
-      obj.Func(
-        name = "f:f2",
-        paramNames = [],
-        variadic = False,
-        returnType = types.Void,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          3: [
-            instr.NopI(),
-          ],
-
-          2: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.AssignI(expr.ArrayE(expr.VarE("v:f2:b", Loc(25,9)), [expr.LitE(0, Loc(25,11))], Loc(25,9)), expr.LitE(0, Loc(25,16)), Loc(25,9)),
-            instr.AssignI(expr.ArrayE(expr.VarE("v:f2:c", Loc(26,9)), [expr.LitE(0, Loc(26,11))], Loc(26,9)), expr.LitE(0, Loc(26,16)), Loc(26,9)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 1, types.UnCondEdge),
-          (3, 1, types.UnCondEdge),
-          (-1, 3, types.UnCondEdge),
-        }, # bbEdges end
-      ), # f:f2() end. 
-
-    "f:f1":
-      obj.Func(
-        name = "f:f1",
-        paramNames = ["v:f1:argc"],
-        variadic = False,
-        returnType = types.Void,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          1: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          2: [
-            instr.ReturnI(Loc(11,5)),
-          ],
-
-          3: [
-            instr.AssignI(expr.VarE("v:f1:t.1", Loc(10,6)), expr.VarE("v:f1:argc", Loc(10,6)), Loc(10,6)),
-            instr.AssignI(expr.VarE("v:f1:argc", Loc(10,6)), expr.BinaryE(expr.VarE("v:f1:argc", Loc(10,6)), op.BO_SUB, expr.LitE(1, Loc(10,6)), Loc(10,6)), Loc(10,6)),
-            instr.AssignI(expr.VarE("v:f1:t.2", Loc(10,6)), expr.BinaryE(expr.VarE("v:f1:t.1", Loc(10,6)), op.BO_EQ, expr.LitE(0, Loc(10,16))), Loc(10,6)),
-            instr.CondI(expr.VarE("v:f1:t.2", Loc(10,6)), Loc(10,3)),
-          ],
-
-          4: [
-            instr.NopI(),
-          ],
-
-          5: [
-            instr.AssignI(expr.VarE("v:f1:test", Loc(6,3)), expr.VarE("v:f1:argc", Loc(6,13)), Loc(6,3)),
-            instr.CondI(expr.LitE(0, Loc(7,6)), Loc(7,3)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 4, types.UnCondEdge),
-          (2, 0, types.UnCondEdge),
-          (3, 2, types.TrueEdge),
-          (3, 1, types.FalseEdge),
-          (4, 3, types.UnCondEdge),
-          (5, 0, types.TrueEdge),
-          (5, 3, types.FalseEdge),
-          (-1, 5, types.UnCondEdge),
-        }, # bbEdges end
-      ), # f:f1() end. 
 
     "f:f3":
       obj.Func(
@@ -170,104 +58,86 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          11: [
-            instr.NopI(),
-          ],
-
-          10: [
-            instr.NopI(),
-          ],
-
-          9: [
-            instr.NopI(),
-          ],
-
-          8: [
-            instr.AssignI(expr.VarE("v:f3:t.3", Loc(32,24)), expr.CallE(expr.FuncE("f:printf", Loc(32,24)), [expr.LitE("""x1
+        instrSeq = [
+            instr.AssignI(expr.VarE("v:f3:t.1", Loc(32,24)), expr.CallE(expr.FuncE("f:printf", Loc(32,24)), [expr.LitE("""x1
 """, Loc(32,31))], Loc(32,24)), Loc(32,24)),
-            instr.AssignI(expr.VarE("v:f3:t.4", Loc(32,20)), expr.SelectE(expr.LitE(0, Loc(32,20)), expr.VarE("v:f3:t.3", Loc(32,24)), expr.LitE(11, Loc(32,41)), Loc(32,20)), Loc(32,20)),
-            instr.CallI(expr.CallE(NullStmt, [NullStmt, expr.VarE("v:f3:t.4", Loc(32,20))], Loc(32,5))),
-          ],
-
-          7: [
-            instr.NopI(),
-          ],
-
-          6: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.CondI(expr.LitE(1), Loc(35,20)),
-            instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(35,5))),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          2: [
-            instr.NopI(),
-          ],
-
-          3: [
-            instr.CondI(expr.LitE(1), Loc(34,20)),
-            instr.CallI(expr.CallE(NullStmt, [NullStmt, NullStmt], Loc(34,5))),
-            instr.CondI(expr.LitE(1, Loc(35,20)), Loc(35,20)),
-          ],
-
-          4: [
-            instr.NopI(),
-          ],
-
-          5: [
-            instr.AssignI(expr.VarE("v:f3:t.1", Loc(33,29)), expr.CallE(expr.FuncE("f:printf", Loc(33,29)), [expr.LitE("""x2
+            instr.AssignI(expr.VarE("v:f3:t.2", ), expr.SelectE(expr.LitE(0, Loc(32,20)), expr.VarE("v:f3:t.1", Loc(32,24)), expr.LitE(11, Loc(32,41)), Loc(32,20)), ),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(32,5)), [expr.LitE("""%d
+""", Loc(32,12)), expr.VarE("v:f3:t.2", )], Loc(32,5)), Loc(32,5)),
+            instr.AssignI(expr.VarE("v:f3:t.3", Loc(33,29)), expr.CallE(expr.FuncE("f:printf", Loc(33,29)), [expr.LitE("""x2
 """, Loc(33,36))], Loc(33,29)), Loc(33,29)),
-            instr.AssignI(expr.VarE("v:f3:t.2", Loc(33,20)), expr.SelectE(expr.LitE(1, Loc(33,20)), expr.LitE(12, Loc(33,24)), expr.VarE("v:f3:t.1", Loc(33,29)), Loc(33,20)), Loc(33,20)),
-            instr.CallI(expr.CallE(NullStmt, [NullStmt, expr.VarE("v:f3:t.2", Loc(33,20))], Loc(33,5))),
-            instr.CondI(expr.LitE(0, Loc(34,20)), Loc(34,20)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 1, types.UnCondEdge),
-          (3, 1, types.TrueEdge),
-          (3, 0, types.FalseEdge),
-          (4, 3, types.UnCondEdge),
-          (5, 0, types.TrueEdge),
-          (5, 3, types.FalseEdge),
-          (6, 5, types.UnCondEdge),
-          (7, 5, types.UnCondEdge),
-          (8, 6, types.UnCondEdge),
-          (9, 8, types.UnCondEdge),
-          (10, 8, types.UnCondEdge),
-          (11, 0, types.UnCondEdge),
-          (-1, 11, types.UnCondEdge),
-        }, # bbEdges end
+            instr.AssignI(expr.VarE("v:f3:t.4", ), expr.SelectE(expr.LitE(1, Loc(33,20)), expr.LitE(12, Loc(33,24)), expr.VarE("v:f3:t.3", Loc(33,29)), Loc(33,20)), ),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(33,5)), [expr.LitE("""%d
+""", Loc(33,12)), expr.VarE("v:f3:t.4", )], Loc(33,5)), Loc(33,5)),
+            instr.AssignI(expr.VarE("v:f3:t.5", Loc(34,20)), expr.LitE(1, Loc(34,20)), Loc(34,20)),
+            instr.CondI(expr.LitE(0, Loc(34,20)), "NextCheckLand3", "TmpAssignLand3", Loc(34,20)),
+            instr.LabelI("NextCheckLand3"),
+            instr.CondI(expr.CallE(expr.FuncE("f:printf", Loc(34,25)), [expr.LitE("""x3
+""", Loc(34,32))], Loc(34,25)), "ExitLand3", "TmpAssignLand3", Loc(34,20)),
+            instr.LabelI("TmpAssignLand3"),
+            instr.AssignI(expr.VarE("v:f3:t.5", Loc(34,20)), expr.LitE(0, Loc(34,20)), Loc(34,20)),
+            instr.LabelI("ExitLand3"),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(34,5)), [expr.LitE("""%d
+""", Loc(34,12)), expr.VarE("v:f3:t.5", Loc(34,20))], Loc(34,5)), Loc(34,5)),
+            instr.AssignI(expr.VarE("v:f3:t.6", Loc(35,20)), expr.LitE(1, Loc(35,20)), Loc(35,20)),
+            instr.CondI(expr.LitE(1, Loc(35,20)), "ExitLor4", "NextCheckLor4", Loc(35,20)),
+            instr.LabelI("NextCheckLor4"),
+            instr.CondI(expr.CallE(expr.FuncE("f:printf", Loc(35,25)), [expr.LitE("""x4
+""", Loc(35,32))], Loc(35,25)), "ExitLor4", "TmpAssignLor4", Loc(35,20)),
+            instr.LabelI("TmpAssignLor4"),
+            instr.AssignI(expr.VarE("v:f3:t.6", Loc(35,20)), expr.LitE(0, Loc(35,20)), Loc(35,20)),
+            instr.LabelI("ExitLor4"),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(35,5)), [expr.LitE("""%d
+""", Loc(35,12)), expr.VarE("v:f3:t.6", Loc(35,20))], Loc(35,5)), Loc(35,5)),
+        ], # instrSeq end.
       ), # f:f3() end. 
 
-    "f:printf":
+    "f:f1":
       obj.Func(
-        name = "f:printf",
-        paramNames = ["v:printf:__format"],
-        variadic = True,
-        returnType = types.Int32,
+        name = "f:f1",
+        paramNames = ["v:f1:argc"],
+        variadic = False,
+        returnType = types.Void,
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
+        instrSeq = [
+            instr.CondI(expr.LitE(0, Loc(7,6)), "IfTrue1", "IfFalse1", Loc(7,6)),
+            instr.LabelI("IfTrue1"),
+            instr.LabelI("label", Loc(8,3)),
+            instr.GotoI("IfExit1"),
+            instr.LabelI("IfFalse1"),
+            instr.LabelI("IfExit1"),
+            instr.AssignI(expr.VarE("v:f1:t.1", Loc(10,6)), expr.VarE("v:f1:argc", Loc(10,6)), Loc(10,6)),
+            instr.AssignI(expr.VarE("v:f1:argc", Loc(10,6)), expr.BinaryE(expr.VarE("v:f1:argc", Loc(10,6)), op.BO_SUB, expr.LitE(1, Loc(10,6)), Loc(10,6)), Loc(10,6)),
+            instr.AssignI(expr.VarE("v:f1:t.2", Loc(10,6)), expr.BinaryE(expr.VarE("v:f1:t.1", Loc(10,6)), op.BO_EQ, expr.LitE(0, Loc(10,16)), Loc(10,6)), Loc(10,6)),
+            instr.CondI(expr.VarE("v:f1:t.2", Loc(10,6)), "IfTrue2", "IfFalse2", Loc(10,6)),
+            instr.LabelI("IfTrue2"),
+            instr.ReturnI(),
+            instr.GotoI("IfExit2"),
+            instr.LabelI("IfFalse2"),
+            instr.LabelI("IfExit2"),
+            instr.GotoI("label"),
+        ], # instrSeq end.
+      ), # f:f1() end. 
 
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:printf() end. 
+    "f:f2":
+      obj.Func(
+        name = "f:f2",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        instrSeq = [
+            instr.GotoI("start"),
+            instr.LabelI("start", Loc(23,5)),
+            instr.AssignI(expr.ArrayE(expr.LitE(0, Loc(24,11)), expr.VarE("v:f2:a", Loc(24,9)), Loc(24,9)), expr.LitE(0, Loc(24,16)), Loc(24,9)),
+            instr.AssignI(expr.ArrayE(expr.LitE(0, Loc(25,11)), expr.VarE("v:f2:b", Loc(25,9)), Loc(25,9)), expr.LitE(0, Loc(25,16)), Loc(25,9)),
+            instr.AssignI(expr.ArrayE(expr.LitE(0, Loc(26,11)), expr.VarE("v:f2:c", Loc(26,9)), Loc(26,9)), expr.LitE(0, Loc(26,16)), Loc(26,9)),
+        ], # instrSeq end.
+      ), # f:f2() end. 
 
   }, # end allObjs dict
 ) # irTUnit.TUnit() ends

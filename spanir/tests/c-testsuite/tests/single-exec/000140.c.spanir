@@ -32,28 +32,12 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
+        instrSeq = [
             instr.AssignI(expr.VarE("v:main:x", Loc(7,2)), expr.LitE(1, Loc(7,6)), Loc(7,2)),
             instr.AssignI(expr.VarE("v:main:p", Loc(8,2)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:main:x", Loc(8,7)), Loc(8,6)), Loc(8,2)),
-            instr.AssignI(expr.ArrayE(expr.VarE("v:main:p", Loc(9,2)), [expr.LitE(0, Loc(9,4))], Loc(9,2)), expr.LitE(0, Loc(9,9)), Loc(9,2)),
-            instr.ReturnI(expr.VarE("v:main:x", Loc(10,9)), Loc(10,2)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+            instr.AssignI(expr.ArrayE(expr.LitE(0, Loc(9,4)), expr.VarE("v:main:p", Loc(9,2)), Loc(9,2)), expr.LitE(0, Loc(9,9)), Loc(9,2)),
+            instr.ReturnI(expr.VarE("v:main:x", Loc(10,9))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

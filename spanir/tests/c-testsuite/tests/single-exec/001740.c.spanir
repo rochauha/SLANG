@@ -23,21 +23,18 @@ irTUnit.TUnit(
     "v:main:t.22": types.Float32,
     "v:main:t.21": types.Float32,
     "v:main:t.20": types.Float32,
-    "v:sin:__x": types.Float32,
     "v:main:t.19": types.Float32,
     "v:main:t.18": types.Float32,
     "v:main:t.17": types.Float32,
     "v:main:t.16": types.Float32,
-    "v:main:t.15": types.Float32,
-    "v:main:t.4": types.Float32,
-    "v:main:t.3": types.Float32,
-    "v:main:t.2": types.Float32,
-    "v:main:t.1": types.Float32,
-    "v:main:a": types.Float32,
-    "v:printf:__format": types.Ptr(to=types.Int8),
     "v:main:t.5": types.Float32,
-    "v:main:t.6": types.Float32,
+    "v:main:t.4": types.Float32,
+    "v:main:t.2": types.Float32,
+    "v:main:t.3": types.Float32,
     "v:main:t.7": types.Float32,
+    "v:main:t.1": types.Float32,
+    "v:main:t.6": types.Float32,
+    "v:main:a": types.Float32,
     "v:main:t.8": types.Float32,
     "v:main:t.9": types.Float32,
     "v:main:t.10": types.Float32,
@@ -45,25 +42,10 @@ irTUnit.TUnit(
     "v:main:t.12": types.Float32,
     "v:main:t.13": types.Float32,
     "v:main:t.14": types.Float32,
+    "v:main:t.15": types.Float32,
   }, # end allVars dict
 
   allObjs = {
-
-    "f:sin":
-      obj.Func(
-        name = "f:sin",
-        paramNames = ["v:sin:__x"],
-        variadic = False,
-        returnType = types.Float32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:sin() end. 
 
     "f:main":
       obj.Func(
@@ -74,109 +56,73 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.AssignI(expr.VarE("v:main:a", Loc(7,4)), expr.BinaryE(expr.LitE(12.340000, Loc(7,14)), op.BO_ADD, expr.LitE(56.780000, Loc(7,22))), Loc(7,4)),
+        instrSeq = [
+            instr.AssignI(expr.VarE("v:main:a", Loc(7,4)), expr.BinaryE(expr.LitE(12.340000, Loc(7,14)), op.BO_ADD, expr.LitE(56.780000, Loc(7,22)), Loc(7,14)), Loc(7,4)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(8,4)), [expr.LitE("""%f
-""", Loc(8,11)), expr.VarE("v:main:a", Loc(8,19))], Loc(8,4))),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(11,19)), expr.BinaryE(expr.LitE(12.340000, Loc(11,19)), op.BO_ADD, expr.LitE(56.780000, Loc(11,27))), Loc(11,19)),
+""", Loc(8,11)), expr.VarE("v:main:a", Loc(8,19))], Loc(8,4)), Loc(8,4)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(11,19)), expr.BinaryE(expr.LitE(12.340000, Loc(11,19)), op.BO_ADD, expr.LitE(56.780000, Loc(11,27)), Loc(11,19)), Loc(11,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(11,4)), [expr.LitE("""%f
-""", Loc(11,11)), expr.VarE("v:main:t.1", Loc(11,19))], Loc(11,4))),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(12,19)), expr.BinaryE(expr.LitE(12.340000, Loc(12,19)), op.BO_SUB, expr.LitE(56.780000, Loc(12,27))), Loc(12,19)),
+""", Loc(11,11)), expr.VarE("v:main:t.1", Loc(11,19))], Loc(11,4)), Loc(11,4)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(12,19)), expr.BinaryE(expr.LitE(12.340000, Loc(12,19)), op.BO_SUB, expr.LitE(56.780000, Loc(12,27)), Loc(12,19)), Loc(12,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(12,4)), [expr.LitE("""%f
-""", Loc(12,11)), expr.VarE("v:main:t.2", Loc(12,19))], Loc(12,4))),
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(13,19)), expr.BinaryE(expr.LitE(12.340000, Loc(13,19)), op.BO_MUL, expr.LitE(56.780000, Loc(13,27))), Loc(13,19)),
+""", Loc(12,11)), expr.VarE("v:main:t.2", Loc(12,19))], Loc(12,4)), Loc(12,4)),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(13,19)), expr.BinaryE(expr.LitE(12.340000, Loc(13,19)), op.BO_MUL, expr.LitE(56.780000, Loc(13,27)), Loc(13,19)), Loc(13,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(13,4)), [expr.LitE("""%f
-""", Loc(13,11)), expr.VarE("v:main:t.3", Loc(13,19))], Loc(13,4))),
-            instr.AssignI(expr.VarE("v:main:t.4", Loc(14,19)), expr.BinaryE(expr.LitE(12.340000, Loc(14,19)), op.BO_DIV, expr.LitE(56.780000, Loc(14,27))), Loc(14,19)),
+""", Loc(13,11)), expr.VarE("v:main:t.3", Loc(13,19))], Loc(13,4)), Loc(13,4)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(14,19)), expr.BinaryE(expr.LitE(12.340000, Loc(14,19)), op.BO_DIV, expr.LitE(56.780000, Loc(14,27)), Loc(14,19)), Loc(14,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(14,4)), [expr.LitE("""%f
-""", Loc(14,11)), expr.VarE("v:main:t.4", Loc(14,19))], Loc(14,4))),
-            instr.AssignI(expr.VarE("v:main:t.10", Loc(17,34)), expr.BinaryE(expr.LitE(12.340000, Loc(17,34)), op.BO_LT, expr.LitE(56.780000, Loc(17,42))), Loc(17,34)),
-            instr.AssignI(expr.VarE("v:main:t.9", Loc(17,49)), expr.BinaryE(expr.LitE(12.340000, Loc(17,49)), op.BO_LE, expr.LitE(56.780000, Loc(17,58))), Loc(17,49)),
-            instr.AssignI(expr.VarE("v:main:t.8", Loc(17,65)), expr.BinaryE(expr.LitE(12.340000, Loc(17,65)), op.BO_EQ, expr.LitE(56.780000, Loc(17,74))), Loc(17,65)),
-            instr.AssignI(expr.VarE("v:main:t.7", Loc(17,81)), expr.BinaryE(expr.LitE(12.340000, Loc(17,81)), op.BO_GE, expr.LitE(56.780000, Loc(17,90))), Loc(17,81)),
-            instr.AssignI(expr.VarE("v:main:t.6", Loc(17,97)), expr.BinaryE(expr.LitE(12.340000, Loc(17,97)), op.BO_GT, expr.LitE(56.780000, Loc(17,105))), Loc(17,97)),
-            instr.AssignI(expr.VarE("v:main:t.5", Loc(17,112)), expr.BinaryE(expr.LitE(12.340000, Loc(17,112)), op.BO_NE, expr.LitE(56.780000, Loc(17,121))), Loc(17,112)),
+""", Loc(14,11)), expr.VarE("v:main:t.4", Loc(14,19))], Loc(14,4)), Loc(14,4)),
+            instr.AssignI(expr.VarE("v:main:t.5", Loc(17,34)), expr.BinaryE(expr.LitE(12.340000, Loc(17,34)), op.BO_LT, expr.LitE(56.780000, Loc(17,42)), Loc(17,34)), Loc(17,34)),
+            instr.AssignI(expr.VarE("v:main:t.6", Loc(17,49)), expr.BinaryE(expr.LitE(12.340000, Loc(17,49)), op.BO_LE, expr.LitE(56.780000, Loc(17,58)), Loc(17,49)), Loc(17,49)),
+            instr.AssignI(expr.VarE("v:main:t.7", Loc(17,65)), expr.BinaryE(expr.LitE(12.340000, Loc(17,65)), op.BO_EQ, expr.LitE(56.780000, Loc(17,74)), Loc(17,65)), Loc(17,65)),
+            instr.AssignI(expr.VarE("v:main:t.8", Loc(17,81)), expr.BinaryE(expr.LitE(12.340000, Loc(17,81)), op.BO_GE, expr.LitE(56.780000, Loc(17,90)), Loc(17,81)), Loc(17,81)),
+            instr.AssignI(expr.VarE("v:main:t.9", Loc(17,97)), expr.BinaryE(expr.LitE(12.340000, Loc(17,97)), op.BO_GT, expr.LitE(56.780000, Loc(17,105)), Loc(17,97)), Loc(17,97)),
+            instr.AssignI(expr.VarE("v:main:t.10", Loc(17,112)), expr.BinaryE(expr.LitE(12.340000, Loc(17,112)), op.BO_NE, expr.LitE(56.780000, Loc(17,121)), Loc(17,112)), Loc(17,112)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(17,4)), [expr.LitE("""%d %d %d %d %d %d
-""", Loc(17,11)), expr.VarE("v:main:t.10", Loc(17,34)), expr.VarE("v:main:t.9", Loc(17,49)), expr.VarE("v:main:t.8", Loc(17,65)), expr.VarE("v:main:t.7", Loc(17,81)), expr.VarE("v:main:t.6", Loc(17,97)), expr.VarE("v:main:t.5", Loc(17,112))], Loc(17,4))),
-            instr.AssignI(expr.VarE("v:main:t.16", Loc(18,34)), expr.BinaryE(expr.LitE(12.340000, Loc(18,34)), op.BO_LT, expr.LitE(12.340000, Loc(18,42))), Loc(18,34)),
-            instr.AssignI(expr.VarE("v:main:t.15", Loc(18,49)), expr.BinaryE(expr.LitE(12.340000, Loc(18,49)), op.BO_LE, expr.LitE(12.340000, Loc(18,58))), Loc(18,49)),
-            instr.AssignI(expr.VarE("v:main:t.14", Loc(18,65)), expr.BinaryE(expr.LitE(12.340000, Loc(18,65)), op.BO_EQ, expr.LitE(12.340000, Loc(18,74))), Loc(18,65)),
-            instr.AssignI(expr.VarE("v:main:t.13", Loc(18,81)), expr.BinaryE(expr.LitE(12.340000, Loc(18,81)), op.BO_GE, expr.LitE(12.340000, Loc(18,90))), Loc(18,81)),
-            instr.AssignI(expr.VarE("v:main:t.12", Loc(18,97)), expr.BinaryE(expr.LitE(12.340000, Loc(18,97)), op.BO_GT, expr.LitE(12.340000, Loc(18,105))), Loc(18,97)),
-            instr.AssignI(expr.VarE("v:main:t.11", Loc(18,112)), expr.BinaryE(expr.LitE(12.340000, Loc(18,112)), op.BO_NE, expr.LitE(12.340000, Loc(18,121))), Loc(18,112)),
+""", Loc(17,11)), expr.VarE("v:main:t.5", Loc(17,34)), expr.VarE("v:main:t.6", Loc(17,49)), expr.VarE("v:main:t.7", Loc(17,65)), expr.VarE("v:main:t.8", Loc(17,81)), expr.VarE("v:main:t.9", Loc(17,97)), expr.VarE("v:main:t.10", Loc(17,112))], Loc(17,4)), Loc(17,4)),
+            instr.AssignI(expr.VarE("v:main:t.11", Loc(18,34)), expr.BinaryE(expr.LitE(12.340000, Loc(18,34)), op.BO_LT, expr.LitE(12.340000, Loc(18,42)), Loc(18,34)), Loc(18,34)),
+            instr.AssignI(expr.VarE("v:main:t.12", Loc(18,49)), expr.BinaryE(expr.LitE(12.340000, Loc(18,49)), op.BO_LE, expr.LitE(12.340000, Loc(18,58)), Loc(18,49)), Loc(18,49)),
+            instr.AssignI(expr.VarE("v:main:t.13", Loc(18,65)), expr.BinaryE(expr.LitE(12.340000, Loc(18,65)), op.BO_EQ, expr.LitE(12.340000, Loc(18,74)), Loc(18,65)), Loc(18,65)),
+            instr.AssignI(expr.VarE("v:main:t.14", Loc(18,81)), expr.BinaryE(expr.LitE(12.340000, Loc(18,81)), op.BO_GE, expr.LitE(12.340000, Loc(18,90)), Loc(18,81)), Loc(18,81)),
+            instr.AssignI(expr.VarE("v:main:t.15", Loc(18,97)), expr.BinaryE(expr.LitE(12.340000, Loc(18,97)), op.BO_GT, expr.LitE(12.340000, Loc(18,105)), Loc(18,97)), Loc(18,97)),
+            instr.AssignI(expr.VarE("v:main:t.16", Loc(18,112)), expr.BinaryE(expr.LitE(12.340000, Loc(18,112)), op.BO_NE, expr.LitE(12.340000, Loc(18,121)), Loc(18,112)), Loc(18,112)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(18,4)), [expr.LitE("""%d %d %d %d %d %d
-""", Loc(18,11)), expr.VarE("v:main:t.16", Loc(18,34)), expr.VarE("v:main:t.15", Loc(18,49)), expr.VarE("v:main:t.14", Loc(18,65)), expr.VarE("v:main:t.13", Loc(18,81)), expr.VarE("v:main:t.12", Loc(18,97)), expr.VarE("v:main:t.11", Loc(18,112))], Loc(18,4))),
-            instr.AssignI(expr.VarE("v:main:t.22", Loc(19,34)), expr.BinaryE(expr.LitE(56.780000, Loc(19,34)), op.BO_LT, expr.LitE(12.340000, Loc(19,42))), Loc(19,34)),
-            instr.AssignI(expr.VarE("v:main:t.21", Loc(19,49)), expr.BinaryE(expr.LitE(56.780000, Loc(19,49)), op.BO_LE, expr.LitE(12.340000, Loc(19,58))), Loc(19,49)),
-            instr.AssignI(expr.VarE("v:main:t.20", Loc(19,65)), expr.BinaryE(expr.LitE(56.780000, Loc(19,65)), op.BO_EQ, expr.LitE(12.340000, Loc(19,74))), Loc(19,65)),
-            instr.AssignI(expr.VarE("v:main:t.19", Loc(19,81)), expr.BinaryE(expr.LitE(56.780000, Loc(19,81)), op.BO_GE, expr.LitE(12.340000, Loc(19,90))), Loc(19,81)),
-            instr.AssignI(expr.VarE("v:main:t.18", Loc(19,97)), expr.BinaryE(expr.LitE(56.780000, Loc(19,97)), op.BO_GT, expr.LitE(12.340000, Loc(19,105))), Loc(19,97)),
-            instr.AssignI(expr.VarE("v:main:t.17", Loc(19,112)), expr.BinaryE(expr.LitE(56.780000, Loc(19,112)), op.BO_NE, expr.LitE(12.340000, Loc(19,121))), Loc(19,112)),
+""", Loc(18,11)), expr.VarE("v:main:t.11", Loc(18,34)), expr.VarE("v:main:t.12", Loc(18,49)), expr.VarE("v:main:t.13", Loc(18,65)), expr.VarE("v:main:t.14", Loc(18,81)), expr.VarE("v:main:t.15", Loc(18,97)), expr.VarE("v:main:t.16", Loc(18,112))], Loc(18,4)), Loc(18,4)),
+            instr.AssignI(expr.VarE("v:main:t.17", Loc(19,34)), expr.BinaryE(expr.LitE(56.780000, Loc(19,34)), op.BO_LT, expr.LitE(12.340000, Loc(19,42)), Loc(19,34)), Loc(19,34)),
+            instr.AssignI(expr.VarE("v:main:t.18", Loc(19,49)), expr.BinaryE(expr.LitE(56.780000, Loc(19,49)), op.BO_LE, expr.LitE(12.340000, Loc(19,58)), Loc(19,49)), Loc(19,49)),
+            instr.AssignI(expr.VarE("v:main:t.19", Loc(19,65)), expr.BinaryE(expr.LitE(56.780000, Loc(19,65)), op.BO_EQ, expr.LitE(12.340000, Loc(19,74)), Loc(19,65)), Loc(19,65)),
+            instr.AssignI(expr.VarE("v:main:t.20", Loc(19,81)), expr.BinaryE(expr.LitE(56.780000, Loc(19,81)), op.BO_GE, expr.LitE(12.340000, Loc(19,90)), Loc(19,81)), Loc(19,81)),
+            instr.AssignI(expr.VarE("v:main:t.21", Loc(19,97)), expr.BinaryE(expr.LitE(56.780000, Loc(19,97)), op.BO_GT, expr.LitE(12.340000, Loc(19,105)), Loc(19,97)), Loc(19,97)),
+            instr.AssignI(expr.VarE("v:main:t.22", Loc(19,112)), expr.BinaryE(expr.LitE(56.780000, Loc(19,112)), op.BO_NE, expr.LitE(12.340000, Loc(19,121)), Loc(19,112)), Loc(19,112)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(19,4)), [expr.LitE("""%d %d %d %d %d %d
-""", Loc(19,11)), expr.VarE("v:main:t.22", Loc(19,34)), expr.VarE("v:main:t.21", Loc(19,49)), expr.VarE("v:main:t.20", Loc(19,65)), expr.VarE("v:main:t.19", Loc(19,81)), expr.VarE("v:main:t.18", Loc(19,97)), expr.VarE("v:main:t.17", Loc(19,112))], Loc(19,4))),
+""", Loc(19,11)), expr.VarE("v:main:t.17", Loc(19,34)), expr.VarE("v:main:t.18", Loc(19,49)), expr.VarE("v:main:t.19", Loc(19,65)), expr.VarE("v:main:t.20", Loc(19,81)), expr.VarE("v:main:t.21", Loc(19,97)), expr.VarE("v:main:t.22", Loc(19,112))], Loc(19,4)), Loc(19,4)),
             instr.AssignI(expr.VarE("v:main:a", Loc(22,4)), expr.LitE(12.340000, Loc(22,8)), Loc(22,4)),
-            instr.AssignI(expr.VarE("v:main:a", Loc(23,4)), expr.BinaryE(expr.VarE("v:main:a", Loc(23,4)), op.BO_ADD, expr.LitE(56.780000, Loc(23,9)), Loc(23,4)), Loc(23,4)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(24,4)), [expr.LitE("""%f
-""", Loc(24,11)), expr.VarE("v:main:a", Loc(24,19))], Loc(24,4))),
+""", Loc(24,11)), expr.VarE("v:main:a", Loc(24,19))], Loc(24,4)), Loc(24,4)),
             instr.AssignI(expr.VarE("v:main:a", Loc(26,4)), expr.LitE(12.340000, Loc(26,8)), Loc(26,4)),
-            instr.AssignI(expr.VarE("v:main:a", Loc(27,4)), expr.BinaryE(expr.VarE("v:main:a", Loc(27,4)), op.BO_SUB, expr.LitE(56.780000, Loc(27,9)), Loc(27,4)), Loc(27,4)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(28,4)), [expr.LitE("""%f
-""", Loc(28,11)), expr.VarE("v:main:a", Loc(28,19))], Loc(28,4))),
+""", Loc(28,11)), expr.VarE("v:main:a", Loc(28,19))], Loc(28,4)), Loc(28,4)),
             instr.AssignI(expr.VarE("v:main:a", Loc(30,4)), expr.LitE(12.340000, Loc(30,8)), Loc(30,4)),
-            instr.AssignI(expr.VarE("v:main:a", Loc(31,4)), expr.BinaryE(expr.VarE("v:main:a", Loc(31,4)), op.BO_MUL, expr.LitE(56.780000, Loc(31,9)), Loc(31,4)), Loc(31,4)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(32,4)), [expr.LitE("""%f
-""", Loc(32,11)), expr.VarE("v:main:a", Loc(32,19))], Loc(32,4))),
+""", Loc(32,11)), expr.VarE("v:main:a", Loc(32,19))], Loc(32,4)), Loc(32,4)),
             instr.AssignI(expr.VarE("v:main:a", Loc(34,4)), expr.LitE(12.340000, Loc(34,8)), Loc(34,4)),
-            instr.AssignI(expr.VarE("v:main:a", Loc(35,4)), expr.BinaryE(expr.VarE("v:main:a", Loc(35,4)), op.BO_DIV, expr.LitE(56.780000, Loc(35,9)), Loc(35,4)), Loc(35,4)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(36,4)), [expr.LitE("""%f
-""", Loc(36,11)), expr.VarE("v:main:a", Loc(36,19))], Loc(36,4))),
+""", Loc(36,11)), expr.VarE("v:main:a", Loc(36,19))], Loc(36,4)), Loc(36,4)),
             instr.AssignI(expr.VarE("v:main:t.23", Loc(39,19)), expr.UnaryE(op.UO_MINUS, expr.LitE(12.340000, Loc(39,20)), Loc(39,19)), Loc(39,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(39,4)), [expr.LitE("""%f
-""", Loc(39,11)), expr.VarE("v:main:t.23", Loc(39,19))], Loc(39,4))),
+""", Loc(39,11)), expr.VarE("v:main:t.23", Loc(39,19))], Loc(39,4)), Loc(39,4)),
             instr.AssignI(expr.VarE("v:main:t.24", Loc(40,19)), expr.UnaryE(op.UO_MINUS, expr.LitE(12.340000, Loc(40,20)), Loc(40,19)), Loc(40,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(40,4)), [expr.LitE("""%f
-""", Loc(40,11)), expr.VarE("v:main:t.24", Loc(40,19))], Loc(40,4))),
+""", Loc(40,11)), expr.VarE("v:main:t.24", Loc(40,19))], Loc(40,4)), Loc(40,4)),
             instr.AssignI(expr.VarE("v:main:a", Loc(43,4)), expr.LitE(2.0, Loc(43,8)), Loc(43,4)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(44,4)), [expr.LitE("""%f
-""", Loc(44,11)), expr.VarE("v:main:a", Loc(44,19))], Loc(44,4))),
+""", Loc(44,11)), expr.VarE("v:main:a", Loc(44,19))], Loc(44,4)), Loc(44,4)),
             instr.AssignI(expr.VarE("v:main:t.25", Loc(45,19)), expr.CallE(expr.FuncE("f:sin", Loc(45,19)), [expr.LitE(2.0, Loc(45,23))], Loc(45,19)), Loc(45,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(45,4)), [expr.LitE("""%f
-""", Loc(45,11)), expr.VarE("v:main:t.25", Loc(45,19))], Loc(45,4))),
-            instr.ReturnI(expr.LitE(0, Loc(47,11)), Loc(47,4)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+""", Loc(45,11)), expr.VarE("v:main:t.25", Loc(45,19))], Loc(45,4)), Loc(45,4)),
+            instr.ReturnI(expr.LitE(0, Loc(47,11))),
+        ], # instrSeq end.
       ), # f:main() end. 
-
-    "f:printf":
-      obj.Func(
-        name = "f:printf",
-        paramNames = ["v:printf:__format"],
-        variadic = True,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:printf() end. 
 
   }, # end allObjs dict
 ) # irTUnit.TUnit() ends

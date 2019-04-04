@@ -17,10 +17,10 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.3": types.Int,
-    "v:main:t.2": types.Int,
+    "v:main:t.3": types.Int32,
+    "v:main:t.2": types.Int32,
     "v:main:x": types.Int32,
-    "v:main:t.1": types.Int,
+    "v:main:t.1": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -34,92 +34,35 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          12: [
-            instr.ReturnI(expr.LitE(111, Loc(6,16)), Loc(6,9)),
-          ],
-
-          11: [
-            instr.ReturnI(expr.LitE(222, Loc(9,16)), Loc(9,9)),
-          ],
-
-          10: [
-            instr.ReturnI(expr.LitE(333, Loc(15,16)), Loc(15,9)),
-          ],
-
-          14: [
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(8,7)), expr.BinaryE(expr.VarE("v:main:x", Loc(3,10)), op.BO_EQ, expr.LitE(10, Loc(5,12)), ), ),
-            instr.CondI(expr.VarE("v:main:t.3", Loc(8,7)), ),
-          ],
-
-          9: [
+        instrSeq = [
             instr.AssignI(expr.VarE("v:main:x", Loc(2,3)), expr.LitE(10, Loc(2,11)), Loc(2,3)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(5,7)), expr.BinaryE(expr.VarE("v:main:x", Loc(3,10)), op.BO_EQ, expr.LitE(20, Loc(8,12)), ), ),
-            instr.CondI(expr.VarE("v:main:t.2", Loc(5,7)), ),
-          ],
-
-          8: [
-            instr.ReturnI(expr.LitE(444, Loc(21,12)), Loc(21,5)),
-          ],
-
-          7: [
-            instr.NopI(),
-          ],
-
-          6: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(33,10)), Loc(33,3)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          2: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(24,5)), expr.BinaryE(expr.VarE("v:main:x", Loc(23,10)), op.BO_EQ, expr.LitE(1, Loc(24,10)), ), ),
-            instr.CondI(expr.VarE("v:main:t.1", Loc(24,5)), ),
-          ],
-
-          3: [
-            instr.NopI(),
-          ],
-
-          4: [
-            instr.NopI(),
-          ],
-
-          5: [
-            instr.ReturnI(expr.LitE(445, Loc(29,14)), Loc(29,7)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 3, types.TrueEdge),
-          (2, 1, types.FalseEdge),
-          (3, 4, types.UnCondEdge),
-          (4, 5, types.UnCondEdge),
-          (5, 0, types.UnCondEdge),
-          (6, 3, types.UnCondEdge),
-          (7, 8, types.UnCondEdge),
-          (8, 0, types.UnCondEdge),
-          (9, 11, types.TrueEdge),
-          (14, 12, types.TrueEdge),
-          (9, 14, types.FalseEdge),
-          (14, 10, types.FalseEdge),
-          (10, 0, types.UnCondEdge),
-          (11, 0, types.UnCondEdge),
-          (12, 0, types.UnCondEdge),
-          (-1, 9, types.UnCondEdge),
-        }, # bbEdges end
+            instr.LabelI("CaseCond1-0"),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(5,7)), expr.BinaryE(expr.VarE("v:main:x", Loc(3,10)), op.BO_EQ, expr.LitE(10, Loc(5,12)), Loc(5,7)), Loc(5,7)),
+            instr.CondI(expr.VarE("v:main:t.1", Loc(5,7)), "CaseBody1-0", "CaseCond1-1", Loc(5,7)),
+            instr.LabelI("CaseBody1-0"),
+            instr.ReturnI(expr.LitE(111, Loc(6,16))),
+            instr.LabelI("CaseCond1-1"),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(8,7)), expr.BinaryE(expr.VarE("v:main:x", Loc(3,10)), op.BO_EQ, expr.LitE(20, Loc(8,12)), Loc(8,7)), Loc(8,7)),
+            instr.CondI(expr.VarE("v:main:t.2", Loc(8,7)), "CaseBody1-1", "Default1", Loc(8,7)),
+            instr.LabelI("CaseBody1-1"),
+            instr.ReturnI(expr.LitE(222, Loc(9,16))),
+            instr.LabelI("CaseCond1-2"),
+            instr.LabelI("Default1"),
+            instr.ReturnI(expr.LitE(333, Loc(15,16))),
+            instr.LabelI("SwitchExit1"),
+            instr.LabelI(""),
+            instr.LabelI("Default2"),
+            instr.ReturnI(expr.LitE(444, Loc(21,12))),
+            instr.LabelI("SwitchExit2"),
+            instr.LabelI("CaseCond3-0"),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(24,5)), expr.BinaryE(expr.VarE("v:main:x", Loc(23,10)), op.BO_EQ, expr.LitE(1, Loc(24,10)), Loc(24,5)), Loc(24,5)),
+            instr.CondI(expr.VarE("v:main:t.3", Loc(24,5)), "CaseBody3-0", "Default3", Loc(24,5)),
+            instr.LabelI("CaseBody3-0"),
+            instr.LabelI("CaseCond3-1"),
+            instr.LabelI("Default3"),
+            instr.LabelI("SwitchExit3"),
+            instr.ReturnI(expr.LitE(0, Loc(33,10))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

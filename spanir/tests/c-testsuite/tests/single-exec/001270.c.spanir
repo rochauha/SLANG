@@ -17,7 +17,7 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:c": types.Int32,
+    "": ,
   }, # end allVars dict
 
   allObjs = {
@@ -31,74 +31,33 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          10: [
-            instr.CondI(expr.LitE(0, Loc(6,5)), Loc(6,2)),
-          ],
-
-          9: [
-            instr.ReturnI(expr.LitE(1, Loc(7,10)), Loc(7,3)),
-          ],
-
-          8: [
-            instr.CondI(expr.LitE(0, Loc(8,12)), Loc(8,9)),
-          ],
-
-          7: [
-            instr.NopI(),
-          ],
-
-          6: [
-            instr.CondI(expr.LitE(1, Loc(10,6)), Loc(10,3)),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(1, Loc(19,9)), Loc(19,2)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          2: [
-            instr.ReturnI(expr.LitE(1, Loc(16,11)), Loc(16,4)),
-          ],
-
-          3: [
-            instr.ReturnI(expr.LitE(0, Loc(14,12)), Loc(14,5)),
-          ],
-
-          4: [
-            instr.ReturnI(expr.LitE(1, Loc(12,12)), Loc(12,5)),
-          ],
-
-          5: [
-            instr.CondI(expr.VarE("v:c", Loc(11,7)), Loc(11,4)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 0, types.UnCondEdge),
-          (3, 0, types.UnCondEdge),
-          (4, 0, types.UnCondEdge),
-          (5, 4, types.TrueEdge),
-          (5, 3, types.FalseEdge),
-          (6, 5, types.TrueEdge),
-          (6, 0, types.FalseEdge),
-          (7, 1, types.UnCondEdge),
-          (8, 0, types.TrueEdge),
-          (8, 6, types.FalseEdge),
-          (9, 0, types.UnCondEdge),
-          (10, 0, types.TrueEdge),
-          (10, 8, types.FalseEdge),
-          (-1, 10, types.UnCondEdge),
-        }, # bbEdges end
+        instrSeq = [
+            instr.CondI(expr.LitE(0, Loc(6,5)), "IfTrue1", "IfFalse1", Loc(6,5)),
+            instr.LabelI("IfTrue1"),
+            instr.ReturnI(expr.LitE(1, Loc(7,10))),
+            instr.GotoI("IfExit1"),
+            instr.LabelI("IfFalse1"),
+            instr.CondI(expr.LitE(0, Loc(8,12)), "IfTrue2", "IfFalse2", Loc(8,12)),
+            instr.LabelI("IfTrue2"),
+            instr.GotoI("IfExit2"),
+            instr.LabelI("IfFalse2"),
+            instr.CondI(expr.LitE(1, Loc(10,6)), "IfTrue3", "IfFalse3", Loc(10,6)),
+            instr.LabelI("IfTrue3"),
+            instr.CondI(expr.VarE("", Loc(11,7)), "IfTrue4", "IfFalse4", Loc(11,7)),
+            instr.LabelI("IfTrue4"),
+            instr.ReturnI(expr.LitE(1, Loc(12,12))),
+            instr.GotoI("IfExit4"),
+            instr.LabelI("IfFalse4"),
+            instr.ReturnI(expr.LitE(0, Loc(14,12))),
+            instr.LabelI("IfExit4"),
+            instr.GotoI("IfExit3"),
+            instr.LabelI("IfFalse3"),
+            instr.ReturnI(expr.LitE(1, Loc(16,11))),
+            instr.LabelI("IfExit3"),
+            instr.LabelI("IfExit2"),
+            instr.LabelI("IfExit1"),
+            instr.ReturnI(expr.LitE(1, Loc(19,9))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

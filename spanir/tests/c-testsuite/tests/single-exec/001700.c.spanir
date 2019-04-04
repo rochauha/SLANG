@@ -17,13 +17,12 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.2": types.UInt32,
-    "v:deref_uintptr:p": types.Ptr(to=types.UInt32),
+    "v:main:frod": types.Int32,
+    "v:main:epos": types.Int32,
     "v:main:t.1": types.Ptr(to=types.Int32),
     "v:should_compile:s": types.Ptr(to=types.Struct("s:S2")),
-    "v:main:epos": types.Int32,
-    "v:main:frod": types.Int32,
-    "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:main:t.2": types.UInt32,
+    "v:deref_uintptr:p": types.Ptr(to=types.UInt32),
   }, # end allVars dict
 
   allObjs = {
@@ -37,22 +36,6 @@ irTUnit.TUnit(
       ),
 
 
-    "f:printf":
-      obj.Func(
-        name = "f:printf",
-        paramNames = ["v:printf:__format"],
-        variadic = True,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:printf() end. 
-
     "f:deref_uintptr":
       obj.Func(
         name = "f:deref_uintptr",
@@ -62,57 +45,11 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
+        instrSeq = [
             instr.AssignI(expr.VarE("v:deref_uintptr:t.1", Loc(47,10)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:deref_uintptr:p", Loc(47,11)), Loc(47,10)), Loc(47,10)),
-            instr.ReturnI(expr.VarE("v:deref_uintptr:t.1", Loc(47,10)), Loc(47,3)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+            instr.ReturnI(expr.VarE("v:deref_uintptr:t.1", Loc(47,10))),
+        ], # instrSeq end.
       ), # f:deref_uintptr() end. 
-
-    "f:it_real_fn":
-      obj.Func(
-        name = "f:it_real_fn",
-        paramNames = [],
-        variadic = False,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(1, Loc(42,10)), Loc(42,3)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
-      ), # f:it_real_fn() end. 
 
     "f:main":
       obj.Func(
@@ -123,38 +60,22 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
+        instrSeq = [
             instr.AssignI(expr.VarE("v:main:epos", Loc(57,4)), expr.LitE(1, Loc(57,26)), Loc(57,4)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(59,4)), [expr.LitE("""%d %d %d %d %d %d %d %d
-""", Loc(59,11)), expr.LitE(0, Loc(59,40)), expr.LitE(1, Loc(59,43)), expr.LitE(2, Loc(59,46)), expr.LitE(3, Loc(59,49)), expr.LitE(54, Loc(59,52)), expr.LitE(73, Loc(59,55)), expr.LitE(74, Loc(59,58)), expr.LitE(75, Loc(59,61))], Loc(59,4))),
+""", Loc(59,11)), expr.LitE(0, Loc(59,40)), expr.LitE(1, Loc(59,43)), expr.LitE(2, Loc(59,46)), expr.LitE(3, Loc(59,49)), expr.LitE(54, Loc(59,52)), expr.LitE(73, Loc(59,55)), expr.LitE(74, Loc(59,58)), expr.LitE(75, Loc(59,61))], Loc(59,4)), Loc(59,4)),
             instr.AssignI(expr.VarE("v:main:frod", Loc(61,4)), expr.LitE(12, Loc(61,11)), Loc(61,4)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(62,4)), [expr.LitE("""%d
-""", Loc(62,11)), expr.VarE("v:main:frod", Loc(62,19))], Loc(62,4))),
+""", Loc(62,11)), expr.VarE("v:main:frod", Loc(62,19))], Loc(62,4)), Loc(62,4)),
             instr.AssignI(expr.VarE("v:main:frod", Loc(63,4)), expr.LitE(54, Loc(63,11)), Loc(63,4)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(64,4)), [expr.LitE("""%d
-""", Loc(64,11)), expr.VarE("v:main:frod", Loc(64,19))], Loc(64,4))),
+""", Loc(64,11)), expr.VarE("v:main:frod", Loc(64,19))], Loc(64,4)), Loc(64,4)),
             instr.AssignI(expr.VarE("v:main:t.1", Loc(67,47)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:main:epos", Loc(67,48)), Loc(67,47)), Loc(67,47)),
             instr.AssignI(expr.VarE("v:main:t.2", Loc(67,33)), expr.CallE(expr.FuncE("f:deref_uintptr", Loc(67,33)), [expr.VarE("v:main:t.1", Loc(67,47))], Loc(67,33)), Loc(67,33)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(67,4)), [expr.LitE("""enum to int: %u
-""", Loc(67,12)), expr.VarE("v:main:t.2", Loc(67,33))], Loc(67,4))),
-            instr.ReturnI(expr.LitE(0, Loc(69,11)), Loc(69,4)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+""", Loc(67,12)), expr.VarE("v:main:t.2", Loc(67,33))], Loc(67,4)), Loc(67,4)),
+            instr.ReturnI(expr.LitE(0, Loc(69,11))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
     "f:should_compile":
@@ -166,25 +87,9 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.AssignI(expr.MemberE(expr.VarE("v:should_compile:s", Loc(37,3)), ["f2"], Loc(37,3)), expr.FuncE("f:it_real_fn", Loc(37,11)), Loc(37,3)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+        instrSeq = [
+            instr.AssignI(expr.MemberE("f2", expr.VarE("v:should_compile:s", Loc(37,3)), Loc(37,3)), expr.FuncE("f:it_real_fn", Loc(37,11)), Loc(37,3)),
+        ], # instrSeq end.
       ), # f:should_compile() end. 
 
     "f:it_real_fn":
@@ -196,11 +101,9 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
+        instrSeq = [
+            instr.ReturnI(expr.LitE(1, Loc(42,10))),
+        ], # instrSeq end.
       ), # f:it_real_fn() end. 
 
   }, # end allObjs dict

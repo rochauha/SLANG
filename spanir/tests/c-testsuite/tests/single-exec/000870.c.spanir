@@ -42,28 +42,12 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:v", Loc(17,2)), ["fptr"], Loc(17,2)), expr.FuncE("f:foo", Loc(17,11)), Loc(17,2)),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(18,9)), expr.MemberE(expr.VarE("v:main:v", Loc(18,9)), ["fptr"], Loc(18,9)), Loc(18,9)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(18,9)), expr.CallE(expr.VarE("v:main:t.1", Loc(18,9)), [], Loc(18,9)), Loc(18,9)),
-            instr.ReturnI(expr.VarE("v:main:t.2", Loc(18,9)), Loc(18,2)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+        instrSeq = [
+            instr.AssignI(expr.MemberE("fptr", expr.VarE("v:main:v", Loc(17,2)), Loc(17,2)), expr.FuncE("f:foo", Loc(17,11)), Loc(17,2)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(18,9)), expr.MemberE("fptr", expr.VarE("v:main:v", Loc(18,9)), Loc(18,9)), Loc(18,9)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(18,9)), expr.CallE(expr.VarE("v:main:t.1", Loc(18,9)), Loc(18,9)), Loc(18,9)),
+            instr.ReturnI(expr.VarE("v:main:t.2", Loc(18,9))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
     "f:foo":
@@ -75,25 +59,9 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(9,9)), Loc(9,2)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+        instrSeq = [
+            instr.ReturnI(expr.LitE(0, Loc(9,9))),
+        ], # instrSeq end.
       ), # f:foo() end. 
 
   }, # end allObjs dict

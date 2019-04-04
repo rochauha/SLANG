@@ -32,79 +32,23 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          11: [
-            instr.NopI(),
-          ],
-
-          10: [
-            instr.NopI(),
-          ],
-
-          9: [
-            instr.NopI(),
-          ],
-
-          8: [
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(4,5)), expr.SelectE(expr.LitE(0, Loc(4,5)), expr.LitE(1, Loc(4,9)), expr.LitE(0, Loc(4,13)), Loc(4,5)), Loc(4,5)),
-            instr.CondI(expr.VarE("v:main:t.2", Loc(4,5)), Loc(4,2)),
-          ],
-
-          7: [
-            instr.ReturnI(expr.LitE(1, Loc(5,10)), Loc(5,3)),
-          ],
-
-          6: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(8,9)), Loc(8,2)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          2: [
-            instr.ReturnI(expr.LitE(2, Loc(7,10)), Loc(7,3)),
-          ],
-
-          3: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(6,5)), expr.SelectE(expr.LitE(1, Loc(6,5)), expr.LitE(0, Loc(6,9)), expr.LitE(1, Loc(6,13)), Loc(6,5)), Loc(6,5)),
-            instr.CondI(expr.VarE("v:main:t.1", Loc(6,5)), Loc(6,2)),
-          ],
-
-          4: [
-            instr.NopI(),
-          ],
-
-          5: [
-            instr.NopI(),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 0, types.UnCondEdge),
-          (3, 0, types.TrueEdge),
-          (3, 1, types.FalseEdge),
-          (4, 3, types.UnCondEdge),
-          (5, 3, types.UnCondEdge),
-          (6, 4, types.UnCondEdge),
-          (7, 0, types.UnCondEdge),
-          (8, 0, types.TrueEdge),
-          (8, 6, types.FalseEdge),
-          (9, 8, types.UnCondEdge),
-          (10, 8, types.UnCondEdge),
-          (11, 0, types.UnCondEdge),
-          (-1, 11, types.UnCondEdge),
-        }, # bbEdges end
+        instrSeq = [
+            instr.AssignI(expr.VarE("v:main:t.1", ), expr.SelectE(expr.LitE(0, Loc(4,5)), expr.LitE(1, Loc(4,9)), expr.LitE(0, Loc(4,13)), Loc(4,5)), ),
+            instr.CondI(expr.VarE("v:main:t.1", ), "IfTrue1", "IfFalse1", Loc(4,5)),
+            instr.LabelI("IfTrue1"),
+            instr.ReturnI(expr.LitE(1, Loc(5,10))),
+            instr.GotoI("IfExit1"),
+            instr.LabelI("IfFalse1"),
+            instr.LabelI("IfExit1"),
+            instr.AssignI(expr.VarE("v:main:t.2", ), expr.SelectE(expr.LitE(1, Loc(6,5)), expr.LitE(0, Loc(6,9)), expr.LitE(1, Loc(6,13)), Loc(6,5)), ),
+            instr.CondI(expr.VarE("v:main:t.2", ), "IfTrue2", "IfFalse2", Loc(6,5)),
+            instr.LabelI("IfTrue2"),
+            instr.ReturnI(expr.LitE(2, Loc(7,10))),
+            instr.GotoI("IfExit2"),
+            instr.LabelI("IfFalse2"),
+            instr.LabelI("IfExit2"),
+            instr.ReturnI(expr.LitE(0, Loc(8,9))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

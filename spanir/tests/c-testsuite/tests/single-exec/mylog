@@ -1,354 +1,1036 @@
 
-  04-04-2019 16:21:18: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkASTCodeBody():533:
+  04-04-2019 17:38:28: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkASTCodeBody():537:
 BOUND START: SLANG_Generated_Output.
 
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleFuncNameAndType():575:
-AddingFunction: sum
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleFuncNameAndType():579:
+AddingFunction: inc_global
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleVariable():608:
-NEW_VAR: "": types.Int32,
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkASTCodeBody():547:
+inc_global
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleVariable():608:
-NEW_VAR: "": types.Int32,
-
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkASTCodeBody():543:
-sum
-
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
 ConvertingStmt : CompoundStmt
 
-CompoundStmt 0x55cf2ea91b28
-`-ReturnStmt 0x55cf2ea91b10
-  `-BinaryOperator 0x55cf2ea91ae8 'int' '+'
-    |-ImplicitCastExpr 0x55cf2ea91ab8 'int' <LValueToRValue>
-    | `-DeclRefExpr 0x55cf2ea91a68 'int' lvalue ParmVar 0x55cf2ea91820 'a' 'int'
-    `-ImplicitCastExpr 0x55cf2ea91ad0 'int' <LValueToRValue>
-      `-DeclRefExpr 0x55cf2ea91a90 'int' lvalue ParmVar 0x55cf2ea91898 'b' 'int'
+CompoundStmt 0x55c05522ddd8
+`-UnaryOperator 0x55c05522ddb8 'int' postfix '++'
+  `-DeclRefExpr 0x55c05522dd90 'int' lvalue Var 0x55c05522dbc8 'global' 'int'
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : ReturnStmt
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : UnaryOperator
 
-ReturnStmt 0x55cf2ea91b10
-`-BinaryOperator 0x55cf2ea91ae8 'int' '+'
-  |-ImplicitCastExpr 0x55cf2ea91ab8 'int' <LValueToRValue>
-  | `-DeclRefExpr 0x55cf2ea91a68 'int' lvalue ParmVar 0x55cf2ea91820 'a' 'int'
-  `-ImplicitCastExpr 0x55cf2ea91ad0 'int' <LValueToRValue>
-    `-DeclRefExpr 0x55cf2ea91a90 'int' lvalue ParmVar 0x55cf2ea91898 'b' 'int'
+UnaryOperator 0x55c05522ddb8 'int' postfix '++'
+`-DeclRefExpr 0x55c05522dd90 'int' lvalue Var 0x55c05522dbc8 'global' 'int'
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : BinaryOperator
-
-BinaryOperator 0x55cf2ea91ae8 'int' '+'
-|-ImplicitCastExpr 0x55cf2ea91ab8 'int' <LValueToRValue>
-| `-DeclRefExpr 0x55cf2ea91a68 'int' lvalue ParmVar 0x55cf2ea91820 'a' 'int'
-`-ImplicitCastExpr 0x55cf2ea91ad0 'int' <LValueToRValue>
-  `-DeclRefExpr 0x55cf2ea91a90 'int' lvalue ParmVar 0x55cf2ea91898 'b' 'int'
-
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : ImplicitCastExpr
-
-ImplicitCastExpr 0x55cf2ea91ab8 'int' <LValueToRValue>
-`-DeclRefExpr 0x55cf2ea91a68 'int' lvalue ParmVar 0x55cf2ea91820 'a' 'int'
-
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
 ConvertingStmt : DeclRefExpr
 
-DeclRefExpr 0x55cf2ea91a68 'int' lvalue ParmVar 0x55cf2ea91820 'a' 'int'
+DeclRefExpr 0x55c05522dd90 'int' lvalue Var 0x55c05522dbc8 'global' 'int'
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : ImplicitCastExpr
-
-ImplicitCastExpr 0x55cf2ea91ad0 'int' <LValueToRValue>
-`-DeclRefExpr 0x55cf2ea91a90 'int' lvalue ParmVar 0x55cf2ea91898 'b' 'int'
-
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : DeclRefExpr
-
-DeclRefExpr 0x55cf2ea91a90 'int' lvalue ParmVar 0x55cf2ea91898 'b' 'int'
-
-  04-04-2019 16:21:18: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkASTCodeBody():533:
+  04-04-2019 17:38:28: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkASTCodeBody():537:
 BOUND START: SLANG_Generated_Output.
 
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleFuncNameAndType():575:
-AddingFunction: main
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleFuncNameAndType():579:
+AddingFunction: print_
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkASTCodeBody():543:
-main
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleVariable():612:
+NEW_VAR: "": types.Ptr(to=types.Int8),
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleVariable():612:
+NEW_VAR: "": types.Ptr(to=types.UInt8),
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleVariable():612:
+NEW_VAR: "": types.Int32,
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkASTCodeBody():547:
+print_
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
 ConvertingStmt : CompoundStmt
 
-CompoundStmt 0x55cf2ea92000
-|-DeclStmt 0x55cf2ea91cc8
-| `-VarDecl 0x55cf2ea91c48  used y 'int' cinit
-|   `-IntegerLiteral 0x55cf2ea91ca8 'int' 10
-|-DeclStmt 0x55cf2ea91e68
-| `-VarDecl 0x55cf2ea91cf8  used x 'int' cinit
-|   `-BinaryOperator 0x55cf2ea91e40 'int' '||'
-|     |-BinaryOperator 0x55cf2ea91dd8 'int' '&&'
-|     | |-ImplicitCastExpr 0x55cf2ea91da8 'int' <LValueToRValue>
-|     | | `-DeclRefExpr 0x55cf2ea91d58 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-|     | `-ImplicitCastExpr 0x55cf2ea91dc0 'int' <LValueToRValue>
-|     |   `-DeclRefExpr 0x55cf2ea91d80 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-|     `-ImplicitCastExpr 0x55cf2ea91e28 'int' <LValueToRValue>
-|       `-DeclRefExpr 0x55cf2ea91e00 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-`-DeclStmt 0x55cf2ea91fe8
-  `-VarDecl 0x55cf2ea91e98  z 'int' cinit
-    `-ConditionalOperator 0x55cf2ea91fb8 'int'
-      |-ImplicitCastExpr 0x55cf2ea91f70 'int' <LValueToRValue>
-      | `-DeclRefExpr 0x55cf2ea91ef8 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-      |-ImplicitCastExpr 0x55cf2ea91f88 'int' <LValueToRValue>
-      | `-DeclRefExpr 0x55cf2ea91f20 'int' lvalue Var 0x55cf2ea91cf8 'x' 'int'
-      `-ImplicitCastExpr 0x55cf2ea91fa0 'int' <LValueToRValue>
-        `-DeclRefExpr 0x55cf2ea91f48 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
+CompoundStmt 0x55c055287c90
+|-CallExpr 0x55c055287910 'int'
+| |-ImplicitCastExpr 0x55c0552878f8 'int (*)(const char *, ...)' <FunctionToPointerDecay>
+| | `-DeclRefExpr 0x55c055287848 'int (const char *, ...)' Function 0x55c055276be8 'printf' 'int (const char *, ...)'
+| |-ImplicitCastExpr 0x55c055287960 'const char *' <BitCast>
+| | `-ImplicitCastExpr 0x55c055287948 'char *' <ArrayToPointerDecay>
+| |   `-StringLiteral 0x55c055287870 'char [4]' lvalue "%s:"
+| `-ImplicitCastExpr 0x55c055287978 'const char *' <LValueToRValue>
+|   `-DeclRefExpr 0x55c0552878a0 'const char *' lvalue ParmVar 0x55c055287520 'name' 'const char *'
+|-WhileStmt 0x55c055287b60
+| |-<<<NULL>>>
+| |-UnaryOperator 0x55c0552879b8 'long' postfix '--'
+| | `-DeclRefExpr 0x55c055287990 'long' lvalue ParmVar 0x55c055287660 'size' 'long'
+| `-CompoundStmt 0x55c055287b48
+|   `-CallExpr 0x55c055287ab0 'int'
+|     |-ImplicitCastExpr 0x55c055287a98 'int (*)(const char *, ...)' <FunctionToPointerDecay>
+|     | `-DeclRefExpr 0x55c0552879d8 'int (const char *, ...)' Function 0x55c055276be8 'printf' 'int (const char *, ...)'
+|     |-ImplicitCastExpr 0x55c055287b00 'const char *' <BitCast>
+|     | `-ImplicitCastExpr 0x55c055287ae8 'char *' <ArrayToPointerDecay>
+|     |   `-StringLiteral 0x55c055287a00 'char [4]' lvalue " %x"
+|     `-ImplicitCastExpr 0x55c055287b30 'int' <IntegralCast>
+|       `-ImplicitCastExpr 0x55c055287b18 'u8':'unsigned char' <LValueToRValue>
+|         `-UnaryOperator 0x55c055287a78 'const u8':'const unsigned char' lvalue prefix '*'
+|           `-UnaryOperator 0x55c055287a58 'const u8 *' postfix '++'
+|             `-DeclRefExpr 0x55c055287a30 'const u8 *' lvalue ParmVar 0x55c0552875e8 'p' 'const u8 *'
+`-CallExpr 0x55c055287c30 'int'
+  |-ImplicitCastExpr 0x55c055287c18 'int (*)(const char *, ...)' <FunctionToPointerDecay>
+  | `-DeclRefExpr 0x55c055287b80 'int (const char *, ...)' Function 0x55c055276be8 'printf' 'int (const char *, ...)'
+  `-ImplicitCastExpr 0x55c055287c78 'const char *' <BitCast>
+    `-ImplicitCastExpr 0x55c055287c60 'char *' <ArrayToPointerDecay>
+      `-StringLiteral 0x55c055287be8 'char [2]' lvalue "\n"
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : CallExpr
+
+CallExpr 0x55c055287910 'int'
+|-ImplicitCastExpr 0x55c0552878f8 'int (*)(const char *, ...)' <FunctionToPointerDecay>
+| `-DeclRefExpr 0x55c055287848 'int (const char *, ...)' Function 0x55c055276be8 'printf' 'int (const char *, ...)'
+|-ImplicitCastExpr 0x55c055287960 'const char *' <BitCast>
+| `-ImplicitCastExpr 0x55c055287948 'char *' <ArrayToPointerDecay>
+|   `-StringLiteral 0x55c055287870 'char [4]' lvalue "%s:"
+`-ImplicitCastExpr 0x55c055287978 'const char *' <LValueToRValue>
+  `-DeclRefExpr 0x55c0552878a0 'const char *' lvalue ParmVar 0x55c055287520 'name' 'const char *'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : ImplicitCastExpr
+
+ImplicitCastExpr 0x55c0552878f8 'int (*)(const char *, ...)' <FunctionToPointerDecay>
+`-DeclRefExpr 0x55c055287848 'int (const char *, ...)' Function 0x55c055276be8 'printf' 'int (const char *, ...)'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : DeclRefExpr
+
+DeclRefExpr 0x55c055287848 'int (const char *, ...)' Function 0x55c055276be8 'printf' 'int (const char *, ...)'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : ImplicitCastExpr
+
+ImplicitCastExpr 0x55c055287960 'const char *' <BitCast>
+`-ImplicitCastExpr 0x55c055287948 'char *' <ArrayToPointerDecay>
+  `-StringLiteral 0x55c055287870 'char [4]' lvalue "%s:"
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : ImplicitCastExpr
+
+ImplicitCastExpr 0x55c055287948 'char *' <ArrayToPointerDecay>
+`-StringLiteral 0x55c055287870 'char [4]' lvalue "%s:"
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : StringLiteral
+
+StringLiteral 0x55c055287870 'char [4]' lvalue "%s:"
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : ImplicitCastExpr
+
+ImplicitCastExpr 0x55c055287978 'const char *' <LValueToRValue>
+`-DeclRefExpr 0x55c0552878a0 'const char *' lvalue ParmVar 0x55c055287520 'name' 'const char *'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : DeclRefExpr
+
+DeclRefExpr 0x55c0552878a0 'const char *' lvalue ParmVar 0x55c055287520 'name' 'const char *'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : WhileStmt
+
+WhileStmt 0x55c055287b60
+|-<<<NULL>>>
+|-UnaryOperator 0x55c0552879b8 'long' postfix '--'
+| `-DeclRefExpr 0x55c055287990 'long' lvalue ParmVar 0x55c055287660 'size' 'long'
+`-CompoundStmt 0x55c055287b48
+  `-CallExpr 0x55c055287ab0 'int'
+    |-ImplicitCastExpr 0x55c055287a98 'int (*)(const char *, ...)' <FunctionToPointerDecay>
+    | `-DeclRefExpr 0x55c0552879d8 'int (const char *, ...)' Function 0x55c055276be8 'printf' 'int (const char *, ...)'
+    |-ImplicitCastExpr 0x55c055287b00 'const char *' <BitCast>
+    | `-ImplicitCastExpr 0x55c055287ae8 'char *' <ArrayToPointerDecay>
+    |   `-StringLiteral 0x55c055287a00 'char [4]' lvalue " %x"
+    `-ImplicitCastExpr 0x55c055287b30 'int' <IntegralCast>
+      `-ImplicitCastExpr 0x55c055287b18 'u8':'unsigned char' <LValueToRValue>
+        `-UnaryOperator 0x55c055287a78 'const u8':'const unsigned char' lvalue prefix '*'
+          `-UnaryOperator 0x55c055287a58 'const u8 *' postfix '++'
+            `-DeclRefExpr 0x55c055287a30 'const u8 *' lvalue ParmVar 0x55c0552875e8 'p' 'const u8 *'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : UnaryOperator
+
+UnaryOperator 0x55c0552879b8 'long' postfix '--'
+`-DeclRefExpr 0x55c055287990 'long' lvalue ParmVar 0x55c055287660 'size' 'long'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : DeclRefExpr
+
+DeclRefExpr 0x55c055287990 'long' lvalue ParmVar 0x55c055287660 'size' 'long'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : CompoundStmt
+
+CompoundStmt 0x55c055287b48
+`-CallExpr 0x55c055287ab0 'int'
+  |-ImplicitCastExpr 0x55c055287a98 'int (*)(const char *, ...)' <FunctionToPointerDecay>
+  | `-DeclRefExpr 0x55c0552879d8 'int (const char *, ...)' Function 0x55c055276be8 'printf' 'int (const char *, ...)'
+  |-ImplicitCastExpr 0x55c055287b00 'const char *' <BitCast>
+  | `-ImplicitCastExpr 0x55c055287ae8 'char *' <ArrayToPointerDecay>
+  |   `-StringLiteral 0x55c055287a00 'char [4]' lvalue " %x"
+  `-ImplicitCastExpr 0x55c055287b30 'int' <IntegralCast>
+    `-ImplicitCastExpr 0x55c055287b18 'u8':'unsigned char' <LValueToRValue>
+      `-UnaryOperator 0x55c055287a78 'const u8':'const unsigned char' lvalue prefix '*'
+        `-UnaryOperator 0x55c055287a58 'const u8 *' postfix '++'
+          `-DeclRefExpr 0x55c055287a30 'const u8 *' lvalue ParmVar 0x55c0552875e8 'p' 'const u8 *'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : CallExpr
+
+CallExpr 0x55c055287ab0 'int'
+|-ImplicitCastExpr 0x55c055287a98 'int (*)(const char *, ...)' <FunctionToPointerDecay>
+| `-DeclRefExpr 0x55c0552879d8 'int (const char *, ...)' Function 0x55c055276be8 'printf' 'int (const char *, ...)'
+|-ImplicitCastExpr 0x55c055287b00 'const char *' <BitCast>
+| `-ImplicitCastExpr 0x55c055287ae8 'char *' <ArrayToPointerDecay>
+|   `-StringLiteral 0x55c055287a00 'char [4]' lvalue " %x"
+`-ImplicitCastExpr 0x55c055287b30 'int' <IntegralCast>
+  `-ImplicitCastExpr 0x55c055287b18 'u8':'unsigned char' <LValueToRValue>
+    `-UnaryOperator 0x55c055287a78 'const u8':'const unsigned char' lvalue prefix '*'
+      `-UnaryOperator 0x55c055287a58 'const u8 *' postfix '++'
+        `-DeclRefExpr 0x55c055287a30 'const u8 *' lvalue ParmVar 0x55c0552875e8 'p' 'const u8 *'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : ImplicitCastExpr
+
+ImplicitCastExpr 0x55c055287a98 'int (*)(const char *, ...)' <FunctionToPointerDecay>
+`-DeclRefExpr 0x55c0552879d8 'int (const char *, ...)' Function 0x55c055276be8 'printf' 'int (const char *, ...)'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : DeclRefExpr
+
+DeclRefExpr 0x55c0552879d8 'int (const char *, ...)' Function 0x55c055276be8 'printf' 'int (const char *, ...)'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : ImplicitCastExpr
+
+ImplicitCastExpr 0x55c055287b00 'const char *' <BitCast>
+`-ImplicitCastExpr 0x55c055287ae8 'char *' <ArrayToPointerDecay>
+  `-StringLiteral 0x55c055287a00 'char [4]' lvalue " %x"
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : ImplicitCastExpr
+
+ImplicitCastExpr 0x55c055287ae8 'char *' <ArrayToPointerDecay>
+`-StringLiteral 0x55c055287a00 'char [4]' lvalue " %x"
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : StringLiteral
+
+StringLiteral 0x55c055287a00 'char [4]' lvalue " %x"
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : ImplicitCastExpr
+
+ImplicitCastExpr 0x55c055287b30 'int' <IntegralCast>
+`-ImplicitCastExpr 0x55c055287b18 'u8':'unsigned char' <LValueToRValue>
+  `-UnaryOperator 0x55c055287a78 'const u8':'const unsigned char' lvalue prefix '*'
+    `-UnaryOperator 0x55c055287a58 'const u8 *' postfix '++'
+      `-DeclRefExpr 0x55c055287a30 'const u8 *' lvalue ParmVar 0x55c0552875e8 'p' 'const u8 *'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : ImplicitCastExpr
+
+ImplicitCastExpr 0x55c055287b18 'u8':'unsigned char' <LValueToRValue>
+`-UnaryOperator 0x55c055287a78 'const u8':'const unsigned char' lvalue prefix '*'
+  `-UnaryOperator 0x55c055287a58 'const u8 *' postfix '++'
+    `-DeclRefExpr 0x55c055287a30 'const u8 *' lvalue ParmVar 0x55c0552875e8 'p' 'const u8 *'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : UnaryOperator
+
+UnaryOperator 0x55c055287a78 'const u8':'const unsigned char' lvalue prefix '*'
+`-UnaryOperator 0x55c055287a58 'const u8 *' postfix '++'
+  `-DeclRefExpr 0x55c055287a30 'const u8 *' lvalue ParmVar 0x55c0552875e8 'p' 'const u8 *'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : UnaryOperator
+
+UnaryOperator 0x55c055287a58 'const u8 *' postfix '++'
+`-DeclRefExpr 0x55c055287a30 'const u8 *' lvalue ParmVar 0x55c0552875e8 'p' 'const u8 *'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : DeclRefExpr
+
+DeclRefExpr 0x55c055287a30 'const u8 *' lvalue ParmVar 0x55c0552875e8 'p' 'const u8 *'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : CallExpr
+
+CallExpr 0x55c055287c30 'int'
+|-ImplicitCastExpr 0x55c055287c18 'int (*)(const char *, ...)' <FunctionToPointerDecay>
+| `-DeclRefExpr 0x55c055287b80 'int (const char *, ...)' Function 0x55c055276be8 'printf' 'int (const char *, ...)'
+`-ImplicitCastExpr 0x55c055287c78 'const char *' <BitCast>
+  `-ImplicitCastExpr 0x55c055287c60 'char *' <ArrayToPointerDecay>
+    `-StringLiteral 0x55c055287be8 'char [2]' lvalue "\n"
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : ImplicitCastExpr
+
+ImplicitCastExpr 0x55c055287c18 'int (*)(const char *, ...)' <FunctionToPointerDecay>
+`-DeclRefExpr 0x55c055287b80 'int (const char *, ...)' Function 0x55c055276be8 'printf' 'int (const char *, ...)'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : DeclRefExpr
+
+DeclRefExpr 0x55c055287b80 'int (const char *, ...)' Function 0x55c055276be8 'printf' 'int (const char *, ...)'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : ImplicitCastExpr
+
+ImplicitCastExpr 0x55c055287c78 'const char *' <BitCast>
+`-ImplicitCastExpr 0x55c055287c60 'char *' <ArrayToPointerDecay>
+  `-StringLiteral 0x55c055287be8 'char [2]' lvalue "\n"
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : ImplicitCastExpr
+
+ImplicitCastExpr 0x55c055287c60 'char *' <ArrayToPointerDecay>
+`-StringLiteral 0x55c055287be8 'char [2]' lvalue "\n"
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : StringLiteral
+
+StringLiteral 0x55c055287be8 'char [2]' lvalue "\n"
+
+  04-04-2019 17:38:28: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkASTCodeBody():537:
+BOUND START: SLANG_Generated_Output.
+
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleFuncNameAndType():579:
+AddingFunction: foo
+FieldDecl 0x55c055226400 <002160.c:45:3, col:12> col:12 referenced t 'struct V':'struct V'
+FieldDecl 0x55c0552261a0 <002160.c:38:3, col:12> col:12 referenced s 'struct S':'struct S'
+FieldDecl 0x55c055224a80 <002160.c:18:3, col:6> col:6 a 'u8':'unsigned char'
+FieldDecl 0x55c055224ad8 <002160.c:18:3, col:8> col:8 b 'u8':'unsigned char'
+FieldDecl 0x55c055224bd8 <002160.c:19:3, col:9> col:6 c 'u8 [2]'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertClangArrayType():2065:
+types.ConstSizeArray(of=types.UInt8, size=2)
+FieldDecl 0x55c055226208 <002160.c:39:3, col:12> col:12 referenced t 'struct T':'struct T'
+FieldDecl 0x55c055225da8 <002160.c:24:3, col:10> col:6 s 'u8 [16]'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertClangArrayType():2065:
+types.ConstSizeArray(of=types.UInt8, size=16)
+FieldDecl 0x55c055225e00 <002160.c:25:3, col:6> col:6 a 'u8':'unsigned char'
+FieldDecl 0x55c055226260 <002160.c:40:3, col:6> col:6 a 'u8':'unsigned char'
+FieldDecl 0x55c0552264d8 <002160.c:46:3, col:14> col:12 s 'struct S []'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertClangArrayType():2065:
+types.IncompleteArray(of=types.Struct("s:S"))
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleVariable():612:
+NEW_VAR: "": types.Ptr(to=types.Struct("s:W")),
+FieldDecl 0x55c05522be50 <002160.c:109:5, col:21> col:21 referenced daddr 'struct in6_addr':'struct in6_addr'
+RecordDecl 0x55c05522b8a0 <002160.c:100:5, line:103:5> line:100:5 union definition
+|-FieldDecl 0x55c05522b990 <line:101:2, col:16> col:5 u6_addr8 'u8 [16]'
+`-FieldDecl 0x55c05522ba60 <line:102:2, col:28> col:17 u6_addr16 'unsigned short [8]'
+FieldDecl 0x55c05522b990 <002160.c:101:2, col:16> col:5 u6_addr8 'u8 [16]'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertClangArrayType():2065:
+types.ConstSizeArray(of=types.UInt8, size=16)
+FieldDecl 0x55c05522ba60 <002160.c:102:2, col:28> col:17 u6_addr16 'unsigned short [8]'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertClangArrayType():2065:
+types.ConstSizeArray(of=types.UInt32, size=8)
+FieldDecl 0x55c05522bb00 <002160.c:100:5, line:103:7> col:7 u 'union (anonymous union at 002160.c:100:5)':'union in6_addr::(anonymous at 002160.c:100:5)'
+FieldDecl 0x55c05522beb8 <002160.c:109:5, col:28> col:28 referenced saddr 'struct in6_addr':'struct in6_addr'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleVariable():612:
+NEW_VAR: "": types.Ptr(to=types.Struct("s:pkthdr")),
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkASTCodeBody():547:
+foo
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : CompoundStmt
+
+CompoundStmt 0x55c0552539d0
+|-DeclStmt 0x55c055288248
+| `-VarDecl 0x55c055288000  used ls 'struct S':'struct S' cinit
+|   `-InitListExpr 0x55c055288140 'struct S':'struct S'
+|     |-ImplicitCastExpr 0x55c055288198 'u8':'unsigned char' <IntegralCast>
+|     | `-IntegerLiteral 0x55c055288060 'int' 1
+|     |-ImplicitCastExpr 0x55c0552881b0 'u8':'unsigned char' <IntegralCast>
+|     | `-IntegerLiteral 0x55c055288080 'int' 2
+|     `-InitListExpr 0x55c0552881c8 'u8 [2]'
+|       |-ImplicitCastExpr 0x55c055288218 'u8':'unsigned char' <IntegralCast>
+|       | `-IntegerLiteral 0x55c0552880a0 'int' 3
+|       `-ImplicitCastExpr 0x55c055288230 'u8':'unsigned char' <IntegralCast>
+|         `-IntegerLiteral 0x55c0552880c0 'int' 4
+|-DeclStmt 0x55c055288520
+| `-VarDecl 0x55c055288290  used ls2 'struct S':'struct S' cinit
+|   `-InitListExpr 0x55c055288418 'struct S':'struct S'
+|     |-ImplicitCastExpr 0x55c055288470 'u8':'unsigned char' <IntegralCast>
+|     | `-IntegerLiteral 0x55c0552882f0 'int' 1
+|     |-ImplicitCastExpr 0x55c055288488 'u8':'unsigned char' <IntegralCast>
+|     | `-IntegerLiteral 0x55c055288310 'int' 2
+|     `-InitListExpr 0x55c0552884a0 'u8 [2]'
+|       |-ImplicitCastExpr 0x55c0552884f0 'u8':'unsigned char' <IntegralCast>
+|       | `-IntegerLiteral 0x55c055288330 'int' 3
+|       `-ImplicitCastExpr 0x55c055288508 'u8':'unsigned char' <IntegralCast>
+|         `-IntegerLiteral 0x55c055288350 'int' 4
+|-DeclStmt 0x55c0552886c0
+| `-VarDecl 0x55c055288558  used lt 'struct T':'struct T' cinit
+|   `-InitListExpr 0x55c055288658 'struct T':'struct T'
+|     |-StringLiteral 0x55c0552885b8 'u8 [16]' lvalue "hello"
+|     `-ImplicitCastExpr 0x55c0552886a8 'u8':'unsigned char' <IntegralCast>
+|       `-IntegerLiteral 0x55c0552885e8 'int' 42
+|-DeclStmt 0x55c055288b18
+| `-VarDecl 0x55c0552886f8  used lu 'struct U':'struct U' cinit
+|   `-InitListExpr 0x55c055288900 'struct U':'struct U'
+|     |-ImplicitCastExpr 0x55c055288960 'u8':'unsigned char' <IntegralCast>
+|     | `-IntegerLiteral 0x55c055288758 'int' 3
+|     |-InitListExpr 0x55c055288978 'struct S':'struct S'
+|     | |-ImplicitCastExpr 0x55c0552889d0 'u8':'unsigned char' <IntegralCast>
+|     | | `-IntegerLiteral 0x55c055288778 'int' 5
+|     | |-ImplicitCastExpr 0x55c0552889e8 'u8':'unsigned char' <IntegralCast>
+|     | | `-IntegerLiteral 0x55c055288798 'int' 6
+|     | `-InitListExpr 0x55c055288a00 'u8 [2]'
+|     |   |-ImplicitCastExpr 0x55c055288a50 'u8':'unsigned char' <IntegralCast>
+|     |   | `-IntegerLiteral 0x55c0552887b8 'int' 7
+|     |   `-ImplicitCastExpr 0x55c055288a68 'u8':'unsigned char' <IntegralCast>
+|     |     `-IntegerLiteral 0x55c0552887d8 'int' 8
+|     |-ImplicitCastExpr 0x55c055288a80 'u8':'unsigned char' <IntegralCast>
+|     | `-IntegerLiteral 0x55c0552887f8 'int' 4
+|     `-InitListExpr 0x55c055288ab0 'struct T':'struct T'
+|       |-StringLiteral 0x55c055288818 'u8 [16]' lvalue "huhu"
+|       `-ImplicitCastExpr 0x55c055288b00 'u8':'unsigned char' <IntegralCast>
+|         `-IntegerLiteral 0x55c055288848 'int' 43
+|-DeclStmt 0x55c055288e40
+| `-VarDecl 0x55c055288b50  used lu1 'struct U':'struct U' cinit
+|   `-InitListExpr 0x55c055288d30 'struct U':'struct U'
+|     |-ImplicitCastExpr 0x55c055288d90 'u8':'unsigned char' <IntegralCast>
+|     | `-IntegerLiteral 0x55c055288bb0 'int' 3
+|     |-ImplicitCastExpr 0x55c055288da8 'struct S':'struct S' <LValueToRValue>
+|     | `-DeclRefExpr 0x55c055288bd0 'struct S':'struct S' lvalue Var 0x55c055288000 'ls' 'struct S':'struct S'
+|     |-ImplicitCastExpr 0x55c055288dc0 'u8':'unsigned char' <IntegralCast>
+|     | `-IntegerLiteral 0x55c055288bf8 'int' 4
+|     `-InitListExpr 0x55c055288dd8 'struct T':'struct T'
+|       |-StringLiteral 0x55c055288c18 'u8 [16]' lvalue "huhu"
+|       `-ImplicitCastExpr 0x55c055288e28 'u8':'unsigned char' <IntegralCast>
+|         `-IntegerLiteral 0x55c055288c48 'int' 43
+|-DeclStmt 0x55c055289188
+| `-VarDecl 0x55c055288e78  used lu2 'struct U':'struct U' cinit
+|   `-InitListExpr 0x55c055289078 'struct U':'struct U'
+|     |-ImplicitCastExpr 0x55c0552890d8 'u8':'unsigned char' <IntegralCast>
+|     | `-IntegerLiteral 0x55c055288ed8 'int' 3
+|     |-ImplicitCastExpr 0x55c0552890f0 'struct S':'struct S' <LValueToRValue>
+|     | `-ParenExpr 0x55c055288f20 'struct S':'struct S' lvalue
+|     |   `-DeclRefExpr 0x55c055288ef8 'struct S':'struct S' lvalue Var 0x55c055288000 'ls' 'struct S':'struct S'
+|     |-ImplicitCastExpr 0x55c055289108 'u8':'unsigned char' <IntegralCast>
+|     | `-IntegerLiteral 0x55c055288f40 'int' 4
+|     `-InitListExpr 0x55c055289120 'struct T':'struct T'
+|       |-StringLiteral 0x55c055288f60 'u8 [16]' lvalue "huhu"
+|       `-ImplicitCastExpr 0x55c055289170 'u8':'unsigned char' <IntegralCast>
+|         `-IntegerLiteral 0x55c055288f90 'int' 43
+|-DeclStmt 0x55c0552893a0
+| `-VarDecl 0x55c055289280  used pls 'const struct S *' cinit
+|   `-ImplicitCastExpr 0x55c055289388 'const struct S *' <BitCast>
+|     `-UnaryOperator 0x55c055289368 'struct S *' prefix '&'
+|       `-DeclRefExpr 0x55c0552892e0 'struct S':'struct S' lvalue Var 0x55c055288000 'ls' 'struct S':'struct S'
+|-DeclStmt 0x55c0552894b0
+| `-VarDecl 0x55c0552893d8  used ls21 'struct S':'struct S' cinit
+|   `-ImplicitCastExpr 0x55c055289498 'struct S':'struct S' <LValueToRValue>
+|     `-UnaryOperator 0x55c055289478 'const struct S':'const struct S' lvalue prefix '*'
+|       `-ImplicitCastExpr 0x55c055289460 'const struct S *' <LValueToRValue>
+|         `-DeclRefExpr 0x55c055289438 'const struct S *' lvalue Var 0x55c055289280 'pls' 'const struct S *'
+|-DeclStmt 0x55c055289810
+| `-VarDecl 0x55c0552894e8  used lu22 'struct U':'struct U' cinit
+|   `-InitListExpr 0x55c055289700 'struct U':'struct U'
+|     |-ImplicitCastExpr 0x55c055289760 'u8':'unsigned char' <IntegralCast>
+|     | `-IntegerLiteral 0x55c055289548 'int' 3
+|     |-ImplicitCastExpr 0x55c055289778 'struct S':'struct S' <LValueToRValue>
+|     | `-UnaryOperator 0x55c0552895a8 'const struct S':'const struct S' lvalue prefix '*'
+|     |   `-ImplicitCastExpr 0x55c055289590 'const struct S *' <LValueToRValue>
+|     |     `-DeclRefExpr 0x55c055289568 'const struct S *' lvalue Var 0x55c055289280 'pls' 'const struct S *'
+|     |-ImplicitCastExpr 0x55c055289790 'u8':'unsigned char' <IntegralCast>
+|     | `-IntegerLiteral 0x55c0552895c8 'int' 4
+|     `-InitListExpr 0x55c0552897a8 'struct T':'struct T'
+|       |-StringLiteral 0x55c0552895e8 'u8 [16]' lvalue "huhu"
+|       `-ImplicitCastExpr 0x55c0552897f8 'u8':'unsigned char' <IntegralCast>
+|         `-IntegerLiteral 0x55c055289618 'int' 43
+|-DeclStmt 0x55c055289b20
+| `-VarDecl 0x55c055289848  used lu21 'struct U':'struct U' cinit
+|   `-InitListExpr 0x55c0552899f8 'struct U':'struct U'
+|     |-ImplicitCastExpr 0x55c055289a58 'u8':'unsigned char' <IntegralCast>
+|     | `-IntegerLiteral 0x55c0552898a8 'int' 3
+|     |-ImplicitCastExpr 0x55c055289a70 'struct S':'struct S' <LValueToRValue>
+|     | `-DeclRefExpr 0x55c0552898c8 'struct S':'struct S' lvalue Var 0x55c055288000 'ls' 'struct S':'struct S'
+|     |-ImplicitCastExpr 0x55c055289a88 'u8':'unsigned char' <IntegralCast>
+|     | `-IntegerLiteral 0x55c0552898f0 'int' 4
+|     `-InitListExpr 0x55c055289ab8 'struct T':'struct T'
+|       |-StringLiteral 0x55c055289910 'u8 [16]' lvalue "huhu"
+|       `-ImplicitCastExpr 0x55c055289b08 'u8':'unsigned char' <IntegralCast>
+|         `-IntegerLiteral 0x55c055289940 'int' 43
+|-DeclStmt 0x55c055289fd8
+| `-VarDecl 0x55c055289b58  used lu3 'struct U':'struct U' cinit
+|   `-InitListExpr 0x55c055289dd8 'struct U':'struct U'
+|     |-ImplicitCastExpr 0x55c055289e38 'u8':'unsigned char' <IntegralCast>
+|     | `-IntegerLiteral 0x55c055289bb8 'int' 3
+|     |-InitListExpr 0x55c055289e50 'struct S':'struct S'
+|     | |-ImplicitCastExpr 0x55c055289ea8 'u8':'unsigned char' <IntegralCast>
+|     | | `-IntegerLiteral 0x55c055289bd8 'int' 5
+|     | |-ImplicitCastExpr 0x55c055289ec0 'u8':'unsigned char' <IntegralCast>
+|     | | `-IntegerLiteral 0x55c055289bf8 'int' 6
+|     | `-InitListExpr 0x55c055289ed8 'u8 [2]'
+|     |   |-ImplicitCastExpr 0x55c055289f28 'u8':'unsigned char' <IntegralCast>
+|     |   | `-IntegerLiteral 0x55c055289c18 'int' 7
+|     |   `-ImplicitCastExpr 0x55c055289f40 'u8':'unsigned char' <IntegralCast>
+|     |     `-IntegerLiteral 0x55c055289c38 'int' 8
+|     |-ImplicitCastExpr 0x55c055289f58 'u8':'unsigned char' <IntegralCast>
+|     | `-IntegerLiteral 0x55c055289cb8 'int' 4
+|     `-InitListExpr 0x55c055289f70 'struct T':'struct T'
+|       |-StringLiteral 0x55c055289cd8 'u8 [16]' lvalue "huhu"
+|       `-ImplicitCastExpr 0x55c055289fc0 'u8':'unsigned char' <IntegralCast>
+|         `-IntegerLiteral 0x55c055289d08 'int' 43
+|-DeclStmt 0x55c05528a488
+| `-VarDecl 0x55c05528a010  used lu4 'struct U':'struct U' cinit
+|   `-InitListExpr 0x55c05528a290 'struct U':'struct U'
+|     |-ImplicitCastExpr 0x55c05528a2f0 'u8':'unsigned char' <IntegralCast>
+|     | `-IntegerLiteral 0x55c05528a070 'int' 3
+|     |-InitListExpr 0x55c05528a308 'struct S':'struct S'
+|     | |-ImplicitCastExpr 0x55c05528a360 'u8':'unsigned char' <IntegralCast>
+|     | | `-IntegerLiteral 0x55c05528a090 'int' 5
+|     | |-ImplicitCastExpr 0x55c05528a378 'u8':'unsigned char' <IntegralCast>
+|     | | `-IntegerLiteral 0x55c05528a0b0 'int' 6
+|     | `-InitListExpr 0x55c05528a390 'u8 [2]'
+|     |   |-array filler
+|     |   | `-ImplicitValueInitExpr 0x55c05528a3f8 'u8':'unsigned char'
+|     |   `-ImplicitCastExpr 0x55c05528a3e0 'u8':'unsigned char' <IntegralCast>
+|     |     `-IntegerLiteral 0x55c05528a0d0 'int' 7
+|     |-ImplicitCastExpr 0x55c05528a408 'u8':'unsigned char' <IntegralCast>
+|     | `-IntegerLiteral 0x55c05528a148 'int' 5
+|     `-InitListExpr 0x55c05528a420 'struct T':'struct T'
+|       |-StringLiteral 0x55c05528a168 'u8 [16]' lvalue "bla"
+|       `-ImplicitCastExpr 0x55c05528a470 'u8':'unsigned char' <IntegralCast>
+|         `-IntegerLiteral 0x55c05528a198 'int' 44
+|-DeclStmt 0x55c05528a7f0
+| `-VarDecl 0x55c05528a4c0  used ls3 'struct S':'struct S' cinit
+|   `-InitListExpr 0x55c05528a6e8 'struct S':'struct S'
+|     |-ImplicitCastExpr 0x55c05528a740 'u8':'unsigned char' <IntegralCast>
+|     | `-ParenExpr 0x55c05528a540 'int'
+|     |   `-IntegerLiteral 0x55c05528a520 'int' 1
+|     |-ImplicitCastExpr 0x55c05528a758 'u8':'unsigned char' <IntegralCast>
+|     | `-ParenExpr 0x55c05528a580 'int'
+|     |   `-IntegerLiteral 0x55c05528a560 'int' 2
+|     `-InitListExpr 0x55c05528a770 'u8 [2]'
+|       |-ImplicitCastExpr 0x55c05528a7c0 'u8':'unsigned char' <IntegralCast>
+|       | `-ParenExpr 0x55c05528a600 'int'
+|       |   `-ParenExpr 0x55c05528a5e0 'int'
+|       |     `-ParenExpr 0x55c05528a5c0 'int'
+|       |       `-IntegerLiteral 0x55c05528a5a0 'int' 3
+|       `-ImplicitCastExpr 0x55c05528a7d8 'u8':'unsigned char' <IntegralCast>
+|         `-IntegerLiteral 0x55c05528a620 'int' 4
+|-DeclStmt 0x55c05528acb0
+| `-VarDecl 0x55c05528a828  used lv 'struct V':'struct V' cinit
+|   `-InitListExpr 0x55c05528aad0 'struct V':'struct V'
+|     |-InitListExpr 0x55c05528ab28 'struct S':'struct S'
+|     | |-ImplicitCastExpr 0x55c05528ab80 'u8':'unsigned char' <IntegralCast>
+|     | | `-IntegerLiteral 0x55c05528a888 'int' 3
+|     | |-ImplicitCastExpr 0x55c05528ab98 'u8':'unsigned char' <IntegralCast>
+|     | | `-IntegerLiteral 0x55c05528a8a8 'int' 4
+|     | `-InitListExpr 0x55c05528abb0 'u8 [2]'
+|     |   |-ImplicitCastExpr 0x55c05528ac00 'u8':'unsigned char' <IntegralCast>
+|     |   | `-IntegerLiteral 0x55c05528a8c8 'int' 5
+|     |   `-ImplicitCastExpr 0x55c05528ac18 'u8':'unsigned char' <IntegralCast>
+|     |     `-IntegerLiteral 0x55c05528a8e8 'int' 6
+|     |-InitListExpr 0x55c05528ac48 'struct T':'struct T'
+|     | |-StringLiteral 0x55c05528a9b0 'u8 [16]' lvalue "haha"
+|     | `-CStyleCastExpr 0x55c05528aa10 'u8':'unsigned char' <IntegralCast>
+|     |   `-IntegerLiteral 0x55c05528a9e0 'int' 45
+|     `-ImplicitCastExpr 0x55c05528ac98 'u8':'unsigned char' <IntegralCast>
+|       `-IntegerLiteral 0x55c05528aa38 'int' 46
+|-DeclStmt 0x55c05528b048
+| `-VarDecl 0x55c05528ace8  used lv2 'struct V':'struct V' cinit
+|   `-InitListExpr 0x55c05528af70 'struct V':'struct V'
+|     |-CStyleCastExpr 0x55c05528ae30 'struct S':'struct S' <NoOp>
+|     | `-ImplicitCastExpr 0x55c05528ae18 'struct S':'struct S' <LValueToRValue>
+|     |   `-MemberExpr 0x55c05528adc0 'struct S':'struct S' lvalue .s 0x55c0552261a0
+|     |     `-MemberExpr 0x55c05528ad88 'struct V':'struct V' lvalue ->t 0x55c055226400
+|     |       `-ImplicitCastExpr 0x55c05528ad70 'struct W *' <LValueToRValue>
+|     |         `-DeclRefExpr 0x55c05528ad48 'struct W *' lvalue ParmVar 0x55c055287d40 'w' 'struct W *'
+|     |-InitListExpr 0x55c05528afc8 'struct T':'struct T'
+|     | |-StringLiteral 0x55c05528ae58 'u8 [16]' lvalue "hihi"
+|     | `-ImplicitCastExpr 0x55c05528b018 'u8':'unsigned char' <IntegralCast>
+|     |   `-IntegerLiteral 0x55c05528ae88 'int' 47
+|     `-ImplicitCastExpr 0x55c05528b030 'u8':'unsigned char' <IntegralCast>
+|       `-IntegerLiteral 0x55c05528aef8 'int' 48
+|-DeclStmt 0x55c05528b658
+| `-VarDecl 0x55c05528b080  used lv3 'struct V':'struct V' cinit
+|   `-InitListExpr 0x55c05528b5b8 'struct V':'struct V'
+|     |-ImplicitCastExpr 0x55c05528b610 'struct S':'struct S' <LValueToRValue>
+|     | `-ParenExpr 0x55c05528b378 'struct S':'struct S' lvalue
+|     |   `-CompoundLiteralExpr 0x55c05528b350 'struct S':'struct S' lvalue
+|     |     `-InitListExpr 0x55c05528b228 'struct S':'struct S'
+|     |       |-ImplicitCastExpr 0x55c05528b2a0 'u8':'unsigned char' <IntegralCast>
+|     |       | `-IntegerLiteral 0x55c05528b100 'int' 7
+|     |       |-ImplicitCastExpr 0x55c05528b2b8 'u8':'unsigned char' <IntegralCast>
+|     |       | `-IntegerLiteral 0x55c05528b120 'int' 8
+|     |       `-InitListExpr 0x55c05528b2d0 'u8 [2]'
+|     |         |-ImplicitCastExpr 0x55c05528b320 'u8':'unsigned char' <IntegralCast>
+|     |         | `-IntegerLiteral 0x55c05528b140 'int' 9
+|     |         `-ImplicitCastExpr 0x55c05528b338 'u8':'unsigned char' <IntegralCast>
+|     |           `-IntegerLiteral 0x55c05528b160 'int' 10
+|     |-ImplicitCastExpr 0x55c05528b628 'struct T':'struct T' <LValueToRValue>
+|     | `-MemberExpr 0x55c05528b4d8 'const struct T':'const struct T' lvalue .t 0x55c055226208
+|     |   `-MemberExpr 0x55c05528b4a0 'const struct V':'const struct V' lvalue ->t 0x55c055226400
+|     |     `-ParenExpr 0x55c05528b480 'const struct W *'
+|     |       `-CStyleCastExpr 0x55c05528b458 'const struct W *' <BitCast>
+|     |         `-ImplicitCastExpr 0x55c05528b440 'struct W *' <LValueToRValue>
+|     |           `-DeclRefExpr 0x55c05528b398 'struct W *' lvalue ParmVar 0x55c055287d40 'w' 'struct W *'
+|     `-ImplicitCastExpr 0x55c05528b640 'u8':'unsigned char' <IntegralCast>
+|       `-IntegerLiteral 0x55c05528b510 'int' 50
+|-DeclStmt 0x55c05528b7a8
+| `-VarDecl 0x55c05528b6f0  used phdr 'const struct pkthdr *' cinit
+|   `-ImplicitCastExpr 0x55c05528b790 'const struct pkthdr *' <BitCast>
+|     `-ImplicitCastExpr 0x55c05528b778 'struct pkthdr *' <LValueToRValue>
+|       `-DeclRefExpr 0x55c05528b750 'struct pkthdr *' lvalue ParmVar 0x55c055287e20 'phdr_' 'struct pkthdr *'
+|-DeclStmt 0x55c05528bae0
+| `-VarDecl 0x55c05528b810  used flow 'struct flowi6':'struct flowi6' cinit
+|   `-InitListExpr 0x55c05528ba60 'struct flowi6':'struct flowi6'
+|     |-ImplicitCastExpr 0x55c05528bac8 'struct in6_addr':'struct in6_addr' <LValueToRValue>
+|     | `-MemberExpr 0x55c05528b968 'const struct in6_addr':'const struct in6_addr' lvalue ->saddr 0x55c05522beb8
+|     |   `-ImplicitCastExpr 0x55c05528b950 'const struct pkthdr *' <LValueToRValue>
+|     |     `-DeclRefExpr 0x55c05528b928 'const struct pkthdr *' lvalue Var 0x55c05528b6f0 'phdr' 'const struct pkthdr *'
+|     `-ImplicitCastExpr 0x55c05528bab0 'struct in6_addr':'struct in6_addr' <LValueToRValue>
+|       `-MemberExpr 0x55c05528b8b0 'const struct in6_addr':'const struct in6_addr' lvalue ->daddr 0x55c05522be50
+|         `-ImplicitCastExpr 0x55c05528b898 'const struct pkthdr *' <LValueToRValue>
+|           `-DeclRefExpr 0x55c05528b870 'const struct pkthdr *' lvalue Var 0x55c05528b6f0 'phdr' 'const struct pkthdr *'
+|-DeclStmt 0x55c05528bb90
+| `-VarDecl 0x55c05528bb10  used elt 'int' cinit
+|   `-IntegerLiteral 0x55c05528bb70 'int' 66
+|-DeclStmt 0x55c05528c118
+| `-VarDecl 0x55c05528bbc8  used lt2 'struct T':'struct T' cinit
+|   `-InitListExpr 0x55c05528bf70 'struct T':'struct T'
+|     |-InitListExpr 0x55c05528bfc0 'u8 [16]'
+|     | |-array filler
+|     | | `-ImplicitValueInitExpr 0x55c05528c0f0 'u8':'unsigned char'
+|     | |-ImplicitValueInitExpr 0x55c05528c0f0 'u8':'unsigned char'
+|     | |-ImplicitCastExpr 0x55c05528c030 'u8':'unsigned char' <IntegralCast>
+|     | | `-IntegerLiteral 0x55c05528bc68 'int' 9
+|     | |-ImplicitCastExpr 0x55c05528c030 'u8':'unsigned char' <IntegralCast>
+|     | | `-IntegerLiteral 0x55c05528bc68 'int' 9
+|     | |-ImplicitCastExpr 0x55c05528c030 'u8':'unsigned char' <IntegralCast>
+|     | | `-IntegerLiteral 0x55c05528bc68 'int' 9
+|     | |-ImplicitCastExpr 0x55c05528c0d8 'u8':'unsigned char' <IntegralCast>
+|     | | `-BinaryOperator 0x55c05528be30 'int' '+'
+|     | |   |-ImplicitCastExpr 0x55c05528be18 'int' <LValueToRValue>
+|     | |   | `-DeclRefExpr 0x55c05528bdd0 'int' lvalue Var 0x55c05528bb10 'elt' 'int'
+|     | |   `-IntegerLiteral 0x55c05528bdf8 'int' 1
+|     | |-ImplicitCastExpr 0x55c05528c0d8 'u8':'unsigned char' <IntegralCast>
+|     | | `-BinaryOperator 0x55c05528be30 'int' '+'
+|     | |   |-ImplicitCastExpr 0x55c05528be18 'int' <LValueToRValue>
+|     | |   | `-DeclRefExpr 0x55c05528bdd0 'int' lvalue Var 0x55c05528bb10 'elt' 'int'
+|     | |   `-IntegerLiteral 0x55c05528bdf8 'int' 1
+|     | |-ImplicitCastExpr 0x55c05528c0d8 'u8':'unsigned char' <IntegralCast>
+|     | | `-BinaryOperator 0x55c05528be30 'int' '+'
+|     | |   |-ImplicitCastExpr 0x55c05528be18 'int' <LValueToRValue>
+|     | |   | `-DeclRefExpr 0x55c05528bdd0 'int' lvalue Var 0x55c05528bb10 'elt' 'int'
+|     | |   `-IntegerLiteral 0x55c05528bdf8 'int' 1
+|     | |-ImplicitCastExpr 0x55c05528c0d8 'u8':'unsigned char' <IntegralCast>
+|     | | `-BinaryOperator 0x55c05528be30 'int' '+'
+|     | |   |-ImplicitCastExpr 0x55c05528be18 'int' <LValueToRValue>
+|     | |   | `-DeclRefExpr 0x55c05528bdd0 'int' lvalue Var 0x55c05528bb10 'elt' 'int'
+|     | |   `-IntegerLiteral 0x55c05528bdf8 'int' 1
+|     | |-ImplicitCastExpr 0x55c05528c0c0 'u8':'unsigned char' <IntegralCast>
+|     | | `-ImplicitCastExpr 0x55c05528c0a8 'int' <LValueToRValue>
+|     | |   `-DeclRefExpr 0x55c05528bd18 'int' lvalue Var 0x55c05528bb10 'elt' 'int'
+|     | |-ImplicitCastExpr 0x55c05528c0c0 'u8':'unsigned char' <IntegralCast>
+|     | | `-ImplicitCastExpr 0x55c05528c0a8 'int' <LValueToRValue>
+|     | |   `-DeclRefExpr 0x55c05528bd18 'int' lvalue Var 0x55c05528bb10 'elt' 'int'
+|     | `-ImplicitCastExpr 0x55c05528c0c0 'u8':'unsigned char' <IntegralCast>
+|     |   `-ImplicitCastExpr 0x55c05528c0a8 'int' <LValueToRValue>
+|     |     `-DeclRefExpr 0x55c05528bd18 'int' lvalue Var 0x55c05528bb10 'elt' 'int'
+|     `-ImplicitCastExpr 0x55c05528c100 'u8':'unsigned char' <IntegralCast>
+|       `-IntegerLiteral 0x55c05528bf00 'int' 1
+|-CallExpr 0x55c05528c390 'void'
+| |-ImplicitCastExpr 0x55c05528c378 'void (*)(const char *, const u8 *, long)' <FunctionToPointerDecay>
+| | `-DeclRefExpr 0x55c05528c130 'void (const char *, const u8 *, long)' Function 0x55c055287790 'print_' 'void (const char *, const u8 *, long)'
+| |-ImplicitCastExpr 0x55c05528c3e8 'const char *' <BitCast>
+| | `-ImplicitCastExpr 0x55c05528c3d0 'char *' <ArrayToPointerDecay>
+| |   `-StringLiteral 0x55c05528c198 'char [3]' lvalue "ls"
+| |-ImplicitCastExpr 0x55c05528c400 'const u8 *' <BitCast>
+| | `-CStyleCastExpr 0x55c05528c278 'u8 *' <BitCast>
+| |   `-UnaryOperator 0x55c05528c1f0 'struct S *' prefix '&'
+| |     `-DeclRefExpr 0x55c05528c1c8 'struct S':'struct S' lvalue Var 0x55c055288000 'ls' 'struct S':'struct S'
+| `-ImplicitCastExpr 0x55c05528c418 'long' <IntegralCast>
+|   `-UnaryExprOrTypeTraitExpr 0x55c05528c2f8 'unsigned long' sizeof
+|     `-ParenExpr 0x55c05528c2d8 'struct S':'struct S' lvalue
+|       `-DeclRefExpr 0x55c05528c2b0 'struct S':'struct S' lvalue Var 0x55c055288000 'ls' 'struct S':'struct S'
+|-CallExpr 0x55c05528c588 'void'
+| |-ImplicitCastExpr 0x55c05528c570 'void (*)(const char *, const u8 *, long)' <FunctionToPointerDecay>
+| | `-DeclRefExpr 0x55c05528c430 'void (const char *, const u8 *, long)' Function 0x55c055287790 'print_' 'void (const char *, const u8 *, long)'
+| |-ImplicitCastExpr 0x55c05528c5e0 'const char *' <BitCast>
+| | `-ImplicitCastExpr 0x55c05528c5c8 'char *' <ArrayToPointerDecay>
+| |   `-StringLiteral 0x55c05528c458 'char [4]' lvalue "ls2"
+| |-ImplicitCastExpr 0x55c05528c5f8 'const u8 *' <BitCast>
+| | `-CStyleCastExpr 0x55c05528c4e0 'u8 *' <BitCast>
+| |   `-UnaryOperator 0x55c05528c4b0 'struct S *' prefix '&'
+| |     `-DeclRefExpr 0x55c05528c488 'struct S':'struct S' lvalue Var 0x55c055288290 'ls2' 'struct S':'struct S'
+| `-ImplicitCastExpr 0x55c05528c610 'long' <IntegralCast>
+|   `-UnaryExprOrTypeTraitExpr 0x55c05528c550 'unsigned long' sizeof
+|     `-ParenExpr 0x55c05528c530 'struct S':'struct S' lvalue
+|       `-DeclRefExpr 0x55c05528c508 'struct S':'struct S' lvalue Var 0x55c055288290 'ls2' 'struct S':'struct S'
+|-CallExpr 0x55c05528c7e0 'void'
+| |-ImplicitCastExpr 0x55c05528c7c8 'void (*)(const char *, const u8 *, long)' <FunctionToPointerDecay>
+| | `-DeclRefExpr 0x55c05528c628 'void (const char *, const u8 *, long)' Function 0x55c055287790 'print_' 'void (const char *, const u8 *, long)'
+| |-ImplicitCastExpr 0x55c05528c838 'const char *' <BitCast>
+| | `-ImplicitCastExpr 0x55c05528c820 'char *' <ArrayToPointerDecay>
+| |   `-StringLiteral 0x55c05528c650 'char [3]' lvalue "lt"
+| |-ImplicitCastExpr 0x55c05528c850 'const u8 *' <BitCast>
+| | `-CStyleCastExpr 0x55c05528c738 'u8 *' <BitCast>
+| |   `-UnaryOperator 0x55c05528c708 'struct T *' prefix '&'
+| |     `-DeclRefExpr 0x55c05528c680 'struct T':'struct T' lvalue Var 0x55c055288558 'lt' 'struct T':'struct T'
+| `-ImplicitCastExpr 0x55c05528c868 'long' <IntegralCast>
+|   `-UnaryExprOrTypeTraitExpr 0x55c05528c7a8 'unsigned long' sizeof
+|     `-ParenExpr 0x55c05528c788 'struct T':'struct T' lvalue
+|       `-DeclRefExpr 0x55c05528c760 'struct T':'struct T' lvalue Var 0x55c055288558 'lt' 'struct T':'struct T'
+|-CallExpr 0x55c05528ca30 'void'
+| |-ImplicitCastExpr 0x55c05528ca18 'void (*)(const char *, const u8 *, long)' <FunctionToPointerDecay>
+| | `-DeclRefExpr 0x55c05528c880 'void (const char *, const u8 *, long)' Function 0x55c055287790 'print_' 'void (const char *, const u8 *, long)'
+| |-ImplicitCastExpr 0x55c05528ca88 'const char *' <BitCast>
+| | `-ImplicitCastExpr 0x55c05528ca70 'char *' <ArrayToPointerDecay>
+| |   `-StringLiteral 0x55c05528c8a8 'char [3]' lvalue "lu"
+| |-ImplicitCastExpr 0x55c05528caa0 'const u8 *' <BitCast>
+| | `-CStyleCastExpr 0x55c05528c988 'u8 *' <BitCast>
+| |   `-UnaryOperator 0x55c05528c958 'struct U *' prefix '&'
+| |     `-DeclRefExpr 0x55c05528c8d8 'struct U':'struct U' lvalue Var 0x55c0552886f8 'lu' 'struct U':'struct U'
+| `-ImplicitCastExpr 0x55c05528cab8 'long' <IntegralCast>
+|   `-UnaryExprOrTypeTraitExpr 0x55c05528c9f8 'unsigned long' sizeof
+|     `-ParenExpr 0x55c05528c9d8 'struct U':'struct U' lvalue
+|       `-DeclRefExpr 0x55c05528c9b0 'struct U':'struct U' lvalue Var 0x55c0552886f8 'lu' 'struct U':'struct U'
+|-CallExpr 0x55c05528cc88 'void'
+| |-ImplicitCastExpr 0x55c05528cc70 'void (*)(const char *, const u8 *, long)' <FunctionToPointerDecay>
+| | `-DeclRefExpr 0x55c05528cb30 'void (const char *, const u8 *, long)' Function 0x55c055287790 'print_' 'void (const char *, const u8 *, long)'
+| |-ImplicitCastExpr 0x55c05528cce0 'const char *' <BitCast>
+| | `-ImplicitCastExpr 0x55c05528ccc8 'char *' <ArrayToPointerDecay>
+| |   `-StringLiteral 0x55c05528cb58 'char [4]' lvalue "lu1"
+| |-ImplicitCastExpr 0x55c05528ccf8 'const u8 *' <BitCast>
+| | `-CStyleCastExpr 0x55c05528cbe0 'u8 *' <BitCast>
+| |   `-UnaryOperator 0x55c05528cbb0 'struct U *' prefix '&'
+| |     `-DeclRefExpr 0x55c05528cb88 'struct U':'struct U' lvalue Var 0x55c055288b50 'lu1' 'struct U':'struct U'
+| `-ImplicitCastExpr 0x55c05528cd10 'long' <IntegralCast>
+|   `-UnaryExprOrTypeTraitExpr 0x55c05528cc50 'unsigned long' sizeof
+|     `-ParenExpr 0x55c05528cc30 'struct U':'struct U' lvalue
+|       `-DeclRefExpr 0x55c05528cc08 'struct U':'struct U' lvalue Var 0x55c055288b50 'lu1' 'struct U':'struct U'
+|-CallExpr 0x55c05528ce80 'void'
+| |-ImplicitCastExpr 0x55c05528ce68 'void (*)(const char *, const u8 *, long)' <FunctionToPointerDecay>
+| | `-DeclRefExpr 0x55c05528cd28 'void (const char *, const u8 *, long)' Function 0x55c055287790 'print_' 'void (const char *, const u8 *, long)'
+| |-ImplicitCastExpr 0x55c05528ced8 'const char *' <BitCast>
+| | `-ImplicitCastExpr 0x55c05528cec0 'char *' <ArrayToPointerDecay>
+| |   `-StringLiteral 0x55c05528cd50 'char [4]' lvalue "lu2"
+| |-ImplicitCastExpr 0x55c05528cef0 'const u8 *' <BitCast>
+| | `-CStyleCastExpr 0x55c05528cdd8 'u8 *' <BitCast>
+| |   `-UnaryOperator 0x55c05528cda8 'struct U *' prefix '&'
+| |     `-DeclRefExpr 0x55c05528cd80 'struct U':'struct U' lvalue Var 0x55c055288e78 'lu2' 'struct U':'struct U'
+| `-ImplicitCastExpr 0x55c05528cf08 'long' <IntegralCast>
+|   `-UnaryExprOrTypeTraitExpr 0x55c05528ce48 'unsigned long' sizeof
+|     `-ParenExpr 0x55c05528ce28 'struct U':'struct U' lvalue
+|       `-DeclRefExpr 0x55c05528ce00 'struct U':'struct U' lvalue Var 0x55c055288e78 'lu2' 'struct U':'struct U'
+|-CallExpr 0x55c05528d078 'void'
+| |-ImplicitCastExpr 0x55c05528d060 'void (*)(const char *, const u8 *, long)' <FunctionToPointerDecay>
+| | `-DeclRefExpr 0x55c05528cf20 'void (const char *, const u8 *, long)' Function 0x55c055287790 'print_' 'void (const char *, const u8 *, long)'
+| |-ImplicitCastExpr 0x55c05528d0d0 'const char *' <BitCast>
+| | `-ImplicitCastExpr 0x55c05528d0b8 'char *' <ArrayToPointerDecay>
+| |   `-StringLiteral 0x55c05528cf48 'char [5]' lvalue "ls21"
+| |-ImplicitCastExpr 0x55c05528d0e8 'const u8 *' <BitCast>
+| | `-CStyleCastExpr 0x55c05528cfd0 'u8 *' <BitCast>
+| |   `-UnaryOperator 0x55c05528cfa0 'struct S *' prefix '&'
+| |     `-DeclRefExpr 0x55c05528cf78 'struct S':'struct S' lvalue Var 0x55c0552893d8 'ls21' 'struct S':'struct S'
+| `-ImplicitCastExpr 0x55c05528d100 'long' <IntegralCast>
+|   `-UnaryExprOrTypeTraitExpr 0x55c05528d040 'unsigned long' sizeof
+|     `-ParenExpr 0x55c05528d020 'struct S':'struct S' lvalue
+|       `-DeclRefExpr 0x55c05528cff8 'struct S':'struct S' lvalue Var 0x55c0552893d8 'ls21' 'struct S':'struct S'
+|-CallExpr 0x55c05528d270 'void'
+| |-ImplicitCastExpr 0x55c05528d258 'void (*)(const char *, const u8 *, long)' <FunctionToPointerDecay>
+| | `-DeclRefExpr 0x55c05528d118 'void (const char *, const u8 *, long)' Function 0x55c055287790 'print_' 'void (const char *, const u8 *, long)'
+| |-ImplicitCastExpr 0x55c05528d2d8 'const char *' <BitCast>
+| | `-ImplicitCastExpr 0x55c05528d2c0 'char *' <ArrayToPointerDecay>
+| |   `-StringLiteral 0x55c05528d140 'char [5]' lvalue "lu21"
+| |-ImplicitCastExpr 0x55c05528d2f0 'const u8 *' <BitCast>
+| | `-CStyleCastExpr 0x55c05528d1c8 'u8 *' <BitCast>
+| |   `-UnaryOperator 0x55c05528d198 'struct U *' prefix '&'
+| |     `-DeclRefExpr 0x55c05528d170 'struct U':'struct U' lvalue Var 0x55c055289848 'lu21' 'struct U':'struct U'
+| `-ImplicitCastExpr 0x55c05528d308 'long' <IntegralCast>
+|   `-UnaryExprOrTypeTraitExpr 0x55c05528d238 'unsigned long' sizeof
+|     `-ParenExpr 0x55c05528d218 'struct U':'struct U' lvalue
+|       `-DeclRefExpr 0x55c05528d1f0 'struct U':'struct U' lvalue Var 0x55c055289848 'lu21' 'struct U':'struct U'
+|-CallExpr 0x55c05528d478 'void'
+| |-ImplicitCastExpr 0x55c05528d460 'void (*)(const char *, const u8 *, long)' <FunctionToPointerDecay>
+| | `-DeclRefExpr 0x55c05528d320 'void (const char *, const u8 *, long)' Function 0x55c055287790 'print_' 'void (const char *, const u8 *, long)'
+| |-ImplicitCastExpr 0x55c05528d4d0 'const char *' <BitCast>
+| | `-ImplicitCastExpr 0x55c05528d4b8 'char *' <ArrayToPointerDecay>
+| |   `-StringLiteral 0x55c05528d348 'char [5]' lvalue "lu22"
+| |-ImplicitCastExpr 0x55c05528d4e8 'const u8 *' <BitCast>
+| | `-CStyleCastExpr 0x55c05528d3d0 'u8 *' <BitCast>
+| |   `-UnaryOperator 0x55c05528d3a0 'struct U *' prefix '&'
+| |     `-DeclRefExpr 0x55c05528d378 'struct U':'struct U' lvalue Var 0x55c0552894e8 'lu22' 'struct U':'struct U'
+| `-ImplicitCastExpr 0x55c05528d500 'long' <IntegralCast>
+|   `-UnaryExprOrTypeTraitExpr 0x55c05528d440 'unsigned long' sizeof
+|     `-ParenExpr 0x55c05528d420 'struct U':'struct U' lvalue
+|       `-DeclRefExpr 0x55c05528d3f8 'struct U':'struct U' lvalue Var 0x55c0552894e8 'lu22' 'struct U':'struct U'
+|-CallExpr 0x55c05528d670 'void'
+| |-ImplicitCastExpr 0x55c05528d658 'void (*)(const char *, const u8 *, long)' <FunctionToPointerDecay>
+| | `-DeclRefExpr 0x55c05528d518 'void (const char *, const u8 *, long)' Function 0x55c055287790 'print_' 'void (const char *, const u8 *, long)'
+| |-ImplicitCastExpr 0x55c05528d6c8 'const char *' <BitCast>
+| | `-ImplicitCastExpr 0x55c05528d6b0 'char *' <ArrayToPointerDecay>
+| |   `-StringLiteral 0x55c05528d540 'char [4]' lvalue "lu3"
+| |-ImplicitCastExpr 0x55c05528d6e0 'const u8 *' <BitCast>
+| | `-CStyleCastExpr 0x55c05528d5c8 'u8 *' <BitCast>
+| |   `-UnaryOperator 0x55c05528d598 'struct U *' prefix '&'
+| |     `-DeclRefExpr 0x55c05528d570 'struct U':'struct U' lvalue Var 0x55c055289b58 'lu3' 'struct U':'struct U'
+| `-ImplicitCastExpr 0x55c05528d6f8 'long' <IntegralCast>
+|   `-UnaryExprOrTypeTraitExpr 0x55c05528d638 'unsigned long' sizeof
+|     `-ParenExpr 0x55c05528d618 'struct U':'struct U' lvalue
+|       `-DeclRefExpr 0x55c05528d5f0 'struct U':'struct U' lvalue Var 0x55c055289b58 'lu3' 'struct U':'struct U'
+|-CallExpr 0x55c05528d868 'void'
+| |-ImplicitCastExpr 0x55c05528d850 'void (*)(const char *, const u8 *, long)' <FunctionToPointerDecay>
+| | `-DeclRefExpr 0x55c05528d710 'void (const char *, const u8 *, long)' Function 0x55c055287790 'print_' 'void (const char *, const u8 *, long)'
+| |-ImplicitCastExpr 0x55c05528d8c0 'const char *' <BitCast>
+| | `-ImplicitCastExpr 0x55c05528d8a8 'char *' <ArrayToPointerDecay>
+| |   `-StringLiteral 0x55c05528d738 'char [4]' lvalue "lu4"
+| |-ImplicitCastExpr 0x55c05528d8d8 'const u8 *' <BitCast>
+| | `-CStyleCastExpr 0x55c05528d7c0 'u8 *' <BitCast>
+| |   `-UnaryOperator 0x55c05528d790 'struct U *' prefix '&'
+| |     `-DeclRefExpr 0x55c05528d768 'struct U':'struct U' lvalue Var 0x55c05528a010 'lu4' 'struct U':'struct U'
+| `-ImplicitCastExpr 0x55c05528d8f0 'long' <IntegralCast>
+|   `-UnaryExprOrTypeTraitExpr 0x55c05528d830 'unsigned long' sizeof
+|     `-ParenExpr 0x55c05528d810 'struct U':'struct U' lvalue
+|       `-DeclRefExpr 0x55c05528d7e8 'struct U':'struct U' lvalue Var 0x55c05528a010 'lu4' 'struct U':'struct U'
+|-CallExpr 0x55c05528da60 'void'
+| |-ImplicitCastExpr 0x55c05528da48 'void (*)(const char *, const u8 *, long)' <FunctionToPointerDecay>
+| | `-DeclRefExpr 0x55c05528d908 'void (const char *, const u8 *, long)' Function 0x55c055287790 'print_' 'void (const char *, const u8 *, long)'
+| |-ImplicitCastExpr 0x55c05528dab8 'const char *' <BitCast>
+| | `-ImplicitCastExpr 0x55c05528daa0 'char *' <ArrayToPointerDecay>
+| |   `-StringLiteral 0x55c05528d930 'char [4]' lvalue "ls3"
+| |-ImplicitCastExpr 0x55c05528dad0 'const u8 *' <BitCast>
+| | `-CStyleCastExpr 0x55c05528d9b8 'u8 *' <BitCast>
+| |   `-UnaryOperator 0x55c05528d988 'struct S *' prefix '&'
+| |     `-DeclRefExpr 0x55c05528d960 'struct S':'struct S' lvalue Var 0x55c05528a4c0 'ls3' 'struct S':'struct S'
+| `-ImplicitCastExpr 0x55c05528dae8 'long' <IntegralCast>
+|   `-UnaryExprOrTypeTraitExpr 0x55c05528da28 'unsigned long' sizeof
+|     `-ParenExpr 0x55c05528da08 'struct S':'struct S' lvalue
+|       `-DeclRefExpr 0x55c05528d9e0 'struct S':'struct S' lvalue Var 0x55c05528a4c0 'ls3' 'struct S':'struct S'
+|-CallExpr 0x55c05528dcb0 'void'
+| |-ImplicitCastExpr 0x55c05528dc98 'void (*)(const char *, const u8 *, long)' <FunctionToPointerDecay>
+| | `-DeclRefExpr 0x55c05528db00 'void (const char *, const u8 *, long)' Function 0x55c055287790 'print_' 'void (const char *, const u8 *, long)'
+| |-ImplicitCastExpr 0x55c05528dd08 'const char *' <BitCast>
+| | `-ImplicitCastExpr 0x55c05528dcf0 'char *' <ArrayToPointerDecay>
+| |   `-StringLiteral 0x55c05528db28 'char [3]' lvalue "lv"
+| |-ImplicitCastExpr 0x55c05528dd20 'const u8 *' <BitCast>
+| | `-CStyleCastExpr 0x55c05528dc08 'u8 *' <BitCast>
+| |   `-UnaryOperator 0x55c05528dbd8 'struct V *' prefix '&'
+| |     `-DeclRefExpr 0x55c05528db58 'struct V':'struct V' lvalue Var 0x55c05528a828 'lv' 'struct V':'struct V'
+| `-ImplicitCastExpr 0x55c05528dd38 'long' <IntegralCast>
+|   `-UnaryExprOrTypeTraitExpr 0x55c05528dc78 'unsigned long' sizeof
+|     `-ParenExpr 0x55c05528dc58 'struct V':'struct V' lvalue
+|       `-DeclRefExpr 0x55c05528dc30 'struct V':'struct V' lvalue Var 0x55c05528a828 'lv' 'struct V':'struct V'
+|-CallExpr 0x55c05528dea8 'void'
+| |-ImplicitCastExpr 0x55c05528de90 'void (*)(const char *, const u8 *, long)' <FunctionToPointerDecay>
+| | `-DeclRefExpr 0x55c05528dd50 'void (const char *, const u8 *, long)' Function 0x55c055287790 'print_' 'void (const char *, const u8 *, long)'
+| |-ImplicitCastExpr 0x55c05528df00 'const char *' <BitCast>
+| | `-ImplicitCastExpr 0x55c05528dee8 'char *' <ArrayToPointerDecay>
+| |   `-StringLiteral 0x55c05528dd78 'char [4]' lvalue "lv2"
+| |-ImplicitCastExpr 0x55c05528df18 'const u8 *' <BitCast>
+| | `-CStyleCastExpr 0x55c05528de00 'u8 *' <BitCast>
+| |   `-UnaryOperator 0x55c05528ddd0 'struct V *' prefix '&'
+| |     `-DeclRefExpr 0x55c05528dda8 'struct V':'struct V' lvalue Var 0x55c05528ace8 'lv2' 'struct V':'struct V'
+| `-ImplicitCastExpr 0x55c05528df30 'long' <IntegralCast>
+|   `-UnaryExprOrTypeTraitExpr 0x55c05528de70 'unsigned long' sizeof
+|     `-ParenExpr 0x55c05528de50 'struct V':'struct V' lvalue
+|       `-DeclRefExpr 0x55c05528de28 'struct V':'struct V' lvalue Var 0x55c05528ace8 'lv2' 'struct V':'struct V'
+|-CallExpr 0x55c05528e0a0 'void'
+| |-ImplicitCastExpr 0x55c05528e088 'void (*)(const char *, const u8 *, long)' <FunctionToPointerDecay>
+| | `-DeclRefExpr 0x55c05528df48 'void (const char *, const u8 *, long)' Function 0x55c055287790 'print_' 'void (const char *, const u8 *, long)'
+| |-ImplicitCastExpr 0x55c05528e0f8 'const char *' <BitCast>
+| | `-ImplicitCastExpr 0x55c05528e0e0 'char *' <ArrayToPointerDecay>
+| |   `-StringLiteral 0x55c05528df70 'char [4]' lvalue "lv3"
+| |-ImplicitCastExpr 0x55c05528e110 'const u8 *' <BitCast>
+| | `-CStyleCastExpr 0x55c05528dff8 'u8 *' <BitCast>
+| |   `-UnaryOperator 0x55c05528dfc8 'struct V *' prefix '&'
+| |     `-DeclRefExpr 0x55c05528dfa0 'struct V':'struct V' lvalue Var 0x55c05528b080 'lv3' 'struct V':'struct V'
+| `-ImplicitCastExpr 0x55c05528e128 'long' <IntegralCast>
+|   `-UnaryExprOrTypeTraitExpr 0x55c05528e068 'unsigned long' sizeof
+|     `-ParenExpr 0x55c05528e048 'struct V':'struct V' lvalue
+|       `-DeclRefExpr 0x55c05528e020 'struct V':'struct V' lvalue Var 0x55c05528b080 'lv3' 'struct V':'struct V'
+|-CallExpr 0x55c05528e298 'void'
+| |-ImplicitCastExpr 0x55c05528e280 'void (*)(const char *, const u8 *, long)' <FunctionToPointerDecay>
+| | `-DeclRefExpr 0x55c05528e140 'void (const char *, const u8 *, long)' Function 0x55c055287790 'print_' 'void (const char *, const u8 *, long)'
+| |-ImplicitCastExpr 0x55c0552536e8 'const char *' <BitCast>
+| | `-ImplicitCastExpr 0x55c0552536d0 'char *' <ArrayToPointerDecay>
+| |   `-StringLiteral 0x55c05528e168 'char [4]' lvalue "lt2"
+| |-ImplicitCastExpr 0x55c055253700 'const u8 *' <BitCast>
+| | `-CStyleCastExpr 0x55c05528e1f0 'u8 *' <BitCast>
+| |   `-UnaryOperator 0x55c05528e1c0 'struct T *' prefix '&'
+| |     `-DeclRefExpr 0x55c05528e198 'struct T':'struct T' lvalue Var 0x55c05528bbc8 'lt2' 'struct T':'struct T'
+| `-ImplicitCastExpr 0x55c055253718 'long' <IntegralCast>
+|   `-UnaryExprOrTypeTraitExpr 0x55c05528e260 'unsigned long' sizeof
+|     `-ParenExpr 0x55c05528e240 'struct T':'struct T' lvalue
+|       `-DeclRefExpr 0x55c05528e218 'struct T':'struct T' lvalue Var 0x55c05528bbc8 'lt2' 'struct T':'struct T'
+`-CallExpr 0x55c0552538e0 'void'
+  |-ImplicitCastExpr 0x55c0552538c8 'void (*)(const char *, const u8 *, long)' <FunctionToPointerDecay>
+  | `-DeclRefExpr 0x55c055253730 'void (const char *, const u8 *, long)' Function 0x55c055287790 'print_' 'void (const char *, const u8 *, long)'
+  |-ImplicitCastExpr 0x55c055253938 'const char *' <BitCast>
+  | `-ImplicitCastExpr 0x55c055253920 'char *' <ArrayToPointerDecay>
+  |   `-StringLiteral 0x55c055253758 'char [5]' lvalue "flow"
+  |-ImplicitCastExpr 0x55c055253950 'const u8 *' <BitCast>
+  | `-CStyleCastExpr 0x55c055253838 'u8 *' <BitCast>
+  |   `-UnaryOperator 0x55c055253808 'struct flowi6 *' prefix '&'
+  |     `-DeclRefExpr 0x55c055253788 'struct flowi6':'struct flowi6' lvalue Var 0x55c05528b810 'flow' 'struct flowi6':'struct flowi6'
+  `-ImplicitCastExpr 0x55c055253968 'long' <IntegralCast>
+    `-UnaryExprOrTypeTraitExpr 0x55c0552538a8 'unsigned long' sizeof
+      `-ParenExpr 0x55c055253888 'struct flowi6':'struct flowi6' lvalue
+        `-DeclRefExpr 0x55c055253860 'struct flowi6':'struct flowi6' lvalue Var 0x55c05528b810 'flow' 'struct flowi6':'struct flowi6'
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
 ConvertingStmt : DeclStmt
 
-DeclStmt 0x55cf2ea91cc8
-`-VarDecl 0x55cf2ea91c48  used y 'int' cinit
-  `-IntegerLiteral 0x55cf2ea91ca8 'int' 10
+DeclStmt 0x55c055288248
+`-VarDecl 0x55c055288000  used ls 'struct S':'struct S' cinit
+  `-InitListExpr 0x55c055288140 'struct S':'struct S'
+    |-ImplicitCastExpr 0x55c055288198 'u8':'unsigned char' <IntegralCast>
+    | `-IntegerLiteral 0x55c055288060 'int' 1
+    |-ImplicitCastExpr 0x55c0552881b0 'u8':'unsigned char' <IntegralCast>
+    | `-IntegerLiteral 0x55c055288080 'int' 2
+    `-InitListExpr 0x55c0552881c8 'u8 [2]'
+      |-ImplicitCastExpr 0x55c055288218 'u8':'unsigned char' <IntegralCast>
+      | `-IntegerLiteral 0x55c0552880a0 'int' 3
+      `-ImplicitCastExpr 0x55c055288230 'u8':'unsigned char' <IntegralCast>
+        `-IntegerLiteral 0x55c0552880c0 'int' 4
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleDeclStmt():659:
-Set last DeclStmt to DeclStmt at 94348329426120
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleDeclStmt():662:
+Set last DeclStmt to DeclStmt at 94284550799944
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleVariable():608:
-NEW_VAR: "": types.Int32,
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleVariable():612:
+NEW_VAR: "": types.Struct("s:S"),
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : ImplicitCastExpr
+
+ImplicitCastExpr 0x55c055288198 'u8':'unsigned char' <IntegralCast>
+`-IntegerLiteral 0x55c055288060 'int' 1
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
 ConvertingStmt : IntegerLiteral
 
-IntegerLiteral 0x55cf2ea91ca8 'int' 10
+IntegerLiteral 0x55c055288060 'int' 1
 
-  04-04-2019 16:21:18: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertIntegerLiteral():1395:
-expr.LitE(10, Loc(13,12))
+  04-04-2019 17:38:28: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertIntegerLiteral():1416:
+expr.LitE(1, Loc(140,18))
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : DeclStmt
+------------------------
+3
 
-DeclStmt 0x55cf2ea91e68
-`-VarDecl 0x55cf2ea91cf8  used x 'int' cinit
-  `-BinaryOperator 0x55cf2ea91e40 'int' '||'
-    |-BinaryOperator 0x55cf2ea91dd8 'int' '&&'
-    | |-ImplicitCastExpr 0x55cf2ea91da8 'int' <LValueToRValue>
-    | | `-DeclRefExpr 0x55cf2ea91d58 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-    | `-ImplicitCastExpr 0x55cf2ea91dc0 'int' <LValueToRValue>
-    |   `-DeclRefExpr 0x55cf2ea91d80 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-    `-ImplicitCastExpr 0x55cf2ea91e28 'int' <LValueToRValue>
-      `-DeclRefExpr 0x55cf2ea91e00 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
+------------------------
+1
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleDeclStmt():659:
-Set last DeclStmt to DeclStmt at 94348329426536
+------------------------
+021952
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleVariable():608:
-NEW_VAR: "": types.Int32,
-
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : BinaryOperator
-
-BinaryOperator 0x55cf2ea91e40 'int' '||'
-|-BinaryOperator 0x55cf2ea91dd8 'int' '&&'
-| |-ImplicitCastExpr 0x55cf2ea91da8 'int' <LValueToRValue>
-| | `-DeclRefExpr 0x55cf2ea91d58 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-| `-ImplicitCastExpr 0x55cf2ea91dc0 'int' <LValueToRValue>
-|   `-DeclRefExpr 0x55cf2ea91d80 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-`-ImplicitCastExpr 0x55cf2ea91e28 'int' <LValueToRValue>
-  `-DeclRefExpr 0x55cf2ea91e00 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : BinaryOperator
-
-BinaryOperator 0x55cf2ea91dd8 'int' '&&'
-|-ImplicitCastExpr 0x55cf2ea91da8 'int' <LValueToRValue>
-| `-DeclRefExpr 0x55cf2ea91d58 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-`-ImplicitCastExpr 0x55cf2ea91dc0 'int' <LValueToRValue>
-  `-DeclRefExpr 0x55cf2ea91d80 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
 ConvertingStmt : ImplicitCastExpr
 
-ImplicitCastExpr 0x55cf2ea91da8 'int' <LValueToRValue>
-`-DeclRefExpr 0x55cf2ea91d58 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
+ImplicitCastExpr 0x55c0552881b0 'u8':'unsigned char' <IntegralCast>
+`-IntegerLiteral 0x55c055288080 'int' 2
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : DeclRefExpr
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : IntegerLiteral
 
-DeclRefExpr 0x55cf2ea91d58 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
+IntegerLiteral 0x55c055288080 'int' 2
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
+  04-04-2019 17:38:28: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertIntegerLiteral():1416:
+expr.LitE(2, Loc(140,21))
+
+------------------------
+3
+
+------------------------
+1
+
+------------------------
+121952
+
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
 ConvertingStmt : ImplicitCastExpr
 
-ImplicitCastExpr 0x55cf2ea91dc0 'int' <LValueToRValue>
-`-DeclRefExpr 0x55cf2ea91d80 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
+ImplicitCastExpr 0x55c055288218 'u8':'unsigned char' <IntegralCast>
+`-IntegerLiteral 0x55c0552880a0 'int' 3
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : DeclRefExpr
+  04-04-2019 17:38:28: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():684:
+ConvertingStmt : IntegerLiteral
 
-DeclRefExpr 0x55cf2ea91d80 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
+IntegerLiteral 0x55c0552880a0 'int' 3
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : ImplicitCastExpr
+  04-04-2019 17:38:28: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertIntegerLiteral():1416:
+expr.LitE(3, Loc(140,24))
 
-ImplicitCastExpr 0x55cf2ea91e28 'int' <LValueToRValue>
-`-DeclRefExpr 0x55cf2ea91e00 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
+------------------------
+3
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : DeclRefExpr
+------------------------
+2
 
-DeclRefExpr 0x55cf2ea91e00 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
+------------------------
+20
+#0 0x00007f33635cd4eb llvm::sys::PrintStackTrace(llvm::raw_ostream&) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/lib/Support/Unix/Signals.inc:398:0
+#1 0x00007f33635cd57e PrintStackTraceSignalHandler(void*) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/lib/Support/Unix/Signals.inc:462:0
+#2 0x00007f33635cb753 llvm::sys::RunSignalHandlers() /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/lib/Support/Signals.cpp:49:0
+#3 0x00007f33635ccd57 SignalHandler(int) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/lib/Support/Unix/Signals.inc:252:0
+#4 0x00007f33609bff20 (/lib/x86_64-linux-gnu/libc.so.6+0x3ef20)
+#5 0x00007f33599b4f8c std::vector<(anonymous namespace)::SlangRecordField, std::allocator<(anonymous namespace)::SlangRecordField> >::operator[](unsigned long) /usr/include/c++/7/bits/stl_vector.h:798:0
+#6 0x00007f33599a4eb9 (anonymous namespace)::SlangRecord::genMemberExpr(std::vector<unsigned int, std::allocator<unsigned int> >) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:218:0
+#7 0x00007f33599a9fee (anonymous namespace)::SlangGenAstChecker::genInitLhsExpr((anonymous namespace)::SlangVar&, clang::VarDecl const*, std::vector<unsigned int, std::allocator<unsigned int> >&) const /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:837:0
+#8 0x00007f33599a9a18 (anonymous namespace)::SlangGenAstChecker::convertInitListExpr((anonymous namespace)::SlangVar&, clang::InitListExpr const*, clang::VarDecl const*, std::vector<unsigned int, std::allocator<unsigned int> >&) const /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:787:0
+#9 0x00007f33599a9969 (anonymous namespace)::SlangGenAstChecker::convertInitListExpr((anonymous namespace)::SlangVar&, clang::InitListExpr const*, clang::VarDecl const*, std::vector<unsigned int, std::allocator<unsigned int> >&) const /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:780:0
+#10 0x00007f33599a88c9 (anonymous namespace)::SlangGenAstChecker::handleVariable(clang::ValueDecl const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) const /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:636:0
+#11 0x00007f33599a8f76 (anonymous namespace)::SlangGenAstChecker::handleDeclStmt(clang::DeclStmt const*) const /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:669:0
+#12 0x00007f33599a940a (anonymous namespace)::SlangGenAstChecker::convertStmt(clang::Stmt const*) const /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:725:0
+#13 0x00007f33599b1bc6 (anonymous namespace)::SlangGenAstChecker::convertCompoundStmt(clang::CompoundStmt const*) const /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:1823:0
+#14 0x00007f33599a93e1 (anonymous namespace)::SlangGenAstChecker::convertStmt(clang::Stmt const*) const /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:722:0
+#15 0x00007f33599a7b6a (anonymous namespace)::SlangGenAstChecker::handleFunctionBody(clang::FunctionDecl const*) const /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:566:0
+#16 0x00007f33599a787b (anonymous namespace)::SlangGenAstChecker::checkASTCodeBody(clang::Decl const*, clang::ento::AnalysisManager&, clang::ento::BugReporter&) const /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:549:0
+#17 0x00007f33599ba51c void clang::ento::check::ASTCodeBody::_checkBody<(anonymous namespace)::SlangGenAstChecker>(void*, clang::Decl const*, clang::ento::AnalysisManager&, clang::ento::BugReporter&) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/include/clang/StaticAnalyzer/Core/Checker.h:53:0
+#18 0x00007f33593a6bb5 clang::ento::CheckerFn<void (clang::Decl const*, clang::ento::AnalysisManager&, clang::ento::BugReporter&)>::operator()(clang::Decl const*, clang::ento::AnalysisManager&, clang::ento::BugReporter&) const /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/include/clang/StaticAnalyzer/Core/CheckerManager.h:59:0
+#19 0x00007f33593a077f clang::ento::CheckerManager::runCheckersOnASTBody(clang::Decl const*, clang::ento::AnalysisManager&, clang::ento::BugReporter&) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Core/CheckerManager.cpp:85:0
+#20 0x00007f335a588649 (anonymous namespace)::AnalysisConsumer::HandleCode(clang::Decl*, unsigned int, clang::ento::ExprEngine::InliningModes, llvm::DenseSet<clang::Decl const*, llvm::DenseMapInfo<clang::Decl const*> >*) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Frontend/AnalysisConsumer.cpp:684:0
+#21 0x00007f335a587093 (anonymous namespace)::AnalysisConsumer::VisitFunctionDecl(clang::FunctionDecl*) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Frontend/AnalysisConsumer.cpp:354:0
+#22 0x00007f335a5974fe clang::RecursiveASTVisitor<(anonymous namespace)::AnalysisConsumer>::WalkUpFromFunctionDecl(clang::FunctionDecl*) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/build/tools/clang/include/clang/AST/DeclNodes.inc:389:0
+#23 0x00007f335a58f070 clang::RecursiveASTVisitor<(anonymous namespace)::AnalysisConsumer>::TraverseFunctionDecl(clang::FunctionDecl*) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/include/clang/AST/RecursiveASTVisitor.h:1994:0
+#24 0x00007f335a589f8b clang::RecursiveASTVisitor<(anonymous namespace)::AnalysisConsumer>::TraverseDecl(clang::Decl*) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/build/tools/clang/include/clang/AST/DeclNodes.inc:389:0
+#25 0x00007f335a5879c9 (anonymous namespace)::AnalysisConsumer::HandleTranslationUnit(clang::ASTContext&) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Frontend/AnalysisConsumer.cpp:545:0
+#26 0x00007f335d1915bc clang::ParseAST(clang::Sema&, bool, bool) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/Parse/ParseAST.cpp:161:0
+#27 0x00007f3361504c33 clang::ASTFrontendAction::ExecuteAction() /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/Frontend/FrontendAction.cpp:998:0
+#28 0x00007f3361504676 clang::FrontendAction::Execute() /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/Frontend/FrontendAction.cpp:901:0
+#29 0x00007f336148b4d4 clang::CompilerInstance::ExecuteAction(clang::FrontendAction&) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/Frontend/CompilerInstance.cpp:992:0
+#30 0x00007f336117a81a clang::ExecuteCompilerInvocation(clang::CompilerInstance*) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/FrontendTool/ExecuteCompilerInvocation.cpp:252:0
+#31 0x000055c054deca2c cc1_main(llvm::ArrayRef<char const*>, char const*, void*) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/tools/driver/cc1_main.cpp:221:0
+#32 0x000055c054de1979 ExecuteCC1Tool(llvm::ArrayRef<char const*>, llvm::StringRef) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/tools/driver/driver.cpp:310:0
+#33 0x000055c054de2629 main /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/tools/driver/driver.cpp:389:0
+#34 0x00007f33609a2b97 __libc_start_main /build/glibc-OTsEL5/glibc-2.27/csu/../csu/libc-start.c:344:0
+#35 0x000055c054ddefda _start (/home/codeman/.itsoflife/local/packages-live/llvm-clang6/build/bin/clang-6.0+0x36fda)
+Stack dump:
+0.	Program arguments: /home/codeman/.itsoflife/local/packages-live/llvm-clang6/build/bin/clang-6.0 -cc1 -triple x86_64-unknown-linux-gnu -analyze -disable-free -main-file-name 002160.c -analyzer-store=region -analyzer-opt-analyze-nested-blocks -analyzer-eagerly-assume -analyzer-checker=core -analyzer-checker=apiModeling -analyzer-checker=unix -analyzer-checker=deadcode -analyzer-checker=security.insecureAPI.UncheckedReturn -analyzer-checker=security.insecureAPI.getpw -analyzer-checker=security.insecureAPI.gets -analyzer-checker=security.insecureAPI.mktemp -analyzer-checker=security.insecureAPI.mkstemp -analyzer-checker=security.insecureAPI.vfork -analyzer-checker=nullability.NullPassedToNonnull -analyzer-checker=nullability.NullReturnedFromNonnull -analyzer-output plist -w -analyzer-checker=debug.SlangGenAst -mrelocation-model static -mthread-model posix -mdisable-fp-elim -fmath-errno -masm-verbose -mconstructor-aliases -munwind-tables -fuse-init-array -target-cpu x86-64 -dwarf-column-info -debugger-tuning=gdb -resource-dir /home/codeman/.itsoflife/local/packages-live/llvm-clang6/build/lib/clang/6.0.1 -internal-isystem /usr/local/include -internal-isystem /home/codeman/.itsoflife/local/packages-live/llvm-clang6/build/lib/clang/6.0.1/include -internal-externc-isystem /usr/include/x86_64-linux-gnu -internal-externc-isystem /include -internal-externc-isystem /usr/include -fdebug-compilation-dir /home/codeman/.itsoflife/git/research/code/SLANG-git/spanir/tests/c-testsuite/tests/single-exec -ferror-limit 19 -fmessage-length 0 -fobjc-runtime=gcc -fdiagnostics-show-option -o 002160.plist -x c 002160.c 
+1.	<eof> parser at end of file
+clang-6.0: error: unable to execute command: Segmentation fault (core dumped)
+clang-6.0: error: clang frontend command failed due to signal (use -v to see invocation)
+clang version 6.0.1 (tags/RELEASE_601/final)
+Target: x86_64-unknown-linux-gnu
+Thread model: posix
+InstalledDir: /home/codeman/.itsoflife/local/packages-live/llvm-clang6/build/bin
+clang-6.0: note: diagnostic msg: PLEASE submit a bug report to http://llvm.org/bugs/ and include the crash backtrace, preprocessed source, and associated run script.
+clang-6.0: note: diagnostic msg: 
+********************
 
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : DeclStmt
+PLEASE ATTACH THE FOLLOWING FILES TO THE BUG REPORT:
+Preprocessed source(s) and associated run script(s) are located at:
+clang-6.0: note: diagnostic msg: /tmp/002160-07c762.c
+clang-6.0: note: diagnostic msg: /tmp/002160-07c762.sh
+clang-6.0: note: diagnostic msg: 
 
-DeclStmt 0x55cf2ea91fe8
-`-VarDecl 0x55cf2ea91e98  z 'int' cinit
-  `-ConditionalOperator 0x55cf2ea91fb8 'int'
-    |-ImplicitCastExpr 0x55cf2ea91f70 'int' <LValueToRValue>
-    | `-DeclRefExpr 0x55cf2ea91ef8 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-    |-ImplicitCastExpr 0x55cf2ea91f88 'int' <LValueToRValue>
-    | `-DeclRefExpr 0x55cf2ea91f20 'int' lvalue Var 0x55cf2ea91cf8 'x' 'int'
-    `-ImplicitCastExpr 0x55cf2ea91fa0 'int' <LValueToRValue>
-      `-DeclRefExpr 0x55cf2ea91f48 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleDeclStmt():659:
-Set last DeclStmt to DeclStmt at 94348329426920
-
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleVariable():608:
-NEW_VAR: "": types.Int32,
-
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : ConditionalOperator
-
-ConditionalOperator 0x55cf2ea91fb8 'int'
-|-ImplicitCastExpr 0x55cf2ea91f70 'int' <LValueToRValue>
-| `-DeclRefExpr 0x55cf2ea91ef8 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-|-ImplicitCastExpr 0x55cf2ea91f88 'int' <LValueToRValue>
-| `-DeclRefExpr 0x55cf2ea91f20 'int' lvalue Var 0x55cf2ea91cf8 'x' 'int'
-`-ImplicitCastExpr 0x55cf2ea91fa0 'int' <LValueToRValue>
-  `-DeclRefExpr 0x55cf2ea91f48 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : ImplicitCastExpr
-
-ImplicitCastExpr 0x55cf2ea91f70 'int' <LValueToRValue>
-`-DeclRefExpr 0x55cf2ea91ef8 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : DeclRefExpr
-
-DeclRefExpr 0x55cf2ea91ef8 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : ImplicitCastExpr
-
-ImplicitCastExpr 0x55cf2ea91f88 'int' <LValueToRValue>
-`-DeclRefExpr 0x55cf2ea91f20 'int' lvalue Var 0x55cf2ea91cf8 'x' 'int'
-
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : DeclRefExpr
-
-DeclRefExpr 0x55cf2ea91f20 'int' lvalue Var 0x55cf2ea91cf8 'x' 'int'
-
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : ImplicitCastExpr
-
-ImplicitCastExpr 0x55cf2ea91fa0 'int' <LValueToRValue>
-`-DeclRefExpr 0x55cf2ea91f48 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-
-  04-04-2019 16:21:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():681:
-ConvertingStmt : DeclRefExpr
-
-DeclRefExpr 0x55cf2ea91f48 'int' lvalue Var 0x55cf2ea91c48 'y' 'int'
-
-# START: A_SPAN_translation_unit.
-
-# eval() the contents of this file.
-# Keep the following imports in effect when calling eval.
-
-# import span.ir.types as types
-# import span.ir.expr as expr
-# import span.ir.instr as instr
-# import span.ir.obj as obj
-# import span.ir.tunit as irTUnit
-# from span.ir.types import Loc
-
-# An instance of span.ir.tunit.TUnit class.
-irTUnit.TUnit(
-  name = "delit.c",
-  description = "Auto-Translated from Clang AST.",
-
-  allVars = {
-    "v:main:z": types.Int32,
-    "v:sum:b": types.Int32,
-    "v:main:y": types.Int32,
-    "v:main:x": types.Int32,
-    "v:main:t.1": types.Int32,
-    "v:sum:a": types.Int32,
-    "v:main:t.2": types.Int32,
-  }, # end allVars dict
-
-  allObjs = {
-
-    "f:main":
-      obj.Func(
-        name = "f:main",
-        paramNames = [],
-        variadic = False,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        instrSeq = [
-            instr.AssignI(expr.VarE("v:main:y", Loc(13,4)), expr.LitE(10, Loc(13,12)), Loc(13,4)),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(14,12)), expr.LitE(1, Loc(14,12)), Loc(14,12)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(14,12)), expr.LitE(1, Loc(14,12)), Loc(14,12)),
-            instr.CondI(expr.VarE("v:main:y", Loc(14,12)), "NextCheckLand2", "TmpAssignLand2", Loc(14,12)),
-            instr.LabelI("NextCheckLand2"),
-            instr.CondI(expr.VarE("v:main:y", Loc(14,17)), "ExitLand2", "TmpAssignLand2", Loc(14,12)),
-            instr.LabelI("TmpAssignLand2"),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(14,12)), expr.LitE(0, Loc(14,12)), Loc(14,12)),
-            instr.LabelI("ExitLand2"),
-            instr.CondI(expr.VarE("v:main:t.2", Loc(14,12)), "ExitLor1", "NextCheckLor1", Loc(14,12)),
-            instr.LabelI("NextCheckLor1"),
-            instr.CondI(expr.VarE("v:main:y", Loc(14,22)), "ExitLor1", "TmpAssignLor1", Loc(14,12)),
-            instr.LabelI("TmpAssignLor1"),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(14,12)), expr.LitE(0, Loc(14,12)), Loc(14,12)),
-            instr.LabelI("ExitLor1"),
-            instr.AssignI(expr.VarE("v:main:x", Loc(14,4)), expr.VarE("v:main:t.1", Loc(14,12)), Loc(14,4)),
-            instr.AssignI(expr.VarE("v:main:z", Loc(15,4)), expr.SelectE(expr.VarE("v:main:y", Loc(15,12)), expr.VarE("v:main:x", Loc(15,16)), expr.VarE("v:main:y", Loc(15,20)), Loc(15,12)), Loc(15,4)),
-        ], # instrSeq end.
-      ), # f:main() end. 
-
-    "f:sum":
-      obj.Func(
-        name = "f:sum",
-        paramNames = ["v:sum:a", "v:sum:b"],
-        variadic = False,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        instrSeq = [
-            instr.AssignI(expr.VarE("v:sum:t.1", Loc(9,10)), expr.BinaryE(expr.VarE("v:sum:a", Loc(9,10)), op.BO_ADD, expr.VarE("v:sum:b", Loc(9,14)), Loc(9,10)), Loc(9,10)),
-            instr.ReturnI(expr.VarE("v:sum:t.1", Loc(9,10))),
-        ], # instrSeq end.
-      ), # f:sum() end. 
-
-  }, # end allObjs dict
-) # irTUnit.TUnit() ends
-
-# END  : A_SPAN_translation_unit.
-
-  04-04-2019 16:21:19: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkEndOfTranslationUnit():551:
-Translation Unit Ended.
-
-
-  04-04-2019 16:21:19: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkEndOfTranslationUnit():552:
-BOUND END  : SLANG_Generated_Output.
-
-delit.c:15:8: warning: Anshuman: Value stored to 'z' during its initialization is never read
-   int z = y ? x : y;
-       ^   ~~~~~~~~~
-1 warning generated.
+********************

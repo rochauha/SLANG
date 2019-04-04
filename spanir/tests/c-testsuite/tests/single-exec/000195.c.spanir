@@ -17,7 +17,6 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.1": types.Struct("s:inner_type"),
     "v:main:q": types.Struct("s:inner_type"),
   }, # end allVars dict
 
@@ -43,28 +42,11 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.1", Loc(7,2)), ["b1"], Loc(7,2)), expr.LitE(1, Loc(7,25))),
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.1", Loc(7,2)), ["b2"], Loc(7,2)), expr.LitE(2, Loc(7,28))),
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.1", Loc(7,2)), ["next"], Loc(7,2)), expr.LitE(3, Loc(7,31))),
-            instr.AssignI(expr.VarE("v:main:q", Loc(7,2)), expr.VarE("v:main:t.1", Loc(7,2)), Loc(7,2)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+        instrSeq = [
+            instr.AssignI(expr.MemberE("b1", expr.VarE("v:main:q", Loc(7,2)), Loc(7,2)), expr.LitE(1, Loc(7,25)), Loc(7,25)),
+            instr.AssignI(expr.MemberE("b2", expr.VarE("v:main:q", Loc(7,2)), Loc(7,2)), expr.LitE(2, Loc(7,28)), Loc(7,28)),
+            instr.AssignI(expr.MemberE("next", expr.VarE("v:main:q", Loc(7,2)), Loc(7,2)), expr.LitE(3, Loc(7,31)), Loc(7,31)),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

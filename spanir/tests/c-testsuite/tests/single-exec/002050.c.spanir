@@ -17,27 +17,23 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.17": types.Int32,
-    "v:main:t.16": types.ConstSizeArray(of=types.Struct("s:1"), dim=9),
-    "v:main:t.15": types.Struct("s:1"),
     "v:main:t.14": types.Int32,
-    "v:main:t.13": types.ConstSizeArray(of=types.Int32, dim=4),
-    "v:main:t.1": types.Struct("s:1"),
-    "v:main:t.2": types.Int32,
-    "v:cases": types.ConstSizeArray(of=types.Struct("s:1"), dim=9),
-    "v:main:j": types.Int32,
-    "v:printf:__format": types.Ptr(to=types.Int8),
-    "v:main:i": types.Int32,
-    "v:main:t.10": types.ConstSizeArray(of=types.Int32, dim=4),
-    "v:main:t.3": types.Struct("s:1"),
     "v:main:t.4": types.Int32,
+    "v:main:t.3": types.Int32,
+    "v:main:t.8": types.Struct("s:1"),
+    "v:main:j": types.Int32,
+    "v:main:t.1": types.Int32,
+    "v:main:t.2": types.Int32,
+    "": ,
     "v:main:t.5": types.Struct("s:1"),
     "v:main:t.6": types.Int32,
-    "v:main:t.7": types.Struct("s:1"),
-    "v:main:t.8": types.ConstSizeArray(of=types.Int32, dim=4),
+    "v:main:t.7": types.Int32,
     "v:main:t.9": types.Int32,
+    "v:main:t.10": types.Struct("s:1"),
     "v:main:t.11": types.Int32,
-    "v:main:t.12": types.ConstSizeArray(of=types.Int32, dim=4),
+    "v:main:t.12": types.Struct("s:1"),
+    "v:main:i": types.Int32,
+    "v:main:t.13": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -45,7 +41,7 @@ irTUnit.TUnit(
       types.Struct(
         name = "s:1",
         fields = [
-          ("c", types.ConstSizeArray(of=types.Int32, dim=4)),
+          ("c", types.ConstSizeArray(of=types.Int32, size=4)),
           ("b", types.Int32),
           ("e", types.Int32),
           ("k", types.Int32),
@@ -53,22 +49,6 @@ irTUnit.TUnit(
         loc = Loc(6,9),
       ),
 
-
-    "f:printf":
-      obj.Func(
-        name = "f:printf",
-        paramNames = ["v:printf:__format"],
-        variadic = True,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:printf() end. 
 
     "f:main":
       obj.Func(
@@ -79,92 +59,47 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          9: [
+        instrSeq = [
             instr.AssignI(expr.VarE("v:main:j", Loc(23,9)), expr.LitE(0, Loc(23,11)), Loc(23,9)),
-          ],
-
-          8: [
-            instr.AssignI(expr.VarE("v:main:t.15", Loc(23,39)), expr.ArrayE(expr.VarE("v:cases", Loc(23,39)), [expr.LitE(0, Loc(23,45))], Loc(23,39)), Loc(23,39)),
-            instr.AssignI(expr.VarE("v:main:t.16", Loc(23,18)), expr.BinaryE(expr.LitE(504, Loc(23,18)), op.BO_DIV, expr.LitE(56, Loc(23,32))), Loc(23,18)),
-            instr.AssignI(expr.VarE("v:main:t.17", Loc(23,14)), expr.BinaryE(expr.VarE("v:main:j", Loc(23,14)), op.BO_LT, expr.VarE("v:main:t.16", Loc(23,18))), Loc(23,14)),
-            instr.CondI(expr.VarE("v:main:t.17", Loc(23,14)), Loc(23,5)),
-          ],
-
-          7: [
+            instr.LabelI("ForCond1"),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(23,18)), expr.BinaryE(, op.BO_DIV, , Loc(23,18)), Loc(23,18)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(23,14)), expr.BinaryE(expr.VarE("v:main:j", Loc(23,14)), op.BO_LT, expr.VarE("v:main:t.1", Loc(23,18)), Loc(23,14)), Loc(23,14)),
+            instr.CondI(expr.VarE("v:main:t.2", Loc(23,14)), "ForBody1", "ForExit1", Loc(23,14)),
+            instr.LabelI("ForBody1"),
             instr.AssignI(expr.VarE("v:main:i", Loc(24,6)), expr.LitE(0, Loc(24,8)), Loc(24,6)),
-          ],
-
-          6: [
-            instr.AssignI(expr.VarE("v:main:t.12", Loc(24,22)), expr.MemberE(expr.VarE("v:cases", Loc(24,22)), ["c"], Loc(24,22)), Loc(24,22)),
-            instr.AssignI(expr.VarE("v:main:t.10", Loc(24,39)), expr.MemberE(expr.VarE("v:cases", Loc(24,39)), ["c"], Loc(24,39)), Loc(24,39)),
-            instr.AssignI(expr.VarE("v:main:t.11", Loc(24,39)), expr.ArrayE(expr.VarE("v:main:t.10", Loc(24,39)), [expr.LitE(0, Loc(24,48))], Loc(24,39)), Loc(24,39)),
-            instr.AssignI(expr.VarE("v:main:t.13", Loc(24,15)), expr.BinaryE(expr.LitE(32, Loc(24,15)), op.BO_DIV, expr.LitE(8, Loc(24,32))), Loc(24,15)),
-            instr.AssignI(expr.VarE("v:main:t.14", Loc(24,11)), expr.BinaryE(expr.VarE("v:main:i", Loc(24,11)), op.BO_LT, expr.VarE("v:main:t.13", Loc(24,15))), Loc(24,11)),
-            instr.CondI(expr.VarE("v:main:t.14", Loc(24,11)), Loc(24,2)),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(32,12)), Loc(32,5)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          2: [
-            instr.AssignI(expr.VarE("v:main:j", Loc(23,50)), expr.BinaryE(expr.VarE("v:main:j", Loc(23,50)), op.BO_ADD, expr.LitE(1, Loc(23,50)), Loc(23,50)), Loc(23,50)),
-          ],
-
-          3: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(27,33)), expr.ArrayE(expr.VarE("v:cases", Loc(27,33)), [expr.VarE("v:main:j", Loc(27,39))], Loc(27,33)), Loc(27,33)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(27,33)), expr.MemberE(expr.VarE("v:main:t.1", Loc(27,33)), ["b"], Loc(27,33)), Loc(27,33)),
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(27,2)), [expr.LitE("""cases[%d].b=%ld
-""", Loc(27,9)), expr.VarE("v:main:j", Loc(27,30)), expr.VarE("v:main:t.2", Loc(27,33))], Loc(27,2))),
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(28,33)), expr.ArrayE(expr.VarE("v:cases", Loc(28,33)), [expr.VarE("v:main:j", Loc(28,39))], Loc(28,33)), Loc(28,33)),
-            instr.AssignI(expr.VarE("v:main:t.4", Loc(28,33)), expr.MemberE(expr.VarE("v:main:t.3", Loc(28,33)), ["e"], Loc(28,33)), Loc(28,33)),
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(28,2)), [expr.LitE("""cases[%d].e=%ld
-""", Loc(28,9)), expr.VarE("v:main:j", Loc(28,30)), expr.VarE("v:main:t.4", Loc(28,33))], Loc(28,2))),
-            instr.AssignI(expr.VarE("v:main:t.5", Loc(29,33)), expr.ArrayE(expr.VarE("v:cases", Loc(29,33)), [expr.VarE("v:main:j", Loc(29,39))], Loc(29,33)), Loc(29,33)),
-            instr.AssignI(expr.VarE("v:main:t.6", Loc(29,33)), expr.MemberE(expr.VarE("v:main:t.5", Loc(29,33)), ["k"], Loc(29,33)), Loc(29,33)),
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(29,2)), [expr.LitE("""cases[%d].k=%ld
-""", Loc(29,9)), expr.VarE("v:main:j", Loc(29,30)), expr.VarE("v:main:t.6", Loc(29,33))], Loc(29,2))),
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(30,2)), [expr.LitE("""
-""", Loc(30,9))], Loc(30,2))),
-          ],
-
-          4: [
-            instr.AssignI(expr.VarE("v:main:i", Loc(24,53)), expr.BinaryE(expr.VarE("v:main:i", Loc(24,53)), op.BO_ADD, expr.LitE(1, Loc(24,53)), Loc(24,53)), Loc(24,53)),
-          ],
-
-          5: [
-            instr.AssignI(expr.VarE("v:main:t.7", Loc(25,44)), expr.ArrayE(expr.VarE("v:cases", Loc(25,44)), [expr.VarE("v:main:j", Loc(25,50))], Loc(25,44)), Loc(25,44)),
-            instr.AssignI(expr.VarE("v:main:t.8", Loc(25,44)), expr.MemberE(expr.VarE("v:main:t.7", Loc(25,44)), ["c"], Loc(25,44)), Loc(25,44)),
-            instr.AssignI(expr.VarE("v:main:t.9", Loc(25,44)), expr.ArrayE(expr.VarE("v:main:t.8", Loc(25,44)), [expr.VarE("v:main:i", Loc(25,55))], Loc(25,44)), Loc(25,44)),
+            instr.LabelI("ForCond2"),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(24,15)), expr.BinaryE(, op.BO_DIV, , Loc(24,15)), Loc(24,15)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(24,11)), expr.BinaryE(expr.VarE("v:main:i", Loc(24,11)), op.BO_LT, expr.VarE("v:main:t.3", Loc(24,15)), Loc(24,11)), Loc(24,11)),
+            instr.CondI(expr.VarE("v:main:t.4", Loc(24,11)), "ForBody2", "ForExit2", Loc(24,11)),
+            instr.LabelI("ForBody2"),
+            instr.AssignI(expr.VarE("v:main:t.5", Loc(25,44)), expr.ArrayE(expr.VarE("v:main:j", Loc(25,50)), expr.VarE("", Loc(25,44)), Loc(25,44)), Loc(25,44)),
+            instr.AssignI(expr.VarE("v:main:t.6", Loc(25,44)), expr.ArrayE(expr.VarE("v:main:i", Loc(25,55)), expr.MemberE("c", expr.VarE("v:main:t.5", Loc(25,44)), Loc(25,44)), Loc(25,44)), Loc(25,44)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(25,6)), [expr.LitE("""cases[%d].c[%d]=%ld
-""", Loc(25,13)), expr.VarE("v:main:j", Loc(25,38)), expr.VarE("v:main:i", Loc(25,41)), expr.VarE("v:main:t.9", Loc(25,44))], Loc(25,6))),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 8, types.UnCondEdge),
-          (3, 2, types.UnCondEdge),
-          (4, 6, types.UnCondEdge),
-          (5, 4, types.UnCondEdge),
-          (6, 5, types.TrueEdge),
-          (6, 3, types.FalseEdge),
-          (7, 6, types.UnCondEdge),
-          (8, 7, types.TrueEdge),
-          (8, 1, types.FalseEdge),
-          (9, 8, types.UnCondEdge),
-          (-1, 9, types.UnCondEdge),
-        }, # bbEdges end
+""", Loc(25,13)), expr.VarE("v:main:j", Loc(25,38)), expr.VarE("v:main:i", Loc(25,41)), expr.VarE("v:main:t.6", Loc(25,44))], Loc(25,6)), Loc(25,6)),
+            instr.AssignI(expr.VarE("v:main:t.7", Loc(24,53)), expr.VarE("v:main:i", Loc(24,53)), Loc(24,53)),
+            instr.AssignI(expr.VarE("v:main:i", Loc(24,53)), expr.BinaryE(expr.VarE("v:main:i", Loc(24,53)), op.BO_ADD, expr.LitE(1, Loc(24,53)), Loc(24,53)), Loc(24,53)),
+            instr.GotoI("ForCond2"),
+            instr.LabelI("ForExit2"),
+            instr.AssignI(expr.VarE("v:main:t.8", Loc(27,33)), expr.ArrayE(expr.VarE("v:main:j", Loc(27,39)), expr.VarE("", Loc(27,33)), Loc(27,33)), Loc(27,33)),
+            instr.AssignI(expr.VarE("v:main:t.9", Loc(27,33)), expr.MemberE("b", expr.VarE("v:main:t.8", Loc(27,33)), Loc(27,33)), Loc(27,33)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(27,2)), [expr.LitE("""cases[%d].b=%ld
+""", Loc(27,9)), expr.VarE("v:main:j", Loc(27,30)), expr.VarE("v:main:t.9", Loc(27,33))], Loc(27,2)), Loc(27,2)),
+            instr.AssignI(expr.VarE("v:main:t.10", Loc(28,33)), expr.ArrayE(expr.VarE("v:main:j", Loc(28,39)), expr.VarE("", Loc(28,33)), Loc(28,33)), Loc(28,33)),
+            instr.AssignI(expr.VarE("v:main:t.11", Loc(28,33)), expr.MemberE("e", expr.VarE("v:main:t.10", Loc(28,33)), Loc(28,33)), Loc(28,33)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(28,2)), [expr.LitE("""cases[%d].e=%ld
+""", Loc(28,9)), expr.VarE("v:main:j", Loc(28,30)), expr.VarE("v:main:t.11", Loc(28,33))], Loc(28,2)), Loc(28,2)),
+            instr.AssignI(expr.VarE("v:main:t.12", Loc(29,33)), expr.ArrayE(expr.VarE("v:main:j", Loc(29,39)), expr.VarE("", Loc(29,33)), Loc(29,33)), Loc(29,33)),
+            instr.AssignI(expr.VarE("v:main:t.13", Loc(29,33)), expr.MemberE("k", expr.VarE("v:main:t.12", Loc(29,33)), Loc(29,33)), Loc(29,33)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(29,2)), [expr.LitE("""cases[%d].k=%ld
+""", Loc(29,9)), expr.VarE("v:main:j", Loc(29,30)), expr.VarE("v:main:t.13", Loc(29,33))], Loc(29,2)), Loc(29,2)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(30,2)), [expr.LitE("""
+""", Loc(30,9))], Loc(30,2)), Loc(30,2)),
+            instr.AssignI(expr.VarE("v:main:t.14", Loc(23,50)), expr.VarE("v:main:j", Loc(23,50)), Loc(23,50)),
+            instr.AssignI(expr.VarE("v:main:j", Loc(23,50)), expr.BinaryE(expr.VarE("v:main:j", Loc(23,50)), op.BO_ADD, expr.LitE(1, Loc(23,50)), Loc(23,50)), Loc(23,50)),
+            instr.GotoI("ForCond1"),
+            instr.LabelI("ForExit1"),
+            instr.ReturnI(expr.LitE(0, Loc(32,12))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

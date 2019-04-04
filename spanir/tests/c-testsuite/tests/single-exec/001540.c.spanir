@@ -18,22 +18,21 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.14": types.Int32,
-    "v:main:t.3": types.Struct("s:fred"),
-    "v:main:jones": types.ConstSizeArray(of=types.Struct("s:fred"), dim=2),
-    "v:main:t.1": types.Int32,
-    "v:printf:__format": types.Ptr(to=types.Int8),
-    "v:main:bloggs": types.Struct("s:fred"),
-    "v:main:t.2": types.Int32,
-    "v:main:t.4": types.Struct("s:fred"),
-    "v:main:t.5": types.Struct("s:fred"),
-    "v:main:t.6": types.Struct("s:fred"),
-    "v:main:t.7": types.Struct("s:fred"),
-    "v:main:t.8": types.Int32,
-    "v:main:t.9": types.Struct("s:fred"),
-    "v:main:t.10": types.Int32,
-    "v:main:t.11": types.Struct("s:fred"),
-    "v:main:t.12": types.Int32,
     "v:main:t.13": types.Struct("s:fred"),
+    "v:main:t.12": types.Int32,
+    "v:main:t.11": types.Struct("s:fred"),
+    "v:main:t.10": types.Int32,
+    "v:main:t.9": types.Struct("s:fred"),
+    "v:main:t.8": types.Int32,
+    "v:main:t.5": types.Struct("s:fred"),
+    "v:main:t.1": types.Int32,
+    "v:main:t.6": types.Struct("s:fred"),
+    "v:main:bloggs": types.Struct("s:fred"),
+    "v:main:t.7": types.Struct("s:fred"),
+    "v:main:jones": types.ConstSizeArray(of=types.Struct("s:fred"), size=2),
+    "v:main:t.2": types.Int32,
+    "v:main:t.3": types.Struct("s:fred"),
+    "v:main:t.4": types.Struct("s:fred"),
   }, # end allVars dict
 
   allObjs = {
@@ -48,22 +47,6 @@ irTUnit.TUnit(
       ),
 
 
-    "f:printf":
-      obj.Func(
-        name = "f:printf",
-        paramNames = ["v:printf:__format"],
-        variadic = True,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:printf() end. 
-
     "f:main":
       obj.Func(
         name = "f:main",
@@ -73,57 +56,41 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:bloggs", Loc(13,4)), ["boris"], Loc(13,4)), expr.LitE(12, Loc(13,19)), Loc(13,4)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:bloggs", Loc(14,4)), ["natasha"], Loc(14,4)), expr.LitE(34, Loc(14,21)), Loc(14,4)),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(16,19)), expr.MemberE(expr.VarE("v:main:bloggs", Loc(16,19)), ["boris"], Loc(16,19)), Loc(16,19)),
+        instrSeq = [
+            instr.AssignI(expr.MemberE("boris", expr.VarE("v:main:bloggs", Loc(13,4)), Loc(13,4)), expr.LitE(12, Loc(13,19)), Loc(13,4)),
+            instr.AssignI(expr.MemberE("natasha", expr.VarE("v:main:bloggs", Loc(14,4)), Loc(14,4)), expr.LitE(34, Loc(14,21)), Loc(14,4)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(16,19)), expr.MemberE("boris", expr.VarE("v:main:bloggs", Loc(16,19)), Loc(16,19)), Loc(16,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(16,4)), [expr.LitE("""%d
-""", Loc(16,11)), expr.VarE("v:main:t.1", Loc(16,19))], Loc(16,4))),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(17,19)), expr.MemberE(expr.VarE("v:main:bloggs", Loc(17,19)), ["natasha"], Loc(17,19)), Loc(17,19)),
+""", Loc(16,11)), expr.VarE("v:main:t.1", Loc(16,19))], Loc(16,4)), Loc(16,4)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(17,19)), expr.MemberE("natasha", expr.VarE("v:main:bloggs", Loc(17,19)), Loc(17,19)), Loc(17,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(17,4)), [expr.LitE("""%d
-""", Loc(17,11)), expr.VarE("v:main:t.2", Loc(17,19))], Loc(17,4))),
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(20,4)), expr.ArrayE(expr.VarE("v:main:jones", Loc(20,4)), [expr.LitE(0, Loc(20,10))], Loc(20,4)), Loc(20,4)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.3", Loc(20,4)), ["boris"], Loc(20,4)), expr.LitE(12, Loc(20,21)), Loc(20,4)),
-            instr.AssignI(expr.VarE("v:main:t.4", Loc(21,4)), expr.ArrayE(expr.VarE("v:main:jones", Loc(21,4)), [expr.LitE(0, Loc(21,10))], Loc(21,4)), Loc(21,4)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.4", Loc(21,4)), ["natasha"], Loc(21,4)), expr.LitE(34, Loc(21,23)), Loc(21,4)),
-            instr.AssignI(expr.VarE("v:main:t.5", Loc(22,4)), expr.ArrayE(expr.VarE("v:main:jones", Loc(22,4)), [expr.LitE(1, Loc(22,10))], Loc(22,4)), Loc(22,4)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.5", Loc(22,4)), ["boris"], Loc(22,4)), expr.LitE(56, Loc(22,21)), Loc(22,4)),
-            instr.AssignI(expr.VarE("v:main:t.6", Loc(23,4)), expr.ArrayE(expr.VarE("v:main:jones", Loc(23,4)), [expr.LitE(1, Loc(23,10))], Loc(23,4)), Loc(23,4)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.6", Loc(23,4)), ["natasha"], Loc(23,4)), expr.LitE(78, Loc(23,23)), Loc(23,4)),
-            instr.AssignI(expr.VarE("v:main:t.7", Loc(25,19)), expr.ArrayE(expr.VarE("v:main:jones", Loc(25,19)), [expr.LitE(0, Loc(25,25))], Loc(25,19)), Loc(25,19)),
-            instr.AssignI(expr.VarE("v:main:t.8", Loc(25,19)), expr.MemberE(expr.VarE("v:main:t.7", Loc(25,19)), ["boris"], Loc(25,19)), Loc(25,19)),
+""", Loc(17,11)), expr.VarE("v:main:t.2", Loc(17,19))], Loc(17,4)), Loc(17,4)),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(20,4)), expr.ArrayE(expr.LitE(0, Loc(20,10)), expr.VarE("v:main:jones", Loc(20,4)), Loc(20,4)), Loc(20,4)),
+            instr.AssignI(expr.MemberE("boris", expr.VarE("v:main:t.3", Loc(20,4)), Loc(20,4)), expr.LitE(12, Loc(20,21)), Loc(20,4)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(21,4)), expr.ArrayE(expr.LitE(0, Loc(21,10)), expr.VarE("v:main:jones", Loc(21,4)), Loc(21,4)), Loc(21,4)),
+            instr.AssignI(expr.MemberE("natasha", expr.VarE("v:main:t.4", Loc(21,4)), Loc(21,4)), expr.LitE(34, Loc(21,23)), Loc(21,4)),
+            instr.AssignI(expr.VarE("v:main:t.5", Loc(22,4)), expr.ArrayE(expr.LitE(1, Loc(22,10)), expr.VarE("v:main:jones", Loc(22,4)), Loc(22,4)), Loc(22,4)),
+            instr.AssignI(expr.MemberE("boris", expr.VarE("v:main:t.5", Loc(22,4)), Loc(22,4)), expr.LitE(56, Loc(22,21)), Loc(22,4)),
+            instr.AssignI(expr.VarE("v:main:t.6", Loc(23,4)), expr.ArrayE(expr.LitE(1, Loc(23,10)), expr.VarE("v:main:jones", Loc(23,4)), Loc(23,4)), Loc(23,4)),
+            instr.AssignI(expr.MemberE("natasha", expr.VarE("v:main:t.6", Loc(23,4)), Loc(23,4)), expr.LitE(78, Loc(23,23)), Loc(23,4)),
+            instr.AssignI(expr.VarE("v:main:t.7", Loc(25,19)), expr.ArrayE(expr.LitE(0, Loc(25,25)), expr.VarE("v:main:jones", Loc(25,19)), Loc(25,19)), Loc(25,19)),
+            instr.AssignI(expr.VarE("v:main:t.8", Loc(25,19)), expr.MemberE("boris", expr.VarE("v:main:t.7", Loc(25,19)), Loc(25,19)), Loc(25,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(25,4)), [expr.LitE("""%d
-""", Loc(25,11)), expr.VarE("v:main:t.8", Loc(25,19))], Loc(25,4))),
-            instr.AssignI(expr.VarE("v:main:t.9", Loc(26,19)), expr.ArrayE(expr.VarE("v:main:jones", Loc(26,19)), [expr.LitE(0, Loc(26,25))], Loc(26,19)), Loc(26,19)),
-            instr.AssignI(expr.VarE("v:main:t.10", Loc(26,19)), expr.MemberE(expr.VarE("v:main:t.9", Loc(26,19)), ["natasha"], Loc(26,19)), Loc(26,19)),
+""", Loc(25,11)), expr.VarE("v:main:t.8", Loc(25,19))], Loc(25,4)), Loc(25,4)),
+            instr.AssignI(expr.VarE("v:main:t.9", Loc(26,19)), expr.ArrayE(expr.LitE(0, Loc(26,25)), expr.VarE("v:main:jones", Loc(26,19)), Loc(26,19)), Loc(26,19)),
+            instr.AssignI(expr.VarE("v:main:t.10", Loc(26,19)), expr.MemberE("natasha", expr.VarE("v:main:t.9", Loc(26,19)), Loc(26,19)), Loc(26,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(26,4)), [expr.LitE("""%d
-""", Loc(26,11)), expr.VarE("v:main:t.10", Loc(26,19))], Loc(26,4))),
-            instr.AssignI(expr.VarE("v:main:t.11", Loc(27,19)), expr.ArrayE(expr.VarE("v:main:jones", Loc(27,19)), [expr.LitE(1, Loc(27,25))], Loc(27,19)), Loc(27,19)),
-            instr.AssignI(expr.VarE("v:main:t.12", Loc(27,19)), expr.MemberE(expr.VarE("v:main:t.11", Loc(27,19)), ["boris"], Loc(27,19)), Loc(27,19)),
+""", Loc(26,11)), expr.VarE("v:main:t.10", Loc(26,19))], Loc(26,4)), Loc(26,4)),
+            instr.AssignI(expr.VarE("v:main:t.11", Loc(27,19)), expr.ArrayE(expr.LitE(1, Loc(27,25)), expr.VarE("v:main:jones", Loc(27,19)), Loc(27,19)), Loc(27,19)),
+            instr.AssignI(expr.VarE("v:main:t.12", Loc(27,19)), expr.MemberE("boris", expr.VarE("v:main:t.11", Loc(27,19)), Loc(27,19)), Loc(27,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(27,4)), [expr.LitE("""%d
-""", Loc(27,11)), expr.VarE("v:main:t.12", Loc(27,19))], Loc(27,4))),
-            instr.AssignI(expr.VarE("v:main:t.13", Loc(28,19)), expr.ArrayE(expr.VarE("v:main:jones", Loc(28,19)), [expr.LitE(1, Loc(28,25))], Loc(28,19)), Loc(28,19)),
-            instr.AssignI(expr.VarE("v:main:t.14", Loc(28,19)), expr.MemberE(expr.VarE("v:main:t.13", Loc(28,19)), ["natasha"], Loc(28,19)), Loc(28,19)),
+""", Loc(27,11)), expr.VarE("v:main:t.12", Loc(27,19))], Loc(27,4)), Loc(27,4)),
+            instr.AssignI(expr.VarE("v:main:t.13", Loc(28,19)), expr.ArrayE(expr.LitE(1, Loc(28,25)), expr.VarE("v:main:jones", Loc(28,19)), Loc(28,19)), Loc(28,19)),
+            instr.AssignI(expr.VarE("v:main:t.14", Loc(28,19)), expr.MemberE("natasha", expr.VarE("v:main:t.13", Loc(28,19)), Loc(28,19)), Loc(28,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(28,4)), [expr.LitE("""%d
-""", Loc(28,11)), expr.VarE("v:main:t.14", Loc(28,19))], Loc(28,4))),
-            instr.ReturnI(expr.LitE(0, Loc(30,11)), Loc(30,4)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+""", Loc(28,11)), expr.VarE("v:main:t.14", Loc(28,19))], Loc(28,4)), Loc(28,4)),
+            instr.ReturnI(expr.LitE(0, Loc(30,11))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

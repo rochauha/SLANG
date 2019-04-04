@@ -17,6 +17,7 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:main:t.3": types.Int32,
     "v:main:t.2": types.Int32,
     "v:main:i": types.Int32,
     "v:main:t.1": types.Int32,
@@ -33,54 +34,25 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          6: [
+        instrSeq = [
             instr.AssignI(expr.VarE("v:main:i", Loc(6,6)), expr.LitE(0, Loc(6,10)), Loc(6,6)),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(10,9)), Loc(10,2)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          2: [
+            instr.LabelI("ForCond1"),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(6,13)), expr.BinaryE(expr.VarE("v:main:i", Loc(6,13)), op.BO_LT, expr.LitE(10, Loc(6,17)), Loc(6,13)), Loc(6,13)),
+            instr.CondI(expr.VarE("v:main:t.1", Loc(6,13)), "ForBody1", "ForExit1", Loc(6,13)),
+            instr.LabelI("ForBody1"),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(7,7)), expr.UnaryE(op.UO_NOT, expr.VarE("v:main:i", Loc(7,8)), Loc(7,7)), Loc(7,7)),
+            instr.CondI(expr.VarE("v:main:t.2", Loc(7,7)), "IfTrue2", "IfFalse2", Loc(7,7)),
+            instr.LabelI("IfTrue2"),
+            instr.GotoI("ForCond1"),
+            instr.GotoI("IfExit2"),
+            instr.LabelI("IfFalse2"),
+            instr.LabelI("IfExit2"),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(6,21)), expr.VarE("v:main:i", Loc(6,21)), Loc(6,21)),
             instr.AssignI(expr.VarE("v:main:i", Loc(6,21)), expr.BinaryE(expr.VarE("v:main:i", Loc(6,21)), op.BO_ADD, expr.LitE(1, Loc(6,21)), Loc(6,21)), Loc(6,21)),
-          ],
-
-          3: [
-            instr.NopI(),
-          ],
-
-          4: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(7,7)), expr.UnaryE(op.UO_NOT, expr.VarE("v:main:i", Loc(7,8)), Loc(7,7)), Loc(7,7)),
-            instr.CondI(expr.VarE("v:main:t.1", Loc(7,7)), Loc(7,3)),
-          ],
-
-          5: [
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(6,13)), expr.BinaryE(expr.VarE("v:main:i", Loc(6,13)), op.BO_LT, expr.LitE(10, Loc(6,17))), Loc(6,13)),
-            instr.CondI(expr.VarE("v:main:t.2", Loc(6,13)), Loc(6,2)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 5, types.UnCondEdge),
-          (3, 2, types.UnCondEdge),
-          (4, 3, types.TrueEdge),
-          (4, 2, types.FalseEdge),
-          (5, 4, types.TrueEdge),
-          (5, 1, types.FalseEdge),
-          (6, 5, types.UnCondEdge),
-          (-1, 6, types.UnCondEdge),
-        }, # bbEdges end
+            instr.GotoI("ForCond1"),
+            instr.LabelI("ForExit1"),
+            instr.ReturnI(expr.LitE(0, Loc(10,9))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

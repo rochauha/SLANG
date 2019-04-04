@@ -17,40 +17,21 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.13": types.UInt32,
-    "v:fwrite:__s": types.Ptr(to=types.Struct("s:_IO_FILE")),
-    "v:fwrite:__n": types.UInt32,
-    "v:fwrite:__size": types.UInt32,
-    "v:fwrite:__ptr": types.Ptr(to=types.Void),
-    "v:main:t.11": types.Int32,
-    "v:main:t.10": types.Int32,
-    "v:main:t.9": types.Int32,
-    "v:fgetc:__stream": types.Ptr(to=types.Struct("s:_IO_FILE")),
-    "v:main:t.8": types.Int8,
+    "v:main:t.11": types.Ptr(to=types.Int8),
+    "v:main:t.10": types.Ptr(to=types.Void),
+    "v:main:t.9": types.Ptr(to=types.Int8),
     "v:main:t.7": types.Int32,
-    "v:fread:__stream": types.Ptr(to=types.Struct("s:_IO_FILE")),
-    "v:fgets:__n": types.Int32,
-    "v:main:t.1": types.Ptr(to=types.Void),
-    "v:fread:__ptr": types.Ptr(to=types.Void),
-    "v:main:ShowChar": types.Int8,
-    "v:fgets:__s": types.Ptr(to=types.Int8),
-    "v:main:t.12": types.UInt32,
-    "v:main:freddy": types.ConstSizeArray(of=types.Int8, dim=7),
-    "v:main:t.5": types.Int32,
-    "v:fopen:__filename": types.Ptr(to=types.Int8),
-    "v:printf:__format": types.Ptr(to=types.Int8),
-    "v:main:t.2": types.Ptr(to=types.Int8),
-    "v:fread:__n": types.UInt32,
-    "v:fclose:__stream": types.Ptr(to=types.Struct("s:_IO_FILE")),
-    "v:main:InChar": types.Int32,
-    "v:main:t.3": types.Ptr(to=types.Int8),
-    "v:fread:__size": types.UInt32,
-    "v:_IO_getc:__fp": types.Ptr(to=types.Struct("s:_IO_FILE")),
     "v:main:t.6": types.Int32,
+    "v:main:t.5": types.Int8,
+    "v:main:t.4": types.Int32,
+    "v:main:t.3": types.Int32,
+    "v:main:t.8": types.Int8,
+    "v:main:freddy": types.ConstSizeArray(of=types.Int8, size=7),
+    "v:main:t.1": types.UInt32,
+    "v:main:ShowChar": types.Int8,
+    "v:main:InChar": types.Int32,
     "v:main:f": types.Ptr(to=types.Struct("s:_IO_FILE")),
-    "v:fgets:__stream": types.Ptr(to=types.Struct("s:_IO_FILE")),
-    "v:fopen:__modes": types.Ptr(to=types.Int8),
-    "v:main:t.4": types.Int8,
+    "v:main:t.2": types.UInt32,
   }, # end allVars dict
 
   allObjs = {
@@ -88,7 +69,7 @@ irTUnit.TUnit(
           ("_old_offset", types.Int32),
           ("_cur_column", types.UInt32),
           ("_vtable_offset", types.Int8),
-          ("_shortbuf", types.ConstSizeArray(of=types.Int8, dim=1)),
+          ("_shortbuf", types.ConstSizeArray(of=types.Int8, size=1)),
           ("_lock", types.Ptr(to=types.Void)),
           ("_offset", types.Int32),
           ("__pad1", types.Ptr(to=types.Void)),
@@ -97,75 +78,11 @@ irTUnit.TUnit(
           ("__pad4", types.Ptr(to=types.Void)),
           ("__pad5", types.UInt32),
           ("_mode", types.Int32),
-          ("_unused2", types.ConstSizeArray(of=types.Int8, dim=20)),
+          ("_unused2", types.ConstSizeArray(of=types.Int8, size=20)),
         ],
         loc = Loc(245,1),
       ),
 
-
-    "f:fread":
-      obj.Func(
-        name = "f:fread",
-        paramNames = ["v:fread:__ptr", "v:fread:__size", "v:fread:__n", "v:fread:__stream"],
-        variadic = False,
-        returnType = types.UInt32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:fread() end. 
-
-    "f:fgetc":
-      obj.Func(
-        name = "f:fgetc",
-        paramNames = ["v:fgetc:__stream"],
-        variadic = False,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:fgetc() end. 
-
-    "f:fclose":
-      obj.Func(
-        name = "f:fclose",
-        paramNames = ["v:fclose:__stream"],
-        variadic = False,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:fclose() end. 
-
-    "f:fwrite":
-      obj.Func(
-        name = "f:fwrite",
-        paramNames = ["v:fwrite:__ptr", "v:fwrite:__size", "v:fwrite:__n", "v:fwrite:__s"],
-        variadic = False,
-        returnType = types.UInt32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:fwrite() end. 
 
     "f:main":
       obj.Func(
@@ -176,218 +93,79 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          19: [
+        instrSeq = [
             instr.AssignI(expr.VarE("v:main:f", Loc(5,4)), expr.CallE(expr.FuncE("f:fopen", Loc(5,14)), [expr.LitE("""fred.txt""", Loc(5,20)), expr.LitE("""w""", Loc(5,32))], Loc(5,14)), Loc(5,4)),
             instr.CallI(expr.CallE(expr.FuncE("f:fwrite", Loc(6,4)), [expr.LitE("""hello
 hello
-""", Loc(6,11)), expr.LitE(1, Loc(6,29)), expr.LitE(12, Loc(6,32)), expr.VarE("v:main:f", Loc(6,36))], Loc(6,4))),
-            instr.CallI(expr.CallE(expr.FuncE("f:fclose", Loc(7,4)), [expr.VarE("v:main:f", Loc(7,11))], Loc(7,4))),
+""", Loc(6,11)), expr.LitE(1, Loc(6,29)), expr.LitE(12, Loc(6,32)), expr.VarE("v:main:f", Loc(6,36))], Loc(6,4)), Loc(6,4)),
+            instr.CallI(expr.CallE(expr.FuncE("f:fclose", Loc(7,4)), [expr.VarE("v:main:f", Loc(7,11))], Loc(7,4)), Loc(7,4)),
             instr.AssignI(expr.VarE("v:main:f", Loc(10,4)), expr.CallE(expr.FuncE("f:fopen", Loc(10,8)), [expr.LitE("""fred.txt""", Loc(10,14)), expr.LitE("""r""", Loc(10,26))], Loc(10,8)), Loc(10,4)),
-            instr.AssignI(expr.VarE("v:main:t.12", Loc(11,8)), expr.CallE(expr.FuncE("f:fread", Loc(11,8)), [expr.VarE("v:main:freddy", Loc(11,14)), expr.LitE(1, Loc(11,22)), expr.LitE(6, Loc(11,25)), expr.VarE("v:main:f", Loc(11,28))], Loc(11,8)), Loc(11,8)),
-            instr.AssignI(expr.VarE("v:main:t.13", Loc(11,8)), expr.BinaryE(expr.VarE("v:main:t.12", Loc(11,8)), op.BO_NE, expr.LitE(6, Loc(11,34))), Loc(11,8)),
-            instr.CondI(expr.VarE("v:main:t.13", Loc(11,8)), Loc(11,4)),
-          ],
-
-          18: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(11,8)), expr.CallE(expr.FuncE("f:fread", Loc(11,8)), [expr.VarE("v:main:freddy", Loc(11,14)), expr.LitE(1, Loc(11,22)), expr.LitE(6, Loc(11,25)), expr.VarE("v:main:f", Loc(11,28))], Loc(11,8)), Loc(11,8)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(11,8)), expr.BinaryE(expr.VarE("v:main:t.1", Loc(11,8)), op.BO_NE, expr.LitE(6, Loc(11,34)), Loc(11,8)), Loc(11,8)),
+            instr.CondI(expr.VarE("v:main:t.2", Loc(11,8)), "IfTrue1", "IfFalse1", Loc(11,8)),
+            instr.LabelI("IfTrue1"),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(12,7)), [expr.LitE("""couldn't read fred.txt
-""", Loc(12,14))], Loc(12,7))),
-          ],
-
-          17: [
-            instr.AssignI(expr.ArrayE(expr.VarE("v:main:freddy", Loc(14,4)), [expr.LitE(6, Loc(14,11))], Loc(14,4)), ERROR:convertExpr, Loc(14,4)),
-            instr.CallI(expr.CallE(expr.FuncE("f:fclose", Loc(15,4)), [expr.VarE("v:main:f", Loc(15,11))], Loc(15,4))),
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(17,4)), [expr.LitE("""%s""", Loc(17,11)), expr.VarE("v:main:freddy", Loc(17,17))], Loc(17,4))),
+""", Loc(12,14))], Loc(12,7)), Loc(12,7)),
+            instr.GotoI("IfExit1"),
+            instr.LabelI("IfFalse1"),
+            instr.LabelI("IfExit1"),
+            instr.AssignI(expr.ArrayE(expr.LitE(6, Loc(14,11)), expr.VarE("v:main:freddy", Loc(14,4)), Loc(14,4)), , Loc(14,4)),
+            instr.CallI(expr.CallE(expr.FuncE("f:fclose", Loc(15,4)), [expr.VarE("v:main:f", Loc(15,11))], Loc(15,4)), Loc(15,4)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(17,4)), [expr.LitE("""%s""", Loc(17,11)), expr.VarE("v:main:freddy", Loc(17,17))], Loc(17,4)), Loc(17,4)),
             instr.AssignI(expr.VarE("v:main:f", Loc(21,4)), expr.CallE(expr.FuncE("f:fopen", Loc(21,8)), [expr.LitE("""fred.txt""", Loc(21,14)), expr.LitE("""r""", Loc(21,26))], Loc(21,8)), Loc(21,4)),
-          ],
-
-          16: [
+            instr.LabelI("WhileCond2"),
             instr.AssignI(expr.VarE("v:main:InChar", Loc(22,13)), expr.CallE(expr.FuncE("f:fgetc", Loc(22,22)), [expr.VarE("v:main:f", Loc(22,28))], Loc(22,22)), Loc(22,13)),
-            instr.AssignI(expr.VarE("v:main:t.10", Loc(22,12)), expr.VarE("v:main:InChar", Loc(22,13)), Loc(22,12)),
-            instr.AssignI(expr.VarE("v:main:t.9", Loc(22,35)), expr.UnaryE(op.UO_MINUS, expr.LitE(1, Loc(22,35)), Loc(22,35)), Loc(22,35)),
-            instr.AssignI(expr.VarE("v:main:t.11", Loc(22,12)), expr.BinaryE(expr.VarE("v:main:t.10", Loc(22,12)), op.BO_NE, expr.VarE("v:main:t.9", Loc(22,35))), Loc(22,12)),
-            instr.CondI(expr.VarE("v:main:t.11", Loc(22,12)), Loc(22,4)),
-          ],
-
-          5: [
-            instr.CallI(expr.CallE(expr.FuncE("f:fclose", Loc(41,4)), [expr.VarE("v:main:f", Loc(41,11))], Loc(41,4))),
-            instr.AssignI(expr.VarE("v:main:f", Loc(43,4)), expr.CallE(expr.FuncE("f:fopen", Loc(43,8)), [expr.LitE("""fred.txt""", Loc(43,14)), expr.LitE("""r""", Loc(43,26))], Loc(43,8)), Loc(43,4)),
-          ],
-
-          4: [
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(44,11)), expr.CallE(expr.FuncE("f:fgets", Loc(44,11)), [expr.VarE("v:main:freddy", Loc(44,17)), expr.LitE(7, Loc(44,25)), expr.VarE("v:main:f", Loc(44,41))], Loc(44,11)), Loc(44,11)),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(44,47)), expr.CastE(expr.LitE(0, Loc(44,47)), types.Ptr(to=types.Void), Loc(44,47)), Loc(44,47)),
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(44,11)), expr.BinaryE(expr.VarE("v:main:t.2", Loc(44,11)), op.BO_NE, expr.VarE("v:main:t.1", Loc(44,47))), Loc(44,11)),
-            instr.CondI(expr.VarE("v:main:t.3", Loc(44,11)), Loc(44,4)),
-          ],
-
-          3: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(45,7)), [expr.LitE("""x: %s""", Loc(45,14)), expr.VarE("v:main:freddy", Loc(45,23))], Loc(45,7))),
-          ],
-
-          2: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:fclose", Loc(47,4)), [expr.VarE("v:main:f", Loc(47,11))], Loc(47,4))),
-            instr.ReturnI(expr.LitE(0, Loc(49,11)), Loc(49,4)),
-          ],
-
-          6: [
-            instr.NopI(),
-          ],
-
-          7: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(39,7)), [expr.LitE("""ch: %d '%c'
-""", Loc(39,14)), expr.VarE("v:main:InChar", Loc(39,31)), expr.VarE("v:main:ShowChar", Loc(39,39))], Loc(39,7))),
-          ],
-
-          8: [
-            instr.AssignI(expr.VarE("v:main:ShowChar", Loc(37,10)), ERROR:convertExpr, Loc(37,10)),
-          ],
-
-          9: [
-            instr.AssignI(expr.VarE("v:main:ShowChar", Loc(35,7)), expr.VarE("v:main:InChar", Loc(35,18)), Loc(35,7)),
-            instr.AssignI(expr.VarE("v:main:t.4", Loc(36,11)), expr.BinaryE(expr.VarE("v:main:ShowChar", Loc(36,11)), op.BO_LT, ERROR:convertExpr), Loc(36,11)),
-            instr.CondI(expr.VarE("v:main:t.4", Loc(36,11)), Loc(36,7)),
-          ],
-
-          10: [
-            instr.AssignI(expr.VarE("v:main:InChar", Loc(33,13)), expr.CallE(expr.FuncE("f:_IO_getc", Loc(33,22)), [expr.VarE("v:main:f", Loc(33,22))], Loc(33,22)), Loc(33,13)),
-            instr.AssignI(expr.VarE("v:main:t.6", Loc(33,12)), expr.VarE("v:main:InChar", Loc(33,13)), Loc(33,12)),
-            instr.AssignI(expr.VarE("v:main:t.5", Loc(33,34)), expr.UnaryE(op.UO_MINUS, expr.LitE(1, Loc(33,34)), Loc(33,34)), Loc(33,34)),
-            instr.AssignI(expr.VarE("v:main:t.7", Loc(33,12)), expr.BinaryE(expr.VarE("v:main:t.6", Loc(33,12)), op.BO_NE, expr.VarE("v:main:t.5", Loc(33,34))), Loc(33,12)),
-            instr.CondI(expr.VarE("v:main:t.7", Loc(33,12)), Loc(33,4)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          11: [
-            instr.CallI(expr.CallE(expr.FuncE("f:fclose", Loc(30,4)), [expr.VarE("v:main:f", Loc(30,11))], Loc(30,4))),
-            instr.AssignI(expr.VarE("v:main:f", Loc(32,4)), expr.CallE(expr.FuncE("f:fopen", Loc(32,8)), [expr.LitE("""fred.txt""", Loc(32,14)), expr.LitE("""r""", Loc(32,26))], Loc(32,8)), Loc(32,4)),
-          ],
-
-          12: [
-            instr.NopI(),
-          ],
-
-          13: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(28,7)), [expr.LitE("""ch: %d '%c'
-""", Loc(28,14)), expr.VarE("v:main:InChar", Loc(28,31)), expr.VarE("v:main:ShowChar", Loc(28,39))], Loc(28,7))),
-          ],
-
-          14: [
-            instr.AssignI(expr.VarE("v:main:ShowChar", Loc(26,10)), ERROR:convertExpr, Loc(26,10)),
-          ],
-
-          15: [
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(22,35)), expr.UnaryE(op.UO_MINUS, expr.LitE(1, Loc(22,35)), Loc(22,35)), Loc(22,35)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(22,12)), expr.BinaryE(expr.VarE("v:main:InChar", Loc(22,13)), op.BO_NE, expr.VarE("v:main:t.3", Loc(22,35)), Loc(22,12)), Loc(22,12)),
+            instr.CondI(expr.VarE("v:main:t.4", Loc(22,12)), "WhileBody2", "WhileExit2", Loc(22,12)),
+            instr.LabelI("WhileBody2"),
             instr.AssignI(expr.VarE("v:main:ShowChar", Loc(24,7)), expr.VarE("v:main:InChar", Loc(24,18)), Loc(24,7)),
-            instr.AssignI(expr.VarE("v:main:t.8", Loc(25,11)), expr.BinaryE(expr.VarE("v:main:ShowChar", Loc(25,11)), op.BO_LT, ERROR:convertExpr), Loc(25,11)),
-            instr.CondI(expr.VarE("v:main:t.8", Loc(25,11)), Loc(25,7)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 4, types.UnCondEdge),
-          (3, 2, types.UnCondEdge),
-          (4, 3, types.TrueEdge),
-          (4, 1, types.FalseEdge),
-          (5, 4, types.UnCondEdge),
-          (6, 10, types.UnCondEdge),
-          (7, 6, types.UnCondEdge),
-          (8, 7, types.UnCondEdge),
-          (9, 8, types.TrueEdge),
-          (9, 7, types.FalseEdge),
-          (10, 9, types.TrueEdge),
-          (10, 5, types.FalseEdge),
-          (11, 10, types.UnCondEdge),
-          (12, 16, types.UnCondEdge),
-          (13, 12, types.UnCondEdge),
-          (14, 13, types.UnCondEdge),
-          (15, 14, types.TrueEdge),
-          (15, 13, types.FalseEdge),
-          (16, 15, types.TrueEdge),
-          (16, 11, types.FalseEdge),
-          (17, 16, types.UnCondEdge),
-          (18, 17, types.UnCondEdge),
-          (19, 18, types.TrueEdge),
-          (19, 17, types.FalseEdge),
-          (-1, 19, types.UnCondEdge),
-        }, # bbEdges end
+            instr.AssignI(expr.VarE("v:main:t.5", Loc(25,11)), expr.BinaryE(expr.VarE("v:main:ShowChar", Loc(25,11)), op.BO_LT, , Loc(25,11)), Loc(25,11)),
+            instr.CondI(expr.VarE("v:main:t.5", Loc(25,11)), "IfTrue3", "IfFalse3", Loc(25,11)),
+            instr.LabelI("IfTrue3"),
+            instr.AssignI(expr.VarE("v:main:ShowChar", Loc(26,10)), , Loc(26,10)),
+            instr.GotoI("IfExit3"),
+            instr.LabelI("IfFalse3"),
+            instr.LabelI("IfExit3"),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(28,7)), [expr.LitE("""ch: %d '%c'
+""", Loc(28,14)), expr.VarE("v:main:InChar", Loc(28,31)), expr.VarE("v:main:ShowChar", Loc(28,39))], Loc(28,7)), Loc(28,7)),
+            instr.GotoI("WhileCond2"),
+            instr.LabelI("WhileExit2"),
+            instr.CallI(expr.CallE(expr.FuncE("f:fclose", Loc(30,4)), [expr.VarE("v:main:f", Loc(30,11))], Loc(30,4)), Loc(30,4)),
+            instr.AssignI(expr.VarE("v:main:f", Loc(32,4)), expr.CallE(expr.FuncE("f:fopen", Loc(32,8)), [expr.LitE("""fred.txt""", Loc(32,14)), expr.LitE("""r""", Loc(32,26))], Loc(32,8)), Loc(32,4)),
+            instr.LabelI("WhileCond4"),
+            instr.AssignI(expr.VarE("v:main:InChar", Loc(33,13)), expr.CallE(expr.FuncE("f:_IO_getc", Loc(33,22)), [expr.VarE("v:main:f", Loc(33,22))], Loc(33,22)), Loc(33,13)),
+            instr.AssignI(expr.VarE("v:main:t.6", Loc(33,34)), expr.UnaryE(op.UO_MINUS, expr.LitE(1, Loc(33,34)), Loc(33,34)), Loc(33,34)),
+            instr.AssignI(expr.VarE("v:main:t.7", Loc(33,12)), expr.BinaryE(expr.VarE("v:main:InChar", Loc(33,13)), op.BO_NE, expr.VarE("v:main:t.6", Loc(33,34)), Loc(33,12)), Loc(33,12)),
+            instr.CondI(expr.VarE("v:main:t.7", Loc(33,12)), "WhileBody4", "WhileExit4", Loc(33,12)),
+            instr.LabelI("WhileBody4"),
+            instr.AssignI(expr.VarE("v:main:ShowChar", Loc(35,7)), expr.VarE("v:main:InChar", Loc(35,18)), Loc(35,7)),
+            instr.AssignI(expr.VarE("v:main:t.8", Loc(36,11)), expr.BinaryE(expr.VarE("v:main:ShowChar", Loc(36,11)), op.BO_LT, , Loc(36,11)), Loc(36,11)),
+            instr.CondI(expr.VarE("v:main:t.8", Loc(36,11)), "IfTrue5", "IfFalse5", Loc(36,11)),
+            instr.LabelI("IfTrue5"),
+            instr.AssignI(expr.VarE("v:main:ShowChar", Loc(37,10)), , Loc(37,10)),
+            instr.GotoI("IfExit5"),
+            instr.LabelI("IfFalse5"),
+            instr.LabelI("IfExit5"),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(39,7)), [expr.LitE("""ch: %d '%c'
+""", Loc(39,14)), expr.VarE("v:main:InChar", Loc(39,31)), expr.VarE("v:main:ShowChar", Loc(39,39))], Loc(39,7)), Loc(39,7)),
+            instr.GotoI("WhileCond4"),
+            instr.LabelI("WhileExit4"),
+            instr.CallI(expr.CallE(expr.FuncE("f:fclose", Loc(41,4)), [expr.VarE("v:main:f", Loc(41,11))], Loc(41,4)), Loc(41,4)),
+            instr.AssignI(expr.VarE("v:main:f", Loc(43,4)), expr.CallE(expr.FuncE("f:fopen", Loc(43,8)), [expr.LitE("""fred.txt""", Loc(43,14)), expr.LitE("""r""", Loc(43,26))], Loc(43,8)), Loc(43,4)),
+            instr.LabelI("WhileCond6"),
+            instr.AssignI(expr.VarE("v:main:t.9", Loc(44,11)), expr.CallE(expr.FuncE("f:fgets", Loc(44,11)), [expr.VarE("v:main:freddy", Loc(44,17)), , expr.VarE("v:main:f", Loc(44,41))], Loc(44,11)), Loc(44,11)),
+            instr.AssignI(expr.VarE("v:main:t.10", ), expr.CastE(expr.LitE(0, Loc(44,47)), types.Ptr(to=types.Void), Loc(44,47)), ),
+            instr.AssignI(expr.VarE("v:main:t.11", Loc(44,11)), expr.BinaryE(expr.VarE("v:main:t.9", Loc(44,11)), op.BO_NE, expr.VarE("v:main:t.10", ), Loc(44,11)), Loc(44,11)),
+            instr.CondI(expr.VarE("v:main:t.11", Loc(44,11)), "WhileBody6", "WhileExit6", Loc(44,11)),
+            instr.LabelI("WhileBody6"),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(45,7)), [expr.LitE("""x: %s""", Loc(45,14)), expr.VarE("v:main:freddy", Loc(45,23))], Loc(45,7)), Loc(45,7)),
+            instr.GotoI("WhileCond6"),
+            instr.LabelI("WhileExit6"),
+            instr.CallI(expr.CallE(expr.FuncE("f:fclose", Loc(47,4)), [expr.VarE("v:main:f", Loc(47,11))], Loc(47,4)), Loc(47,4)),
+            instr.ReturnI(expr.LitE(0, Loc(49,11))),
+        ], # instrSeq end.
       ), # f:main() end. 
-
-    "f:printf":
-      obj.Func(
-        name = "f:printf",
-        paramNames = ["v:printf:__format"],
-        variadic = True,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:printf() end. 
-
-    "f:fgets":
-      obj.Func(
-        name = "f:fgets",
-        paramNames = ["v:fgets:__s", "v:fgets:__n", "v:fgets:__stream"],
-        variadic = False,
-        returnType = types.Ptr(to=types.Int8),
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:fgets() end. 
-
-    "f:_IO_getc":
-      obj.Func(
-        name = "f:_IO_getc",
-        paramNames = ["v:_IO_getc:__fp"],
-        variadic = False,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:_IO_getc() end. 
-
-    "f:fopen":
-      obj.Func(
-        name = "f:fopen",
-        paramNames = ["v:fopen:__filename", "v:fopen:__modes"],
-        variadic = False,
-        returnType = types.Ptr(to=types.Struct("s:_IO_FILE")),
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:fopen() end. 
 
   }, # end allObjs dict
 ) # irTUnit.TUnit() ends

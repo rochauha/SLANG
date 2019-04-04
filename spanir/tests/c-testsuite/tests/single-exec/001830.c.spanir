@@ -17,32 +17,16 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.5": types.Int32,
+    "v:main:t.6": types.Int32,
     "v:main:t.1": types.Int32,
-    "v:main:Count": types.Int32,
     "v:main:t.2": types.Int32,
     "v:main:t.3": types.Int32,
     "v:main:t.4": types.Int32,
-    "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:main:Count": types.Int32,
+    "v:main:t.5": types.Int32,
   }, # end allVars dict
 
   allObjs = {
-
-    "f:printf":
-      obj.Func(
-        name = "f:printf",
-        paramNames = ["v:printf:__format"],
-        variadic = True,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:printf() end. 
 
     "f:main":
       obj.Func(
@@ -53,66 +37,24 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          8: [
+        instrSeq = [
             instr.AssignI(expr.VarE("v:main:Count", Loc(7,9)), expr.LitE(0, Loc(7,17)), Loc(7,9)),
-          ],
-
-          7: [
-            instr.AssignI(expr.VarE("v:main:t.5", Loc(7,20)), expr.BinaryE(expr.VarE("v:main:Count", Loc(7,20)), op.BO_LT, expr.LitE(10, Loc(7,28))), Loc(7,20)),
-            instr.CondI(expr.VarE("v:main:t.5", Loc(7,20)), Loc(7,4)),
-          ],
-
-          6: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(12,11)), Loc(12,4)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          2: [
+            instr.LabelI("ForCond1"),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(7,20)), expr.BinaryE(expr.VarE("v:main:Count", Loc(7,20)), op.BO_LT, expr.LitE(10, Loc(7,28)), Loc(7,20)), Loc(7,20)),
+            instr.CondI(expr.VarE("v:main:t.1", Loc(7,20)), "ForBody1", "ForExit1", Loc(7,20)),
+            instr.LabelI("ForBody1"),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(9,23)), expr.BinaryE(expr.VarE("v:main:Count", Loc(9,23)), op.BO_LT, expr.LitE(5, Loc(9,31)), Loc(9,23)), Loc(9,23)),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(9,37)), expr.BinaryE(expr.VarE("v:main:Count", Loc(9,37)), op.BO_MUL, expr.VarE("v:main:Count", Loc(9,43)), Loc(9,37)), Loc(9,37)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(9,53)), expr.BinaryE(expr.VarE("v:main:Count", Loc(9,53)), op.BO_MUL, expr.LitE(3, Loc(9,61)), Loc(9,53)), Loc(9,53)),
+            instr.AssignI(expr.VarE("v:main:t.5", ), expr.SelectE(expr.VarE("v:main:t.2", Loc(9,23)), expr.VarE("v:main:t.3", Loc(9,37)), expr.VarE("v:main:t.4", Loc(9,53)), Loc(9,22)), ),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(9,7)), [expr.LitE("""%d
+""", Loc(9,14)), expr.VarE("v:main:t.5", )], Loc(9,7)), Loc(9,7)),
+            instr.AssignI(expr.VarE("v:main:t.6", Loc(7,32)), expr.VarE("v:main:Count", Loc(7,32)), Loc(7,32)),
             instr.AssignI(expr.VarE("v:main:Count", Loc(7,32)), expr.BinaryE(expr.VarE("v:main:Count", Loc(7,32)), op.BO_ADD, expr.LitE(1, Loc(7,32)), Loc(7,32)), Loc(7,32)),
-          ],
-
-          3: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(9,23)), expr.BinaryE(expr.VarE("v:main:Count", Loc(9,23)), op.BO_LT, expr.LitE(5, Loc(9,31))), Loc(9,23)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(9,37)), expr.BinaryE(expr.VarE("v:main:Count", Loc(9,37)), op.BO_MUL, expr.VarE("v:main:Count", Loc(9,43))), Loc(9,37)),
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(9,53)), expr.BinaryE(expr.VarE("v:main:Count", Loc(9,53)), op.BO_MUL, expr.LitE(3, Loc(9,61))), Loc(9,53)),
-            instr.AssignI(expr.VarE("v:main:t.4", Loc(9,22)), expr.SelectE(expr.VarE("v:main:t.1", Loc(9,23)), expr.VarE("v:main:t.2", Loc(9,37)), expr.VarE("v:main:t.3", Loc(9,53)), Loc(9,22)), Loc(9,22)),
-            instr.CallI(expr.CallE(NullStmt, [NullStmt, expr.VarE("v:main:t.4", Loc(9,22))], Loc(9,7))),
-          ],
-
-          4: [
-            instr.NopI(),
-          ],
-
-          5: [
-            instr.NopI(),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 7, types.UnCondEdge),
-          (3, 2, types.UnCondEdge),
-          (4, 3, types.UnCondEdge),
-          (5, 3, types.UnCondEdge),
-          (6, 4, types.UnCondEdge),
-          (7, 6, types.TrueEdge),
-          (7, 1, types.FalseEdge),
-          (8, 7, types.UnCondEdge),
-          (-1, 8, types.UnCondEdge),
-        }, # bbEdges end
+            instr.GotoI("ForCond1"),
+            instr.LabelI("ForExit1"),
+            instr.ReturnI(expr.LitE(0, Loc(12,11))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

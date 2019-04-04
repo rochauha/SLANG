@@ -17,13 +17,13 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.4": types.Ptr(to=types.Void),
-    "v:main:i": types.Int32,
+    "v:main:t.4": types.Int32,
     "v:main:q": types.Ptr(to=types.Int32),
     "v:main:p": types.Ptr(to=types.Void),
-    "v:main:t.1": types.Int32,
     "v:main:t.2": types.Ptr(to=types.Void),
+    "v:main:i": types.Int32,
     "v:main:t.3": types.Ptr(to=types.Void),
+    "v:main:t.1": types.Ptr(to=types.Void),
   }, # end allVars dict
 
   allObjs = {
@@ -37,150 +37,21 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          25: [
-            instr.NopI(),
-          ],
-
-          24: [
-            instr.NopI(),
-          ],
-
-          23: [
-            instr.NopI(),
-          ],
-
-          22: [
+        instrSeq = [
             instr.AssignI(expr.VarE("v:main:i", Loc(7,2)), expr.SelectE(expr.VarE("v:main:i", Loc(7,6)), expr.LitE(0, Loc(7,10)), expr.LitE(0, Loc(7,14)), Loc(7,6)), Loc(7,2)),
-          ],
-
-          21: [
-            instr.NopI(),
-          ],
-
-          20: [
-            instr.NopI(),
-          ],
-
-          19: [
-            instr.AssignI(expr.VarE("v:main:t.4", Loc(8,10)), expr.CastE(expr.LitE(0, Loc(8,19)), types.Ptr(to=types.Void), Loc(8,10)), Loc(8,10)),
-            instr.AssignI(expr.VarE("v:main:p", Loc(8,2)), expr.SelectE(expr.VarE("v:main:i", Loc(8,6)), expr.VarE("v:main:t.4", Loc(8,10)), expr.LitE(0, Loc(8,23)), Loc(8,6)), Loc(8,2)),
-          ],
-
-          18: [
-            instr.NopI(),
-          ],
-
-          17: [
-            instr.NopI(),
-          ],
-
-          16: [
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(9,14)), expr.CastE(expr.LitE(0, Loc(9,23)), types.Ptr(to=types.Void), Loc(9,14)), Loc(9,14)),
-            instr.AssignI(expr.VarE("v:main:p", Loc(9,2)), expr.SelectE(expr.VarE("v:main:i", Loc(9,6)), expr.LitE(0, Loc(9,10)), expr.VarE("v:main:t.3", Loc(9,14)), Loc(9,6)), Loc(9,2)),
-          ],
-
-          5: [
-            instr.NopI(),
-          ],
-
-          4: [
-            instr.AssignI(expr.VarE("v:main:q", Loc(13,2)), expr.SelectE(expr.VarE("v:main:i", Loc(13,6)), expr.VarE("v:main:q", Loc(13,10)), expr.LitE(0, Loc(13,14)), Loc(13,6)), Loc(13,2)),
-          ],
-
-          3: [
-            instr.NopI(),
-          ],
-
-          2: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.AssignI(expr.VarE("v:main:q", Loc(14,2)), expr.SelectE(expr.VarE("v:main:i", Loc(14,6)), expr.LitE(0, Loc(14,10)), expr.VarE("v:main:q", Loc(14,14)), Loc(14,6)), Loc(14,2)),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(16,9)), expr.CastE(expr.VarE("v:main:q", Loc(16,15)), types.Int32, Loc(16,9)), Loc(16,9)),
-            instr.ReturnI(expr.VarE("v:main:t.1", Loc(16,9)), Loc(16,2)),
-          ],
-
-          6: [
-            instr.NopI(),
-          ],
-
-          7: [
-            instr.AssignI(expr.VarE("v:main:q", Loc(12,2)), expr.SelectE(expr.VarE("v:main:i", Loc(12,6)), expr.VarE("v:main:p", Loc(12,10)), expr.LitE(0, Loc(12,14)), Loc(12,6)), Loc(12,2)),
-          ],
-
-          8: [
-            instr.NopI(),
-          ],
-
-          9: [
-            instr.NopI(),
-          ],
-
-          10: [
+            instr.AssignI(expr.VarE("v:main:t.1", ), expr.CastE(expr.LitE(0, Loc(8,19)), types.Ptr(to=types.Void), Loc(8,10)), ),
+            instr.AssignI(expr.VarE("v:main:p", Loc(8,2)), expr.SelectE(expr.VarE("v:main:i", Loc(8,6)), expr.VarE("v:main:t.1", ), expr.LitE(0, Loc(8,23)), Loc(8,6)), Loc(8,2)),
+            instr.AssignI(expr.VarE("v:main:t.2", ), expr.CastE(expr.LitE(0, Loc(9,23)), types.Ptr(to=types.Void), Loc(9,14)), ),
+            instr.AssignI(expr.VarE("v:main:p", Loc(9,2)), expr.SelectE(expr.VarE("v:main:i", Loc(9,6)), expr.LitE(0, Loc(9,10)), expr.VarE("v:main:t.2", ), Loc(9,6)), Loc(9,2)),
+            instr.AssignI(expr.VarE("v:main:t.3", ), expr.CastE(expr.LitE(0, Loc(10,29)), types.Ptr(to=types.Void), Loc(10,14)), ),
+            instr.AssignI(expr.VarE("v:main:p", Loc(10,2)), expr.SelectE(expr.VarE("v:main:i", Loc(10,6)), expr.LitE(0, Loc(10,10)), expr.VarE("v:main:t.3", ), Loc(10,6)), Loc(10,2)),
             instr.AssignI(expr.VarE("v:main:q", Loc(11,2)), expr.SelectE(expr.VarE("v:main:i", Loc(11,6)), expr.LitE(0, Loc(11,10)), expr.VarE("v:main:p", Loc(11,14)), Loc(11,6)), Loc(11,2)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          11: [
-            instr.NopI(),
-          ],
-
-          12: [
-            instr.NopI(),
-          ],
-
-          13: [
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(10,14)), expr.CastE(expr.LitE(0, Loc(10,29)), types.Ptr(to=types.Void), Loc(10,14)), Loc(10,14)),
-            instr.AssignI(expr.VarE("v:main:p", Loc(10,2)), expr.SelectE(expr.VarE("v:main:i", Loc(10,6)), expr.LitE(0, Loc(10,10)), expr.VarE("v:main:t.2", Loc(10,14)), Loc(10,6)), Loc(10,2)),
-          ],
-
-          14: [
-            instr.NopI(),
-          ],
-
-          15: [
-            instr.NopI(),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 1, types.UnCondEdge),
-          (3, 1, types.UnCondEdge),
-          (4, 2, types.UnCondEdge),
-          (5, 4, types.UnCondEdge),
-          (6, 4, types.UnCondEdge),
-          (7, 5, types.UnCondEdge),
-          (8, 7, types.UnCondEdge),
-          (9, 7, types.UnCondEdge),
-          (10, 8, types.UnCondEdge),
-          (11, 10, types.UnCondEdge),
-          (12, 10, types.UnCondEdge),
-          (13, 11, types.UnCondEdge),
-          (14, 13, types.UnCondEdge),
-          (15, 13, types.UnCondEdge),
-          (16, 14, types.UnCondEdge),
-          (17, 16, types.UnCondEdge),
-          (18, 16, types.UnCondEdge),
-          (19, 17, types.UnCondEdge),
-          (20, 19, types.UnCondEdge),
-          (21, 19, types.UnCondEdge),
-          (22, 20, types.UnCondEdge),
-          (23, 22, types.UnCondEdge),
-          (24, 22, types.UnCondEdge),
-          (25, 23, types.UnCondEdge),
-          (-1, 25, types.UnCondEdge),
-        }, # bbEdges end
+            instr.AssignI(expr.VarE("v:main:q", Loc(12,2)), expr.SelectE(expr.VarE("v:main:i", Loc(12,6)), expr.VarE("v:main:p", Loc(12,10)), expr.LitE(0, Loc(12,14)), Loc(12,6)), Loc(12,2)),
+            instr.AssignI(expr.VarE("v:main:q", Loc(13,2)), expr.SelectE(expr.VarE("v:main:i", Loc(13,6)), expr.VarE("v:main:q", Loc(13,10)), expr.LitE(0, Loc(13,14)), Loc(13,6)), Loc(13,2)),
+            instr.AssignI(expr.VarE("v:main:q", Loc(14,2)), expr.SelectE(expr.VarE("v:main:i", Loc(14,6)), expr.LitE(0, Loc(14,10)), expr.VarE("v:main:q", Loc(14,14)), Loc(14,6)), Loc(14,2)),
+            instr.AssignI(expr.VarE("v:main:t.4", ), expr.CastE(expr.VarE("v:main:q", Loc(16,15)), types.Int32, Loc(16,9)), ),
+            instr.ReturnI(expr.VarE("v:main:t.4", )),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

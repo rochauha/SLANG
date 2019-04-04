@@ -17,20 +17,11 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.2": types.Int32,
-    "v:main:x": types.ConstSizeArray(of=types.Int32, dim=2),
-    "v:main:t.1": types.ConstSizeArray(of=types.Int32, dim=2),
+    "v:main:t.1": types.Int32,
+    "v:main:x": types.ConstSizeArray(of=types.Int32, size=2),
   }, # end allVars dict
 
   allObjs = {
-    "":
-      types.Struct(
-        name = "",
-        fields = [
-        ],
-        loc = ,
-      ),
-
 
     "f:main":
       obj.Func(
@@ -41,27 +32,12 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.AssignI(expr.VarE("v:main:x", Loc(3,2)), expr.VarE("v:main:t.1", Loc(3,2)), Loc(3,2)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(4,9)), expr.ArrayE(expr.VarE("v:main:x", Loc(4,9)), [expr.LitE(1, Loc(4,11))], Loc(4,9)), Loc(4,9)),
-            instr.ReturnI(expr.VarE("v:main:t.2", Loc(4,9)), Loc(4,2)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+        instrSeq = [
+            instr.AssignI(expr.ArrayE(0, expr.VarE("v:main:x", Loc(3,2)), Loc(3,2)), expr.LitE(1, Loc(3,14)), Loc(3,14)),
+            instr.AssignI(expr.ArrayE(1, expr.VarE("v:main:x", Loc(3,2)), Loc(3,2)), expr.LitE(0, Loc(3,17)), Loc(3,17)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(4,9)), expr.ArrayE(expr.LitE(1, Loc(4,11)), expr.VarE("v:main:x", Loc(4,9)), Loc(4,9)), Loc(4,9)),
+            instr.ReturnI(expr.VarE("v:main:t.1", Loc(4,9))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

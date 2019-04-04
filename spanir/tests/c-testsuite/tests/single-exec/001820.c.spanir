@@ -17,65 +17,48 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:printf:__format": types.Ptr(to=types.Int8),
     "v:print_led:n": types.Int32,
-    "v:d": types.ConstSizeArray(of=types.Int32, dim=32),
     "v:print_led:t.12": types.Int32,
-    "v:print_led:t.11": types.Ptr(to=types.Int8),
-    "v:print_led:t.8": types.Int32,
-    "v:print_led:t.7": types.Ptr(to=types.Int8),
-    "v:print_led:t.6": types.Int32,
-    "v:print_led:t.5": types.Ptr(to=types.Int8),
-    "v:print_led:t.10": types.Int32,
+    "v:print_led:buf": types.Ptr(to=types.Int8),
+    "v:print_led:t.11": types.Int32,
+    "v:print_led:t.10": types.Ptr(to=types.Int8),
+    "v:print_led:t.5": types.Int32,
+    "v:botline:d": types.Int32,
+    "v:print_led:t.8": types.Ptr(to=types.Int8),
     "v:topline:p": types.Ptr(to=types.Int8),
-    "v:print_led:t.4": types.Int32,
-    "v:print_led:t.9": types.Ptr(to=types.Int8),
-    "v:print_led:i": types.Int32,
-    "v:topline:d": types.Int32,
-    "v:print_led:t.1": types.Ptr(to=types.Int8),
-    "v:print_led:t.2": types.Int32,
-    "v:main:buf": types.ConstSizeArray(of=types.Int8, dim=160),
-    "v:botline:p": types.Ptr(to=types.Int8),
-    "v:midline:d": types.Int32,
-    "v:botline:t.20": types.Int,
-    "v:print_led:t.3": types.Ptr(to=types.Int8),
-    "v:midline:p": types.Ptr(to=types.Int8),
-    "v:print_led:t.13": types.Int32,
-    "v:print_led:t.14": types.UInt32,
-    "v:print_led:t.15": types.Int32,
     "v:print_led:t.16": types.Int32,
-    "v:botline:t.18": types.Ptr(to=types.Int8),
-    "v:botline:t.19": types.Ptr(to=types.Int8),
-    "v:botline:t.21": types.Int,
-    "v:botline:t.22": types.Int,
-    "v:botline:t.23": types.Int,
+    "v:print_led:t.9": types.Int32,
+    "v:midline:p": types.Ptr(to=types.Int8),
+    "v:print_led:t.4": types.Int32,
+    "v:print_led:t.2": types.UInt32,
+    "v:print_led:t.7": types.Int32,
+    "v:midline:d": types.Int32,
+    "v:print_led:t.1": types.UInt32,
+    "v:print_led:t.3": types.Int32,
+    "v:print_led:t.13": types.Ptr(to=types.Int8),
+    "v:print_led:x": types.UInt32,
+    "v:print_led:t.14": types.Int32,
+    "v:main:buf": types.ConstSizeArray(of=types.Int8, size=160),
+    "v:print_led:t.6": types.Int32,
+    "v:botline:p": types.Ptr(to=types.Int8),
+    "v:topline:d": types.Int32,
+    "v:print_led:t.15": types.Ptr(to=types.Int8),
+    "v:print_led:t.17": types.Int32,
+    "v:print_led:t.18": types.Ptr(to=types.Int8),
+    "v:print_led:t.19": types.Int32,
+    "v:print_led:t.20": types.Ptr(to=types.Int8),
+    "v:botline:t.21": types.Int32,
+    "v:print_led:i": types.Int32,
+    "v:botline:t.22": types.Int32,
+    "v:botline:t.23": types.Int32,
     "v:botline:t.24": types.Ptr(to=types.Int8),
     "v:botline:t.25": types.Ptr(to=types.Int8),
+    "v:d": types.ConstSizeArray(of=types.Int32, size=32),
     "v:midline:t.26": types.Ptr(to=types.Int8),
     "v:midline:t.27": types.Ptr(to=types.Int8),
-    "v:print_led:t.17": types.UInt32,
-    "v:botline:d": types.Int32,
-    "v:print_led:x": types.UInt32,
-    "v:print_led:buf": types.Ptr(to=types.Int8),
   }, # end allVars dict
 
   allObjs = {
-
-    "f:printf":
-      obj.Func(
-        name = "f:printf",
-        paramNames = ["v:printf:__format"],
-        variadic = True,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:printf() end. 
 
     "f:main":
       obj.Func(
@@ -86,28 +69,12 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:print_led", Loc(227,4)), [expr.LitE(1234567, Loc(227,14)), expr.VarE("v:main:buf", Loc(227,23))], Loc(227,4))),
+        instrSeq = [
+            instr.CallI(expr.CallE(expr.FuncE("f:print_led", Loc(227,4)), [expr.LitE(1234567, Loc(227,14)), expr.VarE("v:main:buf", Loc(227,23))], Loc(227,4)), Loc(227,4)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(228,4)), [expr.LitE("""%s
-""", Loc(228,11)), expr.VarE("v:main:buf", Loc(228,18))], Loc(228,4))),
-            instr.ReturnI(expr.LitE(0, Loc(230,11)), Loc(230,4)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+""", Loc(228,11)), expr.VarE("v:main:buf", Loc(228,18))], Loc(228,4)), Loc(228,4)),
+            instr.ReturnI(expr.LitE(0, Loc(230,11))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
     "f:botline":
@@ -119,275 +86,114 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          -1: [
-            instr.NopI(),
-          ],
-
-          25: [
-            instr.NopI(),
-          ],
-
-          24: [
-            instr.NopI(),
-          ],
-
-          23: [
-            instr.NopI(),
-          ],
-
-          22: [
-            instr.AssignI(expr.VarE("v:botline:t.25", Loc(134,11)), expr.VarE("v:botline:p", Loc(134,11)), Loc(134,11)),
+        instrSeq = [
+            instr.LabelI("CaseCond5-0"),
+            instr.AssignI(expr.VarE("v:botline:t.1", Loc(130,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(126,11)), op.BO_EQ, expr.LitE(0, Loc(130,12)), Loc(130,7)), Loc(130,7)),
+            instr.CondI(expr.VarE("v:botline:t.1", Loc(130,7)), "CaseBody5-0", "CaseCond5-1", Loc(130,7)),
+            instr.LabelI("CaseBody5-0"),
+            instr.GotoI("SwitchExit5"),
+            instr.LabelI("CaseCond5-1"),
+            instr.AssignI(expr.VarE("v:botline:t.2", Loc(131,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(126,11)), op.BO_EQ, expr.LitE(2, Loc(131,12)), Loc(131,7)), Loc(131,7)),
+            instr.CondI(expr.VarE("v:botline:t.2", Loc(131,7)), "CaseBody5-1", "CaseCond5-2", Loc(131,7)),
+            instr.LabelI("CaseBody5-1"),
+            instr.LabelI("CaseCond5-2"),
+            instr.AssignI(expr.VarE("v:botline:t.3", Loc(132,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(126,11)), op.BO_EQ, expr.LitE(6, Loc(132,12)), Loc(132,7)), Loc(132,7)),
+            instr.CondI(expr.VarE("v:botline:t.3", Loc(132,7)), "CaseBody5-2", "CaseCond5-3", Loc(132,7)),
+            instr.LabelI("CaseBody5-2"),
+            instr.LabelI("CaseCond5-3"),
+            instr.AssignI(expr.VarE("v:botline:t.4", Loc(133,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(126,11)), op.BO_EQ, expr.LitE(8, Loc(133,12)), Loc(133,7)), Loc(133,7)),
+            instr.CondI(expr.VarE("v:botline:t.4", Loc(133,7)), "CaseBody5-3", "Default5", Loc(133,7)),
+            instr.LabelI("CaseBody5-3"),
+            instr.AssignI(expr.VarE("v:botline:t.5", Loc(134,11)), expr.VarE("v:botline:p", Loc(134,11)), Loc(134,11)),
             instr.AssignI(expr.VarE("v:botline:p", Loc(134,11)), expr.BinaryE(expr.VarE("v:botline:p", Loc(134,11)), op.BO_ADD, expr.LitE(1, Loc(134,11)), Loc(134,11)), Loc(134,11)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:botline:t.25", Loc(134,11)), Loc(134,10)), ERROR:convertExpr, Loc(134,10)),
-          ],
-
-          21: [
-            instr.AssignI(expr.VarE("v:botline:t.24", Loc(137,11)), expr.VarE("v:botline:p", Loc(137,11)), Loc(137,11)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:botline:t.5", Loc(134,11)), Loc(134,10)), , Loc(134,10)),
+            instr.LabelI("CaseCond5-4"),
+            instr.LabelI("Default5"),
+            instr.AssignI(expr.VarE("v:botline:t.6", Loc(137,11)), expr.VarE("v:botline:p", Loc(137,11)), Loc(137,11)),
             instr.AssignI(expr.VarE("v:botline:p", Loc(137,11)), expr.BinaryE(expr.VarE("v:botline:p", Loc(137,11)), op.BO_ADD, expr.LitE(1, Loc(137,11)), Loc(137,11)), Loc(137,11)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:botline:t.24", Loc(137,11)), Loc(137,10)), ERROR:convertExpr, Loc(137,10)),
-          ],
-
-          42: [
-            instr.AssignI(expr.VarE("v:botline:t.23", Loc(133,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(126,11)), op.BO_EQ, expr.LitE(0, Loc(130,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.23", Loc(133,7)), ),
-          ],
-
-          7: [
-            instr.NopI(),
-          ],
-
-          6: [
-            instr.NopI(),
-          ],
-
-          5: [
-            instr.NopI(),
-          ],
-
-          4: [
-            instr.NopI(),
-          ],
-
-          41: [
-            instr.AssignI(expr.VarE("v:botline:t.22", Loc(132,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(126,11)), op.BO_EQ, expr.LitE(2, Loc(131,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.22", Loc(132,7)), ),
-          ],
-
-          3: [
-            instr.AssignI(expr.VarE("v:botline:t.11", Loc(168,11)), expr.VarE("v:botline:p", Loc(168,11)), Loc(168,11)),
-            instr.AssignI(expr.VarE("v:botline:p", Loc(168,11)), expr.BinaryE(expr.VarE("v:botline:p", Loc(168,11)), op.BO_ADD, expr.LitE(1, Loc(168,11)), Loc(168,11)), Loc(168,11)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:botline:t.11", Loc(168,11)), Loc(168,10)), ERROR:convertExpr, Loc(168,10)),
-          ],
-
-          40: [
-            instr.AssignI(expr.VarE("v:botline:t.21", Loc(131,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(126,11)), op.BO_EQ, expr.LitE(6, Loc(132,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.21", Loc(131,7)), ),
-          ],
-
-          2: [
-            instr.AssignI(expr.VarE("v:botline:t.10", Loc(171,11)), expr.VarE("v:botline:p", Loc(171,11)), Loc(171,11)),
-            instr.AssignI(expr.VarE("v:botline:p", Loc(171,11)), expr.BinaryE(expr.VarE("v:botline:p", Loc(171,11)), op.BO_ADD, expr.LitE(1, Loc(171,11)), Loc(171,11)), Loc(171,11)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:botline:t.10", Loc(171,11)), Loc(171,10)), ERROR:convertExpr, Loc(171,10)),
-          ],
-
-          39: [
-            instr.AssignI(expr.VarE("v:botline:t.17", Loc(148,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(139,11)), op.BO_EQ, expr.LitE(0, Loc(143,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.17", Loc(148,7)), ),
-          ],
-
-          33: [
-            instr.AssignI(expr.VarE("v:botline:t.8", Loc(166,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(155,11)), op.BO_EQ, expr.LitE(1, Loc(160,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.8", Loc(166,7)), ),
-          ],
-
-          32: [
-            instr.AssignI(expr.VarE("v:botline:t.7", Loc(165,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(155,11)), op.BO_EQ, expr.LitE(3, Loc(161,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.7", Loc(165,7)), ),
-          ],
-
-          31: [
-            instr.AssignI(expr.VarE("v:botline:t.6", Loc(164,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(155,11)), op.BO_EQ, expr.LitE(4, Loc(162,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.6", Loc(164,7)), ),
-          ],
-
-          1: [
-            instr.AssignI(expr.VarE("v:botline:t.1", Loc(159,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(155,11)), op.BO_EQ, expr.LitE(9, Loc(167,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.1", Loc(159,7)), ),
-          ],
-
-          38: [
-            instr.AssignI(expr.VarE("v:botline:t.16", Loc(147,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(139,11)), op.BO_EQ, expr.LitE(2, Loc(144,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.16", Loc(147,7)), ),
-          ],
-
-          29: [
-            instr.AssignI(expr.VarE("v:botline:t.4", Loc(162,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(155,11)), op.BO_EQ, expr.LitE(6, Loc(164,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.4", Loc(162,7)), ),
-          ],
-
-          34: [
-            instr.AssignI(expr.VarE("v:botline:t.9", Loc(167,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(155,11)), op.BO_EQ, expr.LitE(0, Loc(159,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.9", Loc(167,7)), ),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          37: [
-            instr.AssignI(expr.VarE("v:botline:t.15", Loc(146,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(139,11)), op.BO_EQ, expr.LitE(3, Loc(145,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.15", Loc(146,7)), ),
-          ],
-
-          28: [
-            instr.AssignI(expr.VarE("v:botline:t.3", Loc(161,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(155,11)), op.BO_EQ, expr.LitE(7, Loc(165,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.3", Loc(161,7)), ),
-          ],
-
-          27: [
-            instr.AssignI(expr.VarE("v:botline:t.2", Loc(160,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(155,11)), op.BO_EQ, expr.LitE(8, Loc(166,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.2", Loc(160,7)), ),
-          ],
-
-          30: [
-            instr.AssignI(expr.VarE("v:botline:t.5", Loc(163,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(155,11)), op.BO_EQ, expr.LitE(5, Loc(163,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.5", Loc(163,7)), ),
-          ],
-
-          8: [
-            instr.NopI(),
-          ],
-
-          9: [
-            instr.NopI(),
-          ],
-
-          10: [
-            instr.NopI(),
-          ],
-
-          11: [
-            instr.NopI(),
-          ],
-
-          12: [
-            instr.AssignI(expr.VarE("v:botline:t.12", Loc(143,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(139,11)), op.BO_EQ, expr.LitE(8, Loc(148,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.12", Loc(143,7)), ),
-          ],
-
-          35: [
-            instr.AssignI(expr.VarE("v:botline:t.13", Loc(144,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(139,11)), op.BO_EQ, expr.LitE(6, Loc(147,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.13", Loc(144,7)), ),
-          ],
-
-          36: [
-            instr.AssignI(expr.VarE("v:botline:t.14", Loc(145,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(139,11)), op.BO_EQ, expr.LitE(5, Loc(146,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.14", Loc(145,7)), ),
-          ],
-
-          13: [
-            instr.AssignI(expr.VarE("v:botline:t.18", Loc(152,11)), expr.VarE("v:botline:p", Loc(152,11)), Loc(152,11)),
-            instr.AssignI(expr.VarE("v:botline:p", Loc(152,11)), expr.BinaryE(expr.VarE("v:botline:p", Loc(152,11)), op.BO_ADD, expr.LitE(1, Loc(152,11)), Loc(152,11)), Loc(152,11)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:botline:t.18", Loc(152,11)), Loc(152,10)), ERROR:convertExpr, Loc(152,10)),
-          ],
-
-          14: [
-            instr.AssignI(expr.VarE("v:botline:t.19", Loc(149,11)), expr.VarE("v:botline:p", Loc(149,11)), Loc(149,11)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:botline:t.6", Loc(137,11)), Loc(137,10)), , Loc(137,10)),
+            instr.LabelI("SwitchExit5"),
+            instr.LabelI("CaseCond6-0"),
+            instr.AssignI(expr.VarE("v:botline:t.7", Loc(143,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(139,11)), op.BO_EQ, expr.LitE(0, Loc(143,12)), Loc(143,7)), Loc(143,7)),
+            instr.CondI(expr.VarE("v:botline:t.7", Loc(143,7)), "CaseBody6-0", "CaseCond6-1", Loc(143,7)),
+            instr.LabelI("CaseBody6-0"),
+            instr.GotoI("SwitchExit6"),
+            instr.LabelI("CaseCond6-1"),
+            instr.AssignI(expr.VarE("v:botline:t.8", Loc(144,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(139,11)), op.BO_EQ, expr.LitE(2, Loc(144,12)), Loc(144,7)), Loc(144,7)),
+            instr.CondI(expr.VarE("v:botline:t.8", Loc(144,7)), "CaseBody6-1", "CaseCond6-2", Loc(144,7)),
+            instr.LabelI("CaseBody6-1"),
+            instr.LabelI("CaseCond6-2"),
+            instr.AssignI(expr.VarE("v:botline:t.9", Loc(145,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(139,11)), op.BO_EQ, expr.LitE(3, Loc(145,12)), Loc(145,7)), Loc(145,7)),
+            instr.CondI(expr.VarE("v:botline:t.9", Loc(145,7)), "CaseBody6-2", "CaseCond6-3", Loc(145,7)),
+            instr.LabelI("CaseBody6-2"),
+            instr.LabelI("CaseCond6-3"),
+            instr.AssignI(expr.VarE("v:botline:t.10", Loc(146,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(139,11)), op.BO_EQ, expr.LitE(5, Loc(146,12)), Loc(146,7)), Loc(146,7)),
+            instr.CondI(expr.VarE("v:botline:t.10", Loc(146,7)), "CaseBody6-3", "CaseCond6-4", Loc(146,7)),
+            instr.LabelI("CaseBody6-3"),
+            instr.LabelI("CaseCond6-4"),
+            instr.AssignI(expr.VarE("v:botline:t.11", Loc(147,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(139,11)), op.BO_EQ, expr.LitE(6, Loc(147,12)), Loc(147,7)), Loc(147,7)),
+            instr.CondI(expr.VarE("v:botline:t.11", Loc(147,7)), "CaseBody6-4", "CaseCond6-5", Loc(147,7)),
+            instr.LabelI("CaseBody6-4"),
+            instr.LabelI("CaseCond6-5"),
+            instr.AssignI(expr.VarE("v:botline:t.12", Loc(148,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(139,11)), op.BO_EQ, expr.LitE(8, Loc(148,12)), Loc(148,7)), Loc(148,7)),
+            instr.CondI(expr.VarE("v:botline:t.12", Loc(148,7)), "CaseBody6-5", "Default6", Loc(148,7)),
+            instr.LabelI("CaseBody6-5"),
+            instr.AssignI(expr.VarE("v:botline:t.13", Loc(149,11)), expr.VarE("v:botline:p", Loc(149,11)), Loc(149,11)),
             instr.AssignI(expr.VarE("v:botline:p", Loc(149,11)), expr.BinaryE(expr.VarE("v:botline:p", Loc(149,11)), op.BO_ADD, expr.LitE(1, Loc(149,11)), Loc(149,11)), Loc(149,11)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:botline:t.19", Loc(149,11)), Loc(149,10)), ERROR:convertExpr, Loc(149,10)),
-          ],
-
-          15: [
-            instr.NopI(),
-          ],
-
-          16: [
-            instr.NopI(),
-          ],
-
-          17: [
-            instr.NopI(),
-          ],
-
-          18: [
-            instr.NopI(),
-          ],
-
-          19: [
-            instr.NopI(),
-          ],
-
-          20: [
-            instr.AssignI(expr.VarE("v:botline:t.20", Loc(130,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(126,11)), op.BO_EQ, expr.LitE(8, Loc(133,12)), ), ),
-            instr.CondI(expr.VarE("v:botline:t.20", Loc(130,7)), ),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 4, types.TrueEdge),
-          (27, 5, types.TrueEdge),
-          (1, 27, types.FalseEdge),
-          (28, 6, types.TrueEdge),
-          (27, 28, types.FalseEdge),
-          (29, 7, types.TrueEdge),
-          (28, 29, types.FalseEdge),
-          (30, 8, types.TrueEdge),
-          (29, 30, types.FalseEdge),
-          (31, 9, types.TrueEdge),
-          (30, 31, types.FalseEdge),
-          (32, 10, types.TrueEdge),
-          (31, 32, types.FalseEdge),
-          (33, 11, types.TrueEdge),
-          (32, 33, types.FalseEdge),
-          (34, 3, types.TrueEdge),
-          (33, 34, types.FalseEdge),
-          (34, 2, types.FalseEdge),
-          (2, 0, types.UnCondEdge),
-          (3, 0, types.UnCondEdge),
-          (4, 5, types.UnCondEdge),
-          (5, 6, types.UnCondEdge),
-          (6, 7, types.UnCondEdge),
-          (7, 8, types.UnCondEdge),
-          (8, 9, types.UnCondEdge),
-          (9, 10, types.UnCondEdge),
-          (10, 11, types.UnCondEdge),
-          (11, 3, types.UnCondEdge),
-          (12, 15, types.TrueEdge),
-          (35, 16, types.TrueEdge),
-          (12, 35, types.FalseEdge),
-          (36, 17, types.TrueEdge),
-          (35, 36, types.FalseEdge),
-          (37, 18, types.TrueEdge),
-          (36, 37, types.FalseEdge),
-          (38, 19, types.TrueEdge),
-          (37, 38, types.FalseEdge),
-          (39, 14, types.TrueEdge),
-          (38, 39, types.FalseEdge),
-          (39, 13, types.FalseEdge),
-          (13, 1, types.UnCondEdge),
-          (14, 1, types.UnCondEdge),
-          (15, 16, types.UnCondEdge),
-          (16, 17, types.UnCondEdge),
-          (17, 18, types.UnCondEdge),
-          (18, 19, types.UnCondEdge),
-          (19, 14, types.UnCondEdge),
-          (20, 23, types.TrueEdge),
-          (40, 24, types.TrueEdge),
-          (20, 40, types.FalseEdge),
-          (41, 25, types.TrueEdge),
-          (40, 41, types.FalseEdge),
-          (42, 22, types.TrueEdge),
-          (41, 42, types.FalseEdge),
-          (42, 21, types.FalseEdge),
-          (21, 12, types.UnCondEdge),
-          (22, 12, types.UnCondEdge),
-          (23, 24, types.UnCondEdge),
-          (24, 25, types.UnCondEdge),
-          (25, 22, types.UnCondEdge),
-          (-1, 20, types.UnCondEdge),
-        }, # bbEdges end
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:botline:t.13", Loc(149,11)), Loc(149,10)), , Loc(149,10)),
+            instr.LabelI("CaseCond6-6"),
+            instr.LabelI("Default6"),
+            instr.AssignI(expr.VarE("v:botline:t.14", Loc(152,11)), expr.VarE("v:botline:p", Loc(152,11)), Loc(152,11)),
+            instr.AssignI(expr.VarE("v:botline:p", Loc(152,11)), expr.BinaryE(expr.VarE("v:botline:p", Loc(152,11)), op.BO_ADD, expr.LitE(1, Loc(152,11)), Loc(152,11)), Loc(152,11)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:botline:t.14", Loc(152,11)), Loc(152,10)), , Loc(152,10)),
+            instr.LabelI("SwitchExit6"),
+            instr.LabelI("CaseCond7-0"),
+            instr.AssignI(expr.VarE("v:botline:t.15", Loc(159,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(155,11)), op.BO_EQ, expr.LitE(0, Loc(159,12)), Loc(159,7)), Loc(159,7)),
+            instr.CondI(expr.VarE("v:botline:t.15", Loc(159,7)), "CaseBody7-0", "CaseCond7-1", Loc(159,7)),
+            instr.LabelI("CaseBody7-0"),
+            instr.GotoI("SwitchExit7"),
+            instr.LabelI("CaseCond7-1"),
+            instr.AssignI(expr.VarE("v:botline:t.16", Loc(160,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(155,11)), op.BO_EQ, expr.LitE(1, Loc(160,12)), Loc(160,7)), Loc(160,7)),
+            instr.CondI(expr.VarE("v:botline:t.16", Loc(160,7)), "CaseBody7-1", "CaseCond7-2", Loc(160,7)),
+            instr.LabelI("CaseBody7-1"),
+            instr.LabelI("CaseCond7-2"),
+            instr.AssignI(expr.VarE("v:botline:t.17", Loc(161,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(155,11)), op.BO_EQ, expr.LitE(3, Loc(161,12)), Loc(161,7)), Loc(161,7)),
+            instr.CondI(expr.VarE("v:botline:t.17", Loc(161,7)), "CaseBody7-2", "CaseCond7-3", Loc(161,7)),
+            instr.LabelI("CaseBody7-2"),
+            instr.LabelI("CaseCond7-3"),
+            instr.AssignI(expr.VarE("v:botline:t.18", Loc(162,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(155,11)), op.BO_EQ, expr.LitE(4, Loc(162,12)), Loc(162,7)), Loc(162,7)),
+            instr.CondI(expr.VarE("v:botline:t.18", Loc(162,7)), "CaseBody7-3", "CaseCond7-4", Loc(162,7)),
+            instr.LabelI("CaseBody7-3"),
+            instr.LabelI("CaseCond7-4"),
+            instr.AssignI(expr.VarE("v:botline:t.19", Loc(163,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(155,11)), op.BO_EQ, expr.LitE(5, Loc(163,12)), Loc(163,7)), Loc(163,7)),
+            instr.CondI(expr.VarE("v:botline:t.19", Loc(163,7)), "CaseBody7-4", "CaseCond7-5", Loc(163,7)),
+            instr.LabelI("CaseBody7-4"),
+            instr.LabelI("CaseCond7-5"),
+            instr.AssignI(expr.VarE("v:botline:t.20", Loc(164,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(155,11)), op.BO_EQ, expr.LitE(6, Loc(164,12)), Loc(164,7)), Loc(164,7)),
+            instr.CondI(expr.VarE("v:botline:t.20", Loc(164,7)), "CaseBody7-5", "CaseCond7-6", Loc(164,7)),
+            instr.LabelI("CaseBody7-5"),
+            instr.LabelI("CaseCond7-6"),
+            instr.AssignI(expr.VarE("v:botline:t.21", Loc(165,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(155,11)), op.BO_EQ, expr.LitE(7, Loc(165,12)), Loc(165,7)), Loc(165,7)),
+            instr.CondI(expr.VarE("v:botline:t.21", Loc(165,7)), "CaseBody7-6", "CaseCond7-7", Loc(165,7)),
+            instr.LabelI("CaseBody7-6"),
+            instr.LabelI("CaseCond7-7"),
+            instr.AssignI(expr.VarE("v:botline:t.22", Loc(166,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(155,11)), op.BO_EQ, expr.LitE(8, Loc(166,12)), Loc(166,7)), Loc(166,7)),
+            instr.CondI(expr.VarE("v:botline:t.22", Loc(166,7)), "CaseBody7-7", "CaseCond7-8", Loc(166,7)),
+            instr.LabelI("CaseBody7-7"),
+            instr.LabelI("CaseCond7-8"),
+            instr.AssignI(expr.VarE("v:botline:t.23", Loc(167,7)), expr.BinaryE(expr.VarE("v:botline:d", Loc(155,11)), op.BO_EQ, expr.LitE(9, Loc(167,12)), Loc(167,7)), Loc(167,7)),
+            instr.CondI(expr.VarE("v:botline:t.23", Loc(167,7)), "CaseBody7-8", "Default7", Loc(167,7)),
+            instr.LabelI("CaseBody7-8"),
+            instr.AssignI(expr.VarE("v:botline:t.24", Loc(168,11)), expr.VarE("v:botline:p", Loc(168,11)), Loc(168,11)),
+            instr.AssignI(expr.VarE("v:botline:p", Loc(168,11)), expr.BinaryE(expr.VarE("v:botline:p", Loc(168,11)), op.BO_ADD, expr.LitE(1, Loc(168,11)), Loc(168,11)), Loc(168,11)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:botline:t.24", Loc(168,11)), Loc(168,10)), , Loc(168,10)),
+            instr.LabelI("CaseCond7-9"),
+            instr.LabelI("Default7"),
+            instr.AssignI(expr.VarE("v:botline:t.25", Loc(171,11)), expr.VarE("v:botline:p", Loc(171,11)), Loc(171,11)),
+            instr.AssignI(expr.VarE("v:botline:p", Loc(171,11)), expr.BinaryE(expr.VarE("v:botline:p", Loc(171,11)), op.BO_ADD, expr.LitE(1, Loc(171,11)), Loc(171,11)), Loc(171,11)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:botline:t.25", Loc(171,11)), Loc(171,10)), , Loc(171,10)),
+            instr.LabelI("SwitchExit7"),
+        ], # instrSeq end.
       ), # f:botline() end. 
 
     "f:print_led":
@@ -399,180 +205,81 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          24: [
-            instr.AssignI(expr.VarE("v:print_led:i", Loc(181,8)), expr.LitE(0, Loc(181,10)), Loc(181,8)),
-          ],
-
-          23: [
-            instr.NopI(),
-          ],
-
-          22: [
-            instr.NopI(),
-          ],
-
-          21: [
-            instr.NopI(),
-          ],
-
-          20: [
-            instr.NopI(),
-          ],
-
-          19: [
-            instr.AssignI(expr.VarE("v:print_led:t.17", Loc(187,10)), expr.BinaryE(expr.VarE("v:print_led:x", Loc(187,10)), op.BO_EQ, expr.LitE(0, Loc(187,15))), Loc(187,10)),
-            instr.AssignI(expr.VarE("v:print_led:n", Loc(187,4)), expr.SelectE(expr.VarE("v:print_led:t.17", Loc(187,10)), expr.LitE(1, Loc(187,20)), expr.LitE(0, Loc(187,24)), Loc(187,10)), Loc(187,4)),
-          ],
-
-          18: [
-            instr.CondI(expr.VarE("v:print_led:x", Loc(189,10)), Loc(189,4)),
-          ],
-
-          17: [
-            instr.AssignI(expr.VarE("v:print_led:t.14", Loc(190,22)), expr.BinaryE(expr.VarE("v:print_led:x", Loc(190,22)), op.BO_MOD, expr.LitE(10, Loc(190,24))), Loc(190,22)),
-            instr.AssignI(expr.VarE("v:print_led:t.15", Loc(190,16)), expr.CastE(expr.VarE("v:print_led:t.14", Loc(190,22)), types.Int32, Loc(190,16)), Loc(190,16)),
-            instr.AssignI(expr.VarE("v:print_led:t.13", Loc(190,9)), expr.VarE("v:print_led:n", Loc(190,9)), Loc(190,9)),
+        instrSeq = [
+            instr.AssignI(expr.VarE("v:print_led:i", Loc(181,4)), expr.LitE(0, Loc(181,10)), Loc(181,4)),
+            instr.AssignI(expr.VarE("v:print_led:t.1", Loc(187,10)), expr.BinaryE(expr.VarE("v:print_led:x", Loc(187,10)), op.BO_EQ, expr.LitE(0, Loc(187,15)), Loc(187,10)), Loc(187,10)),
+            instr.AssignI(expr.VarE("v:print_led:n", Loc(187,4)), expr.SelectE(expr.VarE("v:print_led:t.1", Loc(187,10)), expr.LitE(1, Loc(187,20)), expr.LitE(0, Loc(187,24)), Loc(187,10)), Loc(187,4)),
+            instr.LabelI("WhileCond8"),
+            instr.CondI(expr.VarE("v:print_led:x", Loc(189,10)), "WhileBody8", "WhileExit8", Loc(189,10)),
+            instr.LabelI("WhileBody8"),
+            instr.AssignI(expr.VarE("v:print_led:t.2", Loc(190,22)), expr.BinaryE(expr.VarE("v:print_led:x", Loc(190,22)), op.BO_MOD, expr.LitE(10, Loc(190,24)), Loc(190,22)), Loc(190,22)),
+            instr.AssignI(expr.VarE("v:print_led:t.3", Loc(190,9)), expr.VarE("v:print_led:n", Loc(190,9)), Loc(190,9)),
             instr.AssignI(expr.VarE("v:print_led:n", Loc(190,9)), expr.BinaryE(expr.VarE("v:print_led:n", Loc(190,9)), op.BO_ADD, expr.LitE(1, Loc(190,9)), Loc(190,9)), Loc(190,9)),
-            instr.AssignI(expr.ArrayE(expr.VarE("v:d", Loc(190,7)), [expr.VarE("v:print_led:t.13", Loc(190,9))], Loc(190,7)), expr.VarE("v:print_led:t.15", Loc(190,16)), Loc(190,7)),
-            instr.AssignI(expr.VarE("v:print_led:t.16", Loc(191,10)), expr.BinaryE(expr.VarE("v:print_led:n", Loc(191,10)), op.BO_GE, expr.LitE(32, Loc(191,15))), Loc(191,10)),
-            instr.CondI(expr.VarE("v:print_led:t.16", Loc(191,10)), Loc(191,7)),
-          ],
-
-          16: [
-            instr.NopI(),
-          ],
-
-          5: [
-            instr.AssignI(expr.VarE("v:print_led:t.5", Loc(211,5)), expr.VarE("v:print_led:buf", Loc(211,5)), Loc(211,5)),
-            instr.AssignI(expr.VarE("v:print_led:buf", Loc(211,5)), expr.BinaryE(expr.VarE("v:print_led:buf", Loc(211,5)), op.BO_ADD, expr.LitE(1, Loc(211,5)), Loc(211,5)), Loc(211,5)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:print_led:t.5", Loc(211,5)), Loc(211,4)), ERROR:convertExpr, Loc(211,4)),
-            instr.AssignI(expr.VarE("v:print_led:i", Loc(215,8)), expr.BinaryE(expr.VarE("v:print_led:n", Loc(215,10)), op.BO_SUB, expr.LitE(1, Loc(215,12))), Loc(215,8)),
-          ],
-
-          4: [
-            instr.AssignI(expr.VarE("v:print_led:t.4", Loc(215,14)), expr.BinaryE(expr.VarE("v:print_led:i", Loc(215,14)), op.BO_GE, expr.LitE(0, Loc(215,17))), Loc(215,14)),
-            instr.CondI(expr.VarE("v:print_led:t.4", Loc(215,14)), Loc(215,4)),
-          ],
-
-          3: [
-            instr.AssignI(expr.VarE("v:print_led:t.2", Loc(216,15)), expr.ArrayE(expr.VarE("v:d", Loc(216,15)), [expr.VarE("v:print_led:i", Loc(216,17))], Loc(216,15)), Loc(216,15)),
-            instr.CallI(expr.CallE(expr.FuncE("f:botline", Loc(216,7)), [expr.VarE("v:print_led:t.2", Loc(216,15)), expr.VarE("v:print_led:buf", Loc(216,20))], Loc(216,7))),
-            instr.AssignI(expr.VarE("v:print_led:buf", Loc(217,7)), expr.BinaryE(expr.VarE("v:print_led:buf", Loc(217,7)), op.BO_ADD, expr.LitE(3, Loc(217,14)), Loc(217,7)), Loc(217,7)),
-            instr.AssignI(expr.VarE("v:print_led:t.3", Loc(218,8)), expr.VarE("v:print_led:buf", Loc(218,8)), Loc(218,8)),
-            instr.AssignI(expr.VarE("v:print_led:buf", Loc(218,8)), expr.BinaryE(expr.VarE("v:print_led:buf", Loc(218,8)), op.BO_ADD, expr.LitE(1, Loc(218,8)), Loc(218,8)), Loc(218,8)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:print_led:t.3", Loc(218,8)), Loc(218,7)), ERROR:convertExpr, Loc(218,7)),
-          ],
-
-          2: [
-            instr.AssignI(expr.VarE("v:print_led:i", Loc(215,19)), expr.BinaryE(expr.VarE("v:print_led:i", Loc(215,19)), op.BO_SUB, expr.LitE(1, Loc(215,19)), Loc(215,19)), Loc(215,19)),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.AssignI(expr.VarE("v:print_led:t.1", Loc(220,5)), expr.VarE("v:print_led:buf", Loc(220,5)), Loc(220,5)),
-            instr.AssignI(expr.VarE("v:print_led:buf", Loc(220,5)), expr.BinaryE(expr.VarE("v:print_led:buf", Loc(220,5)), op.BO_ADD, expr.LitE(1, Loc(220,5)), Loc(220,5)), Loc(220,5)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:print_led:t.1", Loc(220,5)), Loc(220,4)), ERROR:convertExpr, Loc(220,4)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:print_led:buf", Loc(221,5)), Loc(221,4)), ERROR:convertExpr, Loc(221,4)),
-          ],
-
-          6: [
-            instr.AssignI(expr.VarE("v:print_led:i", Loc(206,19)), expr.BinaryE(expr.VarE("v:print_led:i", Loc(206,19)), op.BO_SUB, expr.LitE(1, Loc(206,19)), Loc(206,19)), Loc(206,19)),
-          ],
-
-          7: [
-            instr.AssignI(expr.VarE("v:print_led:t.6", Loc(207,15)), expr.ArrayE(expr.VarE("v:d", Loc(207,15)), [expr.VarE("v:print_led:i", Loc(207,17))], Loc(207,15)), Loc(207,15)),
-            instr.CallI(expr.CallE(expr.FuncE("f:midline", Loc(207,7)), [expr.VarE("v:print_led:t.6", Loc(207,15)), expr.VarE("v:print_led:buf", Loc(207,20))], Loc(207,7))),
-            instr.AssignI(expr.VarE("v:print_led:buf", Loc(208,7)), expr.BinaryE(expr.VarE("v:print_led:buf", Loc(208,7)), op.BO_ADD, expr.LitE(3, Loc(208,14)), Loc(208,7)), Loc(208,7)),
-            instr.AssignI(expr.VarE("v:print_led:t.7", Loc(209,8)), expr.VarE("v:print_led:buf", Loc(209,8)), Loc(209,8)),
-            instr.AssignI(expr.VarE("v:print_led:buf", Loc(209,8)), expr.BinaryE(expr.VarE("v:print_led:buf", Loc(209,8)), op.BO_ADD, expr.LitE(1, Loc(209,8)), Loc(209,8)), Loc(209,8)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:print_led:t.7", Loc(209,8)), Loc(209,7)), ERROR:convertExpr, Loc(209,7)),
-          ],
-
-          8: [
-            instr.AssignI(expr.VarE("v:print_led:t.8", Loc(206,14)), expr.BinaryE(expr.VarE("v:print_led:i", Loc(206,14)), op.BO_GE, expr.LitE(0, Loc(206,17))), Loc(206,14)),
-            instr.CondI(expr.VarE("v:print_led:t.8", Loc(206,14)), Loc(206,4)),
-          ],
-
-          9: [
-            instr.AssignI(expr.VarE("v:print_led:t.9", Loc(202,5)), expr.VarE("v:print_led:buf", Loc(202,5)), Loc(202,5)),
-            instr.AssignI(expr.VarE("v:print_led:buf", Loc(202,5)), expr.BinaryE(expr.VarE("v:print_led:buf", Loc(202,5)), op.BO_ADD, expr.LitE(1, Loc(202,5)), Loc(202,5)), Loc(202,5)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:print_led:t.9", Loc(202,5)), Loc(202,4)), ERROR:convertExpr, Loc(202,4)),
-            instr.AssignI(expr.VarE("v:print_led:i", Loc(206,8)), expr.BinaryE(expr.VarE("v:print_led:n", Loc(206,10)), op.BO_SUB, expr.LitE(1, Loc(206,12))), Loc(206,8)),
-          ],
-
-          10: [
-            instr.AssignI(expr.VarE("v:print_led:i", Loc(197,19)), expr.BinaryE(expr.VarE("v:print_led:i", Loc(197,19)), op.BO_SUB, expr.LitE(1, Loc(197,19)), Loc(197,19)), Loc(197,19)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          11: [
-            instr.AssignI(expr.VarE("v:print_led:t.10", Loc(198,15)), expr.ArrayE(expr.VarE("v:d", Loc(198,15)), [expr.VarE("v:print_led:i", Loc(198,17))], Loc(198,15)), Loc(198,15)),
-            instr.CallI(expr.CallE(expr.FuncE("f:topline", Loc(198,7)), [expr.VarE("v:print_led:t.10", Loc(198,15)), expr.VarE("v:print_led:buf", Loc(198,20))], Loc(198,7))),
-            instr.AssignI(expr.VarE("v:print_led:buf", Loc(199,7)), expr.BinaryE(expr.VarE("v:print_led:buf", Loc(199,7)), op.BO_ADD, expr.LitE(3, Loc(199,14)), Loc(199,7)), Loc(199,7)),
-            instr.AssignI(expr.VarE("v:print_led:t.11", Loc(200,8)), expr.VarE("v:print_led:buf", Loc(200,8)), Loc(200,8)),
+            instr.AssignI(expr.VarE("v:print_led:t.4", ), expr.CastE(expr.VarE("v:print_led:t.2", Loc(190,22)), types.Int32, Loc(190,16)), ),
+            instr.AssignI(expr.ArrayE(expr.VarE("v:print_led:t.3", Loc(190,9)), expr.VarE("v:d", Loc(190,7)), Loc(190,7)), expr.VarE("v:print_led:t.4", ), Loc(190,7)),
+            instr.AssignI(expr.VarE("v:print_led:t.5", Loc(191,10)), expr.BinaryE(expr.VarE("v:print_led:n", Loc(191,10)), op.BO_GE, expr.LitE(32, Loc(191,15)), Loc(191,10)), Loc(191,10)),
+            instr.CondI(expr.VarE("v:print_led:t.5", Loc(191,10)), "IfTrue9", "IfFalse9", Loc(191,10)),
+            instr.LabelI("IfTrue9"),
+            instr.GotoI("WhileExit8"),
+            instr.GotoI("IfExit9"),
+            instr.LabelI("IfFalse9"),
+            instr.LabelI("IfExit9"),
+            instr.AssignI(expr.VarE("v:print_led:x", Loc(192,7)), expr.BinaryE(expr.VarE("v:print_led:x", Loc(192,11)), op.BO_DIV, expr.LitE(10, Loc(192,13)), Loc(192,11)), Loc(192,7)),
+            instr.GotoI("WhileCond8"),
+            instr.LabelI("WhileExit8"),
+            instr.AssignI(expr.VarE("v:print_led:i", Loc(197,8)), expr.BinaryE(expr.VarE("v:print_led:n", Loc(197,10)), op.BO_SUB, expr.LitE(1, Loc(197,12)), Loc(197,10)), Loc(197,8)),
+            instr.LabelI("ForCond10"),
+            instr.AssignI(expr.VarE("v:print_led:t.6", Loc(197,14)), expr.BinaryE(expr.VarE("v:print_led:i", Loc(197,14)), op.BO_GE, expr.LitE(0, Loc(197,17)), Loc(197,14)), Loc(197,14)),
+            instr.CondI(expr.VarE("v:print_led:t.6", Loc(197,14)), "ForBody10", "ForExit10", Loc(197,14)),
+            instr.LabelI("ForBody10"),
+            instr.AssignI(expr.VarE("v:print_led:t.7", Loc(198,15)), expr.ArrayE(expr.VarE("v:print_led:i", Loc(198,17)), expr.VarE("v:d", Loc(198,15)), Loc(198,15)), Loc(198,15)),
+            instr.CallI(expr.CallE(expr.FuncE("f:topline", Loc(198,7)), [expr.VarE("v:print_led:t.7", Loc(198,15)), expr.VarE("v:print_led:buf", Loc(198,20))], Loc(198,7)), Loc(198,7)),
+            instr.AssignI(expr.VarE("v:print_led:t.8", Loc(200,8)), expr.VarE("v:print_led:buf", Loc(200,8)), Loc(200,8)),
             instr.AssignI(expr.VarE("v:print_led:buf", Loc(200,8)), expr.BinaryE(expr.VarE("v:print_led:buf", Loc(200,8)), op.BO_ADD, expr.LitE(1, Loc(200,8)), Loc(200,8)), Loc(200,8)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:print_led:t.11", Loc(200,8)), Loc(200,7)), ERROR:convertExpr, Loc(200,7)),
-          ],
-
-          12: [
-            instr.AssignI(expr.VarE("v:print_led:t.12", Loc(197,14)), expr.BinaryE(expr.VarE("v:print_led:i", Loc(197,14)), op.BO_GE, expr.LitE(0, Loc(197,17))), Loc(197,14)),
-            instr.CondI(expr.VarE("v:print_led:t.12", Loc(197,14)), Loc(197,4)),
-          ],
-
-          13: [
-            instr.AssignI(expr.VarE("v:print_led:i", Loc(197,8)), expr.BinaryE(expr.VarE("v:print_led:n", Loc(197,10)), op.BO_SUB, expr.LitE(1, Loc(197,12))), Loc(197,8)),
-          ],
-
-          14: [
-            instr.NopI(),
-          ],
-
-          15: [
-            instr.AssignI(expr.VarE("v:print_led:x", Loc(192,7)), expr.BinaryE(expr.VarE("v:print_led:x", Loc(192,11)), op.BO_DIV, expr.LitE(10, Loc(192,13))), Loc(192,7)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 4, types.UnCondEdge),
-          (3, 2, types.UnCondEdge),
-          (4, 3, types.TrueEdge),
-          (4, 1, types.FalseEdge),
-          (5, 4, types.UnCondEdge),
-          (6, 8, types.UnCondEdge),
-          (7, 6, types.UnCondEdge),
-          (8, 7, types.TrueEdge),
-          (8, 5, types.FalseEdge),
-          (9, 8, types.UnCondEdge),
-          (10, 12, types.UnCondEdge),
-          (11, 10, types.UnCondEdge),
-          (12, 11, types.TrueEdge),
-          (12, 9, types.FalseEdge),
-          (13, 12, types.UnCondEdge),
-          (14, 18, types.UnCondEdge),
-          (15, 14, types.UnCondEdge),
-          (16, 13, types.UnCondEdge),
-          (17, 16, types.TrueEdge),
-          (17, 15, types.FalseEdge),
-          (18, 17, types.TrueEdge),
-          (18, 13, types.FalseEdge),
-          (19, 18, types.UnCondEdge),
-          (20, 19, types.UnCondEdge),
-          (21, 19, types.UnCondEdge),
-          (22, 20, types.UnCondEdge),
-          (23, 22, types.UnCondEdge),
-          (24, 22, types.UnCondEdge),
-          (24, 23, types.UnCondEdge),
-          (-1, 24, types.UnCondEdge),
-        }, # bbEdges end
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:print_led:t.8", Loc(200,8)), Loc(200,7)), , Loc(200,7)),
+            instr.AssignI(expr.VarE("v:print_led:t.9", Loc(197,19)), expr.VarE("v:print_led:i", Loc(197,19)), Loc(197,19)),
+            instr.AssignI(expr.VarE("v:print_led:i", Loc(197,19)), expr.BinaryE(expr.VarE("v:print_led:i", Loc(197,19)), op.BO_SUB, expr.LitE(1, Loc(197,19)), Loc(197,19)), Loc(197,19)),
+            instr.GotoI("ForCond10"),
+            instr.LabelI("ForExit10"),
+            instr.AssignI(expr.VarE("v:print_led:t.10", Loc(202,5)), expr.VarE("v:print_led:buf", Loc(202,5)), Loc(202,5)),
+            instr.AssignI(expr.VarE("v:print_led:buf", Loc(202,5)), expr.BinaryE(expr.VarE("v:print_led:buf", Loc(202,5)), op.BO_ADD, expr.LitE(1, Loc(202,5)), Loc(202,5)), Loc(202,5)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:print_led:t.10", Loc(202,5)), Loc(202,4)), , Loc(202,4)),
+            instr.AssignI(expr.VarE("v:print_led:i", Loc(206,8)), expr.BinaryE(expr.VarE("v:print_led:n", Loc(206,10)), op.BO_SUB, expr.LitE(1, Loc(206,12)), Loc(206,10)), Loc(206,8)),
+            instr.LabelI("ForCond11"),
+            instr.AssignI(expr.VarE("v:print_led:t.11", Loc(206,14)), expr.BinaryE(expr.VarE("v:print_led:i", Loc(206,14)), op.BO_GE, expr.LitE(0, Loc(206,17)), Loc(206,14)), Loc(206,14)),
+            instr.CondI(expr.VarE("v:print_led:t.11", Loc(206,14)), "ForBody11", "ForExit11", Loc(206,14)),
+            instr.LabelI("ForBody11"),
+            instr.AssignI(expr.VarE("v:print_led:t.12", Loc(207,15)), expr.ArrayE(expr.VarE("v:print_led:i", Loc(207,17)), expr.VarE("v:d", Loc(207,15)), Loc(207,15)), Loc(207,15)),
+            instr.CallI(expr.CallE(expr.FuncE("f:midline", Loc(207,7)), [expr.VarE("v:print_led:t.12", Loc(207,15)), expr.VarE("v:print_led:buf", Loc(207,20))], Loc(207,7)), Loc(207,7)),
+            instr.AssignI(expr.VarE("v:print_led:t.13", Loc(209,8)), expr.VarE("v:print_led:buf", Loc(209,8)), Loc(209,8)),
+            instr.AssignI(expr.VarE("v:print_led:buf", Loc(209,8)), expr.BinaryE(expr.VarE("v:print_led:buf", Loc(209,8)), op.BO_ADD, expr.LitE(1, Loc(209,8)), Loc(209,8)), Loc(209,8)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:print_led:t.13", Loc(209,8)), Loc(209,7)), , Loc(209,7)),
+            instr.AssignI(expr.VarE("v:print_led:t.14", Loc(206,19)), expr.VarE("v:print_led:i", Loc(206,19)), Loc(206,19)),
+            instr.AssignI(expr.VarE("v:print_led:i", Loc(206,19)), expr.BinaryE(expr.VarE("v:print_led:i", Loc(206,19)), op.BO_SUB, expr.LitE(1, Loc(206,19)), Loc(206,19)), Loc(206,19)),
+            instr.GotoI("ForCond11"),
+            instr.LabelI("ForExit11"),
+            instr.AssignI(expr.VarE("v:print_led:t.15", Loc(211,5)), expr.VarE("v:print_led:buf", Loc(211,5)), Loc(211,5)),
+            instr.AssignI(expr.VarE("v:print_led:buf", Loc(211,5)), expr.BinaryE(expr.VarE("v:print_led:buf", Loc(211,5)), op.BO_ADD, expr.LitE(1, Loc(211,5)), Loc(211,5)), Loc(211,5)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:print_led:t.15", Loc(211,5)), Loc(211,4)), , Loc(211,4)),
+            instr.AssignI(expr.VarE("v:print_led:i", Loc(215,8)), expr.BinaryE(expr.VarE("v:print_led:n", Loc(215,10)), op.BO_SUB, expr.LitE(1, Loc(215,12)), Loc(215,10)), Loc(215,8)),
+            instr.LabelI("ForCond12"),
+            instr.AssignI(expr.VarE("v:print_led:t.16", Loc(215,14)), expr.BinaryE(expr.VarE("v:print_led:i", Loc(215,14)), op.BO_GE, expr.LitE(0, Loc(215,17)), Loc(215,14)), Loc(215,14)),
+            instr.CondI(expr.VarE("v:print_led:t.16", Loc(215,14)), "ForBody12", "ForExit12", Loc(215,14)),
+            instr.LabelI("ForBody12"),
+            instr.AssignI(expr.VarE("v:print_led:t.17", Loc(216,15)), expr.ArrayE(expr.VarE("v:print_led:i", Loc(216,17)), expr.VarE("v:d", Loc(216,15)), Loc(216,15)), Loc(216,15)),
+            instr.CallI(expr.CallE(expr.FuncE("f:botline", Loc(216,7)), [expr.VarE("v:print_led:t.17", Loc(216,15)), expr.VarE("v:print_led:buf", Loc(216,20))], Loc(216,7)), Loc(216,7)),
+            instr.AssignI(expr.VarE("v:print_led:t.18", Loc(218,8)), expr.VarE("v:print_led:buf", Loc(218,8)), Loc(218,8)),
+            instr.AssignI(expr.VarE("v:print_led:buf", Loc(218,8)), expr.BinaryE(expr.VarE("v:print_led:buf", Loc(218,8)), op.BO_ADD, expr.LitE(1, Loc(218,8)), Loc(218,8)), Loc(218,8)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:print_led:t.18", Loc(218,8)), Loc(218,7)), , Loc(218,7)),
+            instr.AssignI(expr.VarE("v:print_led:t.19", Loc(215,19)), expr.VarE("v:print_led:i", Loc(215,19)), Loc(215,19)),
+            instr.AssignI(expr.VarE("v:print_led:i", Loc(215,19)), expr.BinaryE(expr.VarE("v:print_led:i", Loc(215,19)), op.BO_SUB, expr.LitE(1, Loc(215,19)), Loc(215,19)), Loc(215,19)),
+            instr.GotoI("ForCond12"),
+            instr.LabelI("ForExit12"),
+            instr.AssignI(expr.VarE("v:print_led:t.20", Loc(220,5)), expr.VarE("v:print_led:buf", Loc(220,5)), Loc(220,5)),
+            instr.AssignI(expr.VarE("v:print_led:buf", Loc(220,5)), expr.BinaryE(expr.VarE("v:print_led:buf", Loc(220,5)), op.BO_ADD, expr.LitE(1, Loc(220,5)), Loc(220,5)), Loc(220,5)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:print_led:t.20", Loc(220,5)), Loc(220,4)), , Loc(220,4)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:print_led:buf", Loc(221,5)), Loc(221,4)), , Loc(221,4)),
+        ], # instrSeq end.
       ), # f:print_led() end. 
 
     "f:topline":
@@ -584,123 +291,52 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          -1: [
-            instr.NopI(),
-          ],
-
-          10: [
-            instr.NopI(),
-          ],
-
-          13: [
-            instr.AssignI(expr.VarE("v:topline:t.5", Loc(50,7)), expr.BinaryE(expr.VarE("v:topline:d", Loc(44,11)), op.BO_EQ, expr.LitE(7, Loc(52,12)), ), ),
-            instr.CondI(expr.VarE("v:topline:t.5", Loc(50,7)), ),
-          ],
-
-          12: [
-            instr.AssignI(expr.VarE("v:topline:t.4", Loc(49,7)), expr.BinaryE(expr.VarE("v:topline:d", Loc(44,11)), op.BO_EQ, expr.LitE(8, Loc(53,12)), ), ),
-            instr.CondI(expr.VarE("v:topline:t.4", Loc(49,7)), ),
-          ],
-
-          2: [
-            instr.AssignI(expr.VarE("v:topline:t.2", Loc(43,5)), expr.VarE("v:topline:p", Loc(43,5)), Loc(43,5)),
+        instrSeq = [
+            instr.AssignI(expr.VarE("v:topline:t.1", Loc(43,5)), expr.VarE("v:topline:p", Loc(43,5)), Loc(43,5)),
             instr.AssignI(expr.VarE("v:topline:p", Loc(43,5)), expr.BinaryE(expr.VarE("v:topline:p", Loc(43,5)), op.BO_ADD, expr.LitE(1, Loc(43,5)), Loc(43,5)), Loc(43,5)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:topline:t.2", Loc(43,5)), Loc(43,4)), ERROR:convertExpr, Loc(43,4)),
-            instr.AssignI(expr.VarE("v:topline:t.3", Loc(48,7)), expr.BinaryE(expr.VarE("v:topline:d", Loc(44,11)), op.BO_EQ, expr.LitE(9, Loc(54,12)), ), ),
-            instr.CondI(expr.VarE("v:topline:t.3", Loc(48,7)), ),
-          ],
-
-          14: [
-            instr.AssignI(expr.VarE("v:topline:t.6", Loc(51,7)), expr.BinaryE(expr.VarE("v:topline:d", Loc(44,11)), op.BO_EQ, expr.LitE(5, Loc(51,12)), ), ),
-            instr.CondI(expr.VarE("v:topline:t.6", Loc(51,7)), ),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          17: [
-            instr.AssignI(expr.VarE("v:topline:t.9", Loc(54,7)), expr.BinaryE(expr.VarE("v:topline:d", Loc(44,11)), op.BO_EQ, expr.LitE(0, Loc(48,12)), ), ),
-            instr.CondI(expr.VarE("v:topline:t.9", Loc(54,7)), ),
-          ],
-
-          1: [
-            instr.AssignI(expr.VarE("v:topline:t.1", Loc(61,5)), expr.VarE("v:topline:p", Loc(61,5)), Loc(61,5)),
-            instr.AssignI(expr.VarE("v:topline:p", Loc(61,5)), expr.BinaryE(expr.VarE("v:topline:p", Loc(61,5)), op.BO_ADD, expr.LitE(1, Loc(61,5)), Loc(61,5)), Loc(61,5)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:topline:t.1", Loc(61,5)), Loc(61,4)), ERROR:convertExpr, Loc(61,4)),
-          ],
-
-          15: [
-            instr.AssignI(expr.VarE("v:topline:t.7", Loc(52,7)), expr.BinaryE(expr.VarE("v:topline:d", Loc(44,11)), op.BO_EQ, expr.LitE(3, Loc(50,12)), ), ),
-            instr.CondI(expr.VarE("v:topline:t.7", Loc(52,7)), ),
-          ],
-
-          16: [
-            instr.AssignI(expr.VarE("v:topline:t.8", Loc(53,7)), expr.BinaryE(expr.VarE("v:topline:d", Loc(44,11)), op.BO_EQ, expr.LitE(2, Loc(49,12)), ), ),
-            instr.CondI(expr.VarE("v:topline:t.8", Loc(53,7)), ),
-          ],
-
-          3: [
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:topline:t.1", Loc(43,5)), Loc(43,4)), , Loc(43,4)),
+            instr.LabelI("CaseCond1-0"),
+            instr.AssignI(expr.VarE("v:topline:t.2", Loc(48,7)), expr.BinaryE(expr.VarE("v:topline:d", Loc(44,11)), op.BO_EQ, expr.LitE(0, Loc(48,12)), Loc(48,7)), Loc(48,7)),
+            instr.CondI(expr.VarE("v:topline:t.2", Loc(48,7)), "CaseBody1-0", "CaseCond1-1", Loc(48,7)),
+            instr.LabelI("CaseBody1-0"),
+            instr.GotoI("SwitchExit1"),
+            instr.LabelI("CaseCond1-1"),
+            instr.AssignI(expr.VarE("v:topline:t.3", Loc(49,7)), expr.BinaryE(expr.VarE("v:topline:d", Loc(44,11)), op.BO_EQ, expr.LitE(2, Loc(49,12)), Loc(49,7)), Loc(49,7)),
+            instr.CondI(expr.VarE("v:topline:t.3", Loc(49,7)), "CaseBody1-1", "CaseCond1-2", Loc(49,7)),
+            instr.LabelI("CaseBody1-1"),
+            instr.LabelI("CaseCond1-2"),
+            instr.AssignI(expr.VarE("v:topline:t.4", Loc(50,7)), expr.BinaryE(expr.VarE("v:topline:d", Loc(44,11)), op.BO_EQ, expr.LitE(3, Loc(50,12)), Loc(50,7)), Loc(50,7)),
+            instr.CondI(expr.VarE("v:topline:t.4", Loc(50,7)), "CaseBody1-2", "CaseCond1-3", Loc(50,7)),
+            instr.LabelI("CaseBody1-2"),
+            instr.LabelI("CaseCond1-3"),
+            instr.AssignI(expr.VarE("v:topline:t.5", Loc(51,7)), expr.BinaryE(expr.VarE("v:topline:d", Loc(44,11)), op.BO_EQ, expr.LitE(5, Loc(51,12)), Loc(51,7)), Loc(51,7)),
+            instr.CondI(expr.VarE("v:topline:t.5", Loc(51,7)), "CaseBody1-3", "CaseCond1-4", Loc(51,7)),
+            instr.LabelI("CaseBody1-3"),
+            instr.LabelI("CaseCond1-4"),
+            instr.AssignI(expr.VarE("v:topline:t.6", Loc(52,7)), expr.BinaryE(expr.VarE("v:topline:d", Loc(44,11)), op.BO_EQ, expr.LitE(7, Loc(52,12)), Loc(52,7)), Loc(52,7)),
+            instr.CondI(expr.VarE("v:topline:t.6", Loc(52,7)), "CaseBody1-4", "CaseCond1-5", Loc(52,7)),
+            instr.LabelI("CaseBody1-4"),
+            instr.LabelI("CaseCond1-5"),
+            instr.AssignI(expr.VarE("v:topline:t.7", Loc(53,7)), expr.BinaryE(expr.VarE("v:topline:d", Loc(44,11)), op.BO_EQ, expr.LitE(8, Loc(53,12)), Loc(53,7)), Loc(53,7)),
+            instr.CondI(expr.VarE("v:topline:t.7", Loc(53,7)), "CaseBody1-5", "CaseCond1-6", Loc(53,7)),
+            instr.LabelI("CaseBody1-5"),
+            instr.LabelI("CaseCond1-6"),
+            instr.AssignI(expr.VarE("v:topline:t.8", Loc(54,7)), expr.BinaryE(expr.VarE("v:topline:d", Loc(44,11)), op.BO_EQ, expr.LitE(9, Loc(54,12)), Loc(54,7)), Loc(54,7)),
+            instr.CondI(expr.VarE("v:topline:t.8", Loc(54,7)), "CaseBody1-6", "Default1", Loc(54,7)),
+            instr.LabelI("CaseBody1-6"),
+            instr.AssignI(expr.VarE("v:topline:t.9", Loc(55,11)), expr.VarE("v:topline:p", Loc(55,11)), Loc(55,11)),
+            instr.AssignI(expr.VarE("v:topline:p", Loc(55,11)), expr.BinaryE(expr.VarE("v:topline:p", Loc(55,11)), op.BO_ADD, expr.LitE(1, Loc(55,11)), Loc(55,11)), Loc(55,11)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:topline:t.9", Loc(55,11)), Loc(55,10)), , Loc(55,10)),
+            instr.LabelI("CaseCond1-7"),
+            instr.LabelI("Default1"),
             instr.AssignI(expr.VarE("v:topline:t.10", Loc(58,11)), expr.VarE("v:topline:p", Loc(58,11)), Loc(58,11)),
             instr.AssignI(expr.VarE("v:topline:p", Loc(58,11)), expr.BinaryE(expr.VarE("v:topline:p", Loc(58,11)), op.BO_ADD, expr.LitE(1, Loc(58,11)), Loc(58,11)), Loc(58,11)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:topline:t.10", Loc(58,11)), Loc(58,10)), ERROR:convertExpr, Loc(58,10)),
-          ],
-
-          4: [
-            instr.AssignI(expr.VarE("v:topline:t.11", Loc(55,11)), expr.VarE("v:topline:p", Loc(55,11)), Loc(55,11)),
-            instr.AssignI(expr.VarE("v:topline:p", Loc(55,11)), expr.BinaryE(expr.VarE("v:topline:p", Loc(55,11)), op.BO_ADD, expr.LitE(1, Loc(55,11)), Loc(55,11)), Loc(55,11)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:topline:t.11", Loc(55,11)), Loc(55,10)), ERROR:convertExpr, Loc(55,10)),
-          ],
-
-          5: [
-            instr.NopI(),
-          ],
-
-          6: [
-            instr.NopI(),
-          ],
-
-          7: [
-            instr.NopI(),
-          ],
-
-          8: [
-            instr.NopI(),
-          ],
-
-          9: [
-            instr.NopI(),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 5, types.TrueEdge),
-          (12, 6, types.TrueEdge),
-          (2, 12, types.FalseEdge),
-          (13, 7, types.TrueEdge),
-          (12, 13, types.FalseEdge),
-          (14, 8, types.TrueEdge),
-          (13, 14, types.FalseEdge),
-          (15, 9, types.TrueEdge),
-          (14, 15, types.FalseEdge),
-          (16, 10, types.TrueEdge),
-          (15, 16, types.FalseEdge),
-          (17, 4, types.TrueEdge),
-          (16, 17, types.FalseEdge),
-          (17, 3, types.FalseEdge),
-          (3, 1, types.UnCondEdge),
-          (4, 1, types.UnCondEdge),
-          (5, 6, types.UnCondEdge),
-          (6, 7, types.UnCondEdge),
-          (7, 8, types.UnCondEdge),
-          (8, 9, types.UnCondEdge),
-          (9, 10, types.UnCondEdge),
-          (10, 4, types.UnCondEdge),
-          (-1, 2, types.UnCondEdge),
-        }, # bbEdges end
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:topline:t.10", Loc(58,11)), Loc(58,10)), , Loc(58,10)),
+            instr.LabelI("SwitchExit1"),
+            instr.AssignI(expr.VarE("v:topline:t.11", Loc(61,5)), expr.VarE("v:topline:p", Loc(61,5)), Loc(61,5)),
+            instr.AssignI(expr.VarE("v:topline:p", Loc(61,5)), expr.BinaryE(expr.VarE("v:topline:p", Loc(61,5)), op.BO_ADD, expr.LitE(1, Loc(61,5)), Loc(61,5)), Loc(61,5)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:topline:t.11", Loc(61,5)), Loc(61,4)), , Loc(61,4)),
+        ], # instrSeq end.
       ), # f:topline() end. 
 
     "f:midline":
@@ -712,299 +348,122 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          -1: [
-            instr.NopI(),
-          ],
-
-          27: [
-            instr.NopI(),
-          ],
-
-          26: [
-            instr.NopI(),
-          ],
-
-          25: [
-            instr.NopI(),
-          ],
-
-          24: [
-            instr.NopI(),
-          ],
-
-          23: [
-            instr.NopI(),
-          ],
-
-          22: [
-            instr.AssignI(expr.VarE("v:midline:t.27", Loc(79,11)), expr.VarE("v:midline:p", Loc(79,11)), Loc(79,11)),
+        instrSeq = [
+            instr.LabelI("CaseCond2-0"),
+            instr.AssignI(expr.VarE("v:midline:t.1", Loc(73,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(69,11)), op.BO_EQ, expr.LitE(0, Loc(73,12)), Loc(73,7)), Loc(73,7)),
+            instr.CondI(expr.VarE("v:midline:t.1", Loc(73,7)), "CaseBody2-0", "CaseCond2-1", Loc(73,7)),
+            instr.LabelI("CaseBody2-0"),
+            instr.GotoI("SwitchExit2"),
+            instr.LabelI("CaseCond2-1"),
+            instr.AssignI(expr.VarE("v:midline:t.2", Loc(74,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(69,11)), op.BO_EQ, expr.LitE(4, Loc(74,12)), Loc(74,7)), Loc(74,7)),
+            instr.CondI(expr.VarE("v:midline:t.2", Loc(74,7)), "CaseBody2-1", "CaseCond2-2", Loc(74,7)),
+            instr.LabelI("CaseBody2-1"),
+            instr.LabelI("CaseCond2-2"),
+            instr.AssignI(expr.VarE("v:midline:t.3", Loc(75,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(69,11)), op.BO_EQ, expr.LitE(5, Loc(75,12)), Loc(75,7)), Loc(75,7)),
+            instr.CondI(expr.VarE("v:midline:t.3", Loc(75,7)), "CaseBody2-2", "CaseCond2-3", Loc(75,7)),
+            instr.LabelI("CaseBody2-2"),
+            instr.LabelI("CaseCond2-3"),
+            instr.AssignI(expr.VarE("v:midline:t.4", Loc(76,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(69,11)), op.BO_EQ, expr.LitE(6, Loc(76,12)), Loc(76,7)), Loc(76,7)),
+            instr.CondI(expr.VarE("v:midline:t.4", Loc(76,7)), "CaseBody2-3", "CaseCond2-4", Loc(76,7)),
+            instr.LabelI("CaseBody2-3"),
+            instr.LabelI("CaseCond2-4"),
+            instr.AssignI(expr.VarE("v:midline:t.5", Loc(77,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(69,11)), op.BO_EQ, expr.LitE(8, Loc(77,12)), Loc(77,7)), Loc(77,7)),
+            instr.CondI(expr.VarE("v:midline:t.5", Loc(77,7)), "CaseBody2-4", "CaseCond2-5", Loc(77,7)),
+            instr.LabelI("CaseBody2-4"),
+            instr.LabelI("CaseCond2-5"),
+            instr.AssignI(expr.VarE("v:midline:t.6", Loc(78,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(69,11)), op.BO_EQ, expr.LitE(9, Loc(78,12)), Loc(78,7)), Loc(78,7)),
+            instr.CondI(expr.VarE("v:midline:t.6", Loc(78,7)), "CaseBody2-5", "Default2", Loc(78,7)),
+            instr.LabelI("CaseBody2-5"),
+            instr.AssignI(expr.VarE("v:midline:t.7", Loc(79,11)), expr.VarE("v:midline:p", Loc(79,11)), Loc(79,11)),
             instr.AssignI(expr.VarE("v:midline:p", Loc(79,11)), expr.BinaryE(expr.VarE("v:midline:p", Loc(79,11)), op.BO_ADD, expr.LitE(1, Loc(79,11)), Loc(79,11)), Loc(79,11)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:midline:t.27", Loc(79,11)), Loc(79,10)), ERROR:convertExpr, Loc(79,10)),
-          ],
-
-          21: [
-            instr.AssignI(expr.VarE("v:midline:t.26", Loc(82,11)), expr.VarE("v:midline:p", Loc(82,11)), Loc(82,11)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:midline:t.7", Loc(79,11)), Loc(79,10)), , Loc(79,10)),
+            instr.LabelI("CaseCond2-6"),
+            instr.LabelI("Default2"),
+            instr.AssignI(expr.VarE("v:midline:t.8", Loc(82,11)), expr.VarE("v:midline:p", Loc(82,11)), Loc(82,11)),
             instr.AssignI(expr.VarE("v:midline:p", Loc(82,11)), expr.BinaryE(expr.VarE("v:midline:p", Loc(82,11)), op.BO_ADD, expr.LitE(1, Loc(82,11)), Loc(82,11)), Loc(82,11)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:midline:t.26", Loc(82,11)), Loc(82,10)), ERROR:convertExpr, Loc(82,10)),
-          ],
-
-          46: [
-            instr.AssignI(expr.VarE("v:midline:t.25", Loc(78,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(69,11)), op.BO_EQ, expr.LitE(0, Loc(73,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.25", Loc(78,7)), ),
-          ],
-
-          45: [
-            instr.AssignI(expr.VarE("v:midline:t.24", Loc(77,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(69,11)), op.BO_EQ, expr.LitE(4, Loc(74,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.24", Loc(77,7)), ),
-          ],
-
-          44: [
-            instr.AssignI(expr.VarE("v:midline:t.23", Loc(76,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(69,11)), op.BO_EQ, expr.LitE(5, Loc(75,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.23", Loc(76,7)), ),
-          ],
-
-          8: [
-            instr.NopI(),
-          ],
-
-          7: [
-            instr.NopI(),
-          ],
-
-          6: [
-            instr.NopI(),
-          ],
-
-          43: [
-            instr.AssignI(expr.VarE("v:midline:t.22", Loc(75,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(69,11)), op.BO_EQ, expr.LitE(6, Loc(76,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.22", Loc(75,7)), ),
-          ],
-
-          5: [
-            instr.NopI(),
-          ],
-
-          42: [
-            instr.AssignI(expr.VarE("v:midline:t.21", Loc(74,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(69,11)), op.BO_EQ, expr.LitE(8, Loc(77,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.21", Loc(74,7)), ),
-          ],
-
-          4: [
-            instr.NopI(),
-          ],
-
-          41: [
-            instr.AssignI(expr.VarE("v:midline:t.17", Loc(94,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(84,11)), op.BO_EQ, expr.LitE(2, Loc(88,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.17", Loc(94,7)), ),
-          ],
-
-          3: [
-            instr.AssignI(expr.VarE("v:midline:t.10", Loc(113,11)), expr.VarE("v:midline:p", Loc(113,11)), Loc(113,11)),
-            instr.AssignI(expr.VarE("v:midline:p", Loc(113,11)), expr.BinaryE(expr.VarE("v:midline:p", Loc(113,11)), op.BO_ADD, expr.LitE(1, Loc(113,11)), Loc(113,11)), Loc(113,11)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:midline:t.10", Loc(113,11)), Loc(113,10)), ERROR:convertExpr, Loc(113,10)),
-          ],
-
-          40: [
-            instr.AssignI(expr.VarE("v:midline:t.16", Loc(93,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(84,11)), op.BO_EQ, expr.LitE(3, Loc(89,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.16", Loc(93,7)), ),
-          ],
-
-          2: [
-            instr.AssignI(expr.VarE("v:midline:t.9", Loc(116,11)), expr.VarE("v:midline:p", Loc(116,11)), Loc(116,11)),
-            instr.AssignI(expr.VarE("v:midline:p", Loc(116,11)), expr.BinaryE(expr.VarE("v:midline:p", Loc(116,11)), op.BO_ADD, expr.LitE(1, Loc(116,11)), Loc(116,11)), Loc(116,11)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:midline:t.9", Loc(116,11)), Loc(116,10)), ERROR:convertExpr, Loc(116,10)),
-          ],
-
-          39: [
-            instr.AssignI(expr.VarE("v:midline:t.15", Loc(92,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(84,11)), op.BO_EQ, expr.LitE(4, Loc(90,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.15", Loc(92,7)), ),
-          ],
-
-          33: [
-            instr.AssignI(expr.VarE("v:midline:t.6", Loc(110,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(101,11)), op.BO_EQ, expr.LitE(2, Loc(107,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.6", Loc(110,7)), ),
-          ],
-
-          35: [
-            instr.AssignI(expr.VarE("v:midline:t.8", Loc(112,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(101,11)), op.BO_EQ, expr.LitE(0, Loc(105,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.8", Loc(112,7)), ),
-          ],
-
-          1: [
-            instr.AssignI(expr.VarE("v:midline:t.1", Loc(105,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(101,11)), op.BO_EQ, expr.LitE(9, Loc(112,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.1", Loc(105,7)), ),
-          ],
-
-          38: [
-            instr.AssignI(expr.VarE("v:midline:t.14", Loc(91,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(84,11)), op.BO_EQ, expr.LitE(5, Loc(91,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.14", Loc(91,7)), ),
-          ],
-
-          29: [
-            instr.AssignI(expr.VarE("v:midline:t.2", Loc(106,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(101,11)), op.BO_EQ, expr.LitE(8, Loc(111,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.2", Loc(106,7)), ),
-          ],
-
-          34: [
-            instr.AssignI(expr.VarE("v:midline:t.7", Loc(111,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(101,11)), op.BO_EQ, expr.LitE(1, Loc(106,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.7", Loc(111,7)), ),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          37: [
-            instr.AssignI(expr.VarE("v:midline:t.13", Loc(90,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(84,11)), op.BO_EQ, expr.LitE(6, Loc(92,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.13", Loc(90,7)), ),
-          ],
-
-          30: [
-            instr.AssignI(expr.VarE("v:midline:t.3", Loc(107,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(101,11)), op.BO_EQ, expr.LitE(7, Loc(110,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.3", Loc(107,7)), ),
-          ],
-
-          31: [
-            instr.AssignI(expr.VarE("v:midline:t.4", Loc(108,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(101,11)), op.BO_EQ, expr.LitE(4, Loc(109,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.4", Loc(108,7)), ),
-          ],
-
-          32: [
-            instr.AssignI(expr.VarE("v:midline:t.5", Loc(109,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(101,11)), op.BO_EQ, expr.LitE(3, Loc(108,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.5", Loc(109,7)), ),
-          ],
-
-          9: [
-            instr.NopI(),
-          ],
-
-          10: [
-            instr.NopI(),
-          ],
-
-          11: [
-            instr.AssignI(expr.VarE("v:midline:t.11", Loc(88,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(84,11)), op.BO_EQ, expr.LitE(9, Loc(94,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.11", Loc(88,7)), ),
-          ],
-
-          36: [
-            instr.AssignI(expr.VarE("v:midline:t.12", Loc(89,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(84,11)), op.BO_EQ, expr.LitE(8, Loc(93,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.12", Loc(89,7)), ),
-          ],
-
-          12: [
-            instr.AssignI(expr.VarE("v:midline:t.18", Loc(98,11)), expr.VarE("v:midline:p", Loc(98,11)), Loc(98,11)),
-            instr.AssignI(expr.VarE("v:midline:p", Loc(98,11)), expr.BinaryE(expr.VarE("v:midline:p", Loc(98,11)), op.BO_ADD, expr.LitE(1, Loc(98,11)), Loc(98,11)), Loc(98,11)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:midline:t.18", Loc(98,11)), Loc(98,10)), ERROR:convertExpr, Loc(98,10)),
-          ],
-
-          13: [
-            instr.AssignI(expr.VarE("v:midline:t.19", Loc(95,11)), expr.VarE("v:midline:p", Loc(95,11)), Loc(95,11)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:midline:t.8", Loc(82,11)), Loc(82,10)), , Loc(82,10)),
+            instr.LabelI("SwitchExit2"),
+            instr.LabelI("CaseCond3-0"),
+            instr.AssignI(expr.VarE("v:midline:t.9", Loc(88,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(84,11)), op.BO_EQ, expr.LitE(2, Loc(88,12)), Loc(88,7)), Loc(88,7)),
+            instr.CondI(expr.VarE("v:midline:t.9", Loc(88,7)), "CaseBody3-0", "CaseCond3-1", Loc(88,7)),
+            instr.LabelI("CaseBody3-0"),
+            instr.GotoI("SwitchExit3"),
+            instr.LabelI("CaseCond3-1"),
+            instr.AssignI(expr.VarE("v:midline:t.10", Loc(89,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(84,11)), op.BO_EQ, expr.LitE(3, Loc(89,12)), Loc(89,7)), Loc(89,7)),
+            instr.CondI(expr.VarE("v:midline:t.10", Loc(89,7)), "CaseBody3-1", "CaseCond3-2", Loc(89,7)),
+            instr.LabelI("CaseBody3-1"),
+            instr.LabelI("CaseCond3-2"),
+            instr.AssignI(expr.VarE("v:midline:t.11", Loc(90,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(84,11)), op.BO_EQ, expr.LitE(4, Loc(90,12)), Loc(90,7)), Loc(90,7)),
+            instr.CondI(expr.VarE("v:midline:t.11", Loc(90,7)), "CaseBody3-2", "CaseCond3-3", Loc(90,7)),
+            instr.LabelI("CaseBody3-2"),
+            instr.LabelI("CaseCond3-3"),
+            instr.AssignI(expr.VarE("v:midline:t.12", Loc(91,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(84,11)), op.BO_EQ, expr.LitE(5, Loc(91,12)), Loc(91,7)), Loc(91,7)),
+            instr.CondI(expr.VarE("v:midline:t.12", Loc(91,7)), "CaseBody3-3", "CaseCond3-4", Loc(91,7)),
+            instr.LabelI("CaseBody3-3"),
+            instr.LabelI("CaseCond3-4"),
+            instr.AssignI(expr.VarE("v:midline:t.13", Loc(92,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(84,11)), op.BO_EQ, expr.LitE(6, Loc(92,12)), Loc(92,7)), Loc(92,7)),
+            instr.CondI(expr.VarE("v:midline:t.13", Loc(92,7)), "CaseBody3-4", "CaseCond3-5", Loc(92,7)),
+            instr.LabelI("CaseBody3-4"),
+            instr.LabelI("CaseCond3-5"),
+            instr.AssignI(expr.VarE("v:midline:t.14", Loc(93,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(84,11)), op.BO_EQ, expr.LitE(8, Loc(93,12)), Loc(93,7)), Loc(93,7)),
+            instr.CondI(expr.VarE("v:midline:t.14", Loc(93,7)), "CaseBody3-5", "CaseCond3-6", Loc(93,7)),
+            instr.LabelI("CaseBody3-5"),
+            instr.LabelI("CaseCond3-6"),
+            instr.AssignI(expr.VarE("v:midline:t.15", Loc(94,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(84,11)), op.BO_EQ, expr.LitE(9, Loc(94,12)), Loc(94,7)), Loc(94,7)),
+            instr.CondI(expr.VarE("v:midline:t.15", Loc(94,7)), "CaseBody3-6", "Default3", Loc(94,7)),
+            instr.LabelI("CaseBody3-6"),
+            instr.AssignI(expr.VarE("v:midline:t.16", Loc(95,11)), expr.VarE("v:midline:p", Loc(95,11)), Loc(95,11)),
             instr.AssignI(expr.VarE("v:midline:p", Loc(95,11)), expr.BinaryE(expr.VarE("v:midline:p", Loc(95,11)), op.BO_ADD, expr.LitE(1, Loc(95,11)), Loc(95,11)), Loc(95,11)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:midline:t.19", Loc(95,11)), Loc(95,10)), ERROR:convertExpr, Loc(95,10)),
-          ],
-
-          14: [
-            instr.NopI(),
-          ],
-
-          15: [
-            instr.NopI(),
-          ],
-
-          16: [
-            instr.NopI(),
-          ],
-
-          17: [
-            instr.NopI(),
-          ],
-
-          18: [
-            instr.NopI(),
-          ],
-
-          19: [
-            instr.NopI(),
-          ],
-
-          20: [
-            instr.AssignI(expr.VarE("v:midline:t.20", Loc(73,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(69,11)), op.BO_EQ, expr.LitE(9, Loc(78,12)), ), ),
-            instr.CondI(expr.VarE("v:midline:t.20", Loc(73,7)), ),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 4, types.TrueEdge),
-          (29, 5, types.TrueEdge),
-          (1, 29, types.FalseEdge),
-          (30, 6, types.TrueEdge),
-          (29, 30, types.FalseEdge),
-          (31, 7, types.TrueEdge),
-          (30, 31, types.FalseEdge),
-          (32, 8, types.TrueEdge),
-          (31, 32, types.FalseEdge),
-          (33, 9, types.TrueEdge),
-          (32, 33, types.FalseEdge),
-          (34, 10, types.TrueEdge),
-          (33, 34, types.FalseEdge),
-          (35, 3, types.TrueEdge),
-          (34, 35, types.FalseEdge),
-          (35, 2, types.FalseEdge),
-          (2, 0, types.UnCondEdge),
-          (3, 0, types.UnCondEdge),
-          (4, 5, types.UnCondEdge),
-          (5, 6, types.UnCondEdge),
-          (6, 7, types.UnCondEdge),
-          (7, 8, types.UnCondEdge),
-          (8, 9, types.UnCondEdge),
-          (9, 10, types.UnCondEdge),
-          (10, 3, types.UnCondEdge),
-          (11, 14, types.TrueEdge),
-          (36, 15, types.TrueEdge),
-          (11, 36, types.FalseEdge),
-          (37, 16, types.TrueEdge),
-          (36, 37, types.FalseEdge),
-          (38, 17, types.TrueEdge),
-          (37, 38, types.FalseEdge),
-          (39, 18, types.TrueEdge),
-          (38, 39, types.FalseEdge),
-          (40, 19, types.TrueEdge),
-          (39, 40, types.FalseEdge),
-          (41, 13, types.TrueEdge),
-          (40, 41, types.FalseEdge),
-          (41, 12, types.FalseEdge),
-          (12, 1, types.UnCondEdge),
-          (13, 1, types.UnCondEdge),
-          (14, 15, types.UnCondEdge),
-          (15, 16, types.UnCondEdge),
-          (16, 17, types.UnCondEdge),
-          (17, 18, types.UnCondEdge),
-          (18, 19, types.UnCondEdge),
-          (19, 13, types.UnCondEdge),
-          (20, 23, types.TrueEdge),
-          (42, 24, types.TrueEdge),
-          (20, 42, types.FalseEdge),
-          (43, 25, types.TrueEdge),
-          (42, 43, types.FalseEdge),
-          (44, 26, types.TrueEdge),
-          (43, 44, types.FalseEdge),
-          (45, 27, types.TrueEdge),
-          (44, 45, types.FalseEdge),
-          (46, 22, types.TrueEdge),
-          (45, 46, types.FalseEdge),
-          (46, 21, types.FalseEdge),
-          (21, 11, types.UnCondEdge),
-          (22, 11, types.UnCondEdge),
-          (23, 24, types.UnCondEdge),
-          (24, 25, types.UnCondEdge),
-          (25, 26, types.UnCondEdge),
-          (26, 27, types.UnCondEdge),
-          (27, 22, types.UnCondEdge),
-          (-1, 20, types.UnCondEdge),
-        }, # bbEdges end
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:midline:t.16", Loc(95,11)), Loc(95,10)), , Loc(95,10)),
+            instr.LabelI("CaseCond3-7"),
+            instr.LabelI("Default3"),
+            instr.AssignI(expr.VarE("v:midline:t.17", Loc(98,11)), expr.VarE("v:midline:p", Loc(98,11)), Loc(98,11)),
+            instr.AssignI(expr.VarE("v:midline:p", Loc(98,11)), expr.BinaryE(expr.VarE("v:midline:p", Loc(98,11)), op.BO_ADD, expr.LitE(1, Loc(98,11)), Loc(98,11)), Loc(98,11)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:midline:t.17", Loc(98,11)), Loc(98,10)), , Loc(98,10)),
+            instr.LabelI("SwitchExit3"),
+            instr.LabelI("CaseCond4-0"),
+            instr.AssignI(expr.VarE("v:midline:t.18", Loc(105,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(101,11)), op.BO_EQ, expr.LitE(0, Loc(105,12)), Loc(105,7)), Loc(105,7)),
+            instr.CondI(expr.VarE("v:midline:t.18", Loc(105,7)), "CaseBody4-0", "CaseCond4-1", Loc(105,7)),
+            instr.LabelI("CaseBody4-0"),
+            instr.GotoI("SwitchExit4"),
+            instr.LabelI("CaseCond4-1"),
+            instr.AssignI(expr.VarE("v:midline:t.19", Loc(106,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(101,11)), op.BO_EQ, expr.LitE(1, Loc(106,12)), Loc(106,7)), Loc(106,7)),
+            instr.CondI(expr.VarE("v:midline:t.19", Loc(106,7)), "CaseBody4-1", "CaseCond4-2", Loc(106,7)),
+            instr.LabelI("CaseBody4-1"),
+            instr.LabelI("CaseCond4-2"),
+            instr.AssignI(expr.VarE("v:midline:t.20", Loc(107,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(101,11)), op.BO_EQ, expr.LitE(2, Loc(107,12)), Loc(107,7)), Loc(107,7)),
+            instr.CondI(expr.VarE("v:midline:t.20", Loc(107,7)), "CaseBody4-2", "CaseCond4-3", Loc(107,7)),
+            instr.LabelI("CaseBody4-2"),
+            instr.LabelI("CaseCond4-3"),
+            instr.AssignI(expr.VarE("v:midline:t.21", Loc(108,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(101,11)), op.BO_EQ, expr.LitE(3, Loc(108,12)), Loc(108,7)), Loc(108,7)),
+            instr.CondI(expr.VarE("v:midline:t.21", Loc(108,7)), "CaseBody4-3", "CaseCond4-4", Loc(108,7)),
+            instr.LabelI("CaseBody4-3"),
+            instr.LabelI("CaseCond4-4"),
+            instr.AssignI(expr.VarE("v:midline:t.22", Loc(109,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(101,11)), op.BO_EQ, expr.LitE(4, Loc(109,12)), Loc(109,7)), Loc(109,7)),
+            instr.CondI(expr.VarE("v:midline:t.22", Loc(109,7)), "CaseBody4-4", "CaseCond4-5", Loc(109,7)),
+            instr.LabelI("CaseBody4-4"),
+            instr.LabelI("CaseCond4-5"),
+            instr.AssignI(expr.VarE("v:midline:t.23", Loc(110,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(101,11)), op.BO_EQ, expr.LitE(7, Loc(110,12)), Loc(110,7)), Loc(110,7)),
+            instr.CondI(expr.VarE("v:midline:t.23", Loc(110,7)), "CaseBody4-5", "CaseCond4-6", Loc(110,7)),
+            instr.LabelI("CaseBody4-5"),
+            instr.LabelI("CaseCond4-6"),
+            instr.AssignI(expr.VarE("v:midline:t.24", Loc(111,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(101,11)), op.BO_EQ, expr.LitE(8, Loc(111,12)), Loc(111,7)), Loc(111,7)),
+            instr.CondI(expr.VarE("v:midline:t.24", Loc(111,7)), "CaseBody4-6", "CaseCond4-7", Loc(111,7)),
+            instr.LabelI("CaseBody4-6"),
+            instr.LabelI("CaseCond4-7"),
+            instr.AssignI(expr.VarE("v:midline:t.25", Loc(112,7)), expr.BinaryE(expr.VarE("v:midline:d", Loc(101,11)), op.BO_EQ, expr.LitE(9, Loc(112,12)), Loc(112,7)), Loc(112,7)),
+            instr.CondI(expr.VarE("v:midline:t.25", Loc(112,7)), "CaseBody4-7", "Default4", Loc(112,7)),
+            instr.LabelI("CaseBody4-7"),
+            instr.AssignI(expr.VarE("v:midline:t.26", Loc(113,11)), expr.VarE("v:midline:p", Loc(113,11)), Loc(113,11)),
+            instr.AssignI(expr.VarE("v:midline:p", Loc(113,11)), expr.BinaryE(expr.VarE("v:midline:p", Loc(113,11)), op.BO_ADD, expr.LitE(1, Loc(113,11)), Loc(113,11)), Loc(113,11)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:midline:t.26", Loc(113,11)), Loc(113,10)), , Loc(113,10)),
+            instr.LabelI("CaseCond4-8"),
+            instr.LabelI("Default4"),
+            instr.AssignI(expr.VarE("v:midline:t.27", Loc(116,11)), expr.VarE("v:midline:p", Loc(116,11)), Loc(116,11)),
+            instr.AssignI(expr.VarE("v:midline:p", Loc(116,11)), expr.BinaryE(expr.VarE("v:midline:p", Loc(116,11)), op.BO_ADD, expr.LitE(1, Loc(116,11)), Loc(116,11)), Loc(116,11)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:midline:t.27", Loc(116,11)), Loc(116,10)), , Loc(116,10)),
+            instr.LabelI("SwitchExit4"),
+        ], # instrSeq end.
       ), # f:midline() end. 
 
   }, # end allObjs dict

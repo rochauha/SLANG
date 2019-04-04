@@ -30,26 +30,10 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:voidfn", Loc(10,5)), [], Loc(10,5))),
-            instr.ReturnI(expr.LitE(0, Loc(11,12)), Loc(11,5)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+        instrSeq = [
+            instr.CallI(expr.CallE(expr.FuncE("f:voidfn", Loc(10,5)), Loc(10,5)), Loc(10,5)),
+            instr.ReturnI(expr.LitE(0, Loc(11,12))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
     "f:voidfn":
@@ -61,25 +45,9 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(Loc(4,5)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+        instrSeq = [
+            instr.ReturnI(),
+        ], # instrSeq end.
       ), # f:voidfn() end. 
 
   }, # end allObjs dict

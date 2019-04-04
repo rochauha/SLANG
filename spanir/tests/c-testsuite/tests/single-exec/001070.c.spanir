@@ -18,7 +18,7 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.1": types.Int32,
-    "v:x": types.Int32,
+    "": ,
   }, # end allVars dict
 
   allObjs = {
@@ -32,26 +32,10 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(7,9)), expr.BinaryE(expr.VarE("v:x", Loc(7,9)), op.BO_SUB, expr.LitE(1, Loc(7,11))), Loc(7,9)),
-            instr.ReturnI(expr.VarE("v:main:t.1", Loc(7,9)), Loc(7,2)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+        instrSeq = [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(7,9)), expr.BinaryE(expr.VarE("", Loc(7,9)), op.BO_SUB, expr.LitE(1, Loc(7,11)), Loc(7,9)), Loc(7,9)),
+            instr.ReturnI(expr.VarE("v:main:t.1", Loc(7,9))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

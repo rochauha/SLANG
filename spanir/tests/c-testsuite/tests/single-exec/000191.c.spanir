@@ -63,25 +63,9 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:p", Loc(18,2)), ["a1"], Loc(18,2)), expr.LitE(200, Loc(18,9)), Loc(18,2)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+        instrSeq = [
+            instr.AssignI(expr.MemberE("a1", expr.VarE("v:main:p", Loc(18,2)), Loc(18,2)), expr.LitE(200, Loc(18,9)), Loc(18,2)),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

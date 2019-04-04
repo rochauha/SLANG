@@ -17,9 +17,7 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.3": types.Int32,
-    "v:main:t.2": types.Struct("s:inner_type"),
-    "v:main:t.1": types.Struct("s:my_type"),
+    "v:main:t.1": types.Int32,
     "v:main:x": types.Int32,
     "v:main:p": types.Struct("s:my_type"),
   }, # end allVars dict
@@ -56,32 +54,14 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
+        instrSeq = [
             instr.AssignI(expr.VarE("v:main:x", Loc(12,3)), expr.LitE(20, Loc(12,11)), Loc(12,3)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.1", Loc(13,2)), ["attr_1"], Loc(13,2)), expr.VarE("v:main:x", Loc(13,22))),
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(13,26)), expr.BinaryE(expr.LitE(5, Loc(13,26)), op.BO_ADD, expr.LitE(4, Loc(13,30))), Loc(13,26)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.2", Loc(13,25)), ["b1"], Loc(13,25)), expr.VarE("v:main:t.3", Loc(13,26))),
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.2", Loc(13,25)), ["b2"], Loc(13,25)), expr.LitE(6, Loc(13,33))),
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.2", Loc(13,25)), ["next"], Loc(13,25)), expr.LitE(0, Loc(13,36))),
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.1", Loc(13,2)), ["attr_2"], Loc(13,2)), expr.VarE("v:main:t.2", Loc(13,25))),
-            instr.AssignI(expr.VarE("v:main:p", Loc(13,2)), expr.VarE("v:main:t.1", Loc(13,2)), Loc(13,2)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+            instr.AssignI(expr.MemberE("attr_1", expr.VarE("v:main:p", Loc(13,2)), Loc(13,2)), expr.VarE("v:main:x", Loc(13,22)), Loc(13,22)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(13,26)), expr.BinaryE(expr.LitE(5, Loc(13,26)), op.BO_ADD, expr.LitE(4, Loc(13,30)), Loc(13,26)), Loc(13,26)),
+            instr.AssignI(expr.MemberE("b1", expr.MemberE("attr_2", expr.VarE("v:main:p", Loc(13,2)), Loc(13,2)), Loc(13,2)), expr.VarE("v:main:t.1", Loc(13,26)), Loc(13,26)),
+            instr.AssignI(expr.MemberE("b2", expr.MemberE("attr_2", expr.VarE("v:main:p", Loc(13,2)), Loc(13,2)), Loc(13,2)), expr.LitE(6, Loc(13,33)), Loc(13,33)),
+            instr.AssignI(expr.MemberE("next", expr.MemberE("attr_2", expr.VarE("v:main:p", Loc(13,2)), Loc(13,2)), Loc(13,2)), expr.LitE(0, Loc(13,36)), Loc(13,36)),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

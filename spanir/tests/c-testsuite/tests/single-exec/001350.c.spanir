@@ -18,10 +18,10 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.4": types.UInt32,
+    "v:main:t.3": types.UInt32,
     "v:main:t.2": types.Int32,
     "v:main:t.1": types.Int32,
     "v:main:i": types.Int32,
-    "v:main:t.3": types.UInt32,
     "v:main:u": types.UInt32,
   }, # end allVars dict
 
@@ -36,43 +36,27 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
+        instrSeq = [
             instr.AssignI(expr.VarE("v:main:i", Loc(7,2)), expr.LitE(1, Loc(7,6)), Loc(7,2)),
             instr.AssignI(expr.VarE("v:main:i", Loc(8,2)), expr.UnaryE(op.UO_MINUS, expr.LitE(1, Loc(8,7)), Loc(8,6)), Loc(8,2)),
             instr.AssignI(expr.VarE("v:main:i", Loc(9,2)), expr.UnaryE(op.UO_MINUS, expr.LitE(1, Loc(9,7)), Loc(9,6)), Loc(9,2)),
             instr.AssignI(expr.VarE("v:main:i", Loc(10,2)), expr.UnaryE(op.UO_MINUS, expr.LitE(1, Loc(10,7)), Loc(10,6)), Loc(10,2)),
             instr.AssignI(expr.VarE("v:main:i", Loc(11,2)), expr.UnaryE(op.UO_MINUS, expr.LitE(1, Loc(11,7)), Loc(11,6)), Loc(11,2)),
             instr.AssignI(expr.VarE("v:main:t.1", Loc(12,6)), expr.UnaryE(op.UO_MINUS, expr.LitE(1, Loc(12,7)), Loc(12,6)), Loc(12,6)),
-            instr.AssignI(expr.VarE("v:main:i", Loc(12,2)), expr.BinaryE(expr.VarE("v:main:t.1", Loc(12,6)), op.BO_BIT_AND, expr.LitE(3, Loc(12,13))), Loc(12,2)),
+            instr.AssignI(expr.VarE("v:main:i", Loc(12,2)), expr.BinaryE(expr.VarE("v:main:t.1", Loc(12,6)), op.BO_BIT_AND, expr.LitE(3, Loc(12,13)), Loc(12,6)), Loc(12,2)),
             instr.AssignI(expr.VarE("v:main:t.2", Loc(13,6)), expr.UnaryE(op.UO_MINUS, expr.LitE(1, Loc(13,7)), Loc(13,6)), Loc(13,6)),
-            instr.AssignI(expr.VarE("v:main:i", Loc(13,2)), expr.BinaryE(expr.VarE("v:main:t.2", Loc(13,6)), op.BO_LT, expr.LitE(0, Loc(13,13))), Loc(13,2)),
+            instr.AssignI(expr.VarE("v:main:i", Loc(13,2)), expr.BinaryE(expr.VarE("v:main:t.2", Loc(13,6)), op.BO_LT, expr.LitE(0, Loc(13,13)), Loc(13,6)), Loc(13,2)),
             instr.AssignI(expr.VarE("v:main:u", Loc(15,2)), expr.LitE(1, Loc(15,6)), Loc(15,2)),
             instr.AssignI(expr.VarE("v:main:u", Loc(16,2)), expr.UnaryE(op.UO_MINUS, expr.LitE(1, Loc(16,7)), Loc(16,6)), Loc(16,2)),
             instr.AssignI(expr.VarE("v:main:u", Loc(17,2)), expr.UnaryE(op.UO_MINUS, expr.LitE(1, Loc(17,7)), Loc(17,6)), Loc(17,2)),
             instr.AssignI(expr.VarE("v:main:u", Loc(18,2)), expr.UnaryE(op.UO_MINUS, expr.LitE(1, Loc(18,7)), Loc(18,6)), Loc(18,2)),
             instr.AssignI(expr.VarE("v:main:u", Loc(19,2)), expr.UnaryE(op.UO_MINUS, expr.LitE(1, Loc(19,7)), Loc(19,6)), Loc(19,2)),
             instr.AssignI(expr.VarE("v:main:t.3", Loc(20,6)), expr.UnaryE(op.UO_MINUS, expr.LitE(1, Loc(20,7)), Loc(20,6)), Loc(20,6)),
-            instr.AssignI(expr.VarE("v:main:u", Loc(20,2)), expr.BinaryE(expr.VarE("v:main:t.3", Loc(20,6)), op.BO_BIT_AND, expr.LitE(3, Loc(20,14))), Loc(20,2)),
+            instr.AssignI(expr.VarE("v:main:u", Loc(20,2)), expr.BinaryE(expr.VarE("v:main:t.3", Loc(20,6)), op.BO_BIT_AND, expr.LitE(3, Loc(20,14)), Loc(20,6)), Loc(20,2)),
             instr.AssignI(expr.VarE("v:main:t.4", Loc(21,6)), expr.UnaryE(op.UO_MINUS, expr.LitE(1, Loc(21,7)), Loc(21,6)), Loc(21,6)),
-            instr.AssignI(expr.VarE("v:main:u", Loc(21,2)), expr.BinaryE(expr.VarE("v:main:t.4", Loc(21,6)), op.BO_LT, expr.LitE(0, Loc(21,14))), Loc(21,2)),
-            instr.ReturnI(expr.LitE(0, Loc(22,9)), Loc(22,2)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+            instr.AssignI(expr.VarE("v:main:u", Loc(21,2)), expr.BinaryE(expr.VarE("v:main:t.4", Loc(21,6)), op.BO_LT, expr.LitE(0, Loc(21,14)), Loc(21,6)), Loc(21,2)),
+            instr.ReturnI(expr.LitE(0, Loc(22,9))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

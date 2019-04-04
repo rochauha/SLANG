@@ -33,28 +33,12 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
+        instrSeq = [
             instr.AssignI(expr.VarE("v:main:p", Loc(6,2)), expr.LitE("""hello""", Loc(6,6)), Loc(6,2)),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(7,9)), expr.ArrayE(expr.VarE("v:main:p", Loc(7,9)), [expr.LitE(0, Loc(7,11))], Loc(7,9)), Loc(7,9)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(7,9)), expr.BinaryE(expr.VarE("v:main:t.1", Loc(7,9)), op.BO_SUB, expr.LitE(104, Loc(7,16))), Loc(7,9)),
-            instr.ReturnI(expr.VarE("v:main:t.2", Loc(7,9)), Loc(7,2)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(7,9)), expr.ArrayE(expr.LitE(0, Loc(7,11)), expr.VarE("v:main:p", Loc(7,9)), Loc(7,9)), Loc(7,9)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(7,9)), expr.BinaryE(expr.VarE("v:main:t.1", Loc(7,9)), op.BO_SUB, expr.LitE(104, Loc(7,16)), Loc(7,9)), Loc(7,9)),
+            instr.ReturnI(expr.VarE("v:main:t.2", Loc(7,9))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

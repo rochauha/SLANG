@@ -1,8 +1,8 @@
 int y = 30;
 int main() {
-label:
   int x = 10;
 
+label:
   if (x) {
     x = 20;
   } else {

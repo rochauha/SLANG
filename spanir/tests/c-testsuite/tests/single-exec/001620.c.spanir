@@ -31,25 +31,9 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(33,10)), Loc(33,3)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+        instrSeq = [
+            instr.ReturnI(expr.LitE(0, Loc(33,10))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
     "f:fooc":
@@ -61,25 +45,9 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.AssignI(expr.ArrayE(expr.VarE("v:fooc:x", Loc(16,3)), [expr.LitE(3, Loc(16,5))], Loc(16,3)), expr.LitE(42, Loc(16,10)), Loc(16,3)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+        instrSeq = [
+            instr.AssignI(expr.ArrayE(expr.LitE(3, Loc(16,5)), expr.VarE("v:fooc:x", Loc(16,3)), Loc(16,3)), expr.LitE(42, Loc(16,10)), Loc(16,3)),
+        ], # instrSeq end.
       ), # f:fooc() end. 
 
   }, # end allObjs dict

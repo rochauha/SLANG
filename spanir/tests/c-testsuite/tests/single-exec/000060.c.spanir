@@ -31,46 +31,16 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          1: [
-            instr.ReturnI(expr.VarE("v:main:x", Loc(9,9)), Loc(9,2)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          2: [
-            instr.NopI(),
-          ],
-
-          3: [
-            instr.AssignI(expr.VarE("v:main:x", Loc(8,3)), expr.BinaryE(expr.VarE("v:main:x", Loc(8,7)), op.BO_SUB, expr.LitE(1, Loc(8,11))), Loc(8,3)),
-          ],
-
-          4: [
-            instr.CondI(expr.VarE("v:main:x", Loc(7,9)), Loc(7,2)),
-          ],
-
-          5: [
+        instrSeq = [
             instr.AssignI(expr.VarE("v:main:x", Loc(6,2)), expr.LitE(50, Loc(6,6)), Loc(6,2)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 4, types.UnCondEdge),
-          (3, 2, types.UnCondEdge),
-          (4, 3, types.TrueEdge),
-          (4, 1, types.FalseEdge),
-          (5, 4, types.UnCondEdge),
-          (-1, 5, types.UnCondEdge),
-        }, # bbEdges end
+            instr.LabelI("WhileCond1"),
+            instr.CondI(expr.VarE("v:main:x", Loc(7,9)), "WhileBody1", "WhileExit1", Loc(7,9)),
+            instr.LabelI("WhileBody1"),
+            instr.AssignI(expr.VarE("v:main:x", Loc(8,3)), expr.BinaryE(expr.VarE("v:main:x", Loc(8,7)), op.BO_SUB, expr.LitE(1, Loc(8,11)), Loc(8,7)), Loc(8,3)),
+            instr.GotoI("WhileCond1"),
+            instr.LabelI("WhileExit1"),
+            instr.ReturnI(expr.VarE("v:main:x", Loc(9,9))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

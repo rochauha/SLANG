@@ -30,124 +30,63 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          19: [
-            instr.CondI(expr.LitE(0, Loc(10,6)), Loc(10,2)),
-          ],
-
-          18: [
-            instr.ReturnI(expr.LitE(1, Loc(11,10)), Loc(11,3)),
-          ],
-
-          17: [
-            instr.CondI(expr.LitE(0, Loc(12,6)), Loc(12,2)),
-          ],
-
-          16: [
-            instr.ReturnI(expr.LitE(1, Loc(13,10)), Loc(13,3)),
-          ],
-
-          5: [
-            instr.CondI(expr.LitE(0, Loc(24,6)), Loc(24,2)),
-          ],
-
-          4: [
-            instr.ReturnI(expr.LitE(1, Loc(25,10)), Loc(25,3)),
-          ],
-
-          3: [
-            instr.CondI(expr.LitE(0, Loc(26,6)), Loc(26,2)),
-          ],
-
-          2: [
-            instr.ReturnI(expr.LitE(1, Loc(27,10)), Loc(27,3)),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(29,9)), Loc(29,2)),
-          ],
-
-          6: [
-            instr.ReturnI(expr.LitE(1, Loc(23,10)), Loc(23,3)),
-          ],
-
-          7: [
-            instr.CondI(expr.LitE(0, Loc(22,6)), Loc(22,2)),
-          ],
-
-          8: [
-            instr.ReturnI(expr.LitE(1, Loc(21,10)), Loc(21,3)),
-          ],
-
-          9: [
-            instr.CondI(expr.LitE(0, Loc(20,6)), Loc(20,2)),
-          ],
-
-          10: [
-            instr.ReturnI(expr.LitE(1, Loc(19,10)), Loc(19,3)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          11: [
-            instr.CondI(expr.LitE(0, Loc(18,6)), Loc(18,2)),
-          ],
-
-          12: [
-            instr.ReturnI(expr.LitE(1, Loc(17,10)), Loc(17,3)),
-          ],
-
-          13: [
-            instr.CondI(expr.LitE(0, Loc(16,6)), Loc(16,2)),
-          ],
-
-          14: [
-            instr.ReturnI(expr.LitE(1, Loc(15,10)), Loc(15,3)),
-          ],
-
-          15: [
-            instr.CondI(expr.LitE(0, Loc(14,6)), Loc(14,2)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 0, types.UnCondEdge),
-          (3, 0, types.TrueEdge),
-          (3, 1, types.FalseEdge),
-          (4, 0, types.UnCondEdge),
-          (5, 0, types.TrueEdge),
-          (5, 3, types.FalseEdge),
-          (6, 0, types.UnCondEdge),
-          (7, 0, types.TrueEdge),
-          (7, 5, types.FalseEdge),
-          (8, 0, types.UnCondEdge),
-          (9, 0, types.TrueEdge),
-          (9, 7, types.FalseEdge),
-          (10, 0, types.UnCondEdge),
-          (11, 0, types.TrueEdge),
-          (11, 9, types.FalseEdge),
-          (12, 0, types.UnCondEdge),
-          (13, 0, types.TrueEdge),
-          (13, 11, types.FalseEdge),
-          (14, 0, types.UnCondEdge),
-          (15, 0, types.TrueEdge),
-          (15, 13, types.FalseEdge),
-          (16, 0, types.UnCondEdge),
-          (17, 0, types.TrueEdge),
-          (17, 15, types.FalseEdge),
-          (18, 0, types.UnCondEdge),
-          (19, 0, types.TrueEdge),
-          (19, 17, types.FalseEdge),
-          (-1, 19, types.UnCondEdge),
-        }, # bbEdges end
+        instrSeq = [
+            instr.CondI(expr.LitE(0, Loc(10,6)), "IfTrue1", "IfFalse1", Loc(10,6)),
+            instr.LabelI("IfTrue1"),
+            instr.ReturnI(expr.LitE(1, Loc(11,10))),
+            instr.GotoI("IfExit1"),
+            instr.LabelI("IfFalse1"),
+            instr.LabelI("IfExit1"),
+            instr.CondI(expr.LitE(0, Loc(12,6)), "IfTrue2", "IfFalse2", Loc(12,6)),
+            instr.LabelI("IfTrue2"),
+            instr.ReturnI(expr.LitE(1, Loc(13,10))),
+            instr.GotoI("IfExit2"),
+            instr.LabelI("IfFalse2"),
+            instr.LabelI("IfExit2"),
+            instr.CondI(expr.LitE(0, Loc(14,6)), "IfTrue3", "IfFalse3", Loc(14,6)),
+            instr.LabelI("IfTrue3"),
+            instr.ReturnI(expr.LitE(1, Loc(15,10))),
+            instr.GotoI("IfExit3"),
+            instr.LabelI("IfFalse3"),
+            instr.LabelI("IfExit3"),
+            instr.CondI(expr.LitE(0, Loc(16,6)), "IfTrue4", "IfFalse4", Loc(16,6)),
+            instr.LabelI("IfTrue4"),
+            instr.ReturnI(expr.LitE(1, Loc(17,10))),
+            instr.GotoI("IfExit4"),
+            instr.LabelI("IfFalse4"),
+            instr.LabelI("IfExit4"),
+            instr.CondI(expr.LitE(0, Loc(18,6)), "IfTrue5", "IfFalse5", Loc(18,6)),
+            instr.LabelI("IfTrue5"),
+            instr.ReturnI(expr.LitE(1, Loc(19,10))),
+            instr.GotoI("IfExit5"),
+            instr.LabelI("IfFalse5"),
+            instr.LabelI("IfExit5"),
+            instr.CondI(expr.LitE(0, Loc(20,6)), "IfTrue6", "IfFalse6", Loc(20,6)),
+            instr.LabelI("IfTrue6"),
+            instr.ReturnI(expr.LitE(1, Loc(21,10))),
+            instr.GotoI("IfExit6"),
+            instr.LabelI("IfFalse6"),
+            instr.LabelI("IfExit6"),
+            instr.CondI(expr.LitE(0, Loc(22,6)), "IfTrue7", "IfFalse7", Loc(22,6)),
+            instr.LabelI("IfTrue7"),
+            instr.ReturnI(expr.LitE(1, Loc(23,10))),
+            instr.GotoI("IfExit7"),
+            instr.LabelI("IfFalse7"),
+            instr.LabelI("IfExit7"),
+            instr.CondI(expr.LitE(0, Loc(24,6)), "IfTrue8", "IfFalse8", Loc(24,6)),
+            instr.LabelI("IfTrue8"),
+            instr.ReturnI(expr.LitE(1, Loc(25,10))),
+            instr.GotoI("IfExit8"),
+            instr.LabelI("IfFalse8"),
+            instr.LabelI("IfExit8"),
+            instr.CondI(expr.LitE(0, Loc(26,6)), "IfTrue9", "IfFalse9", Loc(26,6)),
+            instr.LabelI("IfTrue9"),
+            instr.ReturnI(expr.LitE(1, Loc(27,10))),
+            instr.GotoI("IfExit9"),
+            instr.LabelI("IfFalse9"),
+            instr.LabelI("IfExit9"),
+            instr.ReturnI(expr.LitE(0, Loc(29,9))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

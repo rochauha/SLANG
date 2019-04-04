@@ -17,30 +17,13 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:p": types.Int32,
-    "v:printf:__format": types.Ptr(to=types.Int8),
-    "v:main:a": types.Int32,
     "v:main:t": types.Int32,
     "v:main:t.1": types.Int32,
+    "v:main:a": types.Int32,
+    "v:main:p": types.Int32,
   }, # end allVars dict
 
   allObjs = {
-
-    "f:printf":
-      obj.Func(
-        name = "f:printf",
-        paramNames = ["v:printf:__format"],
-        variadic = True,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:printf() end. 
 
     "f:main":
       obj.Func(
@@ -51,53 +34,22 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(21,11)), Loc(21,4)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          2: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(19,13)), expr.BinaryE(expr.VarE("v:main:a", Loc(19,13)), op.BO_LT, expr.LitE(100, Loc(19,17))), Loc(19,13)),
-            instr.CondI(expr.VarE("v:main:t.1", Loc(19,13)), Loc(13,4)),
-          ],
-
-          3: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(15,7)), [expr.LitE("""%d
-""", Loc(15,14)), expr.VarE("v:main:a", Loc(15,22))], Loc(15,7))),
-            instr.AssignI(expr.VarE("v:main:t", Loc(16,7)), expr.VarE("v:main:a", Loc(16,11)), Loc(16,7)),
-            instr.AssignI(expr.VarE("v:main:a", Loc(17,7)), expr.BinaryE(expr.VarE("v:main:t", Loc(17,11)), op.BO_ADD, expr.VarE("v:main:p", Loc(17,15))), Loc(17,7)),
-            instr.AssignI(expr.VarE("v:main:p", Loc(18,7)), expr.VarE("v:main:t", Loc(18,11)), Loc(18,7)),
-          ],
-
-          4: [
-            instr.NopI(),
-          ],
-
-          5: [
+        instrSeq = [
             instr.AssignI(expr.VarE("v:main:a", Loc(9,4)), expr.LitE(1, Loc(9,8)), Loc(9,4)),
             instr.AssignI(expr.VarE("v:main:p", Loc(10,4)), expr.LitE(0, Loc(10,8)), Loc(10,4)),
             instr.AssignI(expr.VarE("v:main:t", Loc(11,4)), expr.LitE(0, Loc(11,8)), Loc(11,4)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 4, types.TrueEdge),
-          (2, 1, types.FalseEdge),
-          (3, 2, types.UnCondEdge),
-          (4, 3, types.UnCondEdge),
-          (5, 3, types.UnCondEdge),
-          (-1, 5, types.UnCondEdge),
-        }, # bbEdges end
+            instr.LabelI("DoEntry1"),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(15,7)), [expr.LitE("""%d
+""", Loc(15,14)), expr.VarE("v:main:a", Loc(15,22))], Loc(15,7)), Loc(15,7)),
+            instr.AssignI(expr.VarE("v:main:t", Loc(16,7)), expr.VarE("v:main:a", Loc(16,11)), Loc(16,7)),
+            instr.AssignI(expr.VarE("v:main:a", Loc(17,7)), expr.BinaryE(expr.VarE("v:main:t", Loc(17,11)), op.BO_ADD, expr.VarE("v:main:p", Loc(17,15)), Loc(17,11)), Loc(17,7)),
+            instr.AssignI(expr.VarE("v:main:p", Loc(18,7)), expr.VarE("v:main:t", Loc(18,11)), Loc(18,7)),
+            instr.LabelI("DoCond1"),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(19,13)), expr.BinaryE(expr.VarE("v:main:a", Loc(19,13)), op.BO_LT, expr.LitE(100, Loc(19,17)), Loc(19,13)), Loc(19,13)),
+            instr.CondI(expr.VarE("v:main:t.1", Loc(19,13)), "DoEntry1", "DoExit1", Loc(19,13)),
+            instr.LabelI("DoExit1"),
+            instr.ReturnI(expr.LitE(0, Loc(21,11))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

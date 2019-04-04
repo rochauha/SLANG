@@ -18,10 +18,10 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.4": types.Int32,
-    "v:main:t.1": types.Int32,
-    "v:main:t.2": types.Int32,
-    "v:main:s1": types.Struct("s:T"),
     "v:main:t.3": types.Int32,
+    "v:main:t.1": types.Int32,
+    "v:main:s1": types.Struct("s:T"),
+    "v:main:t.2": types.Int32,
     "v:main:s2": types.Struct("s:T"),
   }, # end allVars dict
 
@@ -54,42 +54,21 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          3: [
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:s1", Loc(5,2)), ["x"], Loc(5,2)), expr.LitE(1, Loc(5,9)), Loc(5,2)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:s2", Loc(8,3)), ["y"], Loc(8,3)), expr.LitE(1, Loc(8,10)), Loc(8,3)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(9,7)), expr.MemberE(expr.VarE("v:main:s1", Loc(9,7)), ["x"], Loc(9,7)), Loc(9,7)),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(9,14)), expr.MemberE(expr.VarE("v:main:s2", Loc(9,14)), ["y"], Loc(9,14)), Loc(9,14)),
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(9,7)), expr.BinaryE(expr.VarE("v:main:t.2", Loc(9,7)), op.BO_SUB, expr.VarE("v:main:t.1", Loc(9,14))), Loc(9,7)),
-            instr.AssignI(expr.VarE("v:main:t.4", Loc(9,7)), expr.BinaryE(expr.VarE("v:main:t.3", Loc(9,7)), op.BO_NE, expr.LitE(0, Loc(9,22))), Loc(9,7)),
-            instr.CondI(expr.VarE("v:main:t.4", Loc(9,7)), Loc(9,3)),
-          ],
-
-          2: [
-            instr.ReturnI(expr.LitE(1, Loc(10,11)), Loc(10,4)),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(12,9)), Loc(12,2)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 0, types.UnCondEdge),
-          (3, 2, types.TrueEdge),
-          (3, 1, types.FalseEdge),
-          (-1, 3, types.UnCondEdge),
-        }, # bbEdges end
+        instrSeq = [
+            instr.AssignI(expr.MemberE("x", expr.VarE("v:main:s1", Loc(5,2)), Loc(5,2)), expr.LitE(1, Loc(5,9)), Loc(5,2)),
+            instr.AssignI(expr.MemberE("y", expr.VarE("v:main:s2", Loc(8,3)), Loc(8,3)), expr.LitE(1, Loc(8,10)), Loc(8,3)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(9,7)), expr.MemberE("x", expr.VarE("v:main:s1", Loc(9,7)), Loc(9,7)), Loc(9,7)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(9,14)), expr.MemberE("y", expr.VarE("v:main:s2", Loc(9,14)), Loc(9,14)), Loc(9,14)),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(9,7)), expr.BinaryE(expr.VarE("v:main:t.1", Loc(9,7)), op.BO_SUB, expr.VarE("v:main:t.2", Loc(9,14)), Loc(9,7)), Loc(9,7)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(9,7)), expr.BinaryE(expr.VarE("v:main:t.3", Loc(9,7)), op.BO_NE, expr.LitE(0, Loc(9,22)), Loc(9,7)), Loc(9,7)),
+            instr.CondI(expr.VarE("v:main:t.4", Loc(9,7)), "IfTrue1", "IfFalse1", Loc(9,7)),
+            instr.LabelI("IfTrue1"),
+            instr.ReturnI(expr.LitE(1, Loc(10,11))),
+            instr.GotoI("IfExit1"),
+            instr.LabelI("IfFalse1"),
+            instr.LabelI("IfExit1"),
+            instr.ReturnI(expr.LitE(0, Loc(12,9))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

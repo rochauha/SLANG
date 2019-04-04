@@ -18,13 +18,12 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.6": types.Float32,
+    "": ,
     "v:main:t.4": types.Float32,
-    "v:point_array": types.ConstSizeArray(of=types.Struct("s:point"), dim=100),
-    "v:main:t.2": types.Struct("s:point"),
     "v:main:t.5": types.Struct("s:point"),
-    "v:printf:__format": types.Ptr(to=types.Int8),
-    "v:main:t.1": types.Struct("s:point"),
     "v:main:my_point": types.Int32,
+    "v:main:t.1": types.Struct("s:point"),
+    "v:main:t.2": types.Struct("s:point"),
     "v:main:t.3": types.Struct("s:point"),
   }, # end allVars dict
 
@@ -40,22 +39,6 @@ irTUnit.TUnit(
       ),
 
 
-    "f:printf":
-      obj.Func(
-        name = "f:printf",
-        paramNames = ["v:printf:__format"],
-        variadic = True,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:printf() end. 
-
     "f:main":
       obj.Func(
         name = "f:main",
@@ -65,36 +48,20 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
+        instrSeq = [
             instr.AssignI(expr.VarE("v:main:my_point", Loc(13,4)), expr.LitE(10, Loc(13,19)), Loc(13,4)),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(15,4)), expr.ArrayE(expr.VarE("v:point_array", Loc(15,4)), [expr.VarE("v:main:my_point", Loc(15,16))], Loc(15,4)), Loc(15,4)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.1", Loc(15,4)), ["x"], Loc(15,4)), expr.LitE(12.340000, Loc(15,30)), Loc(15,4)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(16,4)), expr.ArrayE(expr.VarE("v:point_array", Loc(16,4)), [expr.VarE("v:main:my_point", Loc(16,16))], Loc(16,4)), Loc(16,4)),
-            instr.AssignI(expr.MemberE(expr.VarE("v:main:t.2", Loc(16,4)), ["y"], Loc(16,4)), expr.LitE(56.780000, Loc(16,30)), Loc(16,4)),
-            instr.AssignI(expr.VarE("v:main:t.5", Loc(18,23)), expr.ArrayE(expr.VarE("v:point_array", Loc(18,23)), [expr.VarE("v:main:my_point", Loc(18,35))], Loc(18,23)), Loc(18,23)),
-            instr.AssignI(expr.VarE("v:main:t.6", Loc(18,23)), expr.MemberE(expr.VarE("v:main:t.5", Loc(18,23)), ["x"], Loc(18,23)), Loc(18,23)),
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(18,48)), expr.ArrayE(expr.VarE("v:point_array", Loc(18,48)), [expr.VarE("v:main:my_point", Loc(18,60))], Loc(18,48)), Loc(18,48)),
-            instr.AssignI(expr.VarE("v:main:t.4", Loc(18,48)), expr.MemberE(expr.VarE("v:main:t.3", Loc(18,48)), ["y"], Loc(18,48)), Loc(18,48)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(15,4)), expr.ArrayE(expr.VarE("v:main:my_point", Loc(15,16)), expr.VarE("", Loc(15,4)), Loc(15,4)), Loc(15,4)),
+            instr.AssignI(expr.MemberE("x", expr.VarE("v:main:t.1", Loc(15,4)), Loc(15,4)), expr.LitE(12.340000, Loc(15,30)), Loc(15,4)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(16,4)), expr.ArrayE(expr.VarE("v:main:my_point", Loc(16,16)), expr.VarE("", Loc(16,4)), Loc(16,4)), Loc(16,4)),
+            instr.AssignI(expr.MemberE("y", expr.VarE("v:main:t.2", Loc(16,4)), Loc(16,4)), expr.LitE(56.780000, Loc(16,30)), Loc(16,4)),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(18,23)), expr.ArrayE(expr.VarE("v:main:my_point", Loc(18,35)), expr.VarE("", Loc(18,23)), Loc(18,23)), Loc(18,23)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(18,23)), expr.MemberE("x", expr.VarE("v:main:t.3", Loc(18,23)), Loc(18,23)), Loc(18,23)),
+            instr.AssignI(expr.VarE("v:main:t.5", Loc(18,48)), expr.ArrayE(expr.VarE("v:main:my_point", Loc(18,60)), expr.VarE("", Loc(18,48)), Loc(18,48)), Loc(18,48)),
+            instr.AssignI(expr.VarE("v:main:t.6", Loc(18,48)), expr.MemberE("y", expr.VarE("v:main:t.5", Loc(18,48)), Loc(18,48)), Loc(18,48)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(18,4)), [expr.LitE("""%f, %f
-""", Loc(18,11)), expr.VarE("v:main:t.6", Loc(18,23)), expr.VarE("v:main:t.4", Loc(18,48))], Loc(18,4))),
-            instr.ReturnI(expr.LitE(0, Loc(20,11)), Loc(20,4)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+""", Loc(18,11)), expr.VarE("v:main:t.4", Loc(18,23)), expr.VarE("v:main:t.6", Loc(18,48))], Loc(18,4)), Loc(18,4)),
+            instr.ReturnI(expr.LitE(0, Loc(20,11))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

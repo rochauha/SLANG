@@ -210,6 +210,10 @@ public:
 
     std::vector<std::string> members;
     SlangRecord *currentRecord = this;
+    llvm::errs() << "\n------------------------\n" << currentRecord->fields.size() << "\n";
+    llvm::errs() << "\n------------------------\n" << indexVector.size() << "\n";
+    llvm::errs() << "\n------------------------\n" << indexVector[0] << indexVector[1] << "\n";
+    llvm::errs().flush();
     for (auto it = indexVector.begin(); it != indexVector.end(); ++it) {
       members.push_back(currentRecord->fields[*it].name);
       if (currentRecord->fields[*it].slangRecord != nullptr) {
@@ -726,6 +730,9 @@ public:
     case Stmt::IntegerLiteralClass:
       return convertIntegerLiteral(cast<IntegerLiteral>(stmt));
 
+    case Stmt::CharacterLiteralClass:
+      return convertCharacterLiteral(cast<CharacterLiteral>(stmt));
+
     case Stmt::FloatingLiteralClass:
       return convertFloatingLiteral(cast<FloatingLiteral>(stmt));
 
@@ -1110,6 +1117,8 @@ public:
     for (auto it = stmt->child_begin();
           it != stmt->child_end();
           ++it) {
+      if (! *it) { continue; }
+
       if (isa<BreakStmt>(*it)) {
         if (lastStmtWasThisCaseStmt) {
           hasBreak = true;
@@ -1334,7 +1343,7 @@ public:
           forBodyLabel, forExitLabel, getLocationString(condition));
     } else {
       addCondInstr("expr.LitE(1)",
-                   forBodyLabel, forExitLabel, getLocationString(condition));
+                   forBodyLabel, forExitLabel, getLocationString(forStmt));
     }
 
     // for body
@@ -1358,6 +1367,19 @@ public:
     auto it = stmt->child_begin();
     return convertStmt(*it);
   }
+
+  SlangExpr convertCharacterLiteral(const CharacterLiteral *cl) const {
+    std::stringstream ss;
+    ss << "expr.LitE(" << cl->getValue();
+    ss << ", " << getLocationString(cl) << ")";
+
+    SlangExpr slangExpr;
+    slangExpr.expr = ss.str();
+    slangExpr.locStr = getLocationString(cl);
+    slangExpr.qualType = cl->getType();
+
+    return slangExpr;
+  } // convertCharacterLiteral()
 
   SlangExpr convertIntegerLiteral(const IntegerLiteral *il) const {
     std::stringstream ss;

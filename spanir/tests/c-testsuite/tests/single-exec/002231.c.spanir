@@ -34,61 +34,16 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          7: [
+        instrSeq = [
             instr.AssignI(expr.VarE("v:main:x", Loc(2,3)), expr.LitE(0, Loc(2,11)), Loc(2,3)),
-          ],
-
-          6: [
-            instr.NopI(),
-          ],
-
-          1: [
             instr.AssignI(expr.VarE("v:main:t.1", Loc(4,7)), expr.VarE("v:main:x", Loc(4,7)), Loc(4,7)),
             instr.AssignI(expr.VarE("v:main:x", Loc(4,7)), expr.BinaryE(expr.VarE("v:main:x", Loc(4,7)), op.BO_ADD, expr.LitE(1, Loc(4,7)), Loc(4,7)), Loc(4,7)),
             instr.AssignI(expr.VarE("v:main:t.2", Loc(4,13)), expr.VarE("v:main:x", Loc(4,13)), Loc(4,13)),
             instr.AssignI(expr.VarE("v:main:x", Loc(4,13)), expr.BinaryE(expr.VarE("v:main:x", Loc(4,13)), op.BO_ADD, expr.LitE(1, Loc(4,13)), Loc(4,13)), Loc(4,13)),
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(4,13)), expr.SelectE(expr.VarE("v:main:t.2", Loc(4,13)), expr.LitE(1, Loc(4,19)), expr.LitE(2, Loc(4,23)), Loc(4,13)), Loc(4,13)),
-            instr.AssignI(expr.VarE("v:main:x", Loc(4,3)), expr.SelectE(expr.VarE("v:main:t.1", Loc(4,7)), expr.VarE("v:main:t.3", Loc(4,13)), expr.LitE(2, Loc(4,27)), Loc(4,7)), Loc(4,3)),
-            instr.ReturnI(expr.VarE("v:main:x", Loc(6,10)), Loc(6,3)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          2: [
-            instr.NopI(),
-          ],
-
-          3: [
-            instr.NopI(),
-          ],
-
-          4: [
-            instr.NopI(),
-          ],
-
-          5: [
-            instr.NopI(),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 1, types.UnCondEdge),
-          (3, 2, types.UnCondEdge),
-          (4, 2, types.UnCondEdge),
-          (5, 3, types.UnCondEdge),
-          (6, 1, types.UnCondEdge),
-          (7, 5, types.UnCondEdge),
-          (-1, 7, types.UnCondEdge),
-        }, # bbEdges end
+            instr.AssignI(expr.VarE("v:main:t.3", ), expr.SelectE(expr.VarE("v:main:t.2", Loc(4,13)), expr.LitE(1, Loc(4,19)), expr.LitE(2, Loc(4,23)), Loc(4,13)), ),
+            instr.AssignI(expr.VarE("v:main:x", Loc(4,3)), expr.SelectE(expr.VarE("v:main:t.1", Loc(4,7)), expr.VarE("v:main:t.3", ), expr.LitE(2, Loc(4,27)), Loc(4,7)), Loc(4,3)),
+            instr.ReturnI(expr.VarE("v:main:x", Loc(6,10))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

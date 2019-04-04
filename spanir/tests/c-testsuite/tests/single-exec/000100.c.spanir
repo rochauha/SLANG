@@ -30,50 +30,17 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          6: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(1, Loc(12,10)), Loc(12,3)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          2: [
-            instr.NopI(),
-          ],
-
-          3: [
-            instr.NopI(),
-          ],
-
-          4: [
-            instr.ReturnI(expr.LitE(0, Loc(8,10)), Loc(8,3)),
-          ],
-
-          5: [
-            instr.ReturnI(expr.LitE(1, Loc(6,10)), Loc(6,3)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 4, types.UnCondEdge),
-          (3, 2, types.UnCondEdge),
-          (4, 0, types.UnCondEdge),
-          (5, 0, types.UnCondEdge),
-          (6, 3, types.UnCondEdge),
-          (-1, 6, types.UnCondEdge),
-        }, # bbEdges end
+        instrSeq = [
+            instr.LabelI("start", Loc(4,2)),
+            instr.GotoI("next"),
+            instr.ReturnI(expr.LitE(1, Loc(6,10))),
+            instr.LabelI("success", Loc(7,2)),
+            instr.ReturnI(expr.LitE(0, Loc(8,10))),
+            instr.LabelI("next", Loc(9,2)),
+            instr.LabelI("foo", Loc(10,2)),
+            instr.GotoI("success"),
+            instr.ReturnI(expr.LitE(1, Loc(12,10))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

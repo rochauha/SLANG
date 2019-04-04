@@ -17,225 +17,38 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:main:t.28": types.Int32,
+    "v:main:t.27": types.Int32,
+    "v:main:t.26": types.Int32,
     "v:main:t.25": types.Int32,
     "v:main:t.24": types.Int32,
-    "v:memcmp:__n": types.UInt32,
-    "v:memcmp:__s2": types.Ptr(to=types.Void),
-    "v:main:t.22": types.Ptr(to=types.Int8),
-    "v:memcpy:__n": types.UInt32,
-    "v:main:t.27": types.Int32,
-    "v:memcpy:__src": types.Ptr(to=types.Void),
-    "v:memcpy:__dest": types.Ptr(to=types.Void),
-    "v:main:t.21": types.Ptr(to=types.Int8),
-    "v:memset:__n": types.UInt32,
-    "v:main:t.26": types.Int32,
-    "v:memset:__c": types.Int32,
-    "v:memset:__s": types.Ptr(to=types.Void),
-    "v:main:t.20": types.Ptr(to=types.Int8),
-    "v:main:t.18": types.Ptr(to=types.Void),
-    "v:memcmp:__s1": types.Ptr(to=types.Void),
-    "v:main:t.2": types.Int32,
-    "v:strcpy:__src": types.Ptr(to=types.Int8),
-    "v:main:t.1": types.Int32,
-    "v:strcmp:__s1": types.Ptr(to=types.Int8),
-    "v:main:t.15": types.Int32,
-    "v:strncpy:__n": types.UInt32,
     "v:main:t.23": types.Int32,
-    "v:strlen:__s": types.Ptr(to=types.Int8),
-    "v:main:t.3": types.Int32,
-    "v:strchr:__c": types.Int32,
-    "v:main:t.19": types.Ptr(to=types.Int8),
-    "v:printf:__format": types.Ptr(to=types.Int8),
-    "v:main:t.5": types.Int32,
-    "v:strcpy:__dest": types.Ptr(to=types.Int8),
-    "v:main:a": types.ConstSizeArray(of=types.Int8, dim=10),
-    "v:strncpy:__src": types.Ptr(to=types.Int8),
-    "v:strncpy:__dest": types.Ptr(to=types.Int8),
-    "v:main:t.7": types.UInt32,
-    "v:main:t.6": types.Int32,
-    "v:strcat:__dest": types.Ptr(to=types.Int8),
+    "v:main:t.22": types.Ptr(to=types.Int8),
+    "v:main:t.21": types.Ptr(to=types.Int8),
+    "v:main:t.20": types.Ptr(to=types.Int8),
+    "v:main:t.19": types.Ptr(to=types.Void),
+    "v:main:t.18": types.Ptr(to=types.Int8),
+    "v:main:t.17": types.Ptr(to=types.Int8),
     "v:main:t.16": types.Ptr(to=types.Int8),
-    "v:strcat:__src": types.Ptr(to=types.Int8),
-    "v:main:t.11": types.Int32,
-    "v:main:t.28": types.Int32,
-    "v:strncmp:__n": types.UInt32,
-    "v:strcmp:__s2": types.Ptr(to=types.Int8),
-    "v:main:t.12": types.Int32,
+    "v:main:t.3": types.Int32,
+    "v:main:t.2": types.Int32,
+    "v:main:t.5": types.Int32,
+    "v:main:t.4": types.Int32,
+    "v:main:a": types.ConstSizeArray(of=types.Int8, size=10),
+    "v:main:t.6": types.Int32,
+    "v:main:t.1": types.Int32,
+    "v:main:t.7": types.UInt32,
     "v:main:t.8": types.Int32,
     "v:main:t.9": types.Int32,
     "v:main:t.10": types.Int32,
+    "v:main:t.11": types.Int32,
+    "v:main:t.12": types.Int32,
     "v:main:t.13": types.Int32,
     "v:main:t.14": types.Int32,
-    "v:strncmp:__s1": types.Ptr(to=types.Int8),
-    "v:strrchr:__s": types.Ptr(to=types.Int8),
-    "v:main:t.4": types.Int32,
-    "v:strchr:__s": types.Ptr(to=types.Int8),
-    "v:strncmp:__s2": types.Ptr(to=types.Int8),
-    "v:strrchr:__c": types.Int32,
-    "v:main:t.17": types.Ptr(to=types.Int8),
+    "v:main:t.15": types.Int32,
   }, # end allVars dict
 
   allObjs = {
-
-    "f:memcmp":
-      obj.Func(
-        name = "f:memcmp",
-        paramNames = ["v:memcmp:__s1", "v:memcmp:__s2", "v:memcmp:__n"],
-        variadic = False,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:memcmp() end. 
-
-    "f:memcpy":
-      obj.Func(
-        name = "f:memcpy",
-        paramNames = ["v:memcpy:__dest", "v:memcpy:__src", "v:memcpy:__n"],
-        variadic = False,
-        returnType = types.Ptr(to=types.Void),
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:memcpy() end. 
-
-    "f:strrchr":
-      obj.Func(
-        name = "f:strrchr",
-        paramNames = ["v:strrchr:__s", "v:strrchr:__c"],
-        variadic = False,
-        returnType = types.Ptr(to=types.Int8),
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:strrchr() end. 
-
-    "f:strchr":
-      obj.Func(
-        name = "f:strchr",
-        paramNames = ["v:strchr:__s", "v:strchr:__c"],
-        variadic = False,
-        returnType = types.Ptr(to=types.Int8),
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:strchr() end. 
-
-    "f:strncmp":
-      obj.Func(
-        name = "f:strncmp",
-        paramNames = ["v:strncmp:__s1", "v:strncmp:__s2", "v:strncmp:__n"],
-        variadic = False,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:strncmp() end. 
-
-    "f:memset":
-      obj.Func(
-        name = "f:memset",
-        paramNames = ["v:memset:__s", "v:memset:__c", "v:memset:__n"],
-        variadic = False,
-        returnType = types.Ptr(to=types.Void),
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:memset() end. 
-
-    "f:strcat":
-      obj.Func(
-        name = "f:strcat",
-        paramNames = ["v:strcat:__dest", "v:strcat:__src"],
-        variadic = False,
-        returnType = types.Ptr(to=types.Int8),
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:strcat() end. 
-
-    "f:strcpy":
-      obj.Func(
-        name = "f:strcpy",
-        paramNames = ["v:strcpy:__dest", "v:strcpy:__src"],
-        variadic = False,
-        returnType = types.Ptr(to=types.Int8),
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:strcpy() end. 
-
-    "f:strcmp":
-      obj.Func(
-        name = "f:strcmp",
-        paramNames = ["v:strcmp:__s1", "v:strcmp:__s2"],
-        variadic = False,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:strcmp() end. 
-
-    "f:strlen":
-      obj.Func(
-        name = "f:strlen",
-        paramNames = ["v:strlen:__s"],
-        variadic = False,
-        returnType = types.UInt32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:strlen() end. 
 
     "f:main":
       obj.Func(
@@ -246,129 +59,81 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          0: [
-            instr.NopI(),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          1: [
-            instr.CallI(expr.CallE(expr.FuncE("f:strcpy", Loc(8,4)), [expr.VarE("v:main:a", Loc(8,11)), expr.LitE("""hello""", Loc(8,14))], Loc(8,4))),
+        instrSeq = [
+            instr.CallI(expr.CallE(expr.FuncE("f:strcpy", Loc(8,4)), [expr.VarE("v:main:a", Loc(8,11)), expr.LitE("""hello""", Loc(8,14))], Loc(8,4)), Loc(8,4)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(9,4)), [expr.LitE("""%s
-""", Loc(9,11)), expr.VarE("v:main:a", Loc(9,19))], Loc(9,4))),
-            instr.CallI(expr.CallE(expr.FuncE("f:strncpy", Loc(11,4)), [expr.VarE("v:main:a", Loc(11,12)), expr.LitE("""gosh""", Loc(11,15)), expr.LitE(2, Loc(11,23))], Loc(11,4))),
+""", Loc(9,11)), expr.VarE("v:main:a", Loc(9,19))], Loc(9,4)), Loc(9,4)),
+            instr.CallI(expr.CallE(expr.FuncE("f:strncpy", Loc(11,4)), [expr.VarE("v:main:a", Loc(11,12)), expr.LitE("""gosh""", Loc(11,15)), expr.LitE(2, Loc(11,23))], Loc(11,4)), Loc(11,4)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(12,4)), [expr.LitE("""%s
-""", Loc(12,11)), expr.VarE("v:main:a", Loc(12,19))], Loc(12,4))),
+""", Loc(12,11)), expr.VarE("v:main:a", Loc(12,19))], Loc(12,4)), Loc(12,4)),
             instr.AssignI(expr.VarE("v:main:t.1", Loc(14,19)), expr.CallE(expr.FuncE("f:strcmp", Loc(14,19)), [expr.VarE("v:main:a", Loc(14,26)), expr.LitE("""apple""", Loc(14,29))], Loc(14,19)), Loc(14,19)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(14,19)), expr.BinaryE(expr.VarE("v:main:t.1", Loc(14,19)), op.BO_GT, expr.LitE(0, Loc(14,40))), Loc(14,19)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(14,19)), expr.BinaryE(expr.VarE("v:main:t.1", Loc(14,19)), op.BO_GT, expr.LitE(0, Loc(14,40)), Loc(14,19)), Loc(14,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(14,4)), [expr.LitE("""%d
-""", Loc(14,11)), expr.VarE("v:main:t.2", Loc(14,19))], Loc(14,4))),
+""", Loc(14,11)), expr.VarE("v:main:t.2", Loc(14,19))], Loc(14,4)), Loc(14,4)),
             instr.AssignI(expr.VarE("v:main:t.3", Loc(15,19)), expr.CallE(expr.FuncE("f:strcmp", Loc(15,19)), [expr.VarE("v:main:a", Loc(15,26)), expr.LitE("""goere""", Loc(15,29))], Loc(15,19)), Loc(15,19)),
-            instr.AssignI(expr.VarE("v:main:t.4", Loc(15,19)), expr.BinaryE(expr.VarE("v:main:t.3", Loc(15,19)), op.BO_GT, expr.LitE(0, Loc(15,40))), Loc(15,19)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(15,19)), expr.BinaryE(expr.VarE("v:main:t.3", Loc(15,19)), op.BO_GT, expr.LitE(0, Loc(15,40)), Loc(15,19)), Loc(15,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(15,4)), [expr.LitE("""%d
-""", Loc(15,11)), expr.VarE("v:main:t.4", Loc(15,19))], Loc(15,4))),
+""", Loc(15,11)), expr.VarE("v:main:t.4", Loc(15,19))], Loc(15,4)), Loc(15,4)),
             instr.AssignI(expr.VarE("v:main:t.5", Loc(16,19)), expr.CallE(expr.FuncE("f:strcmp", Loc(16,19)), [expr.VarE("v:main:a", Loc(16,26)), expr.LitE("""zebra""", Loc(16,29))], Loc(16,19)), Loc(16,19)),
-            instr.AssignI(expr.VarE("v:main:t.6", Loc(16,19)), expr.BinaryE(expr.VarE("v:main:t.5", Loc(16,19)), op.BO_LT, expr.LitE(0, Loc(16,40))), Loc(16,19)),
+            instr.AssignI(expr.VarE("v:main:t.6", Loc(16,19)), expr.BinaryE(expr.VarE("v:main:t.5", Loc(16,19)), op.BO_LT, expr.LitE(0, Loc(16,40)), Loc(16,19)), Loc(16,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(16,4)), [expr.LitE("""%d
-""", Loc(16,11)), expr.VarE("v:main:t.6", Loc(16,19))], Loc(16,4))),
+""", Loc(16,11)), expr.VarE("v:main:t.6", Loc(16,19))], Loc(16,4)), Loc(16,4)),
             instr.AssignI(expr.VarE("v:main:t.7", Loc(18,19)), expr.CallE(expr.FuncE("f:strlen", Loc(18,19)), [expr.VarE("v:main:a", Loc(18,26))], Loc(18,19)), Loc(18,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(18,4)), [expr.LitE("""%d
-""", Loc(18,11)), expr.VarE("v:main:t.7", Loc(18,19))], Loc(18,4))),
-            instr.CallI(expr.CallE(expr.FuncE("f:strcat", Loc(20,4)), [expr.VarE("v:main:a", Loc(20,11)), expr.LitE("""!""", Loc(20,14))], Loc(20,4))),
+""", Loc(18,11)), expr.VarE("v:main:t.7", Loc(18,19))], Loc(18,4)), Loc(18,4)),
+            instr.CallI(expr.CallE(expr.FuncE("f:strcat", Loc(20,4)), [expr.VarE("v:main:a", Loc(20,11)), expr.LitE("""!""", Loc(20,14))], Loc(20,4)), Loc(20,4)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(21,4)), [expr.LitE("""%s
-""", Loc(21,11)), expr.VarE("v:main:a", Loc(21,19))], Loc(21,4))),
+""", Loc(21,11)), expr.VarE("v:main:a", Loc(21,19))], Loc(21,4)), Loc(21,4)),
             instr.AssignI(expr.VarE("v:main:t.8", Loc(23,19)), expr.CallE(expr.FuncE("f:strncmp", Loc(23,19)), [expr.VarE("v:main:a", Loc(23,27)), expr.LitE("""apple""", Loc(23,30)), expr.LitE(2, Loc(23,39))], Loc(23,19)), Loc(23,19)),
-            instr.AssignI(expr.VarE("v:main:t.9", Loc(23,19)), expr.BinaryE(expr.VarE("v:main:t.8", Loc(23,19)), op.BO_GT, expr.LitE(0, Loc(23,44))), Loc(23,19)),
+            instr.AssignI(expr.VarE("v:main:t.9", Loc(23,19)), expr.BinaryE(expr.VarE("v:main:t.8", Loc(23,19)), op.BO_GT, expr.LitE(0, Loc(23,44)), Loc(23,19)), Loc(23,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(23,4)), [expr.LitE("""%d
-""", Loc(23,11)), expr.VarE("v:main:t.9", Loc(23,19))], Loc(23,4))),
+""", Loc(23,11)), expr.VarE("v:main:t.9", Loc(23,19))], Loc(23,4)), Loc(23,4)),
             instr.AssignI(expr.VarE("v:main:t.10", Loc(24,19)), expr.CallE(expr.FuncE("f:strncmp", Loc(24,19)), [expr.VarE("v:main:a", Loc(24,27)), expr.LitE("""goere""", Loc(24,30)), expr.LitE(2, Loc(24,39))], Loc(24,19)), Loc(24,19)),
-            instr.AssignI(expr.VarE("v:main:t.11", Loc(24,19)), expr.BinaryE(expr.VarE("v:main:t.10", Loc(24,19)), op.BO_EQ, expr.LitE(0, Loc(24,45))), Loc(24,19)),
+            instr.AssignI(expr.VarE("v:main:t.11", Loc(24,19)), expr.BinaryE(expr.VarE("v:main:t.10", Loc(24,19)), op.BO_EQ, expr.LitE(0, Loc(24,45)), Loc(24,19)), Loc(24,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(24,4)), [expr.LitE("""%d
-""", Loc(24,11)), expr.VarE("v:main:t.11", Loc(24,19))], Loc(24,4))),
+""", Loc(24,11)), expr.VarE("v:main:t.11", Loc(24,19))], Loc(24,4)), Loc(24,4)),
             instr.AssignI(expr.VarE("v:main:t.12", Loc(25,19)), expr.CallE(expr.FuncE("f:strncmp", Loc(25,19)), [expr.VarE("v:main:a", Loc(25,27)), expr.LitE("""goerg""", Loc(25,30)), expr.LitE(2, Loc(25,39))], Loc(25,19)), Loc(25,19)),
-            instr.AssignI(expr.VarE("v:main:t.13", Loc(25,19)), expr.BinaryE(expr.VarE("v:main:t.12", Loc(25,19)), op.BO_EQ, expr.LitE(0, Loc(25,45))), Loc(25,19)),
+            instr.AssignI(expr.VarE("v:main:t.13", Loc(25,19)), expr.BinaryE(expr.VarE("v:main:t.12", Loc(25,19)), op.BO_EQ, expr.LitE(0, Loc(25,45)), Loc(25,19)), Loc(25,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(25,4)), [expr.LitE("""%d
-""", Loc(25,11)), expr.VarE("v:main:t.13", Loc(25,19))], Loc(25,4))),
+""", Loc(25,11)), expr.VarE("v:main:t.13", Loc(25,19))], Loc(25,4)), Loc(25,4)),
             instr.AssignI(expr.VarE("v:main:t.14", Loc(26,19)), expr.CallE(expr.FuncE("f:strncmp", Loc(26,19)), [expr.VarE("v:main:a", Loc(26,27)), expr.LitE("""zebra""", Loc(26,30)), expr.LitE(2, Loc(26,39))], Loc(26,19)), Loc(26,19)),
-            instr.AssignI(expr.VarE("v:main:t.15", Loc(26,19)), expr.BinaryE(expr.VarE("v:main:t.14", Loc(26,19)), op.BO_LT, expr.LitE(0, Loc(26,44))), Loc(26,19)),
+            instr.AssignI(expr.VarE("v:main:t.15", Loc(26,19)), expr.BinaryE(expr.VarE("v:main:t.14", Loc(26,19)), op.BO_LT, expr.LitE(0, Loc(26,44)), Loc(26,19)), Loc(26,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(26,4)), [expr.LitE("""%d
-""", Loc(26,11)), expr.VarE("v:main:t.15", Loc(26,19))], Loc(26,4))),
-            instr.AssignI(expr.VarE("v:main:t.16", Loc(28,19)), expr.CallE(expr.FuncE("f:strchr", Loc(28,19)), [expr.VarE("v:main:a", Loc(28,26)), ERROR:convertExpr], Loc(28,19)), Loc(28,19)),
+""", Loc(26,11)), expr.VarE("v:main:t.15", Loc(26,19))], Loc(26,4)), Loc(26,4)),
+            instr.AssignI(expr.VarE("v:main:t.16", Loc(28,19)), expr.CallE(expr.FuncE("f:strchr", Loc(28,19)), [expr.VarE("v:main:a", Loc(28,26)), ], Loc(28,19)), Loc(28,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(28,4)), [expr.LitE("""%s
-""", Loc(28,11)), expr.VarE("v:main:t.16", Loc(28,19))], Loc(28,4))),
-            instr.AssignI(expr.VarE("v:main:t.17", Loc(29,19)), expr.CallE(expr.FuncE("f:strrchr", Loc(29,19)), [expr.VarE("v:main:a", Loc(29,27)), ERROR:convertExpr], Loc(29,19)), Loc(29,19)),
+""", Loc(28,11)), expr.VarE("v:main:t.16", Loc(28,19))], Loc(28,4)), Loc(28,4)),
+            instr.AssignI(expr.VarE("v:main:t.17", Loc(29,19)), expr.CallE(expr.FuncE("f:strrchr", Loc(29,19)), [expr.VarE("v:main:a", Loc(29,27)), ], Loc(29,19)), Loc(29,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(29,4)), [expr.LitE("""%s
-""", Loc(29,11)), expr.VarE("v:main:t.17", Loc(29,19))], Loc(29,4))),
-            instr.AssignI(expr.VarE("v:main:t.19", Loc(30,19)), expr.CallE(expr.FuncE("f:strrchr", Loc(30,19)), [expr.VarE("v:main:a", Loc(30,27)), ERROR:convertExpr], Loc(30,19)), Loc(30,19)),
-            instr.AssignI(expr.VarE("v:main:t.18", Loc(30,38)), expr.CastE(expr.LitE(0, Loc(30,38)), types.Ptr(to=types.Void), Loc(30,38)), Loc(30,38)),
-            instr.AssignI(expr.VarE("v:main:t.20", Loc(30,19)), expr.BinaryE(expr.VarE("v:main:t.19", Loc(30,19)), op.BO_EQ, expr.VarE("v:main:t.18", Loc(30,38))), Loc(30,19)),
+""", Loc(29,11)), expr.VarE("v:main:t.17", Loc(29,19))], Loc(29,4)), Loc(29,4)),
+            instr.AssignI(expr.VarE("v:main:t.18", Loc(30,19)), expr.CallE(expr.FuncE("f:strrchr", Loc(30,19)), [expr.VarE("v:main:a", Loc(30,27)), ], Loc(30,19)), Loc(30,19)),
+            instr.AssignI(expr.VarE("v:main:t.19", ), expr.CastE(expr.LitE(0, Loc(30,38)), types.Ptr(to=types.Void), Loc(30,38)), ),
+            instr.AssignI(expr.VarE("v:main:t.20", Loc(30,19)), expr.BinaryE(expr.VarE("v:main:t.18", Loc(30,19)), op.BO_EQ, expr.VarE("v:main:t.19", ), Loc(30,19)), Loc(30,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(30,4)), [expr.LitE("""%d
-""", Loc(30,11)), expr.VarE("v:main:t.20", Loc(30,19))], Loc(30,4))),
-            instr.AssignI(expr.VarE("v:main:t.21", Loc(32,11)), expr.UnaryE(op.UO_ADDROF, expr.ArrayE(expr.VarE("v:main:a", Loc(32,12)), [expr.LitE(1, Loc(32,14))], Loc(32,12)), Loc(32,11)), Loc(32,11)),
-            instr.CallI(expr.CallE(expr.FuncE("f:memset", Loc(32,4)), [expr.VarE("v:main:t.21", Loc(32,11)), ERROR:convertExpr, expr.LitE(4, Loc(32,23))], Loc(32,4))),
+""", Loc(30,11)), expr.VarE("v:main:t.20", Loc(30,19))], Loc(30,4)), Loc(30,4)),
+            instr.AssignI(expr.VarE("v:main:t.21", Loc(32,11)), expr.UnaryE(op.UO_ADDROF, expr.ArrayE(expr.LitE(1, Loc(32,14)), expr.VarE("v:main:a", Loc(32,12)), Loc(32,12)), Loc(32,11)), Loc(32,11)),
+            instr.CallI(expr.CallE(expr.FuncE("f:memset", Loc(32,4)), [expr.VarE("v:main:t.21", Loc(32,11)), , expr.LitE(4, Loc(32,23))], Loc(32,4)), Loc(32,4)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(33,4)), [expr.LitE("""%s
-""", Loc(33,11)), expr.VarE("v:main:a", Loc(33,19))], Loc(33,4))),
-            instr.AssignI(expr.VarE("v:main:t.22", Loc(35,11)), expr.UnaryE(op.UO_ADDROF, expr.ArrayE(expr.VarE("v:main:a", Loc(35,12)), [expr.LitE(2, Loc(35,14))], Loc(35,12)), Loc(35,11)), Loc(35,11)),
-            instr.CallI(expr.CallE(expr.FuncE("f:memcpy", Loc(35,4)), [expr.VarE("v:main:t.22", Loc(35,11)), expr.VarE("v:main:a", Loc(35,18)), expr.LitE(2, Loc(35,21))], Loc(35,4))),
+""", Loc(33,11)), expr.VarE("v:main:a", Loc(33,19))], Loc(33,4)), Loc(33,4)),
+            instr.AssignI(expr.VarE("v:main:t.22", Loc(35,11)), expr.UnaryE(op.UO_ADDROF, expr.ArrayE(expr.LitE(2, Loc(35,14)), expr.VarE("v:main:a", Loc(35,12)), Loc(35,12)), Loc(35,11)), Loc(35,11)),
+            instr.CallI(expr.CallE(expr.FuncE("f:memcpy", Loc(35,4)), [expr.VarE("v:main:t.22", Loc(35,11)), expr.VarE("v:main:a", Loc(35,18)), expr.LitE(2, Loc(35,21))], Loc(35,4)), Loc(35,4)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(36,4)), [expr.LitE("""%s
-""", Loc(36,11)), expr.VarE("v:main:a", Loc(36,19))], Loc(36,4))),
+""", Loc(36,11)), expr.VarE("v:main:a", Loc(36,19))], Loc(36,4)), Loc(36,4)),
             instr.AssignI(expr.VarE("v:main:t.23", Loc(38,19)), expr.CallE(expr.FuncE("f:memcmp", Loc(38,19)), [expr.VarE("v:main:a", Loc(38,26)), expr.LitE("""apple""", Loc(38,29)), expr.LitE(4, Loc(38,38))], Loc(38,19)), Loc(38,19)),
-            instr.AssignI(expr.VarE("v:main:t.24", Loc(38,19)), expr.BinaryE(expr.VarE("v:main:t.23", Loc(38,19)), op.BO_GT, expr.LitE(0, Loc(38,43))), Loc(38,19)),
+            instr.AssignI(expr.VarE("v:main:t.24", Loc(38,19)), expr.BinaryE(expr.VarE("v:main:t.23", Loc(38,19)), op.BO_GT, expr.LitE(0, Loc(38,43)), Loc(38,19)), Loc(38,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(38,4)), [expr.LitE("""%d
-""", Loc(38,11)), expr.VarE("v:main:t.24", Loc(38,19))], Loc(38,4))),
+""", Loc(38,11)), expr.VarE("v:main:t.24", Loc(38,19))], Loc(38,4)), Loc(38,4)),
             instr.AssignI(expr.VarE("v:main:t.25", Loc(39,19)), expr.CallE(expr.FuncE("f:memcmp", Loc(39,19)), [expr.VarE("v:main:a", Loc(39,26)), expr.LitE("""grgr""", Loc(39,29)), expr.LitE(4, Loc(39,37))], Loc(39,19)), Loc(39,19)),
-            instr.AssignI(expr.VarE("v:main:t.26", Loc(39,19)), expr.BinaryE(expr.VarE("v:main:t.25", Loc(39,19)), op.BO_EQ, expr.LitE(0, Loc(39,43))), Loc(39,19)),
+            instr.AssignI(expr.VarE("v:main:t.26", Loc(39,19)), expr.BinaryE(expr.VarE("v:main:t.25", Loc(39,19)), op.BO_EQ, expr.LitE(0, Loc(39,43)), Loc(39,19)), Loc(39,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(39,4)), [expr.LitE("""%d
-""", Loc(39,11)), expr.VarE("v:main:t.26", Loc(39,19))], Loc(39,4))),
+""", Loc(39,11)), expr.VarE("v:main:t.26", Loc(39,19))], Loc(39,4)), Loc(39,4)),
             instr.AssignI(expr.VarE("v:main:t.27", Loc(40,19)), expr.CallE(expr.FuncE("f:memcmp", Loc(40,19)), [expr.VarE("v:main:a", Loc(40,26)), expr.LitE("""zebra""", Loc(40,29)), expr.LitE(4, Loc(40,38))], Loc(40,19)), Loc(40,19)),
-            instr.AssignI(expr.VarE("v:main:t.28", Loc(40,19)), expr.BinaryE(expr.VarE("v:main:t.27", Loc(40,19)), op.BO_LT, expr.LitE(0, Loc(40,43))), Loc(40,19)),
+            instr.AssignI(expr.VarE("v:main:t.28", Loc(40,19)), expr.BinaryE(expr.VarE("v:main:t.27", Loc(40,19)), op.BO_LT, expr.LitE(0, Loc(40,43)), Loc(40,19)), Loc(40,19)),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(40,4)), [expr.LitE("""%d
-""", Loc(40,11)), expr.VarE("v:main:t.28", Loc(40,19))], Loc(40,4))),
-            instr.ReturnI(expr.LitE(0, Loc(42,11)), Loc(42,4)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (-1, 1, types.UnCondEdge),
-        }, # bbEdges end
+""", Loc(40,11)), expr.VarE("v:main:t.28", Loc(40,19))], Loc(40,4)), Loc(40,4)),
+            instr.ReturnI(expr.LitE(0, Loc(42,11))),
+        ], # instrSeq end.
       ), # f:main() end. 
-
-    "f:strncpy":
-      obj.Func(
-        name = "f:strncpy",
-        paramNames = ["v:strncpy:__dest", "v:strncpy:__src", "v:strncpy:__n"],
-        variadic = False,
-        returnType = types.Ptr(to=types.Int8),
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:strncpy() end. 
-
-    "f:printf":
-      obj.Func(
-        name = "f:printf",
-        paramNames = ["v:printf:__format"],
-        variadic = True,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:printf() end. 
 
   }, # end allObjs dict
 ) # irTUnit.TUnit() ends

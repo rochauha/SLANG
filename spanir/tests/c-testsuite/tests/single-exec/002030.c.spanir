@@ -18,29 +18,12 @@ irTUnit.TUnit(
 
   allVars = {
     "v:main:t.3": types.Int32,
-    "v:main:t.1": types.Int32,
     "v:main:t.2": types.Int32,
-    "v:printf:__format": types.Ptr(to=types.Int8),
     "v:main:res": types.Int32,
+    "v:main:t.1": types.Int32,
   }, # end allVars dict
 
   allObjs = {
-
-    "f:printf":
-      obj.Func(
-        name = "f:printf",
-        paramNames = ["v:printf:__format"],
-        variadic = True,
-        returnType = types.Int32,
-
-        # Note: -1 is always start/entry BB. (REQUIRED)
-        # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-        }, # basicBlocks end.
-
-        bbEdges= {
-        }, # bbEdges end
-      ), # f:printf() end. 
 
     "f:main":
       obj.Func(
@@ -51,61 +34,31 @@ irTUnit.TUnit(
 
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
-        basicBlocks = {
-          6: [
+        instrSeq = [
             instr.AssignI(expr.VarE("v:main:res", Loc(5,5)), expr.LitE(0, Loc(5,25)), Loc(5,5)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(7,15)), expr.UnaryE(op.UO_MINUS, expr.LitE(2147483648, Loc(7,16)), Loc(7,15)), Loc(7,15)),
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(7,9)), expr.BinaryE(expr.VarE("v:main:res", Loc(7,9)), op.BO_LT, expr.VarE("v:main:t.2", Loc(7,15))), Loc(7,9)),
-            instr.CondI(expr.VarE("v:main:t.3", Loc(7,9)), Loc(7,5)),
-          ],
-
-          1: [
-            instr.ReturnI(expr.LitE(0, Loc(18,12)), Loc(18,5)),
-          ],
-
-          -1: [
-            instr.NopI(),
-          ],
-
-          0: [
-            instr.NopI(),
-          ],
-
-          2: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(17,9)), [expr.LitE("""long long constant test ok.
-""", Loc(17,16))], Loc(17,9))),
-          ],
-
-          3: [
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(13,9)), [expr.LitE("""Error: 2147483647 < 0
-""", Loc(13,16))], Loc(13,9))),
-            instr.ReturnI(expr.LitE(2, Loc(14,16)), Loc(14,9)),
-          ],
-
-          4: [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(12,9)), expr.BinaryE(expr.LitE(2147483647, Loc(12,9)), op.BO_LT, expr.VarE("v:main:res", Loc(12,24))), Loc(12,9)),
-            instr.CondI(expr.VarE("v:main:t.1", Loc(12,9)), Loc(12,5)),
-          ],
-
-          5: [
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(7,15)), expr.UnaryE(op.UO_MINUS, expr.LitE(2147483648, Loc(7,16)), Loc(7,15)), Loc(7,15)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(7,9)), expr.BinaryE(expr.VarE("v:main:res", Loc(7,9)), op.BO_LT, expr.VarE("v:main:t.1", Loc(7,15)), Loc(7,9)), Loc(7,9)),
+            instr.CondI(expr.VarE("v:main:t.2", Loc(7,9)), "IfTrue1", "IfFalse1", Loc(7,9)),
+            instr.LabelI("IfTrue1"),
             instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(8,9)), [expr.LitE("""Error: 0 < -2147483648
-""", Loc(8,16))], Loc(8,9))),
-            instr.ReturnI(expr.LitE(1, Loc(9,16)), Loc(9,9)),
-          ],
-
-        }, # basicBlocks end.
-
-        bbEdges= {
-          (1, 0, types.UnCondEdge),
-          (2, 1, types.UnCondEdge),
-          (3, 0, types.UnCondEdge),
-          (4, 3, types.TrueEdge),
-          (4, 2, types.FalseEdge),
-          (5, 0, types.UnCondEdge),
-          (6, 5, types.TrueEdge),
-          (6, 4, types.FalseEdge),
-          (-1, 6, types.UnCondEdge),
-        }, # bbEdges end
+""", Loc(8,16))], Loc(8,9)), Loc(8,9)),
+            instr.ReturnI(expr.LitE(1, Loc(9,16))),
+            instr.GotoI("IfExit1"),
+            instr.LabelI("IfFalse1"),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(12,9)), expr.BinaryE(expr.LitE(2147483647, Loc(12,9)), op.BO_LT, expr.VarE("v:main:res", Loc(12,24)), Loc(12,9)), Loc(12,9)),
+            instr.CondI(expr.VarE("v:main:t.3", Loc(12,9)), "IfTrue2", "IfFalse2", Loc(12,9)),
+            instr.LabelI("IfTrue2"),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(13,9)), [expr.LitE("""Error: 2147483647 < 0
+""", Loc(13,16))], Loc(13,9)), Loc(13,9)),
+            instr.ReturnI(expr.LitE(2, Loc(14,16))),
+            instr.GotoI("IfExit2"),
+            instr.LabelI("IfFalse2"),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(17,9)), [expr.LitE("""long long constant test ok.
+""", Loc(17,16))], Loc(17,9)), Loc(17,9)),
+            instr.LabelI("IfExit2"),
+            instr.LabelI("IfExit1"),
+            instr.ReturnI(expr.LitE(0, Loc(18,12))),
+        ], # instrSeq end.
       ), # f:main() end. 
 
   }, # end allObjs dict

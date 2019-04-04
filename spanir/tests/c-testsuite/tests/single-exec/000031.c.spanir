@@ -13,32 +13,15 @@
 
 # An instance of span.ir.tunit.TUnit class.
 irTUnit.TUnit(
-  name = "000192.c",
+  name = "000031.c",
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:a": types.Struct("s:A"),
+    "": ,
+    "v:main:x": types.Int32,
   }, # end allVars dict
 
   allObjs = {
-    "s:B":
-      types.Struct(
-        name = "s:B",
-        fields = [
-          ("a", types.Ptr(to=types.Struct("s:A"))),
-        ],
-        loc = Loc(3,1),
-      ),
-
-    "s:A":
-      types.Struct(
-        name = "s:A",
-        fields = [
-          ("b", types.Ptr(to=types.Struct("s:B"))),
-        ],
-        loc = Loc(7,1),
-      ),
-
 
     "f:main":
       obj.Func(
@@ -50,6 +33,16 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         instrSeq = [
+            instr.AssignI(expr.VarE("v:main:x", Loc(3,3)), expr.LitE(10, Loc(3,11)), Loc(3,3)),
+            instr.LabelI("label", Loc(5,1)),
+            instr.CondI(expr.VarE("v:main:x", Loc(6,7)), "IfTrue1", "IfFalse1", Loc(6,7)),
+            instr.LabelI("IfTrue1"),
+            instr.AssignI(expr.VarE("v:main:x", Loc(7,5)), expr.LitE(20, Loc(7,9)), Loc(7,5)),
+            instr.GotoI("IfExit1"),
+            instr.LabelI("IfFalse1"),
+            instr.AssignI(expr.VarE("v:main:x", Loc(9,5)), expr.VarE("", Loc(9,9)), Loc(9,5)),
+            instr.LabelI("IfExit1"),
+            instr.ReturnI(expr.VarE("v:main:x", Loc(12,10))),
         ], # instrSeq end.
       ), # f:main() end. 
 
