@@ -244,33 +244,7 @@ public:
   std::string fileName; // the current translation unit file name
   SlangFunc *currFunc;  // the current function being translated
 
-  uint64_t normalLabelCount;
-  uint64_t trueLabelCount;
-  uint64_t falseLabelCount;
-  uint64_t startConditionLabelCount;
-  uint64_t endConditionLabelCount;
   uint32_t labelCount;
-
-  uint32_t genNextLabelCount() {
-    labelCount += 1;
-    return labelCount;
-  }
-
-  std::string genNextLabelCountStr() {
-    std::stringstream ss;
-    ss << genNextLabelCount();
-    return ss.str();
-  }
-
-  uint64_t nextNormalLabelCount() { return ++normalLabelCount; }
-
-  uint64_t nextTrueLabelCount() { return ++trueLabelCount; }
-
-  uint64_t nextFalseLabelCount() { return ++falseLabelCount; }
-
-  uint64_t nextStartConditionLabelCount() { return ++startConditionLabelCount; }
-
-  uint64_t nextEndConditionLabelCount() { return ++endConditionLabelCount; }
 
   // to uniquely name anonymous records (see getNextRecordId())
   int32_t recordId;
@@ -288,11 +262,32 @@ public:
   // tracks variables that become dirty in an expression
   std::unordered_map<uint64_t, SlangExpr> dirtyVars;
 
+  // vector of start and exit label of constructs which can contain break and continue stmts.
+  std::vector<std::pair<std::string, std::string>> entryExitLabels;
+
+  void pushLabels(std::string entry, std::string exit) {
+    auto labelPair = std::make_pair(entry, exit);
+    entryExitLabels.push_back(labelPair);
+  }
+
+  void popLabel() {
+    entryExitLabels.pop_back();
+  }
+
+  std::pair<std::string, std::string>& peekLabel() {
+    return entryExitLabels[entryExitLabels.size()-1];
+  }
+
+  std::string peekEntryLabel() {
+    return entryExitLabels[entryExitLabels.size()-1].first;
+  }
+
+  std::string peekExitLabel() {
+    return entryExitLabels[entryExitLabels.size()-1].second;
+  }
+
   SlangTranslationUnit()
       : fileName{}, currFunc{nullptr}, recordId{0}, varMap{}, varNameMap{}, funcMap{}, dirtyVars{} {
-    trueLabelCount = 0;
-    falseLabelCount = 0;
-    endConditionLabelCount = 0;
   }
 
   // clear the buffer for the next function.
@@ -301,6 +296,17 @@ public:
     dirtyVars.clear();
     varNameMap.clear();
   } // clear()
+
+  uint32_t genNextLabelCount() {
+    labelCount += 1;
+    return labelCount;
+  }
+
+  std::string genNextLabelCountStr() {
+    std::stringstream ss;
+    ss << genNextLabelCount();
+    return ss.str();
+  }
 
   void addStmt(std::string spanStmt) { currFunc->spanStmts.push_back(spanStmt); }
 
@@ -652,14 +658,20 @@ public:
   SlangExpr convertStmt(const Stmt *stmt) const {
     SlangExpr slangExpr;
 
-    SLANG_DEBUG("ConvertingStmt : " << stmt->getStmtClassName() << "\n")
-    stmt->dump();
-
     if (!stmt) {
       return slangExpr;
     }
 
+    SLANG_DEBUG("ConvertingStmt : " << stmt->getStmtClassName() << "\n")
+    stmt->dump();
+
     switch (stmt->getStmtClass()) {
+    case Stmt::BreakStmtClass:
+      return convertBreakStmt(cast<BreakStmt>(stmt));
+
+    case Stmt::ContinueStmtClass:
+      return convertContinueStmt(cast<ContinueStmt>(stmt));
+
     case Stmt::LabelStmtClass:
       return convertLabel(cast<LabelStmt>(stmt));
 
@@ -708,12 +720,224 @@ public:
     case Stmt::ReturnStmtClass:
       return convertReturnStmt(cast<ReturnStmt>(stmt));
 
+    case Stmt::SwitchStmtClass:
+      return convertSwitchStmt(cast<SwitchStmt>(stmt));
+
+    case Stmt::GotoStmtClass:
+      return convertGotoStmt(cast<GotoStmt>(stmt));
+
     default:
       SLANG_ERROR("Unhandled_Stmt: " << stmt->getStmtClassName())
     }
 
     return slangExpr;
   } // convertStmt()
+
+  SlangExpr convertGotoStmt(const GotoStmt *gotoStmt) const {
+    std::string label = gotoStmt->getLabel()->getNameAsString();
+    addGotoInstr(label);
+    return SlangExpr{};
+  } // convertGotoStmt()
+
+  SlangExpr convertBreakStmt(const BreakStmt *breakStmt) const {
+    addGotoInstr(stu.peekExitLabel());
+    return SlangExpr{};
+  }
+
+  SlangExpr convertContinueStmt(const ContinueStmt *continueStmt) const {
+    addGotoInstr(stu.peekEntryLabel());
+    return SlangExpr{};
+  }
+
+  SlangExpr convertSwitchStmt(const SwitchStmt *switchStmt) const {
+    std::string id = stu.genNextLabelCountStr();
+    std::string switchExitLabel = "SwitchExit" + id;
+    std::string caseCondLabel = "CaseCond" + id + "-";
+    std::string caseBodyLabel = "CaseBody" + id + "-";
+    std::string defaultLabel = "Default" + id;
+    uint32_t caseCounter = 0;
+
+    stu.pushLabels(switchExitLabel, switchExitLabel);
+
+    std::vector<const Stmt*> caseStmts;
+    std::vector<const Stmt*> defaultStmt;
+
+    const Expr *cond = switchStmt->getCond();
+    SlangExpr switchCond = convertToTmp(convertStmt(cond));
+
+    // Get all case statements inside switch.
+    if (switchStmt->getBody()) {
+      switchStmt->getBody()->dump(); // delit
+      getCaseStmts(caseStmts, switchStmt->getBody());
+      getDefaultStmt(defaultStmt, switchStmt->getBody());
+
+    } else {
+      for (auto it = switchStmt->child_begin(); it != switchStmt->child_end(); ++it) {
+        if (isa<CaseStmt>(*it)) {
+          getCaseStmts(caseStmts, (*it));
+          getDefaultStmt(defaultStmt, (*it));
+        }
+      }
+    }
+
+    std::stringstream ss;
+    std::string label;
+    std::string nextLabel;
+    uint32_t totalCaseStmts = caseStmts.size();
+    uint32_t currIndex = 0;
+    for (const Stmt *stmt: caseStmts) {
+      currIndex += 1;
+      const CaseStmt *caseStmt = cast<CaseStmt>(stmt);
+      ss << caseCondLabel << caseCounter;
+      label = ss.str();
+      ss.str("");
+      addLabelInstr(label);
+
+      const Stmt *cond = *(caseStmt->child_begin());
+      llvm::errs() << "CASE-CASE-CASE\n"; cond->dump();
+      SlangExpr caseCond = convertToTmp(convertStmt(cond));
+
+      ss << caseBodyLabel << caseCounter;
+      label = ss.str();
+      ss.str("");
+
+      ss << caseCondLabel << (caseCounter+1);
+      nextLabel = ss.str();
+      ss.str("");
+
+      SlangExpr eqExpr = convertToTmp(createBinaryExpr(switchCond,
+          "op.BO_EQ", caseCond, getLocationString(caseStmt)));
+
+      if (currIndex != totalCaseStmts) {
+        addCondInstr(eqExpr.expr, label, nextLabel, getLocationString(caseStmt));
+      } else { // when no match, jump to default label when the case is the last one
+        addCondInstr(eqExpr.expr, label, defaultLabel, getLocationString(caseStmt));
+      }
+
+      addLabelInstr(label);
+      for (auto it = caseStmt->child_begin();
+            it != caseStmt->child_end();
+            ++it) {
+        convertStmt(*it);
+      }
+
+      if(caseHasTopLevelBreak(caseStmt)) {
+        addGotoInstr(switchExitLabel);
+      }
+
+      caseCounter += 1;
+    }
+
+    // add the last spurious case label for correctness
+    addLabelInstr(nextLabel);
+
+    // add the default case
+    addLabelInstr(defaultLabel);
+    if (!defaultStmt.empty()) {
+      for (auto it = defaultStmt[0]->child_begin();
+      it != defaultStmt[0]->child_end();
+      ++it) {
+        convertStmt(*it);
+      }
+    }
+
+    addLabelInstr(switchExitLabel);
+
+    stu.popLabel();
+    return SlangExpr{};
+  } // convertSwitchStmt()
+
+  // many times BreakStmt is a sibling of CaseStmt
+  // this function detects that
+  bool caseHasTopLevelBreak(const CaseStmt *caseStmt) const {
+    const auto &parents = FD->getASTContext().getParents(*caseStmt);
+
+    const Stmt *stmt = parents[0].get<Stmt>();
+    bool lastStmtWasThisCaseStmt = false;
+    bool hasBreak = false;
+
+    for (auto it = stmt->child_begin();
+          it != stmt->child_end();
+          ++it) {
+      if (isa<BreakStmt>(*it)) {
+        if (lastStmtWasThisCaseStmt) {
+          hasBreak = true;
+        }
+        break;
+      }
+
+      if (lastStmtWasThisCaseStmt) {
+        lastStmtWasThisCaseStmt = false;
+      }
+      if ((*it) == caseStmt) {
+        lastStmtWasThisCaseStmt = true;
+      }
+    }
+
+    return hasBreak;
+  }
+
+  // get all case statements recursively (case stmts can be hierarchical)
+  void getCaseStmts(std::vector<const Stmt*>& caseStmts, const Stmt *stmt) const {
+    if (! stmt) return;
+
+    if (isa<CaseStmt>(stmt)) {
+      auto caseStmt = cast<CaseStmt>(stmt);
+      caseStmts.push_back(stmt);
+      for (auto it = caseStmt->child_begin(); it != caseStmt->child_end(); ++it) {
+        if ((*it) && isa<CaseStmt>(*it)) {
+          getCaseStmts(caseStmts, (*it));
+        }
+      }
+
+    } else if (isa<CompoundStmt>(stmt)) {
+      const CompoundStmt *compoundStmt = cast<CompoundStmt>(stmt);
+      for (auto it = compoundStmt->body_begin(); it != compoundStmt->body_end(); ++it) {
+        getCaseStmts(caseStmts, (*it));
+      }
+    } else if (isa<SwitchStmt>(stmt)) {
+      // do nothing, as it will be handled separately
+
+    } else {
+      if (stmt->child_begin() != stmt->child_end()) {
+        for (auto it = stmt->child_begin(); it != stmt->child_end(); ++it) {
+          getCaseStmts(caseStmts, (*it));
+        }
+      }
+    }
+  }
+
+  // get the default stmt if present
+  void getDefaultStmt(std::vector<const Stmt*>& defaultStmt, const Stmt *stmt) const {
+    if (! stmt) return;
+
+    if (isa<DefaultStmt>(stmt)) {
+      defaultStmt.push_back(stmt);
+
+    } else if (isa<CaseStmt>(stmt)) {
+      auto caseStmt = cast<CaseStmt>(stmt);
+      for (auto it = caseStmt->child_begin(); it != caseStmt->child_end(); ++it) {
+        if ((*it) && isa<CaseStmt>(*it)) {
+          getDefaultStmt(defaultStmt, (*it));
+        }
+      }
+
+    } else if (isa<CompoundStmt>(stmt)) {
+      const CompoundStmt *compoundStmt = cast<CompoundStmt>(stmt);
+      for (auto it = compoundStmt->body_begin(); it != compoundStmt->body_end(); ++it) {
+        getDefaultStmt(defaultStmt, (*it));
+      }
+    } else if (isa<SwitchStmt>(stmt)) {
+      // do nothing, as it will be handled separately
+    } else {
+      if (stmt->child_begin() != stmt->child_end()) {
+        for (auto it = stmt->child_begin(); it != stmt->child_end(); ++it) {
+          getDefaultStmt(defaultStmt, (*it));
+        }
+      }
+    }
+  }
+
 
   SlangExpr convertReturnStmt(const ReturnStmt *returnStmt) const {
     const Expr *retVal = returnStmt->getRetValue();
@@ -784,6 +1008,8 @@ public:
     std::string whileBodyLabel = "WhileBody" + id;
     std::string whileExitLabel = "WhileExit" + id;
 
+    stu.pushLabels(whileCondLabel, whileExitLabel);
+
     addLabelInstr(whileCondLabel);
 
     const Stmt *condition = whileStmt->getCond();
@@ -803,27 +1029,33 @@ public:
 
     addLabelInstr(whileExitLabel);
 
+    stu.popLabel();
     return SlangExpr{}; // return empty expression
   } // convertWhileStmt()
 
   SlangExpr convertDoStmt(const DoStmt *doStmt) const {
     std::string id = stu.genNextLabelCountStr();
     std::string doEntry = "DoEntry" + id;
+    std::string doCond = "DoCond" + id;
     std::string doExit = "DoExit" + id;
 
-    addLabelInstr(doEntry);
+    stu.pushLabels(doCond, doExit);
 
+    // do body
+    addLabelInstr(doEntry);
     const Stmt *body = doStmt->getBody();
     if (body) { convertStmt(body); }
 
+    // while condition
+    addLabelInstr(doCond);
     const Stmt *condition = doStmt->getCond();
     SlangExpr conditionExpr = convertToTmp(convertStmt(condition));
-
     addCondInstr(conditionExpr.expr,
         doEntry, doExit, getLocationString(condition));
 
     addLabelInstr(doExit);
 
+    stu.popLabel();
     return SlangExpr{}; // return empty expression
   } // convertDoStmt()
 
@@ -832,6 +1064,8 @@ public:
     std::string forCondLabel = "ForCond" + id;
     std::string forBodyLabel = "ForBody" + id;
     std::string forExitLabel = "ForExit" + id;
+
+    stu.pushLabels(forCondLabel, forExitLabel);
 
     // for init
     const Stmt *init = forStmt->getInit();
@@ -861,6 +1095,7 @@ public:
     addGotoInstr(forCondLabel); // jump to for cond
     addLabelInstr(forExitLabel); // for exit
 
+    stu.popLabel();
     return SlangExpr{}; // return empty expression
   } // convertForStmt()
 
@@ -1613,20 +1848,20 @@ public:
     return qt;
   }
 
-  void addGotoInstr(std::string& label) const {
+  void addGotoInstr(std::string label) const {
     std::stringstream ss;
     ss << "instr.GotoI(\"" << label << "\")";
     stu.addStmt(ss.str());
   }
 
-  void addLabelInstr(std::string& label) const {
+  void addLabelInstr(std::string label) const {
     std::stringstream ss;
     ss << "instr.LabelI(\"" << label << "\")";
     stu.addStmt(ss.str());
   }
 
-  void addCondInstr(std::string& expr,
-      std::string& trueLabel, std::string& falseLabel, std::string locStr) const {
+  void addCondInstr(std::string expr,
+      std::string trueLabel, std::string falseLabel, std::string locStr) const {
     std::stringstream ss;
     ss << "instr.CondI(" << expr;
     ss << ", \"" << trueLabel << "\"";
