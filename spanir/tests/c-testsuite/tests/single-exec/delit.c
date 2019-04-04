@@ -10,13 +10,21 @@ int sum(int a, int b) {
 }
 
 int main() {
-  int x, y;
-  x = 10;
-
-  y = 1 ,2, 3, ++x, 5;
-
-  return x + y;
-
+   int y = 10;
+   int x = y && y || y;
+   int z = y ? x : y;
+//  -------
+//  int arr[][3] = {{1,2,7},{3,4},{5}};
+//  struct node n = {1, {2}};
+//  return arr[2][0];
+//  ---------
+//  int x, y;
+//  x = 10;
+//
+//  y = 1 ,2, 3, ++x, 5;
+//
+//  return x + y;
+//  ----------------
 //  sum(10, 20);
 //  ---------
 //  int arr[2][3];

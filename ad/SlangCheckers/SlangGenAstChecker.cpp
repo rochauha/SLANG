@@ -149,11 +149,14 @@ public:
   }
 }; // class SlangFunc
 
+class SlangRecord;
+
 class SlangRecordField {
 public:
   bool anonymous;
   std::string name;
   std::string typeStr;
+  SlangRecord *slangRecord;
   QualType type;
 
   SlangRecordField() : anonymous{false}, name{""}, typeStr{""}, type{QualType()} {}
@@ -201,6 +204,30 @@ public:
   }
 
   std::vector<SlangRecordField> getFields() const { return fields; }
+
+  std::string genMemberExpr(std::vector<uint32_t> indexVector) {
+    std::stringstream ss;
+
+    std::vector<std::string> members;
+    SlangRecord *currentRecord = this;
+    for (auto it = indexVector.begin(); it != indexVector.end(); ++it) {
+      members.push_back(currentRecord->fields[*it].name);
+      if (currentRecord->fields[*it].slangRecord != nullptr) {
+        // means its a field of type record
+        currentRecord = currentRecord->fields[*it].slangRecord;
+      }
+    }
+
+    std::string prefix = "";
+    for (auto it = members.end()-1; it != members.begin()-1; --it) {
+      ss << prefix << "expr.MemberE(\"" << *it << "\"";
+      if (prefix == "") {
+        prefix = ", ";
+      }
+    }
+
+    return ss.str();
+  }
 
   std::string toString() {
     std::stringstream ss;
@@ -576,6 +603,10 @@ public:
 
       if (varDecl) {
         varName = valueDecl->getNameAsString();
+
+        slangVar.typeStr = convertClangType(valueDecl->getType());
+        SLANG_DEBUG("NEW_VAR: " << slangVar.convertToString())
+
         if (varName == "") {
           // used only to name anonymous function parameters
           varName = "p." + Util::getNextUniqueIdStr();
@@ -591,26 +622,31 @@ public:
           SLANG_ERROR("Unknown variable storage.")
         }
 
+        stu.addVar(slangVar.id, slangVar);
+
         // check if it has a initialization body
         if (varDecl->hasInit()) {
           // yes it has, so initialize it
-          SlangExpr slangExpr = convertStmt(varDecl->getInit());
-          std::string locStr = getLocationString(valueDecl);
-          std::stringstream ss;
-          ss << "instr.AssignI(";
-          ss << "expr.VarE(\"" << slangVar.name << "\"";
-          ss << ", " << locStr << ")"; // close expr.VarE(...
-          ss << ", " << slangExpr.expr;
-          ss << ", " << locStr << ")"; // close instr.AssignI(...
-          stu.addStmt(ss.str());
+          if (varDecl->getInit()->getStmtClass() == Stmt::InitListExprClass) {
+            std::vector<uint32_t> indexVector;
+            convertInitListExpr(slangVar, cast<InitListExpr>(varDecl->getInit()),
+                varDecl, indexVector);
+
+          } else {
+            SlangExpr slangExpr = convertStmt(varDecl->getInit());
+            std::string locStr = getLocationString(valueDecl);
+            std::stringstream ss;
+            ss << "instr.AssignI(";
+            ss << "expr.VarE(\"" << slangVar.name << "\"";
+            ss << ", " << locStr << ")"; // close expr.VarE(...
+            ss << ", " << slangExpr.expr;
+            ss << ", " << locStr << ")"; // close instr.AssignI(...
+            stu.addStmt(ss.str());
+          }
         }
       } else {
         SLANG_ERROR("ValueDecl not a VarDecl!")
       }
-
-      slangVar.typeStr = convertClangType(valueDecl->getType());
-      stu.addVar(slangVar.id, slangVar);
-      SLANG_DEBUG("NEW_VAR: " << slangVar.convertToString())
 
     } else {
       SLANG_DEBUG("SEEN_VAR: " << stu.getVar(varAddr).convertToString())
@@ -618,7 +654,6 @@ public:
   } // handleVariable()
 
   void handleDeclStmt(const DeclStmt *declStmt) const {
-    // assumes there is only single decl inside (the likely case).
     stu.setLastDeclStmtTo(declStmt);
     SLANG_DEBUG("Set last DeclStmt to DeclStmt at " << (uint64_t)(declStmt));
 
@@ -727,6 +762,89 @@ public:
 
     return slangExpr;
   } // convertStmt()
+
+  SlangExpr convertInitListExpr(SlangVar& slangVar, const InitListExpr *initListExpr,
+      const VarDecl *varDecl, std::vector<uint32_t>& indexVector) const {
+    uint32_t index = 0;
+    for (auto it = initListExpr->begin(); it != initListExpr->end(); ++it) {
+      const Stmt *stmt = *it;
+      if (stmt->getStmtClass() == Stmt::InitListExprClass) {
+        indexVector.push_back(index);
+        convertInitListExpr(slangVar, cast<InitListExpr>(stmt), varDecl, indexVector);
+        indexVector.pop_back();
+      } else {
+        SlangExpr rhs = convertToTmp(convertStmt(stmt));
+
+        indexVector.push_back(index);
+        SlangExpr lhs = genInitLhsExpr(slangVar, varDecl, indexVector);
+        indexVector.pop_back();
+
+        addAssignInstr(lhs, rhs, getLocationString(stmt));
+      }
+      index += 1;
+    }
+
+    return SlangExpr{};
+  } // convertInitListExpr()
+
+  // used to generate lhs (lvalue) for initializer lists like
+  // int arr[][2] = {{1, 2}, {3, 4}, {5, 6}}; // for each element
+  SlangExpr genInitLhsExpr(SlangVar& slangVar,
+      const VarDecl *varDecl, std::vector<uint32_t>& indexVector) const {
+    SlangExpr slangExpr;
+    std::stringstream ss;
+
+    std::string prefix = "";
+    if (varDecl->getType()->isArrayType()) {
+      for (auto it = indexVector.end()-1; it != indexVector.begin()-1; --it) {
+        ss << prefix << "expr.ArrayE(" << *it;
+        if (prefix == "") {
+          prefix = ", ";
+        }
+      }
+
+      ss << ", expr.VarE(\"" << slangVar.name << "\"";
+      ss << ", " << getLocationString(varDecl) << ")";
+
+      for (auto it = indexVector.begin(); it != indexVector.end(); ++it) {
+        ss << ", " << getLocationString(varDecl) << ")";
+      }
+
+      slangExpr.expr = ss.str();
+      slangExpr.compound = true;
+      slangExpr.qualType = varDecl->getType();
+      slangExpr.locStr = getLocationString(varDecl);
+    } else {
+      // must be a record type
+      auto type = varDecl->getType();
+      const RecordDecl *recordDecl;
+
+      if (type->isStructureType()) {
+        recordDecl = type->getAsStructureType()->getDecl();
+      } else {
+        // must be a union then
+        recordDecl = type->getAsUnionType()->getDecl();
+      }
+
+      std::string memberListStr =
+          stu.getRecord((uint64_t)recordDecl).genMemberExpr(indexVector);
+
+      ss << memberListStr;
+      ss << ", expr.VarE(\"" << slangVar.name << "\"";
+      ss << ", " << getLocationString(varDecl) << ")";
+
+      for (auto it = indexVector.begin(); it != indexVector.end(); ++it) {
+        ss << ", " << getLocationString(varDecl) << ")";
+      }
+
+      slangExpr.expr = ss.str();
+      slangExpr.compound = true;
+      slangExpr.qualType = varDecl->getType();
+      slangExpr.locStr = getLocationString(varDecl);
+    }
+
+    return slangExpr;
+  } // genInitLhsExpr()
 
   // guaranteed to be a comma operator
   SlangExpr convertBinaryCommaOp(const BinaryOperator *binOp) const {
@@ -1214,6 +1332,9 @@ public:
 
       addCondInstr(conditionExpr.expr,
           forBodyLabel, forExitLabel, getLocationString(condition));
+    } else {
+      addCondInstr("expr.LitE(1)",
+                   forBodyLabel, forExitLabel, getLocationString(condition));
     }
 
     // for body
@@ -1570,6 +1691,9 @@ public:
     case BO_And: op = "op.BO_BIT_AND"; break;
     case BO_Xor: op = "op.BO_BIT_XOR"; break;
 
+    case BO_ShlAssign: op = "op.BO_LSHIFT"; break;
+    case BO_ShrAssign: op = "op.BO_RSHIFT"; break;
+
     case BO_Comma: return convertBinaryCommaOp(binOp);
 
     default: op = "ERROR:binOp"; break;
@@ -1733,10 +1857,13 @@ public:
       ss << ")";
 
     } else if (type->isRecordType()) {
+      SlangRecord *getBackSlangRecord;
       if (type->isStructureType()) {
-        return convertClangRecordType(qt.getTypePtr()->getAsStructureType()->getDecl());
+        return convertClangRecordType(qt.getTypePtr()->getAsStructureType()->getDecl(),
+            getBackSlangRecord);
       } else if (type->isUnionType()) {
-        return convertClangRecordType(qt.getTypePtr()->getAsUnionType()->getDecl());
+        return convertClangRecordType(qt.getTypePtr()->getAsUnionType()->getDecl(),
+            getBackSlangRecord);
       } else {
         ss << "ERROR:RecordType";
       }
@@ -1792,16 +1919,18 @@ public:
     return ss.str();
   } // convertClangBuiltinType()
 
-  std::string convertClangRecordType(const RecordDecl *recordDecl) const {
+  std::string convertClangRecordType(const RecordDecl *recordDecl,
+      SlangRecord *&returnSlangRecord) const {
     // a hack1 for anonymous decls (it works!) see test 000193.c and its AST!!
     static const RecordDecl *lastAnonymousRecordDecl = nullptr;
 
     if (recordDecl == nullptr) {
       // default to the last anonymous record decl
-      return convertClangRecordType(lastAnonymousRecordDecl);
+      return convertClangRecordType(lastAnonymousRecordDecl, returnSlangRecord);
     }
 
     if (stu.isRecordPresent((uint64_t)recordDecl)) {
+      returnSlangRecord = &stu.getRecord((uint64_t)recordDecl); // return pointer back
       return stu.getRecord((uint64_t)recordDecl).toShortString();
     }
 
@@ -1828,13 +1957,15 @@ public:
 
     stu.addRecord((uint64_t)recordDecl, slangRecord);                  // IMPORTANT
     SlangRecord &newSlangRecord = stu.getRecord((uint64_t)recordDecl); // IMPORTANT
+    returnSlangRecord = &newSlangRecord; // IMPORTANT
 
     SlangRecordField slangRecordField;
 
+    SlangRecord *getBackSlangRecord;
     for (auto it = recordDecl->decls_begin(); it != recordDecl->decls_end(); ++it) {
       (*it)->dump();
       if (isa<RecordDecl>(*it)) {
-        convertClangRecordType(cast<RecordDecl>(*it));
+        convertClangRecordType(cast<RecordDecl>(*it), getBackSlangRecord);
       } else if (isa<FieldDecl>(*it)) {
         const FieldDecl *fieldDecl = cast<FieldDecl>(*it);
 
@@ -1850,9 +1981,22 @@ public:
 
         slangRecordField.type = fieldDecl->getType();
         if (slangRecordField.anonymous) {
-          auto slangVar = SlangVar((uint64_t)fieldDecl, slangRecordField.name);
-          stu.addVar((uint64_t)fieldDecl, slangVar);
-          slangRecordField.typeStr = convertClangRecordType(nullptr);
+          auto slangVar = SlangVar((uint64_t) fieldDecl, slangRecordField.name);
+          stu.addVar((uint64_t) fieldDecl, slangVar);
+          slangRecordField.typeStr = convertClangRecordType(nullptr,
+              slangRecordField.slangRecord);
+
+        } else if (fieldDecl->getType()->isRecordType()) {
+          auto type = fieldDecl->getType();
+          if (type->isStructureType()) {
+            slangRecordField.typeStr =
+                convertClangRecordType(type->getAsStructureType()->getDecl(),
+                   slangRecordField.slangRecord);
+          } else if (type->isUnionType()) {
+            slangRecordField.typeStr =
+                convertClangRecordType(type->getAsUnionType()->getDecl(),
+                    slangRecordField.slangRecord);
+          }
         } else {
           slangRecordField.typeStr = convertClangType(slangRecordField.type);
         }
