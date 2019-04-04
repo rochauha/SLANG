@@ -362,24 +362,6 @@ public:
     return ss.str();
   }
 
-  // BOUND START: dirtyVars_logic
-
-  void setDirtyVar(uint64_t varId, SlangExpr slangExpr) {
-    // Clear the value for varId to an empty SlangExpr.
-    // This forces the creation of a new tmp var,
-    // whenever getTmpVarForDirtyVar() is called.
-    dirtyVars[varId] = slangExpr;
-  }
-
-  // If this function is called dirtyVar dict should already have the entry.
-  SlangExpr getTmpVarForDirtyVar(uint64_t varId) { return dirtyVars[varId]; }
-
-  bool isDirtyVar(uint64_t varId) { return !(dirtyVars.find(varId) == dirtyVars.end()); }
-
-  void clearDirtyVars() { dirtyVars.clear(); }
-
-  // BOUND END  : dirtyVars_logic
-
   std::string convertFuncName(std::string funcName) {
     std::stringstream ss;
     ss << FUNC_NAME_PREFIX << funcName;
@@ -658,9 +640,7 @@ public:
   SlangExpr convertStmt(const Stmt *stmt) const {
     SlangExpr slangExpr;
 
-    if (!stmt) {
-      return slangExpr;
-    }
+    if (!stmt) { return slangExpr; }
 
     SLANG_DEBUG("ConvertingStmt : " << stmt->getStmtClassName() << "\n")
     stmt->dump();
@@ -695,6 +675,9 @@ public:
 
     case Stmt::BinaryOperatorClass:
       return convertBinaryOperator(cast<BinaryOperator>(stmt));
+
+    case Stmt::ParenExprClass:
+      return convertParenExpr(cast<ParenExpr>(stmt));
 
     case Stmt::CompoundStmtClass:
       return convertCompoundStmt(cast<CompoundStmt>(stmt));
@@ -821,7 +804,7 @@ public:
         convertStmt(*it);
       }
 
-      if(caseHasTopLevelBreak(caseStmt)) {
+      if(caseStmtHasSiblingBreak(caseStmt)) {
         addGotoInstr(switchExitLabel);
       }
 
@@ -849,7 +832,7 @@ public:
 
   // many times BreakStmt is a sibling of CaseStmt
   // this function detects that
-  bool caseHasTopLevelBreak(const CaseStmt *caseStmt) const {
+  bool caseStmtHasSiblingBreak(const CaseStmt *caseStmt) const {
     const auto &parents = FD->getASTContext().getParents(*caseStmt);
 
     const Stmt *stmt = parents[0].get<Stmt>();
@@ -875,7 +858,7 @@ public:
     }
 
     return hasBreak;
-  }
+  } // caseStmtHasSiblingBreak()
 
   // get all case statements recursively (case stmts can be hierarchical)
   void getCaseStmts(std::vector<const Stmt*>& caseStmts, const Stmt *stmt) const {
@@ -1329,12 +1312,80 @@ public:
     return tmpVar;
   } // convertLogicalOp()
 
+  SlangExpr convertUnaryIncDecOp(const UnaryOperator *unOp) const {
+    auto it = unOp->child_begin();
+    SlangExpr exprArg = convertStmt(*it);
+
+    std::string op;
+    switch(unOp->getOpcode()) {
+      case UO_PreInc:
+      case UO_PostInc: op = "op.BO_ADD"; break;
+      case UO_PostDec:
+      case UO_PreDec: op = "op.BO_SUB"; break;
+      default:  break;
+    }
+
+    SlangExpr litOne;
+    litOne.expr = "expr.LitE(1, " + getLocationString(unOp) + ")";
+    litOne.locStr = getLocationString(unOp);
+
+    SlangExpr incDecExpr = createBinaryExpr(exprArg, op,
+        litOne, getLocationString(unOp));
+
+    switch(unOp->getOpcode()) {
+      case UO_PreInc:
+      case UO_PreDec: {
+        addAssignInstr(exprArg, incDecExpr, getLocationString(unOp));
+        return convertToTmp(exprArg, true);
+      }
+
+      case UO_PostInc:
+      case UO_PostDec: {
+        SlangExpr tmpExpr = convertToTmp(exprArg, true);
+        addAssignInstr(exprArg, incDecExpr, getLocationString(unOp));
+        return tmpExpr;
+      }
+
+      default:
+        SLANG_ERROR("ERROR:unknownIncDecOps" <<
+            unOp->getOpcodeStr(unOp->getOpcode()));
+        break;
+    }
+    return exprArg;
+  }
+
   SlangExpr convertUnaryOperator(const UnaryOperator *unOp) const {
-    SlangExpr slangExpr;
+    switch(unOp->getOpcode()) {
+      case UO_PreInc:
+      case UO_PostInc:
+      case UO_PreDec:
+      case UO_PostDec:
+        return convertUnaryIncDecOp(unOp);
+      default:  break;
+    }
 
-    std::string locStr = getLocationString(unOp);
+    SlangExpr exprArg;
+    auto it = unOp->child_begin();
 
-    return slangExpr;
+    if (unOp->getOpcode() == UO_AddrOf) {
+      exprArg = convertStmt(*it); // special case: e.g. &arr[7][5], ...
+    } else {
+      exprArg = convertToTmp(convertStmt(*it));
+    }
+
+    std::string op;
+    switch (unOp->getOpcode()) {
+      default:
+        SLANG_DEBUG("convertUnaryOp: " << unOp->getOpcodeStr(unOp->getOpcode()))
+        break;
+      case UO_AddrOf: op = "op.UO_ADDROF"; break;
+      case UO_Deref: op = "op.UO_DEREF"; break;
+      case UO_Minus: op = "op.UO_MINUS"; break;
+      case UO_Plus: op = "op.UO_MINUS"; break;
+      case UO_LNot: op = "op.UO_NOT"; break;
+    }
+
+    return createUnaryExpr(op, exprArg, getLocationString(unOp), unOp->getType());
   } // convertUnaryOperator()
 
   SlangExpr convertBinaryOperator(const BinaryOperator *binOp) const {
@@ -1387,8 +1438,8 @@ public:
   } // convertBinaryOperator()
 
   // stores the given expression into a tmp variable
-  SlangExpr convertToTmp(SlangExpr slangExpr) const {
-    if (slangExpr.compound) {
+  SlangExpr convertToTmp(SlangExpr slangExpr, bool force = false) const {
+    if (slangExpr.compound || force == true) {
       SlangExpr tmpExpr;
       if (slangExpr.qualType.isNull()) {
         tmpExpr = genTmpVariable("types.Int32", slangExpr.locStr);
@@ -1476,6 +1527,11 @@ public:
 
     return slangExpr;
   } // convertCompoundStmt()
+
+  SlangExpr convertParenExpr(const ParenExpr *parenExpr) const {
+    auto it = parenExpr->child_begin(); // should have only one child
+    return convertStmt(*it);
+  } // convertParenExpr()
 
   SlangExpr convertLabel(const LabelStmt *labelStmt) const {
     SlangExpr slangExpr;
@@ -1920,6 +1976,43 @@ public:
 
     return binaryExpr;
   } // createBinaryExpr()
+
+  // If an element is top level, return true.
+  // e.g. in statement "x = y = z = 10;" the first "=" from left is top level.
+  bool isTopLevel(const Stmt *stmt) const {
+    const auto &parents = FD->getASTContext().getParents(*stmt);
+    if (!parents.empty()) {
+      const Stmt *stmt1 = parents[0].get<Stmt>();
+      if (stmt1) {
+        switch (stmt1->getStmtClass()) {
+          default:
+            return false;
+
+          case Stmt::DoStmtClass:
+          case Stmt::ForStmtClass:
+          case Stmt::CaseStmtClass:
+          case Stmt::DefaultStmtClass:
+          case Stmt::CompoundStmtClass: {
+            return true; // top level
+          }
+
+          case Stmt::WhileStmtClass: {
+            auto body = (cast<WhileStmt>(stmt1))->getBody();
+            return ((uint64_t)body == (uint64_t)stmt);
+          }
+          case Stmt::IfStmtClass: {
+            auto then_ = (cast<IfStmt>(stmt1))->getThen();
+            auto else_ = (cast<IfStmt>(stmt1))->getElse();
+            return ((uint64_t)then_ == (uint64_t)stmt || (uint64_t)else_ == (uint64_t)stmt);
+          }
+        }
+      } else {
+        return false;
+      }
+    } else {
+      return true; // top level
+    }
+  } // isTopLevel()
 
   // BOUND END  : helper_routines
 };
