@@ -709,12 +709,100 @@ public:
     case Stmt::GotoStmtClass:
       return convertGotoStmt(cast<GotoStmt>(stmt));
 
+    case Stmt::CStyleCastExprClass:
+      return convertCStyleCastExpr(cast<CStyleCastExpr>(stmt));
+
+    case Stmt::MemberExprClass:
+      return convertMemberExpr(cast<MemberExpr>(stmt));
+
+    case Stmt::ArraySubscriptExprClass:
+      return convertArraySubscriptExpr(cast<ArraySubscriptExpr>(stmt));
+
     default:
       SLANG_ERROR("Unhandled_Stmt: " << stmt->getStmtClassName())
     }
 
     return slangExpr;
   } // convertStmt()
+
+  SlangExpr convertArraySubscriptExpr(const ArraySubscriptExpr *arrayExpr) const {
+    SlangExpr slangExpr;
+
+    auto it = arrayExpr->child_begin();
+    const Stmt *object = *it;
+    ++it;
+    const Stmt *index = *it;
+
+    SlangExpr arrObject = convertStmt(object);
+    SlangExpr indexExpr = convertToTmp(convertStmt(index));
+
+    if (arrObject.compound &&
+        !((object->getStmtClass() == Stmt::ImplicitCastExprClass) &&
+        (cast<ImplicitCastExpr>(object)->getCastKind() == CK_ArrayToPointerDecay))) {
+      arrObject = convertToTmp(arrObject);
+    }
+
+    std::stringstream ss;
+    ss << "expr.ArrayE(" << indexExpr.expr;
+    ss << ", " << arrObject.expr;
+    ss << ", " << getLocationString(arrayExpr) << ")";
+
+    slangExpr.expr = ss.str();
+    slangExpr.compound = true;
+    slangExpr.qualType = arrayExpr->getType();
+    slangExpr.locStr = getLocationString(arrayExpr);
+
+    return slangExpr;
+  } // convertArraySubscript()
+
+  SlangExpr convertMemberExpr(const MemberExpr *memberExpr) const {
+    auto it = memberExpr->child_begin();
+    const Stmt *child = *it;
+    SlangExpr memParentExpr = convertStmt(child);
+
+    SlangExpr wholeExpr;
+    std::stringstream ss;
+
+    std::string memberName;
+    memberName = memberExpr->getMemberNameInfo().getAsString();
+    if (memberName == "") {
+      memberName = stu.getVar((uint64_t)(memberExpr->getMemberDecl())).name;
+    }
+
+    if (memParentExpr.compound && ! (child->getStmtClass() == Stmt::MemberExprClass)) {
+      // parent is compound and not a member expression
+      memParentExpr = convertToTmp(memParentExpr);
+    }
+
+    ss << "expr.MemberE(\"" << memberName << "\"";
+    ss << ", " << memParentExpr.expr;
+    ss << ", " << getLocationString(memberExpr) << ")";
+
+    wholeExpr.expr = ss.str();
+    wholeExpr.qualType = memberExpr->getType();
+    wholeExpr.locStr = getLocationString(memberExpr);
+    wholeExpr.compound = true;
+
+    return wholeExpr;
+  } // convertMemberExpr()
+
+  SlangExpr convertCStyleCastExpr(const CStyleCastExpr *cCast) const {
+    SlangExpr castExpr;
+    auto it = cCast->child_begin();
+    SlangExpr exprArg = convertToTmp(convertStmt(*it));
+    std::string castTypeStr = convertClangType(cCast->getType());
+
+    std::stringstream ss;
+    ss << "expr.CastE(" << exprArg.expr;
+    ss << ", " << castTypeStr;
+    ss << ", " << getLocationString(cCast) << ")";
+
+    castExpr.expr = ss.str();
+    castExpr.compound = true;
+    castExpr.qualType = cCast->getType();
+
+    return castExpr;
+  } // convertCStyleCastExpr()
 
   SlangExpr convertGotoStmt(const GotoStmt *gotoStmt) const {
     std::string label = gotoStmt->getLabel()->getNameAsString();

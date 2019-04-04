@@ -1,4 +1,4 @@
 digraph {
   node [shape=box]
-  START [label="[START]\ly = &x\lt.1 = x + 10\lx = -t.1\lx = 10\lt.2 = x\lx = x + 1\lx = x - 1\lt.3 = x\lt.4 = t.2 + t.3\lx = t.4 + x\l"];
+  START [label="[START]\larr[0][1] = 2\lt.1 = arr + 1\lx = &t.1[0][1]\ly = x[2]\l"];
 }

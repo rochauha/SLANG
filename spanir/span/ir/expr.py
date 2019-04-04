@@ -193,30 +193,31 @@ class FuncE(VarE):
     return f"{name}"
   def __repr__(self): return self.name
 
-class ArrayE(BasicET):
+class ArrayE(VarE, BasicET):
   """An array expression.
   TODO: allow one subscript only.
   """
   def __init__(self,
+               index: UnitET,
+               of: 'ArrayE',
                var: VarE,
-               indexSeq: List[UnitET],
                loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(ARR_EXPR_EC, loc)
-    self.var = var
-    self.indexSeq = indexSeq
+    self.index = index
+    self.of = of
 
   def __eq__(self,
-             other: 'BinaryE'
+             other: 'ArrayE'
   ) -> bool:
-    if not isinstance(other, BinaryE):
+    if not isinstance(other, ArrayE):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
-    if not self.var == other.var:
-      if LS: _log.warning("ArrayName Differs: %s, %s", self, other)
+    if not self.index == other.index:
+      if LS: _log.warning("Index Differs: %s, %s", self, other)
       return False
-    if not self.indexSeq == other.indexSeq:
-      if LS: _log.warning("IndexSeq Differs: %s, %s", self, other)
+    if not self.ofl == other.of:
+      if LS: _log.warning("Of Differs: %s, %s", self, other)
       return False
     if not self.loc == other.loc:
       if LS: _log.warning("Loc Differs: %s, %s", self, other)
@@ -226,29 +227,20 @@ class ArrayE(BasicET):
   def __hash__(self) -> int:
     return hash(self.var) + hash(self.indexSeq)
 
-  def __str__(self):
-    indexStr = ""
-    with io.StringIO() as sio:
-      for index in self.indexSeq:
-        sio.write(f"[{index}]")
-      indexStr = sio.getvalue()
-
-    return f"{self.var}{indexStr}"
+  def __str__(self): return f"{self.of}[{self.index}]"
 
   def __repr__(self): return self.__str__()
 
-class MemberE(BasicET):
-  """A member access expression: e.g. x->f.c or x.f.c ...
-  TODO: max one member access, x.y or u->y.
-  """
+class MemberE(VarE, BasicET):
+  """A member access expression: e.g. x->f.c or x.f.c ..."""
   def __init__(self,
-               var: VarE,
-               fields: List[types.FieldNameT],
+               name: types.MemberNameT,
+               of: 'MemberE' = None,
                loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(MEMBER_EXPR_EC, loc)
-    self.var = var
-    self.fields = fields
+    self.name = name
+    self.of = of
 
   def __eq__(self,
              other: 'MemberE'
@@ -256,11 +248,11 @@ class MemberE(BasicET):
     if not isinstance(other, MemberE):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
       return False
-    if not self.var == other.var:
-      if LS: _log.warning("Args Differ: %s, %s", self, other)
+    if not self.name == other.name:
+      if LS: _log.warning("Name Differs: %s, %s", self, other)
       return False
-    if not self.fields == other.fields:
-      if LS: _log.warning("Fields Differ: %s, %s", self, other)
+    if not self.of == other.of:
+      if LS: _log.warning("Parent(.of) Differs: %s, %s", self, other)
       return False
     if not self.loc == other.loc:
       if LS: _log.warning("Loc Differs: %s, %s", self, other)
@@ -271,8 +263,7 @@ class MemberE(BasicET):
     return hash(self.var) + hash(self.fields)
 
   def __str__(self):
-    members = ".".join(self.fields)
-    return f"{self.var}.{members}"
+    return f"{self.of}.{self.name}"
 
   def __repr__(self): return self.__str__()
 

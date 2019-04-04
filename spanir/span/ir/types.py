@@ -24,6 +24,7 @@ LabelNameT = str
 StructNameT = str
 UnionNameT = str
 FieldNameT = str  # a structure field name
+MemberNameT = str  # a structure member name
 
 TypeCodeT = int
 
