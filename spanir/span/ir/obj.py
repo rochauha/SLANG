@@ -148,6 +148,8 @@ class Func (ObjT):
             instrs = []
             bbEdge = (oldBbId, bbId, UnCondEdge)
             bbEdges.append(bbEdge)
+          else:
+            instrs = []
         continue
 
       if isinstance(insn, GotoI):
