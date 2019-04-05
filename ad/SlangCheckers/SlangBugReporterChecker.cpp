@@ -89,11 +89,6 @@ class BugMessage {
         return encoded;
     }
 
-    // less than operator based on encoded id
-    bool operator<(const BugMessage &rhs) const {
-        return this->genEncodedId() < rhs.genEncodedId();
-    }
-
     Stmt *getStmt() const { return stmt; }
 
     void setStmt(Stmt *stmt) { this->stmt = stmt; }
@@ -132,6 +127,11 @@ class Bug {
         this->bugName = bugName;
         this->bugCategory = bugCategory;
         this->messages = messages;
+    }
+
+    // less than operator based on encoded id of first message
+    bool operator<(const Bug &rhs) const {
+        this->messages[0].genEncodedId() < rhs.messages[0].genEncodedId();
     }
 
     bool isEmpty() const { return bugName == "" && bugCategory == ""; }
@@ -360,6 +360,10 @@ uint64_t SlangBugReporterChecker::getStmtLocId(const Stmt *stmt) const {
 }
 
 void SlangBugReporterChecker::reportBugs() const {
+    
+    // sort bugs based on location
+    sort(bugRepo.bugVector.begin(), bugRepo.bugVector.end());
+    
     // report all the bugs collected
     for (int i = 0; i < bugRepo.bugVector.size(); ++i) {
         Bug currentBug = bugRepo.bugVector[i];
@@ -387,10 +391,6 @@ void SlangBugReporterChecker::generateSingleBugReport(Bug &bug) const {
         PathDiagnosticLocation::createBegin(bug.messages[0].getStmt(), BR->getSourceManager(), AC);
     auto R = llvm::make_unique<BugReport>(*bt, llvm::StringRef(description), startLoc);
     llvm::errs() << "SLANG : BugReport initialized\n";
-
-    // Sort before generating 'notes'
-    // This doesn't change how the report looks. Only changes the order of notes in the summary
-    // sort(bug.messages.begin(), bug.messages.end());
 
     for (size_t i = 1; i < bug.messages.size(); ++i) {
         Stmt *currentStmt = bug.messages[i].getStmt();
