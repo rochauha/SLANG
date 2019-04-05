@@ -3,6 +3,7 @@
 //  Copyright (c) 2019 The SLANG Authors.
 //
 //  Author: Anshuman Dhuliya (dhuliya@cse.iitb.ac.in)
+//  Author: Ronak Chauhan (r.chauhan@somaiya.edu)
 //
 // AD If SlangBugReporterChecker class name is added or changed, then also edit,
 // AD ../../../include/clang/StaticAnalyzer/Checkers/Checkers.td
@@ -41,39 +42,46 @@ using namespace ento;
 
 // #define LOG_ME(X) if (Utility::debug_mode) Utility::log((X), __FUNCTION__, __LINE__)
 
-// Each bug has to be reported using following necessary six lines
+// Each bug has the following format (example)
 // ----------------------
-// LINE 32
-// COLUMN 24
+// BUG_START
 // BUG_NAME Dead Store
-// BUG_CATEGORY Dead Store
-// BUG_MSG Value assigned is not used
+// BUG_CATEGORY Dead Variable
+//
+// LINE 10
+// COLUMN 3
+// BUG_MSG x is not used ahead.
+//
+//
+// LINE 10
+// COLUMN 7
+// BUG_MSG y is not used ahead.
+//
+// BUG_END
 // ----------------------
-// Note that UNIQUE_ID should not be same for two bugs.
 
 namespace {
-class Bug {
-  public:
-    uint32_t col;
-    uint32_t line;
-    Stmt *stmt;
-    std::string bugName;
-    std::string bugCategory;
-    std::string bugMsg;
 
-    Bug() {
-        col = line = 0;
+class BugMessage {
+    uint32_t line;
+    uint32_t col;
+    std::string messageString;
+    Stmt *stmt;
+
+  public:
+    BugMessage() {
+        line = col = 0;
+        messageString = "";
         stmt = nullptr;
-        bugName = "";
-        bugCategory = "";
-        bugMsg = "";
     }
 
-    void printLocation() { llvm::errs() << "Loc(" << line << ":" << col << ")\n"; }
+    BugMessage(uint32_t line, uint32_t col, std::string messageString) {
+        this->line = line;
+        this->col = col;
+        this->messageString = messageString;
+    }
 
-    uint64_t getEncodedId() { return Bug::genEncodedId(line, col); }
-
-    static uint64_t genEncodedId(uint32_t line, uint32_t col) {
+    uint64_t genEncodedId() const {
         uint64_t encoded = 0;
         encoded |= line;
         encoded <<= 32;
@@ -81,115 +89,101 @@ class Bug {
         return encoded;
     }
 
-    std::string getLocStr() {
-        std::stringstream ss;
-        ss << "(" << line << ", " << col << ")";
-        return ss.str();
+    // less than operator based on encoded id
+    bool operator<(const BugMessage &rhs) const {
+        return this->genEncodedId() < rhs.genEncodedId();
+    }
+
+    Stmt *getStmt() const { return stmt; }
+
+    void setStmt(Stmt *stmt) { this->stmt = stmt; }
+
+    std::string getMessageString() const { return messageString; }
+
+    bool isEmpty() const { return line == 0 && col == 0 && messageString.length() == 0; }
+
+    void dump() const {
+        llvm::errs() << "\n";
+        llvm::errs() << "LINE"
+                     << " " << line << "\n";
+        llvm::errs() << "COLUMN"
+                     << " " << col << "\n";
+        llvm::errs() << "BUG_MSG"
+                     << " " << messageString << "\n";
+        llvm::errs() << "\n";
+        llvm::errs() << "STMT :\n";
+        stmt->dump();
+        llvm::errs() << "\n";
+    }
+};
+
+class Bug {
+  public:
+    std::string bugName;
+    std::string bugCategory;
+    std::vector<BugMessage> messages;
+
+    Bug() {
+        bugName = "";
+        bugCategory = "";
+    }
+
+    Bug(std::string bugName, std::string bugCategory, std::vector<BugMessage> messages) {
+        this->bugName = bugName;
+        this->bugCategory = bugCategory;
+        this->messages = messages;
+    }
+
+    bool isEmpty() const { return bugName == "" && bugCategory == ""; }
+
+    void dump() const {
+        llvm::errs() << "BUG_START"
+                     << "\n";
+        llvm::errs() << "BUG_NAME"
+                     << " " << bugName << "\n";
+        llvm::errs() << "BUG_CATEGORY"
+                     << " " << bugCategory << "\n";
+        llvm::errs() << "\n";
+        for (int i = 0; i < messages.size(); ++i) {
+            messages[i].dump();
+        }
+        llvm::errs() << "BUG_END"
+                     << "\n\n";
     }
 };
 
 class BugRepo {
   public:
     // list of bugs for a particular point in source
-    std::unordered_map<uint64_t, std::vector<Bug>> bugVectorMap;
+    std::vector<Bug> bugVector;
     // stored in vector so that it can be sorted later
-    std::vector<uint64_t> bugIds;
     std::string fileName;
-
-    static uint32_t counter;
 
     void loadBugReports(std::string bugFileName) {
         // read and store the bug reports for the given bugFileName
-        std::ifstream inputTxtFile;
+        std::ifstream inputTextFile;
         std::string line;
         Bug b;
 
-        inputTxtFile.open(bugFileName);
-        if (inputTxtFile.is_open()) {
+        inputTextFile.open(bugFileName);
+        if (inputTextFile.is_open()) {
             llvm::errs() << "SLANG: loaded_file " << bugFileName << "\n";
             while (true) {
-                b = loadSingleBugReport(inputTxtFile);
-                if (b.getEncodedId() == 0) {
-                    break; // error in loading bug report
+                Bug b = parseSingleBug(inputTextFile);
+                if (b.isEmpty()) {
+                    break;
                 }
-                llvm::errs() << "SLANG: loading_bug: " << b.getEncodedId() << "\n";
                 addBug(b);
             }
-            inputTxtFile.close();
+            inputTextFile.close();
         } else {
             llvm::errs() << "SLANG: ERROR: Cannot load from file '" << fileName << "'\n";
         }
 
-        llvm::errs() << "SLANG: Total bugs loaded: " << bugIds.size() << "\n";
-        // sort the bugs w.r.t line and col num.
-        std::sort(bugIds.begin(), bugIds.end());
+        llvm::errs() << "SLANG: Total bugs loaded: " << bugVector.size() << "\n";
     }
 
-    Bug loadSingleBugReport(std::ifstream &inputTextFile) {
-        Bug b;
-        std::string line;
-
-        // get line
-        line = getSingleNonBlankLine(inputTextFile);
-        if (line.size() == 0) {
-            b.line = b.col = 0;
-            return b;
-        }
-        std::stringstream(line) >> b.line;
-
-        // get col
-        line = getSingleNonBlankLine(inputTextFile);
-        if (line.size() == 0) {
-            b.line = b.col = 0;
-            return b;
-        }
-        std::stringstream(line) >> b.col;
-
-        // get bugName
-        line = getSingleNonBlankLine(inputTextFile);
-        if (line.size() == 0) {
-            b.line = b.col = 0;
-            return b;
-        }
-        b.bugName = line;
-
-        // get bugCategory
-        line = getSingleNonBlankLine(inputTextFile);
-        if (line.size() == 0) {
-            b.line = b.col = 0;
-            return b;
-        }
-        b.bugCategory = line;
-
-        // get bugMsg
-        line = getSingleNonBlankLine(inputTextFile);
-        if (line.size() == 0) {
-            b.line = b.col = 0;
-            return b;
-        }
-        b.bugMsg = line;
-
-        return b;
-    }
-
-    std::string getSingleNonBlankLine(std::ifstream &inputTextFile) {
-        std::string line;
-
-        while (1) {
-            std::getline(inputTextFile, line);
-            if (!inputTextFile) { //.bad() || !inputTextFile.eof()) {
-                return "";
-            }
-            line = trim(line);
-            line = removeTag(line);
-            if (line.size() > 0)
-                break;
-        }
-
-        // llvm::errs() << "SLANG: READ: " << line << "\n";
-        return line;
-    }
-
+    // trim spaces
     std::string trim(const std::string &str, const std::string &whitespace = " \t") {
         const auto strBegin = str.find_first_not_of(whitespace);
         if (strBegin == std::string::npos)
@@ -207,22 +201,65 @@ class BugRepo {
         return line;
     }
 
-    bool locIdPresent(uint64_t locId) {
-        if (bugVectorMap.find(locId) == bugVectorMap.end()) {
-            return false;
-        } else {
-            return true;
+    std::string getSingleNonBlankLine(std::ifstream &inputTextFile) {
+        std::string line;
+        while (true) {
+            std::getline(inputTextFile, line);
+            if (!inputTextFile) { //.bad() || !inputTextFile.eof()) {
+                return "";
+            }
+            line = trim(line);
+            line = removeTag(line);
+            if (line.size() > 0)
+                break;
         }
+        return line;
     }
 
-    void addBug(Bug b) {
-        bugVectorMap[b.getEncodedId()].push_back(b);
-        bugIds.push_back(b.getEncodedId());
+    bool isBugHeader(std::string line) { return line == "BUG_START"; }
+
+    bool isBugEnd(std::string &line) { return line == "BUG_END" || line == ""; }
+
+    BugMessage parseSingleBugMessage(std::ifstream &inputTextFile) {
+        uint32_t line;
+        uint32_t col;
+        std::string message;
+
+        std::string lineStr = getSingleNonBlankLine(inputTextFile);
+        if (isBugEnd(lineStr))
+            return BugMessage();
+
+        std::string colStr = getSingleNonBlankLine(inputTextFile);
+        message = getSingleNonBlankLine(inputTextFile);
+
+        line = std::stoi(lineStr, nullptr);
+        col = std::stoi(colStr, nullptr);
+
+        return BugMessage(line, col, message);
     }
+
+    Bug parseSingleBug(std::ifstream &inputTextFile) {
+        std::string headerStr = getSingleNonBlankLine(inputTextFile);
+        if (!isBugHeader(headerStr)) {
+            return Bug();
+        }
+        std::string bugName = getSingleNonBlankLine(inputTextFile);
+        std::string bugCategory = getSingleNonBlankLine(inputTextFile);
+
+        std::vector<BugMessage> bugMessageVector;
+        while (true) {
+            BugMessage bugMsg = parseSingleBugMessage(inputTextFile);
+            if (bugMsg.isEmpty()) {
+                break;
+            }
+            bugMessageVector.push_back(bugMsg);
+        }
+        return Bug(bugName, bugCategory, bugMessageVector);
+    }
+
+    void addBug(Bug b) { bugVector.push_back(b); }
 };
 } // namespace
-
-uint32_t BugRepo::counter = 0;
 
 namespace {
 class SlangBugReporterChecker : public Checker<check::ASTCodeBody> {
@@ -237,15 +274,11 @@ class SlangBugReporterChecker : public Checker<check::ASTCodeBody> {
 
     // handling_routines
     void handleCfg(const CFG *cfg) const;
-
     void handleBBStmts(const CFGBlock *bb) const;
-
-    void reportBugs() const;
-    void reportBug(Stmt *stmt, std::string bugName, std::string bugCategory,
-                   std::string bugMsg) const;
-
     uint64_t getStmtLocId(const Stmt *stmt) const;
     void matchStmtToBug(const Stmt *stmt) const;
+    void reportBugs() const;
+    void generateSingleBugReport(Bug &b) const;
 }; // class SlangBugReporterChecker
 } // anonymous namespace
 
@@ -270,8 +303,6 @@ void SlangBugReporterChecker::checkASTCodeBody(const Decl *D, AnalysisManager &m
     } else {
         llvm::errs() << "SLANG: ERROR: No CFG for function.\n";
     }
-
-    llvm::errs() << "SLANG: Reporting Bugs.\n";
     reportBugs();
 } // checkASTCodeBody()
 
@@ -300,15 +331,15 @@ void SlangBugReporterChecker::handleBBStmts(const CFGBlock *bb) const {
 
 // matches bugs to real statement elements
 void SlangBugReporterChecker::matchStmtToBug(const Stmt *stmt) const {
-    uint64_t locId;
-
-    locId = getStmtLocId(stmt);
-    if (bugRepo.locIdPresent(locId)) {
-        for (Bug &bug : bugRepo.bugVectorMap[locId]) {
-            bug.stmt = const_cast<Stmt *>(stmt);
-            SLANG_DEBUG("Matched Bug at location: " << bug.getLocStr() << "\nto Stmt/Expr: ")
-            SLANG_DEBUG((stmt->dump(), ""))
+    uint64_t locId = getStmtLocId(stmt);
+    for (int i = 0; i < bugRepo.bugVector.size(); ++i) {
+        Bug currentBug = bugRepo.bugVector[i];
+        for (int j = 0; j < currentBug.messages.size(); ++j) {
+            if (locId == currentBug.messages[j].genEncodedId()) {
+                currentBug.messages[j].setStmt(const_cast<Stmt *>(stmt));
+            }
         }
+        bugRepo.bugVector[i] = currentBug;
     }
 }
 
@@ -330,25 +361,48 @@ uint64_t SlangBugReporterChecker::getStmtLocId(const Stmt *stmt) const {
 
 void SlangBugReporterChecker::reportBugs() const {
     // report all the bugs collected
-    for (uint64_t locId : bugRepo.bugIds) {
-        for (Bug &bug : bugRepo.bugVectorMap[locId]) {
-            if (bug.stmt != nullptr) {
-                reportBug(bug.stmt, bug.bugName, bug.bugCategory, bug.bugMsg);
-            } else {
-                llvm::errs() << "SLANG: Unmatched location: ";
-                bug.printLocation();
-            }
-        }
+    for (int i = 0; i < bugRepo.bugVector.size(); ++i) {
+        Bug currentBug = bugRepo.bugVector[i];
+        generateSingleBugReport(currentBug);
     }
 }
 
-void SlangBugReporterChecker::reportBug(Stmt *stmt, std::string bugName, std::string bugCategory,
-                                        std::string bugMsg) const {
+void SlangBugReporterChecker::generateSingleBugReport(Bug &bug) const {
+    llvm::errs() << "Generating bug report for :\n";
+    bug.dump();
+    llvm::errs() << "\n";
 
-    PathDiagnosticLocation ExLoc =
-        PathDiagnosticLocation::createBegin(stmt, BR->getSourceManager(), AC);
-    BR->EmitBasicReport(D, this, bugName.c_str(), bugCategory.c_str(), bugMsg.c_str(), ExLoc,
-                        stmt->getSourceRange());
+    BugType *bt = new BugType(this->getCheckName(), llvm::StringRef(bug.bugName),
+                              llvm::StringRef(bug.bugCategory));
+    llvm::errs() << "SLANG : Bug type created with name : " << bug.bugName
+                 << " and category : " << bug.bugCategory << "\n";
+
+    BR->Register(bt);
+    llvm::errs() << "SLANG : Bug type registered\n";
+
+    std::string description = "SlangBugReport : " + bug.bugCategory;
+
+    // BugReport starts at location of first message
+    PathDiagnosticLocation startLoc =
+        PathDiagnosticLocation::createBegin(bug.messages[0].getStmt(), BR->getSourceManager(), AC);
+    auto R = llvm::make_unique<BugReport>(*bt, llvm::StringRef(description), startLoc);
+    llvm::errs() << "SLANG : BugReport initialized\n";
+
+    // Sort before generating 'notes'
+    // This doesn't change how the report looks. Only changes the order of notes in the summary
+    sort(bug.messages.begin(), bug.messages.end());
+
+    for (int i = 0; i < bug.messages.size(); ++i) {
+        Stmt *currentStmt = bug.messages[i].getStmt();
+        std::string currentMessage = bug.messages[i].getMessageString();
+
+        PathDiagnosticLocation currentLoc =
+            PathDiagnosticLocation::createBegin(currentStmt, BR->getSourceManager(), AC);
+
+        R->addNote(llvm::StringRef(currentMessage), currentLoc);
+    }
+    llvm::errs() << "SLANG : Emitting bug report\n";
+    BR->emitReport(std::move(R));
 }
 
 // Register the Checker
