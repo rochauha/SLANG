@@ -27,7 +27,7 @@ NAME Dead Code
 CATEGORY Dead Store
 LINE 8
 COLUMN 10
-MESSAGE This value of t.1 is unused
+MESSAGE Value of the above expression is unused
 END
 
 START
@@ -43,7 +43,7 @@ NAME Dead Code
 CATEGORY Dead Store
 LINE 11
 COLUMN 12
-MESSAGE This value of t.2 is unused
+MESSAGE Value of the above expression is unused
 END
 
 START
