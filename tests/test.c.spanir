@@ -13,14 +13,12 @@
 
 # An instance of span.ir.tunit.TUnit class.
 irTUnit.TUnit(
-  name = "../../../../../tests/test.c",
+  name = "tests/test.c",
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:z": types.Int32,
     "v:main:x": types.Int32,
-    "v:main:t.1": types.Int32,
-    "v:main:y": types.Int32,
+    "v:main:n": types.Int16,
   }, # end allVars dict
 
   allObjs = {
@@ -35,15 +33,9 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         instrSeq = [
-            instr.AssignI(expr.VarE("v:main:y", Loc(9,2)), expr.LitE(300, Loc(9,13)), Loc(9,2)),
-            instr.AssignI(expr.VarE("v:main:z", Loc(9,2)), expr.LitE(0, Loc(9,22)), Loc(9,2)),
-            instr.LabelI("DoEntry1", Loc(10,2)),
-            instr.AssignI(expr.VarE("v:main:x", Loc(11,3)), expr.LitE(300, Loc(11,7)), Loc(11,3)),
-            instr.AssignI(expr.VarE("v:main:x", Loc(12,3)), expr.BinaryE(expr.VarE("v:main:x", Loc(12,7)), op.BO_ADD, expr.VarE("v:main:y", Loc(12,11)), Loc(12,7)), Loc(12,3)),
-            instr.AssignI(expr.VarE("v:main:z", Loc(13,3)), expr.BinaryE(expr.VarE("v:main:z", Loc(13,7)), op.BO_SUB, expr.VarE("v:main:x", Loc(13,11)), Loc(13,7)), Loc(13,3)),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(14,11)), expr.BinaryE(expr.VarE("v:main:z", Loc(14,11)), op.BO_GT, expr.LitE(0, Loc(14,15)), Loc(14,11)), Loc(14,11)),
-            instr.CondI(expr.VarE("v:main:t.1", Loc(14,11)), "DoEntry1", "DoExit1", Loc(14,11)),
-            instr.LabelI("DoExit1", Loc(10,2)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(3,5)), expr.LitE(8, Loc(3,13)), Loc(3,5)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(4,5)), expr.LitE(1, Loc(4,9)), Loc(4,5)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(5,5)), expr.LitE(2, Loc(5,9)), Loc(5,5)),
         ], # instrSeq end.
       ), # f:main() end. 
 
