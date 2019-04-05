@@ -760,6 +760,9 @@ public:
     case Stmt::ArraySubscriptExprClass:
       return convertArraySubscriptExpr(cast<ArraySubscriptExpr>(stmt));
 
+    case Stmt::UnaryExprOrTypeTraitExprClass:
+      return convertUnaryExprOrTypeTraitExpr(cast<UnaryExprOrTypeTraitExpr>(stmt));    
+
     case Stmt::CallExprClass:
       return convertCallExpr(cast<CallExpr>(stmt));
 
@@ -1136,6 +1139,16 @@ public:
 
     return hasBreak;
   } // caseStmtHasSiblingBreak()
+
+  // Returns true if the type is not complete enough to give away a constant size
+  bool isIncompleteType(const Type *type) const {
+      bool retVal = false;
+
+      if (type->isIncompleteArrayType() || type->isVariableArrayType()) {
+          retVal = true;
+      }
+      return retVal;
+  }
 
   // get all case statements recursively (case stmts can be hierarchical)
   void getCaseStmts(std::vector<const Stmt*>& caseStmts, const Stmt *stmt) const {
@@ -1680,6 +1693,60 @@ public:
 
     return createUnaryExpr(op, exprArg, getLocationString(unOp), unOp->getType());
   } // convertUnaryOperator()
+
+  SlangExpr convertUnaryExprOrTypeTraitExpr(const UnaryExprOrTypeTraitExpr *stmt) const {
+    SlangExpr slangExpr;
+    SlangExpr innerExpr;
+    std::stringstream ss;
+    uint64_t size = 0;
+
+    std::string locStr = getLocationString(stmt);
+
+    UnaryExprOrTypeTrait kind = stmt->getKind();
+    switch (kind) {
+    // the sizeof operator
+    case UETT_SizeOf: {
+        auto iterator = stmt->child_begin();
+        if (iterator != stmt->child_end()) {
+            // then child is an expression
+
+            const Stmt *firstChild = *iterator;
+            innerExpr = convertStmt(firstChild);
+            const Expr *expr = cast<Expr>(firstChild);
+            // slangExpr.qualType = FD->getASTContext().getTypeOfExprType(const_cast<Expr*>(expr));
+            slangExpr.qualType = expr->getType();
+            const Type *type = slangExpr.qualType.getTypePtr();
+            if (type && !isIncompleteType(type)) {
+                TypeInfo typeInfo = FD->getASTContext().getTypeInfo(slangExpr.qualType);
+                size = typeInfo.Width / 8;
+            } else {
+                // FIXME: handle runtime sizeof support too
+                SLANG_ERROR("SizeOf_Expr_is_incomplete. Loc:" << locStr)
+            }
+        } else {
+            // child is a type
+            slangExpr.qualType = stmt->getArgumentType();
+            TypeInfo typeInfo = FD->getASTContext().getTypeInfo(slangExpr.qualType);
+            size = typeInfo.Width / 8;
+        }
+
+        ss << "expr.LitE(";
+        if (size == 0) {
+            ss << "ERROR:sizeof()";
+        } else {
+            ss << size;
+        }
+        ss << ", " << locStr << ")";
+        slangExpr.expr = ss.str();
+        break;
+    }
+
+    default:
+        SLANG_ERROR("UnaryExprOrTypeTrait not handled. Kind: " << kind)
+        break;
+    }
+    return slangExpr;
+  } // convertUnaryExprOrTypeTraitExpr()
 
   SlangExpr convertBinaryOperator(const BinaryOperator *binOp) const {
     SlangExpr slangExpr;
