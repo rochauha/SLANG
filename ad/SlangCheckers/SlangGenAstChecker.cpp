@@ -1978,7 +1978,9 @@ public:
       } else if (type->isChar16Type()) {
         ss << "types.Int16";
       } else if (type->isIntegerType()) {
-        ss << "types.Int32";
+        TypeInfo typeInfo = FD->getASTContext().getTypeInfo(qt);
+        size_t size = typeInfo.Width;
+        ss << "types.Int" << size;
       } else {
         ss << "UnknownSignedIntType.";
       }
@@ -1989,7 +1991,9 @@ public:
       } else if (type->isChar16Type()) {
         ss << "types.UInt16";
       } else if (type->isIntegerType()) {
-        ss << "types.UInt32";
+        TypeInfo typeInfo = FD->getASTContext().getTypeInfo(qt);
+        size_t size = typeInfo.Width;
+        ss << "types.UInt" << size;
       } else {
         ss << "UnknownUnsignedIntType.";
       }
