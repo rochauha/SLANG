@@ -34,7 +34,7 @@ simple_replace:
 ~/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/MyTraverseAST.cpp
 
 br_test:
-	scan-build -V -enable-checker debug.SlangBugReport clang -std=c99 tests/test.c	
+	scan-build -V -enable-checker debug.SlangBugReport clang -std=c99 tests/test_spanreport.c	
 # 	clang -cc1 -analyze -analyzer-checker=debug.SlangBugReport -std=c99 tests/test.c
 br_replace:
 	cp ad/SlangCheckers/SlangBugReporterChecker.cpp \

@@ -10,9 +10,9 @@ LINE 11
 COLUMN 5
 BUG_MSG reporting assignment of variable x.
 
-BUG_END
+END
 
-BUG_START
+START
 BUG_NAME SlangTest 2 : sorted sequence
 BUG_CATEGORY SlangBug
 

@@ -380,7 +380,7 @@ void SlangBugReporterChecker::generateSingleBugReport(Bug &bug) const {
     BR->Register(bt);
     llvm::errs() << "SLANG : Bug type registered\n";
 
-    std::string description = "SlangBugReport : " + bug.bugCategory;
+    std::string description = bug.messages[0].getMessageString();
 
     // BugReport starts at location of first message
     PathDiagnosticLocation startLoc =
@@ -390,9 +390,9 @@ void SlangBugReporterChecker::generateSingleBugReport(Bug &bug) const {
 
     // Sort before generating 'notes'
     // This doesn't change how the report looks. Only changes the order of notes in the summary
-    sort(bug.messages.begin(), bug.messages.end());
+    // sort(bug.messages.begin(), bug.messages.end());
 
-    for (int i = 0; i < bug.messages.size(); ++i) {
+    for (size_t i = 1; i < bug.messages.size(); ++i) {
         Stmt *currentStmt = bug.messages[i].getStmt();
         std::string currentMessage = bug.messages[i].getMessageString();
 
