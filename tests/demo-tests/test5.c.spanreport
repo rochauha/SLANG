@@ -1,0 +1,56 @@
+START
+NAME Dead Code
+CATEGORY Dead Store
+LINE 3
+COLUMN 3
+MESSAGE This value of a is unused
+END
+
+START
+NAME Dead Code
+CATEGORY Dead Store
+LINE 4
+COLUMN 3
+MESSAGE This value of u is unused
+END
+
+START
+NAME Dead Code
+CATEGORY Dead Store
+LINE 7
+COLUMN 5
+MESSAGE This value of tmp is unused
+END
+
+START
+NAME Dead Code
+CATEGORY Dead Store
+LINE 8
+COLUMN 10
+MESSAGE This value of t.1 is unused
+END
+
+START
+NAME Dead Code
+CATEGORY Dead Store
+LINE 10
+COLUMN 7
+MESSAGE This value of b is unused
+END
+
+START
+NAME Dead Code
+CATEGORY Dead Store
+LINE 11
+COLUMN 12
+MESSAGE This value of t.2 is unused
+END
+
+START
+NAME Dead Code
+CATEGORY Dead Store
+LINE 13
+COLUMN 7
+MESSAGE This value of b is unused
+END
+

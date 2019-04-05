@@ -1,4 +1,4 @@
-void main() {
+int main() {
   int **z, a, *u, cond, tmp, b;
   a = 11;
   u = &a;
@@ -13,5 +13,5 @@ void main() {
       b = 16;
     }
   }
-  return;
+  return 0;
 }
