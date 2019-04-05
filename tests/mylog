@@ -1,0 +1,51 @@
+scan-build: Using '/home/codeman/.itsoflife/local/packages-live/llvm-clang6/build/bin/clang-6.0' for static analysis
+SLANG: loaded_file test_spanreport.c.spanreport
+terminate called after throwing an instance of 'std::invalid_argument'
+  what():  stoi
+#0 0x00007fc35f6c74eb llvm::sys::PrintStackTrace(llvm::raw_ostream&) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/lib/Support/Unix/Signals.inc:398:0
+#1 0x00007fc35f6c757e PrintStackTraceSignalHandler(void*) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/lib/Support/Unix/Signals.inc:462:0
+#2 0x00007fc35f6c5753 llvm::sys::RunSignalHandlers() /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/lib/Support/Signals.cpp:49:0
+#3 0x00007fc35f6c6d57 SignalHandler(int) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/lib/Support/Unix/Signals.inc:252:0
+#4 0x00007fc35cab9f20 (/lib/x86_64-linux-gnu/libc.so.6+0x3ef20)
+#5 0x00007fc35cab9e97 gsignal /build/glibc-OTsEL5/glibc-2.27/signal/../sysdeps/unix/sysv/linux/raise.c:51:0
+#6 0x00007fc35cabb801 abort /build/glibc-OTsEL5/glibc-2.27/stdlib/abort.c:81:0
+#7 0x00007fc35cef88b7 __strtof_l (/usr/lib/x86_64-linux-gnu/libstdc++.so.6+0x8c8b7)
+#8 0x00007fc35cefea06 (/usr/lib/x86_64-linux-gnu/libstdc++.so.6+0x92a06)
+#9 0x00007fc35cefea41 (/usr/lib/x86_64-linux-gnu/libstdc++.so.6+0x92a41)
+#10 0x00007fc35cefec74 (/usr/lib/x86_64-linux-gnu/libstdc++.so.6+0x92c74)
+#11 0x00007fc35cefa743 __strtof_l (/usr/lib/x86_64-linux-gnu/libstdc++.so.6+0x8e743)
+#12 0x00007fc355b0f082 int __gnu_cxx::__stoa<long, int, char, int>(long (*)(char const*, char**, int), char const*, char const*, unsigned long*, int) /usr/include/c++/7/ext/string_conversions.h:84:0
+#13 0x00007fc355b0ef06 std::__cxx11::stoi(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, unsigned long*, int) /usr/include/c++/7/bits/basic_string.h:6364:0
+#14 0x00007fc355b09e21 (anonymous namespace)::BugRepo::parseSingleBugMessage(std::basic_ifstream<char, std::char_traits<char> >&) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangBugReporterChecker.cpp:235:0
+#15 0x00007fc355b09fd9 (anonymous namespace)::BugRepo::parseSingleBug(std::basic_ifstream<char, std::char_traits<char> >&) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangBugReporterChecker.cpp:252:0
+#16 0x00007fc355b0981f (anonymous namespace)::BugRepo::loadBugReports(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangBugReporterChecker.cpp:173:0
+#17 0x00007fc355b0a274 (anonymous namespace)::SlangBugReporterChecker::checkASTCodeBody(clang::Decl const*, clang::ento::AnalysisManager&, clang::ento::BugReporter&) const /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangBugReporterChecker.cpp:299:0
+#18 0x00007fc355b0d7f4 void clang::ento::check::ASTCodeBody::_checkBody<(anonymous namespace)::SlangBugReporterChecker>(void*, clang::Decl const*, clang::ento::AnalysisManager&, clang::ento::BugReporter&) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/include/clang/StaticAnalyzer/Core/Checker.h:53:0
+#19 0x00007fc3554a2bb5 clang::ento::CheckerFn<void (clang::Decl const*, clang::ento::AnalysisManager&, clang::ento::BugReporter&)>::operator()(clang::Decl const*, clang::ento::AnalysisManager&, clang::ento::BugReporter&) const /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/include/clang/StaticAnalyzer/Core/CheckerManager.h:59:0
+#20 0x00007fc35549c77f clang::ento::CheckerManager::runCheckersOnASTBody(clang::Decl const*, clang::ento::AnalysisManager&, clang::ento::BugReporter&) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Core/CheckerManager.cpp:85:0
+#21 0x00007fc356682649 (anonymous namespace)::AnalysisConsumer::HandleCode(clang::Decl*, unsigned int, clang::ento::ExprEngine::InliningModes, llvm::DenseSet<clang::Decl const*, llvm::DenseMapInfo<clang::Decl const*> >*) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Frontend/AnalysisConsumer.cpp:684:0
+#22 0x00007fc356681093 (anonymous namespace)::AnalysisConsumer::VisitFunctionDecl(clang::FunctionDecl*) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Frontend/AnalysisConsumer.cpp:354:0
+#23 0x00007fc3566914fe clang::RecursiveASTVisitor<(anonymous namespace)::AnalysisConsumer>::WalkUpFromFunctionDecl(clang::FunctionDecl*) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/build/tools/clang/include/clang/AST/DeclNodes.inc:389:0
+#24 0x00007fc356689070 clang::RecursiveASTVisitor<(anonymous namespace)::AnalysisConsumer>::TraverseFunctionDecl(clang::FunctionDecl*) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/include/clang/AST/RecursiveASTVisitor.h:1994:0
+#25 0x00007fc356683f8b clang::RecursiveASTVisitor<(anonymous namespace)::AnalysisConsumer>::TraverseDecl(clang::Decl*) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/build/tools/clang/include/clang/AST/DeclNodes.inc:389:0
+#26 0x00007fc3566819c9 (anonymous namespace)::AnalysisConsumer::HandleTranslationUnit(clang::ASTContext&) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Frontend/AnalysisConsumer.cpp:545:0
+#27 0x00007fc35928b5bc clang::ParseAST(clang::Sema&, bool, bool) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/Parse/ParseAST.cpp:161:0
+#28 0x00007fc35d5fec33 clang::ASTFrontendAction::ExecuteAction() /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/Frontend/FrontendAction.cpp:998:0
+#29 0x00007fc35d5fe676 clang::FrontendAction::Execute() /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/Frontend/FrontendAction.cpp:901:0
+#30 0x00007fc35d5854d4 clang::CompilerInstance::ExecuteAction(clang::FrontendAction&) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/Frontend/CompilerInstance.cpp:992:0
+#31 0x00007fc35d27481a clang::ExecuteCompilerInvocation(clang::CompilerInstance*) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/FrontendTool/ExecuteCompilerInvocation.cpp:252:0
+#32 0x000055fa6aeaca2c cc1_main(llvm::ArrayRef<char const*>, char const*, void*) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/tools/driver/cc1_main.cpp:221:0
+#33 0x000055fa6aea1979 ExecuteCC1Tool(llvm::ArrayRef<char const*>, llvm::StringRef) /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/tools/driver/driver.cpp:310:0
+#34 0x000055fa6aea2629 main /home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/tools/driver/driver.cpp:389:0
+#35 0x00007fc35ca9cb97 __libc_start_main /build/glibc-OTsEL5/glibc-2.27/csu/../csu/libc-start.c:344:0
+#36 0x000055fa6ae9efda _start (/home/codeman/.itsoflife/local/packages-live/llvm-clang6/build/bin/clang-6.0+0x36fda)
+Stack dump:
+0.	Program arguments: /home/codeman/.itsoflife/local/packages-live/llvm-clang6/build/bin/clang-6.0 -cc1 -triple x86_64-unknown-linux-gnu -analyze -disable-free -main-file-name test_spanreport.c -analyzer-store=region -analyzer-opt-analyze-nested-blocks -analyzer-eagerly-assume -analyzer-checker=core -analyzer-checker=apiModeling -analyzer-checker=unix -analyzer-checker=deadcode -analyzer-checker=security.insecureAPI.UncheckedReturn -analyzer-checker=security.insecureAPI.getpw -analyzer-checker=security.insecureAPI.gets -analyzer-checker=security.insecureAPI.mktemp -analyzer-checker=security.insecureAPI.mkstemp -analyzer-checker=security.insecureAPI.vfork -analyzer-checker=nullability.NullPassedToNonnull -analyzer-checker=nullability.NullReturnedFromNonnull -analyzer-output plist -w -mrelocation-model static -mthread-model posix -mdisable-fp-elim -fmath-errno -masm-verbose -mconstructor-aliases -munwind-tables -fuse-init-array -target-cpu x86-64 -dwarf-column-info -debugger-tuning=gdb -resource-dir /home/codeman/.itsoflife/local/packages-live/llvm-clang6/build/lib/clang/6.0.1 -internal-isystem /usr/local/include -internal-isystem /home/codeman/.itsoflife/local/packages-live/llvm-clang6/build/lib/clang/6.0.1/include -internal-externc-isystem /usr/include/x86_64-linux-gnu -internal-externc-isystem /include -internal-externc-isystem /usr/include -std=c99 -fdebug-compilation-dir /home/codeman/.itsoflife/git/research/code/SLANG-git/tests -ferror-limit 19 -fmessage-length 0 -fobjc-runtime=gcc -fdiagnostics-show-option -analyzer-checker debug.slangbug -analyzer-output=html -o /tmp/scan-build-2019-04-05-144418-13696-1 -x c test_spanreport.c 
+1.	<eof> parser at end of file
+scan-build: 0 bugs found.
+scan-build: The analyzer encountered problems on some source files.
+scan-build: Preprocessed versions of these sources were deposited in '/tmp/scan-build-2019-04-05-144418-13696-1/failures'.
+scan-build: Please consider submitting a bug report using these files:
+scan-build:   http://clang-analyzer.llvm.org/filing_bugs.html
+scan-build: Analysis run complete.
+scan-build: Viewing analysis results in '/tmp/scan-build-2019-04-05-144418-13696-1' using scan-view.

@@ -44,20 +44,20 @@ using namespace ento;
 
 // Each bug has the following format (example)
 // ----------------------
-// BUG_START
-// BUG_NAME Dead Store
-// BUG_CATEGORY Dead Variable
+// START
+// NAME Dead Store
+// CATEGORY Dead Variable
 //
 // LINE 10
 // COLUMN 3
-// BUG_MSG x is not used ahead.
+// MSG x is not used ahead.
 //
 //
 // LINE 10
 // COLUMN 7
-// BUG_MSG y is not used ahead.
+// MSG y is not used ahead.
 //
-// BUG_END
+// END
 // ----------------------
 
 namespace {
@@ -108,7 +108,7 @@ class BugMessage {
                      << " " << line << "\n";
         llvm::errs() << "COLUMN"
                      << " " << col << "\n";
-        llvm::errs() << "BUG_MSG"
+        llvm::errs() << "MSG"
                      << " " << messageString << "\n";
         llvm::errs() << "\n";
         llvm::errs() << "STMT :\n";
@@ -137,17 +137,17 @@ class Bug {
     bool isEmpty() const { return bugName == "" && bugCategory == ""; }
 
     void dump() const {
-        llvm::errs() << "BUG_START"
+        llvm::errs() << "START"
                      << "\n";
-        llvm::errs() << "BUG_NAME"
+        llvm::errs() << "NAME"
                      << " " << bugName << "\n";
-        llvm::errs() << "BUG_CATEGORY"
+        llvm::errs() << "CATEGORY"
                      << " " << bugCategory << "\n";
         llvm::errs() << "\n";
         for (int i = 0; i < messages.size(); ++i) {
             messages[i].dump();
         }
-        llvm::errs() << "BUG_END"
+        llvm::errs() << "END"
                      << "\n\n";
     }
 };
@@ -216,9 +216,9 @@ class BugRepo {
         return line;
     }
 
-    bool isBugHeader(std::string line) { return line == "BUG_START"; }
+    bool isBugHeader(std::string line) { return line == "START"; }
 
-    bool isBugEnd(std::string &line) { return line == "BUG_END" || line == ""; }
+    bool isBugEnd(std::string &line) { return line == "END" || line == ""; }
 
     BugMessage parseSingleBugMessage(std::ifstream &inputTextFile) {
         uint32_t line;
@@ -296,7 +296,7 @@ void SlangBugReporterChecker::checkASTCodeBody(const Decl *D, AnalysisManager &m
     AC = mgr.getAnalysisDeclContext(D);
 
     bugRepo.fileName = D->getASTContext().getSourceManager().getFilename(D->getLocStart()).str();
-    bugRepo.loadBugReports(bugRepo.fileName + ".bugs");
+    bugRepo.loadBugReports(bugRepo.fileName + ".spanreport");
 
     if (const CFG *cfg = mgr.getCFG(D)) {
         handleCfg(cfg);
