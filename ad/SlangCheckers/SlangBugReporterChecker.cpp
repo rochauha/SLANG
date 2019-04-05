@@ -131,7 +131,7 @@ class Bug {
 
     // less than operator based on encoded id of first message
     bool operator<(const Bug &rhs) const {
-        this->messages[0].genEncodedId() < rhs.messages[0].genEncodedId();
+        return this->messages[0].genEncodedId() < rhs.messages[0].genEncodedId();
     }
 
     bool isEmpty() const { return bugName == "" && bugCategory == ""; }
