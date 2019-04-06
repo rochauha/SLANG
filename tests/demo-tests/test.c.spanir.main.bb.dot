@@ -1,0 +1,6 @@
+digraph {
+  node [shape=box]
+  START [label="[START]\lx = 10\lt.2 = x * 4\lt.3 = alloca t.2\lt.1 = (types.VarArray(INT32))t.3\lt.4 = sizeof t.1\lt.5 = 2 * t.4\lt.6 = alloca t.5\larr = (types.VarArray(types.VarArray(INT32)))t.6\l"];
+  END [label="[END]\lnop()\l"];
+  START -> END;
+}

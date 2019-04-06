@@ -41,6 +41,7 @@ irTUnit.TUnit(
         instrSeq = [
             instr.AssignI(expr.VarE("v:main:a", Loc(3,3)), expr.LitE(11, Loc(3,7)), Loc(3,3)),
             instr.AssignI(expr.VarE("v:main:u", Loc(4,3)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:main:a", Loc(4,8)), Loc(4,7)), Loc(4,3)),
+            instr.UnDefValI(expr.VarE("v:main:cond"), Loc(6,9)),
             instr.LabelI("WhileCond1"),
             instr.CondI(expr.VarE("v:main:cond", Loc(6,9)), "WhileBody1", "WhileExit1", Loc(6,9)),
             instr.LabelI("WhileBody1"),

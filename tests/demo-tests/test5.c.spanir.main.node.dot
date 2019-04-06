@@ -1,0 +1,33 @@
+digraph {
+  node [shape=box]
+  n1 [label="1: a = 11", color=blue, penwidth=4];
+  n2 [label="2: u = &a"];
+  n3 [label="3: input(cond)"];
+  n4 [label="4: if (cond) BB2 BB6"];
+  n5 [label="5: tmp = *u"];
+  n6 [label="6: t.1 = tmp * 2"];
+  n7 [label="7: *u = t.1"];
+  n8 [label="8: if (b) BB3 BB4"];
+  n9 [label="9: b = 15"];
+  n10 [label="10: t.2 = &b"];
+  n11 [label="11: *z = t.2"];
+  n12 [label="12: b = 16"];
+  n13 [label="13: return 0"];
+  n14 [label="14: nop()", color=blue, penwidth=4];
+
+  n1 -> n2 ;
+  n2 -> n3 ;
+  n3 -> n4 ;
+  n4 -> n5 [color=green, penwidth=2];
+  n4 -> n13 [color=red, penwidth=2];
+  n5 -> n6 ;
+  n6 -> n7 ;
+  n7 -> n8 ;
+  n8 -> n12 [color=red, penwidth=2];
+  n8 -> n9 [color=green, penwidth=2];
+  n9 -> n10 ;
+  n10 -> n11 ;
+  n11 -> n4 ;
+  n12 -> n4 ;
+  n13 -> n14 ;
+}

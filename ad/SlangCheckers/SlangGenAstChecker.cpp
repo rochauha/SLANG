@@ -582,7 +582,7 @@ public:
       // if (funcDecl->doesThisDeclarationHaveABody()) { //& !funcDecl->hasPrototype())
       for (unsigned i = 0, e = funcDecl->getNumParams(); i != e; ++i) {
         const ParmVarDecl *paramVarDecl = funcDecl->getParamDecl(i);
-        handleVariable(paramVarDecl, slangFunc.name); // adds the var too
+        handleValueDecl(paramVarDecl, slangFunc.name); // adds the var too
         slangFunc.paramNames.push_back(stu.getVar((uint64_t)paramVarDecl).name);
       }
       slangFunc.variadic = funcDecl->isVariadic();
@@ -596,7 +596,7 @@ public:
   } // handleFunction()
 
   // record the variable name and type
-  void handleVariable(const ValueDecl *valueDecl, std::string funcName) const {
+  void handleValueDecl(const ValueDecl *valueDecl, std::string funcName) const {
     uint64_t varAddr = (uint64_t)valueDecl;
     std::string varName;
     if (stu.isNewVar(varAddr)) {
@@ -628,6 +628,15 @@ public:
 
         stu.addVar(slangVar.id, slangVar);
 
+        if (valueDecl->getType()->isArrayType()) {
+          auto arrayType = valueDecl->getType()->getAsArrayTypeUnsafe();
+          if (isa<VariableArrayType>(arrayType)) {
+            SlangExpr varExpr = convertVariable(varDecl);
+            convertVarArrayVariable(varExpr, valueDecl->getType(),
+                arrayType->getElementType());
+          }
+        }
+
         // check if it has a initialization body
         if (varDecl->hasInit()) {
           // yes it has, so initialize it
@@ -655,7 +664,7 @@ public:
     } else {
       SLANG_DEBUG("SEEN_VAR: " << stu.getVar(varAddr).convertToString())
     }
-  } // handleVariable()
+  } // handleValueDecl()
 
   void handleDeclStmt(const DeclStmt *declStmt) const {
     stu.setLastDeclStmtTo(declStmt);
@@ -666,7 +675,7 @@ public:
 
     for (auto it = declStmt->decl_begin(); it != declStmt->decl_end(); ++it) {
       if (isa<VarDecl>(*it)) {
-        handleVariable(cast<ValueDecl>(*it), stu.currFunc->name);
+        handleValueDecl(cast<ValueDecl>(*it), stu.currFunc->name);
       }
     }
   } // handleDeclStmt()
@@ -772,6 +781,106 @@ public:
 
     return slangExpr;
   } // convertStmt()
+
+  SlangExpr convertVarArrayVariable(SlangExpr varExpr,
+      QualType valueType, QualType elementType) const {
+
+    const Type *elemTypePtr = elementType.getTypePtr();
+    const VariableArrayType *varArrayType =
+        cast<VariableArrayType>(valueType.getTypePtr()->getAsArrayTypeUnsafe());
+
+    if (elemTypePtr->isArrayType()) {
+      // it will definitely be a VarArray Type (since this func is called)
+      SlangExpr tmpElementVarArr = genTmpVariable(elementType, varExpr.locStr);
+      convertVarArrayVariable(tmpElementVarArr, elementType,
+          elemTypePtr->getAsArrayTypeUnsafe()->getElementType());
+
+      SlangExpr thisVarArrSizeExpr = convertToTmp(
+          convertStmt(varArrayType->getSizeExpr()));
+
+      SlangExpr sizeOfInnerVarArrExpr = addAndReturnSizeOfInstrExpr(tmpElementVarArr);
+      SlangExpr sizeOfThisVarArrExpr = convertToTmp(createBinaryExpr(thisVarArrSizeExpr,
+          "op.BO_MUL", sizeOfInnerVarArrExpr, thisVarArrSizeExpr.locStr));
+
+      std::stringstream ss;
+      ss << "expr.AllocE(" << sizeOfThisVarArrExpr.expr;
+      ss << ", " << sizeOfThisVarArrExpr.locStr << ")";
+      SlangExpr allocExpr;
+      allocExpr.expr = ss.str();
+      allocExpr.qualType = FD->getASTContext().VoidPtrTy;
+      allocExpr.locStr = sizeOfInnerVarArrExpr.locStr;
+      allocExpr.compound = true;
+
+      SlangExpr tmpVoidPtrVar = convertToTmp(allocExpr);
+
+      ss.str("");
+      ss << "expr.CastE(" << tmpVoidPtrVar.expr;
+      ss << ", op.CastOp(" << convertClangType(valueType) << ")";
+      ss << ", " << tmpVoidPtrVar.locStr << ")";
+      SlangExpr castExpr;
+      castExpr.expr = ss.str();
+      castExpr.qualType = valueType;
+      castExpr.compound = true;
+      castExpr.locStr = tmpVoidPtrVar.locStr;
+
+      addAssignInstr(varExpr, castExpr, varExpr.locStr);
+      return varExpr;
+
+    } else {
+      // a non-array element type
+      TypeInfo typeInfo = FD->getASTContext().getTypeInfo(elementType);
+      uint64_t size = typeInfo.Width / 8;
+
+      SlangExpr thisVarArrSizeExpr = convertToTmp(
+          convertStmt(varArrayType->getSizeExpr()));
+
+      SlangExpr sizeOfInnerNonVarArrType;
+      std::stringstream ss;
+      ss << "expr.LitE(" << size;
+      ss << ", " << thisVarArrSizeExpr.locStr << ")";
+      sizeOfInnerNonVarArrType.expr = ss.str();
+      sizeOfInnerNonVarArrType.qualType = FD->getASTContext().UnsignedIntTy;
+      sizeOfInnerNonVarArrType.locStr = thisVarArrSizeExpr.locStr;
+
+      SlangExpr sizeOfThisVarArrExpr = convertToTmp(
+          createBinaryExpr(thisVarArrSizeExpr,
+              "op.BO_MUL", sizeOfInnerNonVarArrType, thisVarArrSizeExpr.locStr));
+
+      ss.str("");
+      ss << "expr.AllocE(" << sizeOfThisVarArrExpr.expr;
+      ss << ", " << sizeOfThisVarArrExpr.locStr << ")";
+      SlangExpr allocExpr;
+      allocExpr.expr = ss.str();
+      allocExpr.qualType = FD->getASTContext().VoidPtrTy;
+      allocExpr.locStr = sizeOfInnerNonVarArrType.locStr;
+      allocExpr.compound = true;
+
+      SlangExpr tmpVoidPtrVar = convertToTmp(allocExpr);
+
+      ss.str("");
+      ss << "expr.CastE(" << tmpVoidPtrVar.expr;
+      ss << ", op.CastOp(" << convertClangType(valueType) << ")";
+      ss << ", " << tmpVoidPtrVar.locStr << ")";
+      SlangExpr castExpr;
+      castExpr.expr = ss.str();
+      castExpr.qualType = valueType;
+      castExpr.compound = true;
+      castExpr.locStr = tmpVoidPtrVar.locStr;
+
+      addAssignInstr(varExpr, castExpr, varExpr.locStr);
+      return varExpr;
+    }
+
+    // if (type && !isIncompleteType(type)) {
+    //   TypeInfo typeInfo = FD->getASTContext().getTypeInfo(slangExpr.qualType);
+    //   size = typeInfo.Width / 8;
+    // }
+    // SlangExpr sizeExpr = convertToTmp(convertStmt(varArrayType->getSizeExpr()));
+    // llvm::errs() << "----------\n" << sizeExpr.toString() << "\n";
+    // varArrayType->dump();
+    // convertClangType(varArrayType->getElementType());
+    // return SlangExpr{};
+  } // convertVarArrayVariable()
 
   SlangExpr convertInitListExpr(SlangVar& slangVar, const InitListExpr *initListExpr,
       const VarDecl *varDecl, std::vector<uint32_t>& indexVector) const {
@@ -984,7 +1093,7 @@ public:
 
     std::stringstream ss;
     ss << "expr.CastE(" << exprArg.expr;
-    ss << ", " << castTypeStr;
+    ss << ", op.CastOp(" << castTypeStr << ")";
     ss << ", " << getLocationString(cCast) << ")";
 
     castExpr.expr = ss.str();
@@ -1495,18 +1604,19 @@ public:
     return slangExpr;
   } // convertStringLiteral()
 
-  SlangExpr convertVarDecl(const VarDecl *varDecl, std::string &locStr) const {
+  SlangExpr convertVariable(const VarDecl *varDecl) const {
     std::stringstream ss;
     SlangExpr slangExpr;
 
     ss << "expr.VarE(\"" << stu.convertVarExpr((uint64_t)varDecl) << "\"";
-    ss << ", " << locStr << ")";
+    ss << ", " << getLocationString(varDecl) << ")";
     slangExpr.expr = ss.str();
     slangExpr.qualType = varDecl->getType();
     slangExpr.varId = (uint64_t)varDecl;
+    slangExpr.locStr = getLocationString(varDecl);
 
     return slangExpr;
-  } // convertVarDecl()
+  } // convertVariable()
 
   SlangExpr convertEnumConst(const EnumConstantDecl *ecd, std::string &locStr) const {
     SlangExpr slangExpr;
@@ -1531,7 +1641,7 @@ public:
     const ValueDecl *valueDecl = dre->getDecl();
     if (isa<VarDecl>(valueDecl)) {
       auto varDecl = cast<VarDecl>(valueDecl);
-      slangExpr = convertVarDecl(varDecl, locStr);
+      slangExpr = convertVariable(varDecl);
       slangExpr.locStr = getLocationString(dre);
       return slangExpr;
 
@@ -2123,7 +2233,6 @@ public:
       ss << "types.VarArray(of=";
       ss << convertClangType(arrayType->getElementType());
       ss << ")";
-
     } else if (isa<IncompleteArrayType>(arrayType)) {
       ss << "types.IncompleteArray(of=";
       ss << convertClangType(arrayType->getElementType());
@@ -2402,6 +2511,24 @@ public:
       return true; // top level
     }
   } // isTopLevel()
+
+  SlangExpr addAndReturnSizeOfInstrExpr(SlangExpr tmpElementVarArr) const {
+    std::stringstream ss;
+
+    SlangExpr tmpExpr = convertToTmp(tmpElementVarArr);
+
+    SlangExpr sizeOfExpr;
+    ss << "expr.SizeOfE(" << tmpExpr.expr;
+    ss << ", " << tmpElementVarArr.locStr << ")";
+    sizeOfExpr.expr = ss.str();
+    sizeOfExpr.qualType = FD->getASTContext().UnsignedIntTy;
+    sizeOfExpr.compound = true;
+    sizeOfExpr.locStr = tmpElementVarArr.locStr;
+
+    SlangExpr slangExpr = convertToTmp(sizeOfExpr);
+
+    return slangExpr;
+  }
 
   // BOUND END  : helper_routines
 };

@@ -98,17 +98,11 @@ class BugMessage {
     bool isEmpty() const { return line == 0 && col == 0 && messageString.length() == 0; }
 
     void dump() const {
-        llvm::errs() << "\n";
-        llvm::errs() << "LINE"
-                     << " " << line << "\n";
-        llvm::errs() << "COLUMN"
-                     << " " << col << "\n";
-        llvm::errs() << "MSG"
-                     << " " << messageString << "\n";
-        llvm::errs() << "\n";
+        llvm::errs() << "LINE" << " " << line << "\n";
+        llvm::errs() << "COLUMN" << " " << col << "\n";
+        llvm::errs() << "MSG" << " " << messageString << "\n";
         llvm::errs() << "STMT :\n";
         stmt->dump();
-        llvm::errs() << "\n";
     }
 };
 
@@ -137,18 +131,13 @@ class Bug {
     bool isEmpty() const { return bugName == "" && bugCategory == ""; }
 
     void dump() const {
-        llvm::errs() << "START"
-                     << "\n";
-        llvm::errs() << "NAME"
-                     << " " << bugName << "\n";
-        llvm::errs() << "CATEGORY"
-                     << " " << bugCategory << "\n";
-        llvm::errs() << "\n";
-        for (int i = 0; i < messages.size(); ++i) {
+        llvm::errs() << "START" << "\n";
+        llvm::errs() << "NAME" << " " << bugName << "\n";
+        llvm::errs() << "CATEGORY" << " " << bugCategory << "\n";
+        for (int i = 0; i < (int)messages.size(); ++i) {
             messages[i].dump();
         }
-        llvm::errs() << "END"
-                     << "\n\n";
+        llvm::errs() << "END" << "\n";
     }
 };
 
@@ -332,9 +321,9 @@ void SlangBugReporterChecker::handleBBStmts(const CFGBlock *bb) const {
 // matches bugs to real statement elements
 void SlangBugReporterChecker::matchStmtToBug(const Stmt *stmt) const {
     uint64_t locId = getStmtLocId(stmt);
-    for (int i = 0; i < bugRepo.bugVector.size(); ++i) {
+    for (int i = 0; i < (int)bugRepo.bugVector.size(); ++i) {
         Bug currentBug = bugRepo.bugVector[i];
-        for (int j = 0; j < currentBug.messages.size(); ++j) {
+        for (int j = 0; j < (int)currentBug.messages.size(); ++j) {
             if (locId == currentBug.messages[j].genEncodedId()) {
                 currentBug.messages[j].setStmt(const_cast<Stmt *>(stmt));
             }
@@ -362,27 +351,23 @@ uint64_t SlangBugReporterChecker::getStmtLocId(const Stmt *stmt) const {
 void SlangBugReporterChecker::reportBugs() const {
     
     // sort bugs based on location
-    sort(bugRepo.bugVector.begin(), bugRepo.bugVector.end());
+    std::sort(bugRepo.bugVector.begin(), bugRepo.bugVector.end());
     
     // report all the bugs collected
-    for (int i = 0; i < bugRepo.bugVector.size(); ++i) {
+    for (int i = 0; i < (int)bugRepo.bugVector.size(); ++i) {
         Bug currentBug = bugRepo.bugVector[i];
         generateSingleBugReport(currentBug);
     }
 }
 
 void SlangBugReporterChecker::generateSingleBugReport(Bug &bug) const {
-    llvm::errs() << "Generating bug report for :\n";
+    llvm::errs() << "\nSLANG: Generating report for:\n";
     bug.dump();
-    llvm::errs() << "\n";
 
     BugType *bt = new BugType(this->getCheckName(), llvm::StringRef(bug.bugName),
                               llvm::StringRef(bug.bugCategory));
-    llvm::errs() << "SLANG : Bug type created with name : " << bug.bugName
-                 << " and category : " << bug.bugCategory << "\n";
 
     BR->Register(bt);
-    llvm::errs() << "SLANG : Bug type registered\n";
 
     std::string description = bug.messages[0].getMessageString();
 
@@ -390,7 +375,6 @@ void SlangBugReporterChecker::generateSingleBugReport(Bug &bug) const {
     PathDiagnosticLocation startLoc =
         PathDiagnosticLocation::createBegin(bug.messages[0].getStmt(), BR->getSourceManager(), AC);
     auto R = llvm::make_unique<BugReport>(*bt, llvm::StringRef(description), startLoc);
-    llvm::errs() << "SLANG : BugReport initialized\n";
 
     for (size_t i = 1; i < bug.messages.size(); ++i) {
         Stmt *currentStmt = bug.messages[i].getStmt();
@@ -401,8 +385,8 @@ void SlangBugReporterChecker::generateSingleBugReport(Bug &bug) const {
 
         R->addNote(llvm::StringRef(currentMessage), currentLoc);
     }
-    llvm::errs() << "SLANG : Emitting bug report\n";
     BR->emitReport(std::move(R));
+    llvm::errs() << "SLANG : Report Created\n";
 }
 
 // Register the Checker

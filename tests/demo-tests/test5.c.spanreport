@@ -9,14 +9,6 @@ END
 START
 NAME Dead Code
 CATEGORY Dead Store
-LINE 4
-COLUMN 3
-MESSAGE This value of u is unused
-END
-
-START
-NAME Dead Code
-CATEGORY Dead Store
 LINE 7
 COLUMN 5
 MESSAGE This value of tmp is unused

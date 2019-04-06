@@ -1,0 +1,56 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "test.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:t.6": types.Ptr(to=types.Void),
+    "v:main:t.5": types.Int32,
+    "v:main:arr": types.VarArray(of=types.VarArray(of=types.Int32)),
+    "v:main:x": types.Int32,
+    "v:main:t.2": types.Int32,
+    "v:main:t.1": types.VarArray(of=types.Int32),
+    "v:main:t.3": types.Ptr(to=types.Void),
+    "v:main:t.4": types.UInt32,
+  }, # end allVars dict
+
+  allObjs = {
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        instrSeq = [
+            instr.AssignI(expr.VarE("v:main:x", Loc(2,3)), expr.LitE(10, Loc(2,11)), Loc(2,3)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(3,14)), expr.BinaryE(expr.VarE("v:main:x", Loc(2,3)), op.BO_MUL, expr.LitE(4, Loc(3,14)), Loc(3,14)), Loc(3,14)),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(3,14)), expr.AllocE(expr.VarE("v:main:t.2", Loc(3,14)), Loc(3,14)), Loc(3,14)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(3,3)), expr.CastE(expr.VarE("v:main:t.3", Loc(3,14)), op.CastOp(types.VarArray(of=types.Int32)), Loc(3,14)), Loc(3,3)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(3,3)), expr.SizeOfE(expr.VarE("v:main:t.1", Loc(3,3)), Loc(3,3)), Loc(3,3)),
+            instr.AssignI(expr.VarE("v:main:t.5", Loc(3,11)), expr.BinaryE(expr.LitE(2, Loc(3,11)), op.BO_MUL, expr.VarE("v:main:t.4", Loc(3,3)), Loc(3,11)), Loc(3,11)),
+            instr.AssignI(expr.VarE("v:main:t.6", Loc(3,3)), expr.AllocE(expr.VarE("v:main:t.5", Loc(3,11)), Loc(3,11)), Loc(3,3)),
+            instr.AssignI(expr.VarE("v:main:arr", Loc(3,3)), expr.CastE(expr.VarE("v:main:t.6", Loc(3,3)), op.CastOp(types.VarArray(of=types.VarArray(of=types.Int32))), Loc(3,3)), Loc(3,3)),
+        ], # instrSeq end.
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

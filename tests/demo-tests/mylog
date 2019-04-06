@@ -1,8 +1,154 @@
-Writing '/tmp/CFG-8ef414.dot'...  done. 
-Trying 'xdg-open' program... Remember to erase graph file: /tmp/CFG-8ef414.dot
-Writing '/tmp/CFG-1c434c.dot'...  done. 
-Trying 'xdg-open' program... Remember to erase graph file: /tmp/CFG-1c434c.dot
-array2.c:14:16: warning: 1st function call argument is an uninitialized value
-  int arr1[x+2+func(arr[0][0])];
-               ^~~~~~~~~~~~~~~
-1 warning generated.
+
+  06-04-2019 19:24:18: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkASTCodeBody():537:
+BOUND START: SLANG_Generated_Output.
+
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleFuncNameAndType():579:
+AddingFunction: main
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkASTCodeBody():547:
+main
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():693:
+ConvertingStmt : CompoundStmt
+
+CompoundStmt 0x55abc43c1418
+|-DeclStmt 0x55abc43c1278
+| `-VarDecl 0x55abc43c11f8  used x 'int' cinit
+|   `-IntegerLiteral 0x55abc43c1258 'int' 10
+`-DeclStmt 0x55abc43c1400
+  `-VarDecl 0x55abc43c13a0  arr 'int [2][x]'
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():693:
+ConvertingStmt : DeclStmt
+
+DeclStmt 0x55abc43c1278
+`-VarDecl 0x55abc43c11f8  used x 'int' cinit
+  `-IntegerLiteral 0x55abc43c1258 'int' 10
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleDeclStmt():671:
+Set last DeclStmt to DeclStmt at 94196220039800
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleValueDecl():612:
+NEW_VAR: "": types.Int32,
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():693:
+ConvertingStmt : IntegerLiteral
+
+IntegerLiteral 0x55abc43c1258 'int' 10
+
+  06-04-2019 19:24:18: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertIntegerLiteral():1538:
+expr.LitE(10, Loc(2,11))
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():693:
+ConvertingStmt : DeclStmt
+
+DeclStmt 0x55abc43c1400
+`-VarDecl 0x55abc43c13a0  arr 'int [2][x]'
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleDeclStmt():671:
+Set last DeclStmt to DeclStmt at 94196220040192
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertClangArrayType():2245:
+types.VarArray(of=types.Int32)
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertClangArrayType():2245:
+types.VarArray(of=types.VarArray(of=types.Int32))
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:handleValueDecl():612:
+NEW_VAR: "": types.VarArray(of=types.VarArray(of=types.Int32)),
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertClangArrayType():2245:
+types.VarArray(of=types.Int32)
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():693:
+ConvertingStmt : ImplicitCastExpr
+
+ImplicitCastExpr 0x55abc43c12d8 'int' <LValueToRValue>
+`-DeclRefExpr 0x55abc43c12b0 'int' lvalue Var 0x55abc43c11f8 'x' 'int'
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():693:
+ConvertingStmt : DeclRefExpr
+
+DeclRefExpr 0x55abc43c12b0 'int' lvalue Var 0x55abc43c11f8 'x' 'int'
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertClangArrayType():2245:
+types.VarArray(of=types.Int32)
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertStmt():693:
+ConvertingStmt : IntegerLiteral
+
+IntegerLiteral 0x55abc43c1290 'int' 2
+
+  06-04-2019 19:24:18: TRACE (10):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertIntegerLiteral():1538:
+expr.LitE(2, Loc(3,11))
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertClangArrayType():2245:
+types.VarArray(of=types.Int32)
+
+  06-04-2019 19:24:18: DEBUG (20):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:convertClangArrayType():2245:
+types.VarArray(of=types.VarArray(of=types.Int32))
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "test.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:t.6": types.Ptr(to=types.Void),
+    "v:main:t.5": types.Int32,
+    "v:main:arr": types.VarArray(of=types.VarArray(of=types.Int32)),
+    "v:main:x": types.Int32,
+    "v:main:t.2": types.Int32,
+    "v:main:t.1": types.VarArray(of=types.Int32),
+    "v:main:t.3": types.Ptr(to=types.Void),
+    "v:main:t.4": types.UInt32,
+  }, # end allVars dict
+
+  allObjs = {
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        instrSeq = [
+            instr.AssignI(expr.VarE("v:main:x", Loc(2,3)), expr.LitE(10, Loc(2,11)), Loc(2,3)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(3,14)), expr.BinaryE(expr.VarE("v:main:x", Loc(2,3)), op.BO_MUL, expr.LitE(4, Loc(3,14)), Loc(3,14)), Loc(3,14)),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(3,14)), expr.AllocE(expr.VarE("v:main:t.2", Loc(3,14)), Loc(3,14)), Loc(3,14)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(3,3)), expr.CastE(expr.VarE("v:main:t.3", Loc(3,14)), op.CastOp(types.VarArray(of=types.Int32)), Loc(3,14)), Loc(3,3)),
+            instr.AssignI(expr.VarE("v:main:t.4", Loc(3,3)), expr.SizeOfE(expr.VarE("v:main:t.1", Loc(3,3)), Loc(3,3)), Loc(3,3)),
+            instr.AssignI(expr.VarE("v:main:t.5", Loc(3,11)), expr.BinaryE(expr.LitE(2, Loc(3,11)), op.BO_MUL, expr.VarE("v:main:t.4", Loc(3,3)), Loc(3,11)), Loc(3,11)),
+            instr.AssignI(expr.VarE("v:main:t.6", Loc(3,3)), expr.AllocE(expr.VarE("v:main:t.5", Loc(3,11)), Loc(3,11)), Loc(3,3)),
+            instr.AssignI(expr.VarE("v:main:arr", Loc(3,3)), expr.CastE(expr.VarE("v:main:t.6", Loc(3,3)), op.CastOp(types.VarArray(of=types.VarArray(of=types.Int32))), Loc(3,3)), Loc(3,3)),
+        ], # instrSeq end.
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.
+
+  06-04-2019 19:24:18: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkEndOfTranslationUnit():555:
+Translation Unit Ended.
+
+
+  06-04-2019 19:24:18: EVENT (40):/home/codeman/.itsoflife/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers/SlangGenAstChecker.cpp:checkEndOfTranslationUnit():556:
+BOUND END  : SLANG_Generated_Output.
+
