@@ -284,7 +284,7 @@ public:
   std::unordered_map<uint64_t, SlangVar> varMap;
   // map of var-name to a count:
   // used in case two local variables have same name (blocks)
-  std::unordered_map<std::string, int32_t> varNameMap;
+  std::unordered_map<std::string, uint64_t> varCountMap;
   // contains functions
   std::unordered_map<uint64_t, SlangFunc> funcMap;
   // contains structs
@@ -318,14 +318,14 @@ public:
   }
 
   SlangTranslationUnit()
-      : fileName{}, currFunc{nullptr}, recordId{0}, varMap{}, varNameMap{}, funcMap{}, dirtyVars{} {
+      : fileName{}, currFunc{nullptr}, recordId{0}, varMap{}, varCountMap{}, funcMap{}, dirtyVars{} {
   }
 
   // clear the buffer for the next function.
   void clear() {
     varMap.clear();
     dirtyVars.clear();
-    varNameMap.clear();
+    varCountMap.clear();
   } // clear()
 
   uint32_t genNextLabelCount() {
@@ -618,6 +618,13 @@ public:
 
         if (varDecl->hasLocalStorage()) {
           slangVar.setLocalVarName(varName, funcName);
+          if (stu.varCountMap.find(slangVar.name) != stu.varCountMap.end()) {
+            stu.varCountMap[slangVar.name]++;
+            uint64_t newVarId = stu.varCountMap[slangVar.name];
+            slangVar.setLocalVarName(std::to_string(newVarId) + "." + varName, funcName);
+          } else {
+            stu.varCountMap[slangVar.name] = 1;
+          }
         } else if (varDecl->hasGlobalStorage()) {
           slangVar.setGlobalVarName(varName);
         } else if (varDecl->hasExternalStorage()) {
