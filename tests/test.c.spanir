@@ -17,8 +17,9 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
+    "v:main:2.x": types.Int32,
+    "v:main:t.1": types.Int32,
     "v:main:x": types.Int32,
-    "v:main:n": types.Int16,
   }, # end allVars dict
 
   allObjs = {
@@ -33,9 +34,14 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         instrSeq = [
-            instr.AssignI(expr.VarE("v:main:x", Loc(3,5)), expr.LitE(8, Loc(3,13)), Loc(3,5)),
-            instr.AssignI(expr.VarE("v:main:x", Loc(4,5)), expr.LitE(1, Loc(4,9)), Loc(4,5)),
-            instr.AssignI(expr.VarE("v:main:x", Loc(5,5)), expr.LitE(2, Loc(5,9)), Loc(5,5)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(2,2)), expr.LitE(10, Loc(2,10)), Loc(2,2)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(3,6)), expr.BinaryE(expr.LitE(5, Loc(3,6)), op.BO_GT, expr.VarE("v:main:x", Loc(2,2)), Loc(3,6)), Loc(3,6)),
+            instr.CondI(expr.VarE("v:main:t.1", Loc(3,6)), "IfTrue1", "IfFalse1", Loc(3,6)),
+            instr.LabelI("IfTrue1"),
+            instr.AssignI(expr.VarE("v:main:2.x", Loc(4,3)), expr.LitE(200, Loc(4,11)), Loc(4,3)),
+            instr.GotoI("IfExit1"),
+            instr.LabelI("IfFalse1"),
+            instr.LabelI("IfExit1"),
         ], # instrSeq end.
       ), # f:main() end. 
 

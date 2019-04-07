@@ -1,6 +1,6 @@
 int main() {
-    short int n;
-    int x = sizeof(long int);
-    x = sizeof(char);
-    x = sizeof n;
+	int x = 10;
+	if (5 > x) {
+		int x = 200;
+	}
 }
