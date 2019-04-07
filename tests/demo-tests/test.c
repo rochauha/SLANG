@@ -1,12 +1,24 @@
+struct val {
+  int x;
+};
 struct node {
   int val1;
-  int nodeArr[13];
+  struct val *vv;
+  struct val v;
+  //int nodeArr[13];
 };
 
 int main() {
-  struct node arr[10];
-  arr[1].val1 = 889;
-  arr[2].nodeArr[5] = 33;
+  struct node n;
+  struct val v;
+  n.val1 = 40;
+  n.v.x = 10;
+  n.vv = &v;
+  n.vv->x = 30;
+
+  //struct node arr[10];
+  //arr[1].val1 = 889;
+  //arr[2].nodeArr[5] = 33;
 
 // ----------------
 //  int x = 10;

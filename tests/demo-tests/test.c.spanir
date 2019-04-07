@@ -17,20 +17,32 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.2": types.Struct("s:node"),
-    "v:main:arr": types.ConstSizeArray(of=types.Struct("s:node"), size=10),
-    "v:main:t.1": types.Struct("s:node"),
+    "v:main:t.2": types.Ptr(to=types.Struct("s:val")),
+    "v:main:t.3": types.Ptr(to=types.Struct("s:val")),
+    "v:main:n": types.Struct("s:node"),
+    "v:main:t.1": types.Ptr(to=types.Struct("s:val")),
+    "v:main:v": types.Struct("s:val"),
   }, # end allVars dict
 
   allObjs = {
+    "s:val":
+      types.Struct(
+        name = "s:val",
+        fields = [
+          ("x", types.Int32),
+        ],
+        loc = Loc(1,1),
+      ),
+
     "s:node":
       types.Struct(
         name = "s:node",
         fields = [
           ("val1", types.Int32),
-          ("nodeArr", types.ConstSizeArray(of=types.Int32, size=13)),
+          ("vv", types.Ptr(to=types.Struct("s:val"))),
+          ("v", types.Struct("s:val")),
         ],
-        loc = Loc(1,1),
+        loc = Loc(4,1),
       ),
 
 
@@ -44,10 +56,13 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         instrSeq = [
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(8,3)), expr.ArrayE(expr.LitE(1, Loc(8,7)), expr.VarE("v:main:arr", Loc(7,3)), Loc(8,3)), Loc(8,3)),
-            instr.AssignI(expr.MemberE("val1", expr.VarE("v:main:t.1", Loc(8,3)), Loc(8,3)), expr.LitE(889, Loc(8,17)), Loc(8,3)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(9,3)), expr.ArrayE(expr.LitE(2, Loc(9,7)), expr.VarE("v:main:arr", Loc(7,3)), Loc(9,3)), Loc(9,3)),
-            instr.AssignI(expr.ArrayE(expr.LitE(5, Loc(9,18)), expr.MemberE("nodeArr", expr.VarE("v:main:t.2", Loc(9,3)), Loc(9,3)), Loc(9,3)), expr.LitE(33, Loc(9,23)), Loc(9,3)),
+            instr.AssignI(expr.MemberE("val1", expr.VarE("v:main:n", Loc(12,3)), Loc(14,3)), expr.LitE(40, Loc(14,12)), Loc(14,3)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(15,3)), expr.AddrOfE(expr.MemberE("v", expr.VarE("v:main:n", Loc(12,3)), Loc(15,3)), Loc(15,3)), Loc(15,3)),
+            instr.AssignI(expr.MemberE("x", expr.VarE("v:main:t.1", Loc(15,3)), Loc(15,3)), expr.LitE(10, Loc(15,11)), Loc(15,3)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(16,10)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:main:v", Loc(13,3)), Loc(16,10)), Loc(16,10)),
+            instr.AssignI(expr.MemberE("vv", expr.VarE("v:main:n", Loc(12,3)), Loc(16,3)), expr.VarE("v:main:t.2", Loc(16,10)), Loc(16,3)),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(17,3)), expr.MemberE("vv", expr.VarE("v:main:n", Loc(12,3)), Loc(17,3)), Loc(17,3)),
+            instr.AssignI(expr.MemberE("x", expr.VarE("v:main:t.3", Loc(17,3)), Loc(17,3)), expr.LitE(30, Loc(17,13)), Loc(17,3)),
         ], # instrSeq end.
       ), # f:main() end. 
 

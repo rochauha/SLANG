@@ -1034,10 +1034,29 @@ public:
   SlangExpr convertMemberExpr(const MemberExpr *memberExpr) const {
     auto it = memberExpr->child_begin();
     const Stmt *child = *it;
-    SlangExpr memParentExpr = convertStmt(child);
-
-    SlangExpr wholeExpr;
+    SlangExpr parentExpr = convertStmt(child);
+    SlangExpr parentTmpExpr;
+    SlangExpr memSlangExpr;
     std::stringstream ss;
+
+    // store parent to a temporary
+    parentTmpExpr = parentExpr;
+    if (parentExpr.compound) {
+      if (parentExpr.qualType.getTypePtr()->isPointerType()) {
+        parentTmpExpr = convertToTmp(parentExpr);
+      } else {
+        SlangExpr addrOfExpr;
+        ss << "expr.AddrOfE(" << parentExpr.expr;
+        ss << ", " << getLocationString(memberExpr) << ")";
+
+        addrOfExpr.expr = ss.str();
+        addrOfExpr.qualType = FD->getASTContext().getPointerType(parentExpr.qualType);
+        addrOfExpr.locStr = getLocationString(memberExpr);
+        addrOfExpr.compound = true;
+
+        parentTmpExpr = convertToTmp(addrOfExpr);
+      }
+    }
 
     std::string memberName;
     memberName = memberExpr->getMemberNameInfo().getAsString();
@@ -1045,21 +1064,17 @@ public:
       memberName = stu.getVar((uint64_t)(memberExpr->getMemberDecl())).name;
     }
 
-    if (memParentExpr.compound && ! (child->getStmtClass() == Stmt::MemberExprClass)) {
-      // parent is compound and not a member expression
-      memParentExpr = convertToTmp(memParentExpr);
-    }
-
+    ss.str("");
     ss << "expr.MemberE(\"" << memberName << "\"";
-    ss << ", " << memParentExpr.expr;
+    ss << ", " << parentTmpExpr.expr;
     ss << ", " << getLocationString(memberExpr) << ")";
 
-    wholeExpr.expr = ss.str();
-    wholeExpr.qualType = memberExpr->getType();
-    wholeExpr.locStr = getLocationString(memberExpr);
-    wholeExpr.compound = true;
+    memSlangExpr.expr = ss.str();
+    memSlangExpr.qualType = memberExpr->getType();
+    memSlangExpr.locStr = getLocationString(memberExpr);
+    memSlangExpr.compound = true;
 
-    return wholeExpr;
+    return memSlangExpr;
   } // convertMemberExpr()
 
   SlangExpr convertCStyleCastExpr(const CStyleCastExpr *cCast) const {
