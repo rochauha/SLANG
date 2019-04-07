@@ -632,8 +632,31 @@ public:
           auto arrayType = valueDecl->getType()->getAsArrayTypeUnsafe();
           if (isa<VariableArrayType>(arrayType)) {
             SlangExpr varExpr = convertVariable(varDecl);
-            convertVarArrayVariable(varExpr, valueDecl->getType(),
+            SlangExpr sizeExpr = convertVarArrayVariable(valueDecl->getType(),
                 arrayType->getElementType());
+
+            SlangExpr allocExpr;
+            std::stringstream ss;
+            ss << "expr.AllocE(" << sizeExpr.expr;
+            ss << ", " << getLocationString(valueDecl) << ")";
+            allocExpr.expr = ss.str();
+            allocExpr.qualType = FD->getASTContext().VoidPtrTy;
+            allocExpr.locStr = getLocationString(valueDecl);
+            allocExpr.compound = true;
+
+            SlangExpr tmpVoidPtr = convertToTmp(allocExpr);
+
+            SlangExpr castExpr;
+            ss.str("");
+            ss << "expr.CastE(" << tmpVoidPtr.expr;
+            ss << ", op.CastOp(" << convertClangType(valueDecl->getType()) << ")";
+            ss << ", " << getLocationString(valueDecl) << ")";
+            castExpr.expr = ss.str();
+            castExpr.qualType = valueDecl->getType();
+            castExpr.compound = true;
+            castExpr.locStr = getLocationString(valueDecl);
+
+            addAssignInstr(varExpr, castExpr, getLocationString(valueDecl));
           }
         }
 
@@ -641,9 +664,10 @@ public:
         if (varDecl->hasInit()) {
           // yes it has, so initialize it
           if (varDecl->getInit()->getStmtClass() == Stmt::InitListExprClass) {
-            std::vector<uint32_t> indexVector;
-            convertInitListExpr(slangVar, cast<InitListExpr>(varDecl->getInit()),
-                varDecl, indexVector);
+            // TODO: uncomment when initializer list is fully supported
+            // std::vector<uint32_t> indexVector;
+            // convertInitListExpr(slangVar, cast<InitListExpr>(varDecl->getInit()),
+            //    varDecl, indexVector);
 
           } else {
             SlangExpr slangExpr = convertStmt(varDecl->getInit());
@@ -782,49 +806,24 @@ public:
     return slangExpr;
   } // convertStmt()
 
-  SlangExpr convertVarArrayVariable(SlangExpr varExpr,
-      QualType valueType, QualType elementType) const {
-
+  SlangExpr convertVarArrayVariable(QualType valueType, QualType elementType) const {
     const Type *elemTypePtr = elementType.getTypePtr();
     const VariableArrayType *varArrayType =
         cast<VariableArrayType>(valueType.getTypePtr()->getAsArrayTypeUnsafe());
 
     if (elemTypePtr->isArrayType()) {
       // it will definitely be a VarArray Type (since this func is called)
-      SlangExpr tmpElementVarArr = genTmpVariable(elementType, varExpr.locStr);
-      convertVarArrayVariable(tmpElementVarArr, elementType,
+      SlangExpr tmpSubArraySize = convertVarArrayVariable(elementType,
           elemTypePtr->getAsArrayTypeUnsafe()->getElementType());
 
       SlangExpr thisVarArrSizeExpr = convertToTmp(
           convertStmt(varArrayType->getSizeExpr()));
 
-      SlangExpr sizeOfInnerVarArrExpr = addAndReturnSizeOfInstrExpr(tmpElementVarArr);
       SlangExpr sizeOfThisVarArrExpr = convertToTmp(createBinaryExpr(thisVarArrSizeExpr,
-          "op.BO_MUL", sizeOfInnerVarArrExpr, thisVarArrSizeExpr.locStr));
+          "op.BO_MUL", tmpSubArraySize, thisVarArrSizeExpr.locStr));
 
-      std::stringstream ss;
-      ss << "expr.AllocE(" << sizeOfThisVarArrExpr.expr;
-      ss << ", " << sizeOfThisVarArrExpr.locStr << ")";
-      SlangExpr allocExpr;
-      allocExpr.expr = ss.str();
-      allocExpr.qualType = FD->getASTContext().VoidPtrTy;
-      allocExpr.locStr = sizeOfInnerVarArrExpr.locStr;
-      allocExpr.compound = true;
-
-      SlangExpr tmpVoidPtrVar = convertToTmp(allocExpr);
-
-      ss.str("");
-      ss << "expr.CastE(" << tmpVoidPtrVar.expr;
-      ss << ", op.CastOp(" << convertClangType(valueType) << ")";
-      ss << ", " << tmpVoidPtrVar.locStr << ")";
-      SlangExpr castExpr;
-      castExpr.expr = ss.str();
-      castExpr.qualType = valueType;
-      castExpr.compound = true;
-      castExpr.locStr = tmpVoidPtrVar.locStr;
-
-      addAssignInstr(varExpr, castExpr, varExpr.locStr);
-      return varExpr;
+      SlangExpr tmpThisArraySize = convertToTmp(sizeOfThisVarArrExpr);
+      return tmpThisArraySize;
 
     } else {
       // a non-array element type
@@ -846,40 +845,9 @@ public:
           createBinaryExpr(thisVarArrSizeExpr,
               "op.BO_MUL", sizeOfInnerNonVarArrType, thisVarArrSizeExpr.locStr));
 
-      ss.str("");
-      ss << "expr.AllocE(" << sizeOfThisVarArrExpr.expr;
-      ss << ", " << sizeOfThisVarArrExpr.locStr << ")";
-      SlangExpr allocExpr;
-      allocExpr.expr = ss.str();
-      allocExpr.qualType = FD->getASTContext().VoidPtrTy;
-      allocExpr.locStr = sizeOfInnerNonVarArrType.locStr;
-      allocExpr.compound = true;
-
-      SlangExpr tmpVoidPtrVar = convertToTmp(allocExpr);
-
-      ss.str("");
-      ss << "expr.CastE(" << tmpVoidPtrVar.expr;
-      ss << ", op.CastOp(" << convertClangType(valueType) << ")";
-      ss << ", " << tmpVoidPtrVar.locStr << ")";
-      SlangExpr castExpr;
-      castExpr.expr = ss.str();
-      castExpr.qualType = valueType;
-      castExpr.compound = true;
-      castExpr.locStr = tmpVoidPtrVar.locStr;
-
-      addAssignInstr(varExpr, castExpr, varExpr.locStr);
-      return varExpr;
+      SlangExpr tmpThisArraySize = convertToTmp(sizeOfThisVarArrExpr);
+      return tmpThisArraySize;
     }
-
-    // if (type && !isIncompleteType(type)) {
-    //   TypeInfo typeInfo = FD->getASTContext().getTypeInfo(slangExpr.qualType);
-    //   size = typeInfo.Width / 8;
-    // }
-    // SlangExpr sizeExpr = convertToTmp(convertStmt(varArrayType->getSizeExpr()));
-    // llvm::errs() << "----------\n" << sizeExpr.toString() << "\n";
-    // varArrayType->dump();
-    // convertClangType(varArrayType->getElementType());
-    // return SlangExpr{};
   } // convertVarArrayVariable()
 
   SlangExpr convertInitListExpr(SlangVar& slangVar, const InitListExpr *initListExpr,
@@ -888,6 +856,7 @@ public:
     for (auto it = initListExpr->begin(); it != initListExpr->end(); ++it) {
       const Stmt *stmt = *it;
       if (stmt->getStmtClass() == Stmt::InitListExprClass) {
+          // && isCompoundTypeAt(varDecl, indexVector)) {
         indexVector.push_back(index);
         convertInitListExpr(slangVar, cast<InitListExpr>(stmt), varDecl, indexVector);
         indexVector.pop_back();
@@ -906,8 +875,16 @@ public:
     return SlangExpr{};
   } // convertInitListExpr()
 
+  // checks if the
+  bool isCompoundTypeAt(const VarDecl *varDecl,
+      std::vector<int>& indexVector) const {
+    // TODO
+    return true;
+  }
+
   // used to generate lhs (lvalue) for initializer lists like
   // int arr[][2] = {{1, 2}, {3, 4}, {5, 6}}; // for each element
+  // it also works for the struct types
   SlangExpr genInitLhsExpr(SlangVar& slangVar,
       const VarDecl *varDecl, std::vector<uint32_t>& indexVector) const {
     SlangExpr slangExpr;
@@ -1121,31 +1098,34 @@ public:
 
   SlangExpr convertSwitchStmt(const SwitchStmt *switchStmt) const {
     std::string id = stu.genNextLabelCountStr();
+    std::string switchStartLabel = "SwitchStart" + id;
     std::string switchExitLabel = "SwitchExit" + id;
     std::string caseCondLabel = "CaseCond" + id + "-";
     std::string caseBodyLabel = "CaseBody" + id + "-";
     std::string defaultLabel = "Default" + id;
-    uint32_t caseCounter = 0;
+    bool defaultLabelAdded = false;
 
-    stu.pushLabels(switchExitLabel, switchExitLabel);
+    stu.pushLabels(switchStartLabel, switchExitLabel);
 
-    std::vector<const Stmt*> caseStmts;
-    std::vector<const Stmt*> defaultStmt;
+    addLabelInstr(switchStartLabel);
 
-    const Expr *cond = switchStmt->getCond();
-    SlangExpr switchCond = convertToTmp(convertStmt(cond));
+    std::vector<const Stmt*> caseStmtsWithDefault;
+    // std::vector<const Stmt*> defaultStmt;
+
+    const Expr *condExpr = switchStmt->getCond();
+    SlangExpr switchCond = convertToTmp(convertStmt(condExpr));
 
     // Get all case statements inside switch.
     if (switchStmt->getBody()) {
       switchStmt->getBody()->dump(); // delit
-      getCaseStmts(caseStmts, switchStmt->getBody());
-      getDefaultStmt(defaultStmt, switchStmt->getBody());
+      getCaseStmts(caseStmtsWithDefault, switchStmt->getBody());
+      // getDefaultStmt(defaultStmt, switchStmt->getBody());
 
     } else {
       for (auto it = switchStmt->child_begin(); it != switchStmt->child_end(); ++it) {
         if (isa<CaseStmt>(*it)) {
-          getCaseStmts(caseStmts, (*it));
-          getDefaultStmt(defaultStmt, (*it));
+          getCaseStmts(caseStmtsWithDefault, (*it));
+          // getDefaultStmt(defaultStmt, (*it));
         }
       }
     }
@@ -1153,101 +1133,140 @@ public:
     std::stringstream ss;
     std::string label;
     std::string nextLabel;
-    uint32_t totalCaseStmts = caseStmts.size();
-    uint32_t currIndex = 0;
-    for (const Stmt *stmt: caseStmts) {
-      currIndex += 1;
-      const CaseStmt *caseStmt = cast<CaseStmt>(stmt);
-      ss << caseCondLabel << caseCounter;
-      label = ss.str();
-      ss.str("");
-      addLabelInstr(label);
+    size_t totalStmts = caseStmtsWithDefault.size();
+    for (size_t index=0; index < caseStmtsWithDefault.size(); ++index) {
+      // for (const Stmt *stmt: caseStmtsWithDefault) {
+      const Stmt *stmt = caseStmtsWithDefault[index];
 
-      const Stmt *cond = *(caseStmt->child_begin());
-      llvm::errs() << "CASE-CASE-CASE\n"; cond->dump();
-      SlangExpr caseCond = convertToTmp(convertStmt(cond));
+      if (isa<CaseStmt>(stmt)) {
+        const CaseStmt *caseStmt = cast<CaseStmt>(stmt);
+        // find where to jump to if the case condtion is false
+        std::string falseLabel;
+        falseLabel = defaultLabel;
 
-      ss << caseBodyLabel << caseCounter;
-      label = ss.str();
-      ss.str("");
+        if (index != totalStmts - 1) {
+          // try jumping to the next case's cond
+          for (size_t i=index+1; i < totalStmts; ++i) {
+            if (isa<CaseStmt>(caseStmtsWithDefault[i])) {
+              ss << caseCondLabel << i;
+              falseLabel = ss.str();
+              ss.str("");
+              break;
+            }
+          }
+        }
 
-      ss << caseCondLabel << (caseCounter+1);
-      nextLabel = ss.str();
-      ss.str("");
+        // armed with the falseLabel add the condition
+        ss << caseCondLabel << index;
+        std::string condLabel = ss.str();
+        ss.str("");
 
-      SlangExpr eqExpr = convertToTmp(createBinaryExpr(switchCond,
-          "op.BO_EQ", caseCond, getLocationString(caseStmt)));
+        const Stmt *cond = *(caseStmt->child_begin());
+        // llvm::errs() << "CASE-CASE-CASE\n"; cond->dump();
+        SlangExpr caseCond = convertToTmp(convertStmt(cond));
 
-      if (currIndex != totalCaseStmts) {
-        addCondInstr(eqExpr.expr, label, nextLabel, getLocationString(caseStmt));
-      } else { // when no match, jump to default label when the case is the last one
-        addCondInstr(eqExpr.expr, label, defaultLabel, getLocationString(caseStmt));
+        // generate body label
+        ss << caseBodyLabel << index;
+        std::string bodyLabel = ss.str();
+        ss.str("");
+
+        addLabelInstr(condLabel); // condition label
+        // add the actual condition
+        SlangExpr eqExpr = convertToTmp(createBinaryExpr(switchCond,
+            "op.BO_EQ", caseCond, getLocationString(caseStmt)));
+        addCondInstr(eqExpr.expr, bodyLabel, falseLabel, getLocationString(caseStmt));
+
+        // case body
+        addLabelInstr(bodyLabel);
+        for (auto it = caseStmt->child_begin();
+             it != caseStmt->child_end();
+             ++it) {
+          convertStmt(*it);
+        }
+
+        // if it has break, then jump to exit
+        // Note: a break as child stmt is covered recursively
+        if (caseOrDefaultStmtHasSiblingBreak(caseStmt)) {
+          addGotoInstr(switchExitLabel);
+        } else {
+          // try jumping to the next case's body if present :)
+          if (index != totalStmts-1) {
+            if (isa<CaseStmt>(caseStmtsWithDefault[index + 1])) {
+              ss << caseBodyLabel << index + 1;
+              addGotoInstr(ss.str());
+              ss.str("");
+            } else {
+              // must be default then, hence fall through to it
+            }
+          }
+        }
+
+      } else if (isa<DefaultStmt>(stmt)) {
+        // add the default case
+        addLabelInstr(defaultLabel);
+        defaultLabelAdded = true;
+        for (auto it = stmt->child_begin(); it != stmt->child_end();
+             ++it) {
+          convertStmt(*it);
+        }
+
+        // if it has break, then jump to exit
+        // Note: a break as child stmt is covered recursively
+        if (caseOrDefaultStmtHasSiblingBreak(stmt)) {
+          addGotoInstr(switchExitLabel);
+        } else {
+          // try jumping to the next case's body
+          if (index != totalStmts-1) {
+            // must be a case stmt, since this is a default stmt :)
+            ss << caseBodyLabel << index+1;
+            addGotoInstr(ss.str());
+            ss.str("");
+          }
+        }
       }
 
-      addLabelInstr(label);
-      for (auto it = caseStmt->child_begin();
-            it != caseStmt->child_end();
-            ++it) {
-        convertStmt(*it);
-      }
-
-      if(caseStmtHasSiblingBreak(caseStmt)) {
-        addGotoInstr(switchExitLabel);
-      }
-
-      caseCounter += 1;
     }
 
-    // add the last spurious case label for correctness
-    addLabelInstr(nextLabel);
-
-    // add the default case
-    addLabelInstr(defaultLabel);
-    if (!defaultStmt.empty()) {
-      for (auto it = defaultStmt[0]->child_begin();
-      it != defaultStmt[0]->child_end();
-      ++it) {
-        convertStmt(*it);
-      }
+    if (!defaultLabelAdded) {
+      addLabelInstr(defaultLabel); // needed
     }
-
     addLabelInstr(switchExitLabel);
 
     stu.popLabel();
     return SlangExpr{};
   } // convertSwitchStmt()
 
-  // many times BreakStmt is a sibling of CaseStmt
+  // many times BreakStmt is a sibling of CaseStmt/DefaultStmt
   // this function detects that
-  bool caseStmtHasSiblingBreak(const CaseStmt *caseStmt) const {
-    const auto &parents = FD->getASTContext().getParents(*caseStmt);
+  bool caseOrDefaultStmtHasSiblingBreak(const Stmt *stmt) const {
+    const auto &parents = FD->getASTContext().getParents(*stmt);
 
-    const Stmt *stmt = parents[0].get<Stmt>();
-    bool lastStmtWasThisCaseStmt = false;
+    const Stmt *parentStmt = parents[0].get<Stmt>();
+    bool lastStmtWasTheGivenCaseOrDefaultStmt = false;
     bool hasBreak = false;
 
-    for (auto it = stmt->child_begin();
-          it != stmt->child_end();
+    for (auto it = parentStmt->child_begin();
+          it != parentStmt->child_end();
           ++it) {
       if (! *it) { continue; }
 
       if (isa<BreakStmt>(*it)) {
-        if (lastStmtWasThisCaseStmt) {
+        if (lastStmtWasTheGivenCaseOrDefaultStmt) {
           hasBreak = true;
         }
         break;
       }
 
-      if (lastStmtWasThisCaseStmt) {
-        lastStmtWasThisCaseStmt = false;
+      if (lastStmtWasTheGivenCaseOrDefaultStmt) {
+        lastStmtWasTheGivenCaseOrDefaultStmt = false;
       }
-      if ((*it) == caseStmt) {
-        lastStmtWasThisCaseStmt = true;
+      if ((*it) == stmt) {
+        lastStmtWasTheGivenCaseOrDefaultStmt = true;
       }
     }
 
     return hasBreak;
-  } // caseStmtHasSiblingBreak()
+  } // caseOrDefaultStmtHasSiblingBreak()
 
   // Returns true if the type is not complete enough to give away a constant size
   bool isIncompleteType(const Type *type) const {
@@ -1260,30 +1279,39 @@ public:
   }
 
   // get all case statements recursively (case stmts can be hierarchical)
-  void getCaseStmts(std::vector<const Stmt*>& caseStmts, const Stmt *stmt) const {
+  void getCaseStmts(std::vector<const Stmt*>& caseStmtsWithDefault, const Stmt *stmt) const {
     if (! stmt) return;
 
     if (isa<CaseStmt>(stmt)) {
       auto caseStmt = cast<CaseStmt>(stmt);
-      caseStmts.push_back(stmt);
+      caseStmtsWithDefault.push_back(stmt);
       for (auto it = caseStmt->child_begin(); it != caseStmt->child_end(); ++it) {
         if ((*it) && isa<CaseStmt>(*it)) {
-          getCaseStmts(caseStmts, (*it));
+          getCaseStmts(caseStmtsWithDefault, (*it));
         }
       }
 
     } else if (isa<CompoundStmt>(stmt)) {
       const CompoundStmt *compoundStmt = cast<CompoundStmt>(stmt);
       for (auto it = compoundStmt->body_begin(); it != compoundStmt->body_end(); ++it) {
-        getCaseStmts(caseStmts, (*it));
+        getCaseStmts(caseStmtsWithDefault, (*it));
       }
     } else if (isa<SwitchStmt>(stmt)) {
       // do nothing, as it will be handled separately
 
+    } else if (isa<DefaultStmt>(stmt)) {
+      auto defaultStmt = cast<DefaultStmt>(stmt);
+      caseStmtsWithDefault.push_back(stmt);
+      for (auto it = defaultStmt->child_begin(); it != defaultStmt->child_end(); ++it) {
+        if ((*it) && isa<CaseStmt>(*it)) {
+          getCaseStmts(caseStmtsWithDefault, (*it));
+        }
+      }
+
     } else {
       if (stmt->child_begin() != stmt->child_end()) {
         for (auto it = stmt->child_begin(); it != stmt->child_end(); ++it) {
-          getCaseStmts(caseStmts, (*it));
+          getCaseStmts(caseStmtsWithDefault, (*it));
         }
       }
     }

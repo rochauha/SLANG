@@ -8,11 +8,11 @@ digraph {
   BB6 [label="[BB6]\lreturn 0\l"];
   END [label="[END]\lnop()\l"];
   BB1 -> BB6 [color=red, penwidth=2];
-  BB2 -> BB4 [color=red, penwidth=2];
-  BB6 -> END;
-  BB1 -> BB2 [color=green, penwidth=2];
-  START -> BB1;
   BB2 -> BB3 [color=green, penwidth=2];
-  BB4 -> BB1;
+  START -> BB1;
+  BB2 -> BB4 [color=red, penwidth=2];
+  BB1 -> BB2 [color=green, penwidth=2];
+  BB6 -> END;
   BB3 -> BB1;
+  BB4 -> BB1;
 }

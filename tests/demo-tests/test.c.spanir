@@ -17,17 +17,22 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.6": types.Ptr(to=types.Void),
-    "v:main:t.5": types.Int32,
-    "v:main:arr": types.VarArray(of=types.VarArray(of=types.Int32)),
-    "v:main:x": types.Int32,
-    "v:main:t.2": types.Int32,
-    "v:main:t.1": types.VarArray(of=types.Int32),
-    "v:main:t.3": types.Ptr(to=types.Void),
-    "v:main:t.4": types.UInt32,
+    "v:main:t.2": types.Struct("s:node"),
+    "v:main:arr": types.ConstSizeArray(of=types.Struct("s:node"), size=10),
+    "v:main:t.1": types.Struct("s:node"),
   }, # end allVars dict
 
   allObjs = {
+    "s:node":
+      types.Struct(
+        name = "s:node",
+        fields = [
+          ("val1", types.Int32),
+          ("nodeArr", types.ConstSizeArray(of=types.Int32, size=13)),
+        ],
+        loc = Loc(1,1),
+      ),
+
 
     "f:main":
       obj.Func(
@@ -39,14 +44,10 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         instrSeq = [
-            instr.AssignI(expr.VarE("v:main:x", Loc(2,3)), expr.LitE(10, Loc(2,11)), Loc(2,3)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(3,14)), expr.BinaryE(expr.VarE("v:main:x", Loc(2,3)), op.BO_MUL, expr.LitE(4, Loc(3,14)), Loc(3,14)), Loc(3,14)),
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(3,14)), expr.AllocE(expr.VarE("v:main:t.2", Loc(3,14)), Loc(3,14)), Loc(3,14)),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(3,3)), expr.CastE(expr.VarE("v:main:t.3", Loc(3,14)), op.CastOp(types.VarArray(of=types.Int32)), Loc(3,14)), Loc(3,3)),
-            instr.AssignI(expr.VarE("v:main:t.4", Loc(3,3)), expr.SizeOfE(expr.VarE("v:main:t.1", Loc(3,3)), Loc(3,3)), Loc(3,3)),
-            instr.AssignI(expr.VarE("v:main:t.5", Loc(3,11)), expr.BinaryE(expr.LitE(2, Loc(3,11)), op.BO_MUL, expr.VarE("v:main:t.4", Loc(3,3)), Loc(3,11)), Loc(3,11)),
-            instr.AssignI(expr.VarE("v:main:t.6", Loc(3,3)), expr.AllocE(expr.VarE("v:main:t.5", Loc(3,11)), Loc(3,11)), Loc(3,3)),
-            instr.AssignI(expr.VarE("v:main:arr", Loc(3,3)), expr.CastE(expr.VarE("v:main:t.6", Loc(3,3)), op.CastOp(types.VarArray(of=types.VarArray(of=types.Int32))), Loc(3,3)), Loc(3,3)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(8,3)), expr.ArrayE(expr.LitE(1, Loc(8,7)), expr.VarE("v:main:arr", Loc(7,3)), Loc(8,3)), Loc(8,3)),
+            instr.AssignI(expr.MemberE("val1", expr.VarE("v:main:t.1", Loc(8,3)), Loc(8,3)), expr.LitE(889, Loc(8,17)), Loc(8,3)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(9,3)), expr.ArrayE(expr.LitE(2, Loc(9,7)), expr.VarE("v:main:arr", Loc(7,3)), Loc(9,3)), Loc(9,3)),
+            instr.AssignI(expr.ArrayE(expr.LitE(5, Loc(9,18)), expr.MemberE("nodeArr", expr.VarE("v:main:t.2", Loc(9,3)), Loc(9,3)), Loc(9,3)), expr.LitE(33, Loc(9,23)), Loc(9,3)),
         ], # instrSeq end.
       ), # f:main() end. 
 
