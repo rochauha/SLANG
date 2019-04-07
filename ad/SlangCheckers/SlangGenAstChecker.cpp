@@ -677,17 +677,20 @@ public:
             //    varDecl, indexVector);
 
           } else {
-            SlangExpr slangExpr = convertStmt(varDecl->getInit());
-            std::string locStr = getLocationString(valueDecl);
-            std::stringstream ss;
-            ss << "instr.AssignI(";
-            ss << "expr.VarE(\"" << slangVar.name << "\"";
-            ss << ", " << locStr << ")"; // close expr.VarE(...
-            ss << ", " << slangExpr.expr;
-            ss << ", " << locStr << ")"; // close instr.AssignI(...
-            stu.addStmt(ss.str());
+            if (varDecl->hasLocalStorage()) {
+              SlangExpr slangExpr = convertStmt(varDecl->getInit());
+              std::string locStr = getLocationString(valueDecl);
+              std::stringstream ss;
+              ss << "instr.AssignI(";
+              ss << "expr.VarE(\"" << slangVar.name << "\"";
+              ss << ", " << locStr << ")"; // close expr.VarE(...
+              ss << ", " << slangExpr.expr;
+              ss << ", " << locStr << ")"; // close instr.AssignI(...
+              stu.addStmt(ss.str());
+            }
           }
         }
+
       } else {
         SLANG_ERROR("ValueDecl not a VarDecl!")
       }

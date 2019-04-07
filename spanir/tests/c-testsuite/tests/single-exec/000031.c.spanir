@@ -40,7 +40,6 @@ irTUnit.TUnit(
             instr.AssignI(expr.VarE("v:main:x", Loc(3,3)), expr.LitE(20, Loc(7,9)), Loc(7,5)),
             instr.GotoI("IfExit1"),
             instr.LabelI("IfFalse1"),
-            instr.AssignI(expr.VarE("v:y", Loc(1,1)), expr.LitE(30, Loc(1,9)), Loc(1,1)),
             instr.AssignI(expr.VarE("v:main:x", Loc(3,3)), expr.VarE("v:y", Loc(1,1)), Loc(9,5)),
             instr.LabelI("IfExit1"),
             instr.ReturnI(expr.VarE("v:main:x", Loc(3,3))),
