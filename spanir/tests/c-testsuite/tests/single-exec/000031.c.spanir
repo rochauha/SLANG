@@ -17,7 +17,7 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "": ,
+    "v:y": types.Int32,
     "v:main:x": types.Int32,
   }, # end allVars dict
 
@@ -35,14 +35,15 @@ irTUnit.TUnit(
         instrSeq = [
             instr.AssignI(expr.VarE("v:main:x", Loc(3,3)), expr.LitE(10, Loc(3,11)), Loc(3,3)),
             instr.LabelI("label", Loc(5,1)),
-            instr.CondI(expr.VarE("v:main:x", Loc(6,7)), "IfTrue1", "IfFalse1", Loc(6,7)),
+            instr.CondI(expr.VarE("v:main:x", Loc(3,3)), "IfTrue1", "IfFalse1", Loc(6,7)),
             instr.LabelI("IfTrue1"),
-            instr.AssignI(expr.VarE("v:main:x", Loc(7,5)), expr.LitE(20, Loc(7,9)), Loc(7,5)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(3,3)), expr.LitE(20, Loc(7,9)), Loc(7,5)),
             instr.GotoI("IfExit1"),
             instr.LabelI("IfFalse1"),
-            instr.AssignI(expr.VarE("v:main:x", Loc(9,5)), expr.VarE("", Loc(9,9)), Loc(9,5)),
+            instr.AssignI(expr.VarE("v:y", Loc(1,1)), expr.LitE(30, Loc(1,9)), Loc(1,1)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(3,3)), expr.VarE("v:y", Loc(1,1)), Loc(9,5)),
             instr.LabelI("IfExit1"),
-            instr.ReturnI(expr.VarE("v:main:x", Loc(12,10))),
+            instr.ReturnI(expr.VarE("v:main:x", Loc(3,3))),
         ], # instrSeq end.
       ), # f:main() end. 
 

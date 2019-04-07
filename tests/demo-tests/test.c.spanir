@@ -17,34 +17,12 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.2": types.Ptr(to=types.Struct("s:val")),
-    "v:main:t.3": types.Ptr(to=types.Struct("s:val")),
-    "v:main:n": types.Struct("s:node"),
-    "v:main:t.1": types.Ptr(to=types.Struct("s:val")),
-    "v:main:v": types.Struct("s:val"),
+    "v:main:t.2": types.Ptr(to=types.Int32),
+    "v:main:arr": types.ConstSizeArray(of=types.ConstSizeArray(of=types.Int32, size=10), size=10),
+    "v:main:t.1": types.Ptr(to=types.ConstSizeArray(of=types.Int32, size=10)),
   }, # end allVars dict
 
   allObjs = {
-    "s:val":
-      types.Struct(
-        name = "s:val",
-        fields = [
-          ("x", types.Int32),
-        ],
-        loc = Loc(1,1),
-      ),
-
-    "s:node":
-      types.Struct(
-        name = "s:node",
-        fields = [
-          ("val1", types.Int32),
-          ("vv", types.Ptr(to=types.Struct("s:val"))),
-          ("v", types.Struct("s:val")),
-        ],
-        loc = Loc(4,1),
-      ),
-
 
     "f:main":
       obj.Func(
@@ -56,13 +34,9 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         instrSeq = [
-            instr.AssignI(expr.MemberE("val1", expr.VarE("v:main:n", Loc(12,3)), Loc(14,3)), expr.LitE(40, Loc(14,12)), Loc(14,3)),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(15,3)), expr.AddrOfE(expr.MemberE("v", expr.VarE("v:main:n", Loc(12,3)), Loc(15,3)), Loc(15,3)), Loc(15,3)),
-            instr.AssignI(expr.MemberE("x", expr.VarE("v:main:t.1", Loc(15,3)), Loc(15,3)), expr.LitE(10, Loc(15,11)), Loc(15,3)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(16,10)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:main:v", Loc(13,3)), Loc(16,10)), Loc(16,10)),
-            instr.AssignI(expr.MemberE("vv", expr.VarE("v:main:n", Loc(12,3)), Loc(16,3)), expr.VarE("v:main:t.2", Loc(16,10)), Loc(16,3)),
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(17,3)), expr.MemberE("vv", expr.VarE("v:main:n", Loc(12,3)), Loc(17,3)), Loc(17,3)),
-            instr.AssignI(expr.MemberE("x", expr.VarE("v:main:t.3", Loc(17,3)), Loc(17,3)), expr.LitE(30, Loc(17,13)), Loc(17,3)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(17,4)), expr.CastE(expr.VarE("v:main:arr", Loc(16,3)), types.Ptr(to=types.ConstSizeArray(of=types.Int32, size=10)), Loc(17,4)), Loc(17,4)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(17,4)), expr.CastE(expr.ArrayE(expr.LitE(4, Loc(17,8)), expr.VarE("v:main:t.1", Loc(17,4)), Loc(17,4)), types.Ptr(to=types.Int32), Loc(17,4)), Loc(17,4)),
+            instr.AssignI(expr.ArrayE(expr.LitE(7, Loc(17,11)), expr.VarE("v:main:t.2", Loc(17,4)), Loc(17,4)), expr.LitE(17, Loc(17,16)), Loc(17,4)),
         ], # instrSeq end.
       ), # f:main() end. 
 

@@ -1010,30 +1010,47 @@ public:
 
   SlangExpr convertArraySubscriptExpr(const ArraySubscriptExpr *arrayExpr) const {
     SlangExpr slangExpr;
+    std::stringstream ss;
 
     auto it = arrayExpr->child_begin();
     const Stmt *object = *it;
     ++it;
     const Stmt *index = *it;
 
-    SlangExpr arrObject = convertStmt(object);
+    SlangExpr parentExpr = convertStmt(object);
     SlangExpr indexExpr = convertToTmp(convertStmt(index));
+    SlangExpr tmpExpr;
 
-    if (arrObject.compound &&
-        !((object->getStmtClass() == Stmt::ImplicitCastExprClass) &&
-        (cast<ImplicitCastExpr>(object)->getCastKind() == CK_ArrayToPointerDecay))) {
-      arrObject = convertToTmp(arrObject);
+    if (parentExpr.qualType.getTypePtr()->isArrayType()) {
+      ss << "expr.CastE(" << parentExpr.expr;
+      ss << ", " << convertClangType(FD->getASTContext().getPointerType(arrayExpr->getType()));
+      ss << ", " << getLocationString(arrayExpr) << ")";
+      tmpExpr.expr = ss.str();
+      tmpExpr.qualType = FD->getASTContext().getPointerType(arrayExpr->getType());
+      tmpExpr.locStr = getLocationString(arrayExpr);
+      tmpExpr.compound = true;
+
+      tmpExpr = convertToTmp(tmpExpr);
+
+    } else if (parentExpr.compound) {
+      tmpExpr = convertToTmp(parentExpr);
     }
 
-    std::stringstream ss;
+    // if (parentExpr.compound &&
+    //     !((object->getStmtClass() == Stmt::ImplicitCastExprClass) &&
+    //     (cast<ImplicitCastExpr>(object)->getCastKind() == CK_ArrayToPointerDecay))) {
+    //   parentExpr = convertToTmp(parentExpr);
+    // }
+
+    ss.str("");
     ss << "expr.ArrayE(" << indexExpr.expr;
-    ss << ", " << arrObject.expr;
+    ss << ", " << tmpExpr.expr;
     ss << ", " << getLocationString(arrayExpr) << ")";
 
     slangExpr.expr = ss.str();
-    slangExpr.compound = true;
     slangExpr.qualType = arrayExpr->getType();
     slangExpr.locStr = getLocationString(arrayExpr);
+    slangExpr.compound = true;
 
     return slangExpr;
   } // convertArraySubscript()
@@ -1689,6 +1706,7 @@ public:
     std::string locStr = getLocationString(dre);
 
     const ValueDecl *valueDecl = dre->getDecl();
+    handleValueDecl(valueDecl, stu.currFunc->name);
     if (isa<VarDecl>(valueDecl)) {
       auto varDecl = cast<VarDecl>(valueDecl);
       slangExpr = convertVariable(varDecl);
