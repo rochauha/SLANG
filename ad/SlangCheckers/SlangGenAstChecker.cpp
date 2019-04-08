@@ -1024,9 +1024,12 @@ public:
     SlangExpr indexExpr = convertToTmp(convertStmt(index));
     SlangExpr tmpExpr;
 
-    if (parentExpr.qualType.getTypePtr()->isArrayType()) {
+    tmpExpr = parentExpr;
+    if (parentExpr.compound && parentExpr.qualType.getTypePtr()->isArrayType()) {
       ss << "expr.CastE(" << parentExpr.expr;
-      ss << ", " << convertClangType(FD->getASTContext().getPointerType(arrayExpr->getType()));
+      ss << ", op.CastOp(";
+      ss << convertClangType(FD->getASTContext().getPointerType(arrayExpr->getType()));
+      ss << ")";
       ss << ", " << getLocationString(arrayExpr) << ")";
       tmpExpr.expr = ss.str();
       tmpExpr.qualType = FD->getASTContext().getPointerType(arrayExpr->getType());

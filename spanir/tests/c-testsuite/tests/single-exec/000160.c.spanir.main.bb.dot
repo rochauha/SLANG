@@ -1,0 +1,6 @@
+digraph {
+  node [shape=box]
+  START [label="[START]\lp = &arr[1]\l*p = 0\lt.1 = arr[1]\lreturn t.1\l"];
+  END [label="[END]\lnop()\l"];
+  START -> END;
+}

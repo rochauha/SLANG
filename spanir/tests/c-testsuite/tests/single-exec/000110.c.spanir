@@ -1,0 +1,45 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "000110.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:y": types.Int32,
+    "v:main:x": types.Int32,
+  }, # end allVars dict
+
+  allObjs = {
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        instrSeq = [
+            instr.AssignI(expr.VarE("v:main:y", Loc(5,2)), expr.LitE(0, Loc(6,10)), Loc(6,6)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(4,2)), expr.VarE("v:main:y", Loc(5,2)), Loc(6,2)),
+            instr.ReturnI(expr.VarE("v:main:x", Loc(4,2))),
+        ], # instrSeq end.
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

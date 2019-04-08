@@ -1,0 +1,6 @@
+digraph {
+  node [shape=box]
+  START [label="[START]\ly = 0\lx = y\lreturn x\l"];
+  END [label="[END]\lnop()\l"];
+  START -> END;
+}

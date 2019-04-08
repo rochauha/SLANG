@@ -1,0 +1,6 @@
+digraph {
+  node [shape=box]
+  START [label="[START]\lx = 0\lt.1 = x + x\lt.2 = x + 2\lt.3 = t.2 + 1\lt.4 = (types.Ptr(INT32, 1)) arr[t.1]\lp = &t.4[t.3]\l*p = 0\lt.5 = (types.Ptr(INT32, 1)) arr[1]\lt.6 = t.5[3]\lreturn t.6\l"];
+  END [label="[END]\lnop()\l"];
+  START -> END;
+}

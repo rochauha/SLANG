@@ -1,0 +1,6 @@
+digraph {
+  node [shape=box]
+  START [label="[START]\lx = 4\lp = &x\l*p = 0\lt.1 = *p\lreturn t.1\l"];
+  END [label="[END]\lnop()\l"];
+  START -> END;
+}
