@@ -1,0 +1,6 @@
+digraph {
+  node [shape=box]
+  START [label="[START]\lt.1 = &x\lscanf('%d',t.1)\lprintf('%d',x)\lreturn 0\l"];
+  END [label="[END]\lnop()\l"];
+  START -> END;
+}

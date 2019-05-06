@@ -1,0 +1,77 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "Ptr_Var_Function.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:t.3": types.Ptr(to=types.Int32),
+    "v:main:d": types.Ptr(to=types.Int32),
+    "v:main:b": types.Int32,
+    "v:main:a": types.Int32,
+    "v:main:t.1": types.Ptr(to=types.Ptr(to=types.Int32)),
+    "v:add:x": types.Ptr(to=types.Int32),
+    "v:add:t.1": types.Int32,
+    "v:main:t.2": types.Ptr(to=types.Int32),
+    "v:main:c": types.Ptr(to=types.Int32),
+    "v:add:y": types.Ptr(to=types.Int32),
+    "v:add:t.2": types.Int32,
+    "v:add:c": types.Ptr(to=types.Int32),
+    "v:add:t.3": types.Int32,
+  }, # end allVars dict
+
+  allObjs = {
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        instrSeq = [
+            instr.AssignI(expr.VarE("v:main:a", Loc(12,1)), expr.LitE(10, Loc(12,7)), Loc(12,1)),
+            instr.AssignI(expr.VarE("v:main:b", Loc(12,1)), expr.LitE(20, Loc(12,12)), Loc(12,1)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(14,7)), expr.AddrOfE(expr.VarE("v:main:c", Loc(14,8)), Loc(14,7)), Loc(14,7)),
+            instr.AssignI(expr.VarE("v:main:t.2", Loc(14,10)), expr.AddrOfE(expr.VarE("v:main:a", Loc(14,11)), Loc(14,10)), Loc(14,10)),
+            instr.AssignI(expr.VarE("v:main:t.3", Loc(14,13)), expr.AddrOfE(expr.VarE("v:main:b", Loc(14,14)), Loc(14,13)), Loc(14,13)),
+            instr.AssignI(expr.VarE("v:main:d", Loc(14,1)), expr.CallE(expr.FuncE("f:add", Loc(14,3)), [expr.VarE("v:main:t.1", Loc(14,7)), expr.VarE("v:main:t.2", Loc(14,10)), expr.VarE("v:main:t.3", Loc(14,13))], Loc(14,3)), Loc(14,1)),
+        ], # instrSeq end.
+      ), # f:main() end. 
+
+    "f:add":
+      obj.Func(
+        name = "f:add",
+        paramNames = ["v:add:c", "v:add:x", "v:add:y"],
+        variadic = False,
+        returnType = types.Ptr(to=types.Int32),
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        instrSeq = [
+            instr.AssignI(expr.VarE("v:add:t.1", Loc(5,5)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:add:x", Loc(5,6)), Loc(5,5)), Loc(5,5)),
+            instr.AssignI(expr.VarE("v:add:t.2", Loc(5,8)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:add:y", Loc(5,9)), Loc(5,8)), Loc(5,8)),
+            instr.AssignI(expr.VarE("v:add:t.3", Loc(5,5)), expr.BinaryE(expr.VarE("v:add:t.1", Loc(5,5)), op.BO_ADD, expr.VarE("v:add:t.2", Loc(5,8)), Loc(5,5)), Loc(5,5)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:add:c", Loc(5,3)), Loc(5,2)), expr.VarE("v:add:t.3", Loc(5,5)), Loc(5,2)),
+            instr.ReturnI(expr.VarE("v:add:c", Loc(6,9))),
+        ], # instrSeq end.
+      ), # f:add() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

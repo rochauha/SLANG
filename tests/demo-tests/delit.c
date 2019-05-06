@@ -1,13 +1,14 @@
-#include <stdio.h>
+ #include<stdio.h>                                                               
+ void add(int x, int y)                                                          
+ {   int c;                                                                      
+   c=x+y;                                                                        
+   //use(c);                                                                       
+   printf("Hello\n");
+ }                                                                               
 
-int main() {
-  int x[4] = {1,2,3,4};
-  int *p = x;
-  printf("%d\n", p[1]);
-
-  int a[2][2] = {{1,2},{3,4}};
-  int (*pp)[2][2] = a;
-  printf("%d\n", pp[0][0][0]);
-
-  return 0;
-}
+ int main()                                                                      
+ {                                                                               
+ int a=10,b=20;                                                                  
+ void (*fun_ptr)(int,int)=&add;                                                  
+ (*fun_ptr)(a,b);                                                                
+ }                  

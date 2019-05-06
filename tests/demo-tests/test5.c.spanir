@@ -17,14 +17,12 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.2": types.Ptr(to=types.Int32),
-    "v:main:t.1": types.Int32,
-    "v:main:a": types.Int32,
-    "v:main:z": types.Ptr(to=types.Ptr(to=types.Int32)),
-    "v:main:u": types.Ptr(to=types.Int32),
-    "v:main:cond": types.Int32,
-    "v:main:tmp": types.Int32,
+    "v:cond": types.Int32,
     "v:main:b": types.Int32,
+    "v:main:tmp": types.Int32,
+    "v:main:t.if1": types.Int32,
+    "v:main:a": types.Int32,
+    "v:main:u": types.Ptr(to=types.Int32),
   }, # end allVars dict
 
   allObjs = {
@@ -39,27 +37,27 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         instrSeq = [
-            instr.AssignI(expr.VarE("v:main:a", Loc(3,3)), expr.LitE(11, Loc(3,7)), Loc(3,3)),
-            instr.AssignI(expr.VarE("v:main:u", Loc(4,3)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:main:a", Loc(4,8)), Loc(4,7)), Loc(4,3)),
-            instr.UnDefValI(expr.VarE("v:main:cond"), Loc(6,9)),
+            instr.AssignI(expr.VarE("v:main:a", Loc(4,3)), expr.LitE(11, Loc(4,7)), Loc(4,3)),
+            instr.AssignI(expr.VarE("v:main:b", Loc(5,3)), expr.LitE(13, Loc(5,7)), Loc(5,3)),
+            instr.AssignI(expr.VarE("v:cond", Loc(6,3)), expr.LitE(10, Loc(6,10)), Loc(6,3)),
+            instr.AssignI(expr.VarE("v:main:u", Loc(7,3)), expr.AddrOfE(expr.VarE("v:main:a", Loc(7,8)), Loc(7,7)), Loc(7,3)),
             instr.LabelI("WhileCond1"),
-            instr.CondI(expr.VarE("v:main:cond", Loc(6,9)), "WhileBody1", "WhileExit1", Loc(6,9)),
+            instr.AssignI(expr.VarE("v:main:t.if1", Loc(9,9)), expr.BinaryE(expr.VarE("v:cond", Loc(9,9)), op.BO_GT, expr.LitE(1, Loc(9,16)), Loc(9,9)), Loc(9,9)),
+            instr.CondI(expr.VarE("v:main:t.if1", Loc(9,9)), "WhileBody1", "WhileExit1", Loc(9,9)),
             instr.LabelI("WhileBody1"),
-            instr.AssignI(expr.VarE("v:main:tmp", Loc(7,5)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:u", Loc(7,12)), Loc(7,11)), Loc(7,5)),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(8,10)), expr.BinaryE(expr.VarE("v:main:tmp", Loc(8,10)), op.BO_MUL, expr.LitE(2, Loc(8,16)), Loc(8,10)), Loc(8,10)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:u", Loc(8,6)), Loc(8,5)), expr.VarE("v:main:t.1", Loc(8,10)), Loc(8,5)),
-            instr.CondI(expr.VarE("v:main:b", Loc(9,8)), "IfTrue2", "IfFalse2", Loc(9,8)),
+            instr.AssignI(expr.VarE("v:main:tmp", Loc(10,5)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:u", Loc(10,12)), Loc(10,11)), Loc(10,5)),
+            instr.AssignI(expr.VarE("v:main:b", Loc(11,5)), expr.BinaryE(expr.VarE("v:main:tmp", Loc(11,9)), op.BO_MOD, expr.LitE(2, Loc(11,15)), Loc(11,9)), Loc(11,5)),
+            instr.CondI(expr.VarE("v:main:b", Loc(12,8)), "IfTrue2", "IfFalse2", Loc(12,8)),
             instr.LabelI("IfTrue2"),
-            instr.AssignI(expr.VarE("v:main:b", Loc(10,7)), expr.LitE(15, Loc(10,11)), Loc(10,7)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(11,12)), expr.UnaryE(op.UO_ADDROF, expr.VarE("v:main:b", Loc(11,13)), Loc(11,12)), Loc(11,12)),
-            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:z", Loc(11,8)), Loc(11,7)), expr.VarE("v:main:t.2", Loc(11,12)), Loc(11,7)),
+            instr.AssignI(expr.VarE("v:main:b", Loc(13,7)), expr.LitE(15, Loc(13,11)), Loc(13,7)),
             instr.GotoI("IfExit2"),
             instr.LabelI("IfFalse2"),
-            instr.AssignI(expr.VarE("v:main:b", Loc(13,7)), expr.LitE(16, Loc(13,11)), Loc(13,7)),
+            instr.AssignI(expr.VarE("v:main:b", Loc(15,7)), expr.LitE(16, Loc(15,11)), Loc(15,7)),
             instr.LabelI("IfExit2"),
+            instr.AssignI(expr.VarE("v:main:u", Loc(17,5)), expr.AddrOfE(expr.VarE("v:main:b", Loc(17,10)), Loc(17,9)), Loc(17,5)),
             instr.GotoI("WhileCond1"),
             instr.LabelI("WhileExit1"),
-            instr.ReturnI(expr.LitE(0, Loc(16,10))),
+            instr.ReturnI(expr.VarE("v:main:b", Loc(20,10))),
         ], # instrSeq end.
       ), # f:main() end. 
 

@@ -1,18 +1,20 @@
 digraph {
   node [shape=box]
-  START [label="[START]\la = 11\lu = &a\linput(cond)\l"];
-  BB1 [label="[BB1]\lif (cond) BB2 BB6\l"];
-  BB2 [label="[BB2]\ltmp = *u\lt.1 = tmp * 2\l*u = t.1\lif (b) BB3 BB4\l"];
-  BB3 [label="[BB3]\lb = 15\lt.2 = &b\l*z = t.2\l"];
+  START [label="[START]\la = 11\lb = 13\lcond = 10\lu = &a\l"];
+  BB1 [label="[BB1]\lt.1 = cond > 1\lif (t.1) BB2 BB6\l"];
+  BB2 [label="[BB2]\ltmp = *u\lb = tmp % 2\lif (b) BB3 BB4\l"];
+  BB3 [label="[BB3]\lb = 15\l"];
   BB4 [label="[BB4]\lb = 16\l"];
-  BB6 [label="[BB6]\lreturn 0\l"];
+  BB5 [label="[BB5]\lu = &b\l"];
+  BB6 [label="[BB6]\lreturn b\l"];
   END [label="[END]\lnop()\l"];
   BB1 -> BB6 [color=red, penwidth=2];
-  BB2 -> BB3 [color=green, penwidth=2];
-  START -> BB1;
+  BB4 -> BB5;
   BB2 -> BB4 [color=red, penwidth=2];
+  BB5 -> BB1;
+  BB2 -> BB3 [color=green, penwidth=2];
   BB1 -> BB2 [color=green, penwidth=2];
+  START -> BB1;
+  BB3 -> BB5;
   BB6 -> END;
-  BB3 -> BB1;
-  BB4 -> BB1;
 }

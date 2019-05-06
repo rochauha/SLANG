@@ -1,17 +1,21 @@
+int cond;
 int main() {
-  int **z, a, *u, cond, tmp, b;
+  int a, *u, tmp, b;
   a = 11;
+  b = 13;
+  cond = 10;
   u = &a;
-  // input(cond); // special instruction
-  while(cond) { // `cond` value is undeterministic.
-    tmp = *u; // point-of-interest
-    *u = tmp * 2;
+
+  while(cond > 1) {
+    tmp = *u;
+    b = tmp % 2;
     if(b) {
       b = 15;
-      *z = &b;
     } else {
       b = 16;
     }
+    u = &b;
+    cond += 1;
   }
-  return 0;
+  return b;
 }

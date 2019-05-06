@@ -1,0 +1,63 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "delit.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:t.if2": types.Int32,
+    "v:main:t.L1": types.Int32,
+    "v:main:f": types.Float32,
+    "v:main:y": types.Int32,
+    "v:main:x": types.Int32,
+  }, # end allVars dict
+
+  allObjs = {
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        instrSeq = [
+            instr.AssignI(expr.VarE("v:main:x", Loc(3,3)), expr.LitE(1, Loc(3,14)), Loc(3,3)),
+            instr.AssignI(expr.VarE("v:main:f", Loc(4,3)), expr.LitE(20.300000, Loc(4,13)), Loc(4,3)),
+            instr.AssignI(expr.VarE("v:main:f", Loc(5,3)), expr.BinaryE(expr.VarE("v:main:x", Loc(5,7)), op.BO_ADD, expr.VarE("v:main:f", Loc(5,11)), Loc(5,7)), Loc(5,3)),
+            instr.AssignI(expr.VarE("v:main:t.L1", Loc(7,7)), expr.LitE(1, Loc(7,7)), Loc(7,7)),
+            instr.AssignI(expr.VarE("v:main:t.if2", Loc(7,7)), expr.BinaryE(expr.VarE("v:main:y", Loc(7,7)), op.BO_GT, expr.VarE("v:main:x", Loc(7,11)), Loc(7,7)), Loc(7,7)),
+            instr.CondI(expr.VarE("v:main:t.if2", Loc(7,7)), "NextCheckLand2", "TmpAssignLand2", Loc(7,7)),
+            instr.LabelI("NextCheckLand2"),
+            instr.CondI(expr.VarE("v:main:y", Loc(7,16)), "ExitLand2", "TmpAssignLand2", Loc(7,7)),
+            instr.LabelI("TmpAssignLand2"),
+            instr.AssignI(expr.VarE("v:main:t.L1", Loc(7,7)), expr.LitE(0, Loc(7,7)), Loc(7,7)),
+            instr.LabelI("ExitLand2"),
+            instr.CondI(expr.VarE("v:main:t.L1", Loc(7,7)), "IfTrue1", "IfFalse1", Loc(7,7)),
+            instr.LabelI("IfTrue1"),
+            instr.AssignI(expr.VarE("v:main:x", Loc(8,5)), expr.LitE(20, Loc(8,9)), Loc(8,5)),
+            instr.GotoI("IfExit1"),
+            instr.LabelI("IfFalse1"),
+            instr.AssignI(expr.VarE("v:main:x", Loc(10,5)), expr.LitE(30, Loc(10,9)), Loc(10,5)),
+            instr.LabelI("IfExit1"),
+        ], # instrSeq end.
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

@@ -1,0 +1,59 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "Ptr_Assign_Member_Var_Instr.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:t.1": types.Ptr(to=types.Struct("s:MyData")),
+    "v:main:c": types.Int32,
+    "v:main:a": types.Struct("s:MyData"),
+    "v:main:b": types.Ptr(to=types.Struct("s:MyData")),
+  }, # end allVars dict
+
+  allObjs = {
+    "s:MyData":
+      types.Struct(
+        name = "s:MyData",
+        fields = [
+          ("age", types.Int32),
+          ("year", types.Int32),
+        ],
+        loc = Loc(2,1),
+      ),
+
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        instrSeq = [
+            instr.AssignI(expr.MemberE("year", expr.VarE("v:main:a", Loc(14,1)), Loc(14,1)), expr.LitE(1995, Loc(14,8)), Loc(14,1)),
+            instr.AssignI(expr.MemberE("age", expr.VarE("v:main:a", Loc(15,1)), Loc(15,1)), expr.LitE(23, Loc(15,7)), Loc(15,1)),
+            instr.AssignI(expr.VarE("v:main:c", Loc(16,1)), expr.LitE(10, Loc(16,7)), Loc(16,1)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(19,1)), expr.AddrOfE(expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:b", Loc(19,3)), Loc(19,2)), Loc(19,1)), Loc(19,1)),
+            instr.AssignI(expr.MemberE("age", expr.VarE("v:main:t.1", Loc(19,1)), Loc(19,1)), expr.VarE("v:main:c", Loc(19,10)), Loc(19,1)),
+        ], # instrSeq end.
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

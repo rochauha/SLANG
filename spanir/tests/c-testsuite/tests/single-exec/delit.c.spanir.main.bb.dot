@@ -1,0 +1,13 @@
+digraph {
+  node [shape=box]
+  START [label="[START]\lx = 0\lt.1 = x > 10\lif (t.1) BB1 BB2\l"];
+  BB1 [label="[BB1]\lx = 11\l"];
+  BB2 [label="[BB2]\lx = 20\l"];
+  BB3 [label="[BB3]\lreturn x\l"];
+  END [label="[END]\lnop()\l"];
+  BB1 -> BB3;
+  BB2 -> BB3;
+  START -> BB1 [color=green, penwidth=2];
+  START -> BB2 [color=red, penwidth=2];
+  BB3 -> END;
+}

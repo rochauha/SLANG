@@ -1,0 +1,15 @@
+digraph {
+  node [shape=box]
+  n1 [label="1: a.year = 1995", color=blue, penwidth=4];
+  n2 [label="2: a.age = 23"];
+  n3 [label="3: c = 10"];
+  n4 [label="4: t.1 = &*b"];
+  n5 [label="5: t.1.age = c"];
+  n6 [label="6: nop()", color=blue, penwidth=4];
+
+  n1 -> n2 ;
+  n2 -> n3 ;
+  n3 -> n4 ;
+  n4 -> n5 ;
+  n5 -> n6 ;
+}

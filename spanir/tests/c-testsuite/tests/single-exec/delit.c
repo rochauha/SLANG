@@ -1,18 +1,42 @@
-struct val {
-  int z;
-};
-struct node {
-  int x;
-  struct val v;
-};
-int sum(int a, int b) {
-  return a + b;
-}
-
+#include <malloc.h>
 int main() {
-   int y = 10;
-   int x = y && y || y;
-   int z = y ? x : y;
+  int y, x = 1;
+  float f = 20.3;
+  f = x + f;
+  //int *p = (int*) malloc(4);
+  if (y > x && y) {
+    x = 20;
+  } else {
+    x = 30;
+  }
+
+  //int y = x + 1 && 4;
+  // if (x > y && y || x) {
+  //   y = 33;
+  // }
+//  int x = 0;
+//  if(x > 10) {
+//    x = 11;
+//  } else {
+//    x = 20;
+//  }
+//  return x;
+}
+//struct val {
+//  int z;
+//};
+//struct node {
+//  int x;
+//  struct val v;
+//};
+//int sum(int a, int b) {
+//  return a + b;
+//}
+//
+//int main() {
+//   int y = 10;
+//   int x = y && y || y;
+//   int z = y ? x : y;
 //  -------
 //  int arr[][3] = {{1,2,7},{3,4},{5}};
 //  struct node n = {1, {2}};
@@ -78,4 +102,4 @@ int main() {
 //   } while(x);
 //   return 0;
 //   z = y;
-}
+//}

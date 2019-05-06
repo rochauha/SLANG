@@ -79,6 +79,7 @@ class BugMessage {
         this->line = line;
         this->col = col;
         this->messageString = messageString;
+        stmt = nullptr;
     }
 
     uint64_t genEncodedId() const {
@@ -102,7 +103,11 @@ class BugMessage {
         llvm::errs() << "COLUMN" << " " << col << "\n";
         llvm::errs() << "MSG" << " " << messageString << "\n";
         llvm::errs() << "STMT :\n";
-        stmt->dump();
+        if (stmt) {
+            stmt->dump();
+        } else {
+            llvm::errs() << "STMT is nullptr\n";
+        }
     }
 };
 
@@ -371,22 +376,29 @@ void SlangBugReporterChecker::generateSingleBugReport(Bug &bug) const {
 
     std::string description = bug.messages[0].getMessageString();
 
-    // BugReport starts at location of first message
-    PathDiagnosticLocation startLoc =
-        PathDiagnosticLocation::createBegin(bug.messages[0].getStmt(), BR->getSourceManager(), AC);
-    auto R = llvm::make_unique<BugReport>(*bt, llvm::StringRef(description), startLoc);
+    if (bug.messages[0].getStmt()) {
+        // BugReport starts at location of first message
+        PathDiagnosticLocation startLoc =
+            PathDiagnosticLocation::createBegin(bug.messages[0].getStmt(), BR->getSourceManager(), AC);
+        auto R = llvm::make_unique<BugReport>(*bt, llvm::StringRef(description), startLoc);
 
-    for (size_t i = 1; i < bug.messages.size(); ++i) {
-        Stmt *currentStmt = bug.messages[i].getStmt();
-        std::string currentMessage = bug.messages[i].getMessageString();
+        for (size_t i = 1; i < bug.messages.size(); ++i) {
+            Stmt *currentStmt = bug.messages[i].getStmt();
+            if (currentStmt) {
+                std::string currentMessage = bug.messages[i].getMessageString();
 
-        PathDiagnosticLocation currentLoc =
-            PathDiagnosticLocation::createBegin(currentStmt, BR->getSourceManager(), AC);
+                PathDiagnosticLocation currentLoc =
+                    PathDiagnosticLocation::createBegin(currentStmt, BR->getSourceManager(), AC);
 
-        R->addNote(llvm::StringRef(currentMessage), currentLoc);
+                R->addNote(llvm::StringRef(currentMessage), currentLoc);
+            } else {
+                llvm::errs() << "No Stmt found\n";
+                bug.messages[i].dump();
+            }
+        }
+        BR->emitReport(std::move(R));
+        llvm::errs() << "SLANG : Report Created\n";
     }
-    BR->emitReport(std::move(R));
-    llvm::errs() << "SLANG : Report Created\n";
 }
 
 // Register the Checker

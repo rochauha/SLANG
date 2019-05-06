@@ -17,14 +17,14 @@ irTUnit.TUnit(
   description = "Auto-Translated from Clang AST.",
 
   allVars = {
-    "v:main:t.4": types.Int32,
-    "v:main:t.3": types.ConstSizeArray(of=types.Int32, size=2),
-    "v:main:p": types.Ptr(to=types.Int32),
-    "v:main:t.2": types.ConstSizeArray(of=types.ConstSizeArray(of=types.Int32, size=2), size=2),
-    "v:main:x": types.ConstSizeArray(of=types.Int32, size=4),
-    "v:main:t.1": types.Int32,
-    "v:main:a": types.ConstSizeArray(of=types.ConstSizeArray(of=types.Int32, size=2), size=2),
-    "v:main:pp": types.Ptr(to=types.ConstSizeArray(of=types.ConstSizeArray(of=types.Int32, size=2), size=2)),
+    "v:main:t.1": types.FuncSig(returnType=types.Void, paramTypes=[types.Int32, types.Int32]),
+    "v:main:a": types.Int32,
+    "v:add:x": types.Int32,
+    "v:main:fun_ptr": types.Ptr(to=types.FuncSig(returnType=types.Void, paramTypes=[types.Int32, types.Int32])),
+    "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:add:y": types.Int32,
+    "v:add:c": types.Int32,
+    "v:main:b": types.Int32,
   }, # end allVars dict
 
   allObjs = {
@@ -39,19 +39,42 @@ irTUnit.TUnit(
         # Note: -1 is always start/entry BB. (REQUIRED)
         # Note: 0 is always end/exit BB (REQUIRED)
         instrSeq = [
-            instr.AssignI(expr.VarE("v:main:p", Loc(5,3)), expr.VarE("v:main:x", Loc(4,3)), Loc(5,3)),
-            instr.AssignI(expr.VarE("v:main:t.1", Loc(6,18)), expr.ArrayE(expr.LitE(1, Loc(6,20)), expr.VarE("v:main:p", Loc(5,3)), Loc(6,18)), Loc(6,18)),
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(6,3)), [expr.LitE("""%d
-""", Loc(6,10)), expr.VarE("v:main:t.1", Loc(6,18))], Loc(6,3)), Loc(6,3)),
-            instr.AssignI(expr.VarE("v:main:pp", Loc(9,3)), expr.VarE("v:main:a", Loc(8,3)), Loc(9,3)),
-            instr.AssignI(expr.VarE("v:main:t.2", Loc(10,18)), expr.ArrayE(expr.LitE(0, Loc(10,21)), expr.VarE("v:main:pp", Loc(9,3)), Loc(10,18)), Loc(10,18)),
-            instr.AssignI(expr.VarE("v:main:t.3", Loc(10,18)), expr.ArrayE(expr.LitE(0, Loc(10,24)), expr.VarE("v:main:t.2", Loc(10,18)), Loc(10,18)), Loc(10,18)),
-            instr.AssignI(expr.VarE("v:main:t.4", Loc(10,18)), expr.ArrayE(expr.LitE(0, Loc(10,27)), expr.VarE("v:main:t.3", Loc(10,18)), Loc(10,18)), Loc(10,18)),
-            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(10,3)), [expr.LitE("""%d
-""", Loc(10,10)), expr.VarE("v:main:t.4", Loc(10,18))], Loc(10,3)), Loc(10,3)),
-            instr.ReturnI(expr.LitE(0, Loc(12,10))),
+            instr.AssignI(expr.VarE("v:main:a", Loc(11,2)), expr.LitE(10, Loc(11,8)), Loc(11,2)),
+            instr.AssignI(expr.VarE("v:main:b", Loc(11,2)), expr.LitE(20, Loc(11,13)), Loc(11,2)),
+            instr.AssignI(expr.VarE("v:main:fun_ptr", Loc(12,2)), expr.AddrOfE(expr.FuncE("f:add", Loc(12,28)), Loc(12,27)), Loc(12,2)),
+            instr.AssignI(expr.VarE("v:main:t.1", Loc(13,3)), expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:fun_ptr", Loc(13,4)), Loc(13,3)), Loc(13,3)),
+            instr.CallI(expr.CallE(expr.VarE("v:main:t.1", Loc(13,3)), [expr.VarE("v:main:a", Loc(13,13)), expr.VarE("v:main:b", Loc(13,15))], Loc(13,2)), Loc(13,2)),
         ], # instrSeq end.
       ), # f:main() end. 
+
+    "f:add":
+      obj.Func(
+        name = "f:add",
+        paramNames = ["v:add:x", "v:add:y"],
+        variadic = False,
+        returnType = types.Void,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        instrSeq = [
+            instr.AssignI(expr.VarE("v:add:c", Loc(4,4)), expr.BinaryE(expr.VarE("v:add:x", Loc(4,6)), op.BO_ADD, expr.VarE("v:add:y", Loc(4,8)), Loc(4,6)), Loc(4,4)),
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(6,4)), [expr.LitE("""Hello
+""", Loc(6,11))], Loc(6,4)), Loc(6,4)),
+        ], # instrSeq end.
+      ), # f:add() end. 
+
+    "f:printf":
+      obj.Func(
+        name = "f:printf",
+        paramNames = ["v:printf:__format"],
+        variadic = True,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        instrSeq = [
+        ], # instrSeq end.
+      ), # f:printf() end. 
 
   }, # end allObjs dict
 ) # irTUnit.TUnit() ends

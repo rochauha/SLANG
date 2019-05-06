@@ -1,0 +1,58 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "Ptr_Assign_Var_Member_Instr.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:c": types.Ptr(to=types.Int32),
+    "v:main:a": types.Struct("s:MyData"),
+    "v:main:b": types.Struct("s:MyData"),
+  }, # end allVars dict
+
+  allObjs = {
+    "s:MyData":
+      types.Struct(
+        name = "s:MyData",
+        fields = [
+          ("age", types.Int32),
+          ("year", types.Int32),
+        ],
+        loc = Loc(2,1),
+      ),
+
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        instrSeq = [
+            instr.AssignI(expr.MemberE("year", expr.VarE("v:main:a", Loc(13,1)), Loc(13,1)), expr.LitE(1995, Loc(13,8)), Loc(13,1)),
+            instr.AssignI(expr.MemberE("age", expr.VarE("v:main:a", Loc(14,1)), Loc(14,1)), expr.LitE(23, Loc(14,7)), Loc(14,1)),
+            instr.AssignI(expr.MemberE("age", expr.VarE("v:main:b", Loc(15,1)), Loc(15,1)), expr.LitE(26, Loc(15,7)), Loc(15,1)),
+            instr.AssignI(expr.MemberE("year", expr.VarE("v:main:b", Loc(16,1)), Loc(16,1)), expr.LitE(1993, Loc(16,8)), Loc(16,1)),
+            instr.AssignI(expr.VarE("v:main:c", Loc(18,1)), expr.AddrOfE(expr.MemberE("year", expr.VarE("v:main:a", Loc(18,5)), Loc(18,5)), Loc(18,3)), Loc(18,1)),
+        ], # instrSeq end.
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.
