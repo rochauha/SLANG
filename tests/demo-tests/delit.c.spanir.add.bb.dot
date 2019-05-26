@@ -1,0 +1,6 @@
+digraph {
+  node [shape=box]
+  START [label="[START]\l1: p = &p.1\l2: c = x + y\l3: printf('Hello\n')\l"];
+  START -> END;
+  END [label="[END]\l4: nop()\l"];
+} // close digraph

@@ -550,7 +550,7 @@ public:
     FD = dyn_cast<FunctionDecl>(D);
     if (FD) {
       FD = FD->getCanonicalDecl();
-      handleFuncNameAndType(FD);
+      FD = handleFuncNameAndType(FD, true);
       stu.currFunc = &stu.funcMap[(uint64_t) FD];
       SLANG_DEBUG("Current Function: " << stu.currFunc->name << " " << (uint64_t)FD->getCanonicalDecl())
       handleFunctionBody(FD);
@@ -581,12 +581,17 @@ public:
   }
 
   // records the function details
-  void handleFuncNameAndType(const FunctionDecl *funcDecl) const {
+  const FunctionDecl* handleFuncNameAndType(const FunctionDecl *funcDecl,
+      bool force=false) const {
+    const FunctionDecl *realFuncDecl = funcDecl;
+
     if (funcDecl->isDefined()) {
-      funcDecl = funcDecl->getCanonicalDecl();
+      funcDecl = funcDecl->getDefinition();
+      realFuncDecl = funcDecl;
+      // funcDecl = funcDecl->getCanonicalDecl();
     }
 
-    if (stu.funcMap.find((uint64_t)funcDecl) == stu.funcMap.end()) {
+    if (stu.funcMap.find((uint64_t)funcDecl) == stu.funcMap.end() || force) {
       // if here, function not already present. Add its details.
 
       SlangFunc slangFunc{};
@@ -611,6 +616,8 @@ public:
       // STEP 2: Copy the function to the map.
       stu.funcMap[(uint64_t)funcDecl] = slangFunc;
     }
+
+    return realFuncDecl;
   } // handleFunction()
 
   void handleFuncDecl(const FunctionDecl *funcDecl) {
@@ -2017,9 +2024,9 @@ public:
     if (slangExpr.compound || force == true) {
       SlangExpr tmpExpr;
       if (slangExpr.qualType.isNull()) {
-        tmpExpr = genTmpVariable("t.", "types.Int32", slangExpr.locStr);
+        tmpExpr = genTmpVariable("t", "types.Int32", slangExpr.locStr);
       } else {
-        tmpExpr = genTmpVariable("t.", slangExpr.qualType, slangExpr.locStr);
+        tmpExpr = genTmpVariable("t", slangExpr.qualType, slangExpr.locStr);
       }
       std::stringstream ss;
 

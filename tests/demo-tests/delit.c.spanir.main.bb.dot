@@ -1,6 +1,6 @@
 digraph {
   node [shape=box]
-  START [label="[START]\lt.1 = &x\lscanf('%d',t.1)\lprintf('%d',x)\lreturn 0\l"];
-  END [label="[END]\lnop()\l"];
+  START [label="[START]\l1: a = 10\l2: b = 20\l3: fun_ptr = &add\l4: t.1t = *fun_ptr\l5: t.1t(a,b)\l"];
   START -> END;
-}
+  END [label="[END]\l6: nop()\l"];
+} // close digraph

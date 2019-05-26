@@ -9,8 +9,8 @@ digraph {
   n7 [label="7: tmp = *u"];
   n8 [label="8: b = tmp % 2"];
   n9 [label="9: if (b) BB3 BB4"];
-  n10 [label="10: b = 16"];
-  n11 [label="11: b = 15"];
+  n10 [label="10: b = 15"];
+  n11 [label="11: b = 16"];
   n12 [label="12: u = &b"];
   n13 [label="13: return b"];
   n14 [label="14: nop()", color=blue, penwidth=4];
@@ -24,8 +24,8 @@ digraph {
   n6 -> n13 [color=red, penwidth=2];
   n7 -> n8 ;
   n8 -> n9 ;
-  n9 -> n11 [color=green, penwidth=2];
-  n9 -> n10 [color=red, penwidth=2];
+  n9 -> n11 [color=red, penwidth=2];
+  n9 -> n10 [color=green, penwidth=2];
   n10 -> n12 ;
   n11 -> n12 ;
   n12 -> n5 ;

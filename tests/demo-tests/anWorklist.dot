@@ -1,0 +1,22 @@
+
+digraph {
+  randdir=TB;
+
+subgraph "cluster_1_Li" {
+  label = "1_Li";
+  "1_LiLi0" [label="Li0"];
+  "1_LiWL" [shape=box, label="."];
+
+  "1_LiNodeWl" [shape=box, label="6,5,4,3,2,1"];
+  "1_LiWL" -> "1_LiNodeWl" [style=invis];
+} // close Wl subgraph
+
+
+subgraph "1_LiCfg" {
+  "1_LiSTART" [shape=box, label="[START]\l1: a = 10\l2: b = 20\l3: nop\l4: nop\l5: nop\l"];
+  "1_LiSTART" -> "1_LiEND" ;
+  "1_LiEND" [shape=box, label="[END]\l6: nop\l"];
+} // close cfg subgraph
+
+
+} // close digraph

@@ -6,7 +6,7 @@
 
 int g;
 void main(int argc, char **argv) {
-  int x = 10, y, z;
+  int x, y, z;
   x = 10;
   y = 20;
   z = y;

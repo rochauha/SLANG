@@ -1,20 +1,20 @@
 digraph {
   node [shape=box]
-  START [label="[START]\la = 11\lb = 13\lcond = 10\lu = &a\l"];
-  BB1 [label="[BB1]\lt.1 = cond > 1\lif (t.1) BB2 BB6\l"];
-  BB2 [label="[BB2]\ltmp = *u\lb = tmp % 2\lif (b) BB3 BB4\l"];
-  BB3 [label="[BB3]\lb = 15\l"];
-  BB4 [label="[BB4]\lb = 16\l"];
-  BB5 [label="[BB5]\lu = &b\l"];
-  BB6 [label="[BB6]\lreturn b\l"];
-  END [label="[END]\lnop()\l"];
-  BB1 -> BB6 [color=red, penwidth=2];
-  BB4 -> BB5;
-  BB2 -> BB4 [color=red, penwidth=2];
-  BB5 -> BB1;
-  BB2 -> BB3 [color=green, penwidth=2];
-  BB1 -> BB2 [color=green, penwidth=2];
+  START [label="[START]\l1: a = 11\l2: b = 13\l3: cond = 10\l4: u = &a\l"];
   START -> BB1;
+  BB1 [label="[BB1]\l5: t.if1 = cond > 1\l6: if (t.if1) BB2 BB6\l"];
+  BB1 -> BB6 [color=red, penwidth=2];
+  BB1 -> BB2 [color=green, penwidth=2];
+  BB2 [label="[BB2]\l7: tmp = *u\l8: b = tmp % 2\l9: if (b) BB3 BB4\l"];
+  BB2 -> BB3 [color=green, penwidth=2];
+  BB2 -> BB4 [color=red, penwidth=2];
+  BB3 [label="[BB3]\l11: b = 15\l"];
   BB3 -> BB5;
+  BB4 [label="[BB4]\l10: b = 16\l"];
+  BB4 -> BB5;
+  BB5 [label="[BB5]\l12: u = &b\l"];
+  BB5 -> BB1;
+  BB6 [label="[BB6]\l13: return b\l"];
   BB6 -> END;
-}
+  END [label="[END]\l14: nop()\l"];
+} // close digraph
