@@ -1,0 +1,11 @@
+digraph {
+  node [shape=box]
+  START [label="[START]\l1: a = 10\l2: c = 20\l3: b = 3\l4: if (b) None None\l"];
+  START -> BB2 [color=red, penwidth=2];
+  START -> BB3 [color=green, penwidth=2];
+  BB2 [label="[BB2]\l6: u = &c\l"];
+  BB2 -> END;
+  BB3 [label="[BB3]\l5: u = &a\l"];
+  BB3 -> END;
+  END [label="[END]\l7: c = *u\l8: use({c})\l"];
+} // close digraph

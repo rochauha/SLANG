@@ -1,0 +1,13 @@
+digraph {
+  node [shape=box]
+  START [label="[START]\l1: a = 0\l2: b = 10\l3: c = *u\l4: t.1if = c >= 5\l5: if (t.1if) BB1 BB2\l"];
+  START -> BB1 [color=green, penwidth=2];
+  START -> BB2 [color=red, penwidth=2];
+  BB1 [label="[BB1]\l7: b = 10\l"];
+  BB1 -> BB3;
+  BB2 [label="[BB2]\l6: b = 20\l"];
+  BB2 -> BB3;
+  BB3 [label="[BB3]\l8: c = 123\l"];
+  BB3 -> END;
+  END [label="[END]\l9: nop()\l"];
+} // close digraph

@@ -1,0 +1,16 @@
+digraph {
+  node [shape=box]
+  START [label="[START]\l1: a = 11\l2: u = &a\l3: input(cond)\l"];
+  START -> BB2;
+  BB2 [label="[BB2]\l4: if (cond) None None\l"];
+  BB2 -> END [color=red, penwidth=2];
+  BB2 -> BB3 [color=green, penwidth=2];
+  BB3 [label="[BB3]\l5: tmp = *u\l6: b = tmp % 2\l7: if (b) None None\l"];
+  BB3 -> BB4 [color=green, penwidth=2];
+  BB3 -> BB5 [color=red, penwidth=2];
+  BB4 [label="[BB4]\l8: b = 15\l9: u = &b\l"];
+  BB4 -> BB2;
+  BB5 [label="[BB5]\l10: b = 16\l"];
+  BB5 -> BB2;
+  END [label="[END]\l11: nop()\l"];
+} // close digraph

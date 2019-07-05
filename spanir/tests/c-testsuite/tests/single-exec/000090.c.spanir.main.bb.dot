@@ -1,6 +1,0 @@
-digraph {
-  node [shape=box]
-  START [label="[START]\lx = 1\lx = x * 10\lx = x / 2\lx = x % 3\lt.1 = x - 2\lreturn t.1\l"];
-  END [label="[END]\lnop()\l"];
-  START -> END;
-}

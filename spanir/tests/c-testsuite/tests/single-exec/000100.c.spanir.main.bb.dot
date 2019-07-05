@@ -1,8 +1,0 @@
-digraph {
-  node [shape=box]
-  START [label="[START]\l"];
-  BB1 [label="[BB1]\lreturn 0\l"];
-  END [label="[END]\lnop()\l"];
-  BB1 -> END;
-  START -> BB1;
-}

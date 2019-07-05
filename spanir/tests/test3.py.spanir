@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+
+# MIT License
+# Copyright (c) 2019 Anshuman Dhuliya
+
+# These imports must be done in the module eval()ing this file.
+# import span.ir.types as types
+# import span.ir.op as op
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.ir as ir
+
+ir.TranslationUnit(
+  name = "span.tests.test3",
+  description = """
+    Nested if conditions, with only numeric unit assignments.
+    
+    1. b = 1;
+    2. if b:
+    3.   y = 0;
+    4.   if y:
+    5.     y = a;
+       else:
+    6.   y = x;
+    7. use(y);
+  """,
+
+  allVars = {
+    "v:main:x": types.Int,
+    "v:main:y": types.Int,
+    "v:main:a": types.Int,
+    "v:main:b": types.Int,
+  }, # end allVars dict
+
+  allObjs = {
+    "f:main":
+      obj.Func(
+        name= "f:main",
+        paramNames= [],
+        returnType= types.Int,
+        paramTypes= [],
+
+        basicBlocks= {
+          -1: [ # -1 is always start/entry BB. (REQUIRED)
+            instr.AssignI(expr.VarE("v:main:b"), expr.LitE(1)),
+            instr.CondI(expr.VarE("v:main:b")),
+          ],
+
+          2: [
+            instr.AssignI(expr.VarE("v:main:y"), expr.VarE("v:main:x")),
+          ],
+
+          3: [
+            instr.AssignI(expr.VarE("v:main:y"), expr.LitE(0)),
+            instr.CondI(expr.VarE("v:main:y")),
+          ],
+
+          4: [
+            instr.AssignI(expr.VarE("v:main:y"), expr.VarE("v:main:a")),
+          ],
+
+          0: [ # 0 is always end/exit block (REQUIRED)
+            instr.UseI({expr.VarE("v:main:y")}),
+          ],
+        },
+
+        bbEdges= [
+          (-1, 2, types.FalseEdge),
+          (-1, 3, types.TrueEdge),
+          (3, 4, types.TrueEdge),
+          (3, 0, types.FalseEdge),
+          (2, 0, types.UnCondEdge),
+          (4, 0, types.UnCondEdge),
+        ],
+      ),
+  } # end allObjs dict
+) # end irTunit.TUnit object
+

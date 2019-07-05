@@ -1,0 +1,78 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TUnit class.
+irTUnit.TUnit(
+  name = "funcPtr.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:KKKKK": types.Ptr(to=types.FuncSig(returnType=types.Int32, paramTypes=[types.Int32, types.Float32])),
+    "v:main:argv": types.Ptr(to=types.Ptr(to=types.Int8)),
+    "v:main:argc": types.Int32,
+    "v:printf:__format": types.Ptr(to=types.Int8),
+    "v:add:a": types.Int32,
+    "v:add:f": types.Float32,
+  }, # end allVars dict
+
+  allObjs = {
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = ["v:main:argc", "v:main:argv"],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        instrSeq = [
+            instr.AssignI(expr.VarE("v:main:KKKKK", Loc(10,3)), expr.LitE(0, Loc(10,11)), Loc(10,3)),
+            instr.AssignI(expr.VarE("v:main:KKKKK", Loc(12,3)), expr.FuncE("f:add", Loc(12,11)), Loc(12,3)),
+            instr.CallI(expr.CallE(expr.VarE("v:main:KKKKK", Loc(13,3)), [expr.LitE(10, Loc(13,9)), expr.LitE(20.500000, Loc(13,13))], Loc(13,3)), Loc(13,3)),
+            instr.ReturnI(expr.LitE(0, Loc(15,10))),
+        ], # instrSeq end.
+      ), # f:main() end. 
+
+    "f:add":
+      obj.Func(
+        name = "f:add",
+        paramNames = ["v:add:a", "v:add:f"],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        instrSeq = [
+            instr.CallI(expr.CallE(expr.FuncE("f:printf", Loc(4,3)), [expr.LitE("""%d, %f
+""", Loc(4,10)), expr.VarE("v:add:a", Loc(4,22)), expr.VarE("v:add:f", Loc(4,25))], Loc(4,3)), Loc(4,3)),
+        ], # instrSeq end.
+      ), # f:add() end. 
+
+    "f:printf":
+      obj.Func(
+        name = "f:printf",
+        paramNames = ["v:printf:__format"],
+        variadic = True,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        instrSeq = [
+        ], # instrSeq end.
+      ), # f:printf() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

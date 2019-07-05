@@ -29,10 +29,10 @@ InstrCodeT = int
 NOP_INSTR_IC                   = 0
 
 BLOCK_ALL_INSTR_IC: InstrCodeT = 1
-USE_INSTR_IC: InstrCodeT      = 2
+USE_INSTR_IC: InstrCodeT       = 2
 COND_READ_INSTR_IC: InstrCodeT = 3
 UNDEF_VAL_INSTR_IC: InstrCodeT = 4
-FILTER_INSTR_IC: InstrCodeT    = 5
+LIVE_INSTR_IC: InstrCodeT      = 5
 EX_READ_INSTR_IC: InstrCodeT   = 6
 
 ASSIGN_INSTR_IC: InstrCodeT    = 10
@@ -68,6 +68,9 @@ class InstrIT(types.AnyT):
   def isReturnInstr(self): return self.instrCode == RETURN_INSTR_IC
   def isCondInstr(self): return self.instrCode == COND_INSTR_IC
   def isGotoInstr(self): return self.instrCode == GOTO_INSTR_IC
+
+  def toHooplIr(self) -> str:
+    return "TODO"
 
 class AssignI(InstrIT):
   """Assignment statement.
@@ -105,6 +108,11 @@ class AssignI(InstrIT):
   def __str__(self): return f"{self.lhs} = {self.rhs}"
 
   def __repr__(self): return self.__str__()
+
+  def toHooplIr(self) -> str:
+    lhsStr = self.lhs.toHooplIr()
+    rhsStr = self.rhs.toHooplIr()
+    return f"Assign ({lhsStr}) ({rhsStr})"
 
 class GotoI(InstrIT):
   """goto xyz; instruction"""
@@ -194,10 +202,16 @@ class CondI(InstrIT):
 
   def __repr__(self): return self.__str__()
 
+  def toHooplIr(self) -> str:
+    argStr = self.arg.toHooplIr()
+    trueLabel = "BBStart" if self.trueLabel.endswith("-1") else self.trueLabel
+    falseLabel = "BBStart" if self.falseLabel.endswith("-1") else self.falseLabel
+    return f"Cond (argStr) \"{trueLabel}\" \"{falseLabel}\""
+
 class ReturnI(InstrIT):
   """Return statement."""
   def __init__(self,
-               arg: expr.UnitET,
+               arg: expr.UnitET = None,
                loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(RETURN_INSTR_IC, loc)
@@ -349,7 +363,7 @@ class LiveI(InstrIT):
                vars: Set[expr.VarE] = None,
                loc: Optional[types.Loc] = None
   ) -> None:
-    super().__init__(FILTER_INSTR_IC, loc)
+    super().__init__(LIVE_INSTR_IC, loc)
     self.vars = vars if vars is not None else set()
 
   def __eq__(self,
@@ -366,7 +380,8 @@ class LiveI(InstrIT):
       return False
     return True
 
-  def __str__(self): return f"live({self.vars})"
+  #def __str__(self): return f"live({self.vars})"
+  def __str__(self): return f"filter"
 
   def __repr__(self): return self.__str__()
 

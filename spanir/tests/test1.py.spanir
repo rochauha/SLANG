@@ -1,0 +1,91 @@
+#!/usr/bin/env python3
+
+# MIT License
+# Copyright (c) 2019 Anshuman Dhuliya
+
+
+# A sample analysis unit.
+#
+# Every translation unit or program, has to be correctly converted
+# into an equivalent analysis unit (a python module).
+# Use this module as a target template.
+
+
+# These imports must be done in the module eval()ing this file.
+# import span.ir.types as types
+# import span.ir.op as op
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.ir as ir
+
+# Dictionary of all the variables in a module.
+# Even local/automatic variables are included.
+
+# The naming of the variables is such that none of the names collide.
+
+# Naming convention:
+# 1. Global variables are prefixed with "v:"
+# 2. Automatic variables are prefixed with, "v:" along with
+#  their function name, separated with a colon.
+   
+# Eg.
+# "v:x" is a global variable. (one colon in name)
+# "v:main:x" is a local variable in function main. (has two colons)
+
+ir.TranslationUnit(
+  # translation unit name
+  name = "span.tests.test1",
+  description = """
+    A simple sequential program.
+
+    1. x = 10;
+    2. y = 20;
+    3. z = y;
+    4. g = z; //g is a global var
+  """,
+
+  allVars = {
+    # all global and local variables go here
+    "v:main:argc": types.Int,
+    "v:main:argv": types.Ptr(types.Char, 2),
+    "v:main:x":    types.Int,
+    "v:main:y":    types.Int,
+    "v:main:z":    types.Int,  # local variable z in function main
+    "v:g":         types.Int,  # global variable g
+  }, # end allVars dict
+
+  allObjs = {
+    # all global objects func, struct, union (except variables) go here
+    "f:main":  # function main
+      obj.Func(
+        name = "f:main",
+        paramNames = ["v:main:argc", "v:main:argv"],
+        paramTypes = [types.Int, types.Ptr(types.Char, 2)],
+        returnType = types.Int,
+
+        basicBlocks = {
+          -1: [ # -1 is always start/entry BB. (REQUIRED)
+            instr.AssignI(expr.VarE("v:main:x", types.Loc(10,11)),
+                          expr.LitE(10, types.Loc( 10,11))),
+            instr.AssignI(expr.VarE("v:main:y", types.Loc(10,11)),
+                          expr.LitE(20, types.Loc(10,11))),
+            instr.AssignI(expr.VarE("v:main:z", types.Loc(10,11)),
+                          expr.VarE("v:main:y", types.Loc(10,11))),
+            instr.AssignI(expr.VarE("v:g", types.Loc(10,11)),
+                          expr.VarE("v:main:z", types.Loc(10,11))),
+          ],
+
+          0: [ # 0 is always end/exit block (REQUIRED)
+          ],
+        },
+
+        bbEdges = [
+          (-1, 0, types.UnCondEdge),
+        ],
+
+        loc = types.Loc(10,11),
+      ),
+  } # end allObjs dict
+) # end irTUnit.TUnit object
+

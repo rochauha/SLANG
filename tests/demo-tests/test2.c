@@ -4,9 +4,9 @@
 // test2.c: A sample test program. (This file)
 // test2.py: SPAN IR module for this file.
 
-int main() {
+int main(int argc) {
   int b,x,y;
-  b = 1;
+  b = argc - 10;
   if (b)
     y = 20;
   else

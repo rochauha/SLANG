@@ -9,7 +9,7 @@ All possible expressions used in an instruction.
 
 import logging
 _log = logging.getLogger(__name__)
-from typing import Optional, List, Set
+from typing import Optional, List, Set, Any
 
 from span.util.logger import LS
 import span.ir.types as types
@@ -43,6 +43,7 @@ PTRCALL_EXPR_EC: ExprCodeT    = 41
 MEMBER_EXPR_EC: ExprCodeT     = 45
 PHI_EXPR_EC: ExprCodeT        = 50
 SELECT_EXPR_EC: ExprCodeT     = 60
+ALLOC_EXPR_EC: ExprCodeT      = 70
 
 ################################################
 #BOUND END  : expr_codes
@@ -55,9 +56,9 @@ class ExprET(types.AnyT):
                loc: Optional[types.Loc] = None
   ) -> None:
     if self.__class__.__name__.endswith("T"): super().__init__()
-    self.type: types.Type = types.Void
     self.exprCode = exprCode
     self.loc = loc
+    self.type: types.Type = types.Void
 
   def isUnaryExpr(self):
     return self.exprCode == UNARY_EXPR_EC or self.exprCode == CAST_EXPR_EC
@@ -79,6 +80,9 @@ class ExprET(types.AnyT):
   def __hash__(self) -> int:
     return hash(self.exprCode) + hash(self.type)
 
+  def toHooplIr(self) -> str:
+    return "TODO"
+
 class BasicET(ExprET):
   """Basic exprs like a var 'x', a value '12.3', a[10], x.y."""
   def __init__(self,
@@ -86,6 +90,10 @@ class BasicET(ExprET):
                loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(exprCode, loc)
+
+  def toHooplIr(self) -> str:
+    # a virtual function
+    return "TODO"
 
 class UnitET(BasicET):
   """Unit exprs like a var 'x', a value '12.3'."""
@@ -123,7 +131,8 @@ class LitE(UnitET):
 
   def __str__(self):
     if isinstance(self.val, str):
-      #escaped = self.val.encode('unicode_escape')
+      # escaped = self.val.encode('unicode_escape')
+      # return escaped.decode("ascii")
       newVal = repr(self.val)
       newVal = newVal[1:-1]
       newVal = "'" + newVal + "'"
@@ -132,7 +141,21 @@ class LitE(UnitET):
 
   def __repr__(self): return self.__str__()
 
-class VarE(UnitET):
+  def toHooplIr(self) -> str:
+    if type(self.val) == str:
+      return f"Lit \"{self.val}\""
+    else:
+      return f"Lit {self.val}"
+
+class VarET(UnitET):
+  """Entities that have a location."""
+  def __init__(self,
+               exprCode: ExprCodeT,
+               loc: Optional[types.Loc] = None
+  ) -> None:
+    super().__init__(exprCode, loc)
+
+class VarE(VarET):
   """Holds a single variable name."""
   def __init__(self,
                name: types.VarNameT,
@@ -162,7 +185,65 @@ class VarE(UnitET):
     name = self.name.split(":")[-1]
     return f"{name}"
 
-class FuncE(VarE):
+  def __repr__(self): return self.__str__()
+
+  def toHooplIr(self) -> str:
+    if self.type.typeCode == types.PTR_TC:
+      return f"PtrVar \"{self.name}\""
+    else:
+      return f"Var \"{self.name}\""
+
+class PseudoVarE(VarET):
+  """Holds a single pseudo variable name.
+  Pseudo variables are used to name line
+  and type based heap locations etc.
+
+  Note: to avoid circular dependency avoid any operation on
+  instructions in this module.
+  """
+  def __init__(self,
+               name: types.VarNameT,
+               loc: Optional[types.Loc] = None,
+               insns: List[Any] = None, # list of instructions (max size 2)
+               sizeExpr: ExprET = None, # the "arg" of malloc, or "arg1 * arg2" of calloc
+  ) -> None:
+    super().__init__(VAR_EXPR_EC, loc)
+    self.name: types.VarNameT = name
+    # First insn is always the memory alloc instruction
+    # The second is optionally a cast assignment.
+    self.insns = insns
+    # sizeExpr is either a UnitET, i.e. malloc's arg
+    #                 or a BinaryE, i.e. arg1 * arg2 (product of calloc's arg)
+    self.sizeExpr = sizeExpr
+
+  def __eq__(self,
+             other: 'PseudoVarE'
+  ) -> bool:
+    if not isinstance(other, PseudoVarE):
+      if LS: _log.warning("%s, %s are incomparable.", self, other)
+      return False
+    if not self.name == other.name:
+      if LS: _log.warning("VarName Differs: %s, %s", repr(self), repr(other))
+      return False
+    if not self.loc == other.loc:
+      if LS: _log.warning("Loc Differs: %s, %s", self, other)
+      return False
+    return True
+
+  def __hash__(self):
+    return hash(self.name) + hash(self.exprCode)
+
+  def __str__(self):
+    name = self.name.split(":")[-1]
+    return f"{name}"
+
+  def toHooplIr(self) -> str:
+    if self.type.typeCode == types.PTR_TC:
+      return f"PtrVar \"{self.name}\""
+    else:
+      return f"Var \"{self.name}\""
+
+class FuncE(VarET):
   """Holds a single function name."""
   def __init__(self,
                name: types.FuncNameT,
@@ -193,19 +274,24 @@ class FuncE(VarE):
     return f"{name}"
   def __repr__(self): return self.name
 
-class ArrayE(VarE, BasicET):
-  """An array expression.
-  TODO: allow one subscript only.
-  """
+class ArrayE(VarET, BasicET):
+  """An array expression."""
   def __init__(self,
                index: UnitET,
-               of: 'ArrayE',
-               var: VarE,
+               of: 'BasicET',
                loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(ARR_EXPR_EC, loc)
     self.index = index
     self.of = of
+    self.name = self.findName(self.of)
+
+  def findName(self, of: BasicET):
+    """Finds and sets the name of the array."""
+    if isinstance(of, VarE):
+      return of.name
+    elif isinstance(of, ArrayE):
+      return self.findName(of.of)
 
   def __eq__(self,
              other: 'ArrayE'
@@ -216,7 +302,7 @@ class ArrayE(VarE, BasicET):
     if not self.index == other.index:
       if LS: _log.warning("Index Differs: %s, %s", self, other)
       return False
-    if not self.ofl == other.of:
+    if not self.of == other.of:
       if LS: _log.warning("Of Differs: %s, %s", self, other)
       return False
     if not self.loc == other.loc:
@@ -225,22 +311,24 @@ class ArrayE(VarE, BasicET):
     return True
 
   def __hash__(self) -> int:
-    return hash(self.var) + hash(self.indexSeq)
+    return hash(self.of) + hash(self.index)
 
   def __str__(self): return f"{self.of}[{self.index}]"
 
   def __repr__(self): return self.__str__()
 
-class MemberE(VarE, BasicET):
-  """A member access expression: e.g. x->f.c or x.f.c ..."""
+class MemberE(VarET, BasicET):
+  """A member access expression: e.g. x->f or x.f ..."""
   def __init__(self,
                name: types.MemberNameT,
-               of: 'MemberE' = None,
+               of: 'BasicET' = None,
                loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(MEMBER_EXPR_EC, loc)
     self.name = name
     self.of = of
+    self.fullName = f"{repr(self.of)}.{self.name}"
+    self.isPtrExpr = False # to be set in tunit module
 
   def __eq__(self,
              other: 'MemberE'
@@ -260,7 +348,7 @@ class MemberE(VarE, BasicET):
     return True
 
   def __hash__(self) -> int:
-    return hash(self.var) + hash(self.fields)
+    return hash(self.fullName)
 
   def __str__(self):
     return f"{self.of}.{self.name}"
@@ -307,7 +395,21 @@ class BinaryE(ExprET):
 
   def __repr__(self): return self.__str__()
 
-class UnaryE(ExprET):
+  def toHooplIr(self) -> str:
+    opStr = self.opr.toHooplIr()
+    arg1Str = self.arg1.toHooplIr()
+    arg2Str = self.arg2.toHooplIr()
+    return f"Binary {opStr} ({arg1Str}) ({arg2Str})"
+
+class UnaryET(ExprET):
+  """A generic unary expression base class."""
+  def __init__(self,
+               exprCode: ExprCodeT,
+               loc: Optional[types.Loc] = None
+  ) -> None:
+    super().__init__(exprCode, loc)
+
+class UnaryE(UnaryET):
   """A unary arithmetic expression."""
   def __init__(self,
                opr: op.UnaryOp,
@@ -342,8 +444,11 @@ class UnaryE(ExprET):
 
   def __repr__(self): return self.__str__()
 
-class AddrOfE(UnaryE):
-  """A unary arithmetic expression."""
+  def toHooplIr(self) -> str:
+    return f"Unary ({self.arg})"
+
+class AddrOfE(UnaryET):
+  """A unary address-of expression."""
   def __init__(self,
                arg: BasicET,
                loc: Optional[types.Loc] = None
@@ -352,13 +457,10 @@ class AddrOfE(UnaryE):
     self.arg = arg
 
   def __eq__(self,
-             other: 'UnaryE'
+             other: 'AddrOfE'
   ) -> bool:
-    if not isinstance(other, UnaryE):
+    if not isinstance(other, AddrOfE):
       if LS: _log.warning("%s, %s are incomparable.", self, other)
-      return False
-    if not self.opr == other.opr:
-      if LS: _log.warning("Operator Differs: %s, %s", self, other)
       return False
     if not self.arg == other.arg:
       if LS: _log.warning("Arg Differs: %s, %s", self, other)
@@ -371,11 +473,15 @@ class AddrOfE(UnaryE):
   def __hash__(self) -> int:
     return hash(self.arg) + hash(self.exprCode)
 
-  def __str__(self): return f"{self.opr}{self.arg}"
+  def __str__(self): return f"&{self.arg}"
 
   def __repr__(self): return self.__str__()
 
-class SizeOfE(UnaryE):
+  def toHooplIr(self) -> str:
+    argStr = self.arg.toHooplIr()
+    return f"Unary AddrOf ({argStr})"
+
+class SizeOfE(UnaryET):
   """Calculates size of the argument type in bytes at runtime."""
   def __init__(self,
                var: VarE, # var of types.VarArray type only
@@ -401,15 +507,19 @@ class SizeOfE(UnaryE):
   def __hash__(self) -> int:
     return hash(self.var) + hash(self.exprCode)
 
-  def __str__(self): return f"{self.opr}{self.var}"
+  def __str__(self): return f"sizeof {self.var}"
 
   def __repr__(self): return self.__str__()
 
-class CastE(UnaryE):
+  def toHooplIr(self) -> str:
+    varStr = self.var.toHooplIr()
+    return f"Unary SizeOf ({varStr})"
+
+class CastE(UnaryET):
   """A unary type cast expression."""
   def __init__(self,
-               arg: UnitET,
-               to: types.Type,
+               arg: BasicET,
+               to: op.CastOp,
                loc: Optional[types.Loc] = None
   ) -> None:
     super().__init__(CAST_EXPR_EC, loc)
@@ -436,7 +546,7 @@ class CastE(UnaryE):
   def __hash__(self) -> int:
     return hash(self.to) + hash(self.arg) + hash(self.exprCode)
 
-  def __str__(self): return f"({self.to}){self.arg}"
+  def __str__(self): return f"({self.to}) {self.arg}"
 
   def __repr__(self): return self.__str__()
 
@@ -450,8 +560,8 @@ class AllocE(ExprET):
                size: UnitET,
                loc: types.Loc,
   ) -> None:
+    super().__init__(ALLOC_EXPR_EC, loc)
     self.size = size
-    self.loc = loc
 
   def __eq__(self,
              other: 'AllocE'
@@ -555,7 +665,7 @@ class PhiE(ExprET):
   def __repr__(self): return self.__str__()
 
 class SelectE(ExprET):
-  """Ternary operator."""
+  """Ternary conditional operator."""
   def __init__(self,
                cond: UnitET, # use as a boolean value
                arg1: UnitET,

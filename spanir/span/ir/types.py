@@ -3,15 +3,20 @@
 # MIT License
 # Copyright (c) 2019 Anshuman Dhuliya
 
-"""All value types available in the IR."""
+"""All value types available in the IR.
+This module is imported by almost all
+other modules in the source. Hence this
+module shouldn't import any other source
+modules except for the utility modules.
+"""
 
 # TODO: make all Type objects immutable. Till then assume immutable.
 
 import logging
 _log = logging.getLogger(__name__)
-from typing import TypeVar, List, Optional, Tuple
+from typing import TypeVar, List, Optional, Tuple, Dict, Set
 
-from span.util.logger import LS
+from span.util.util import LS, AS
 from span.util.messages import PTR_INDLEV_INVALID
 
 ################################################
@@ -21,6 +26,7 @@ from span.util.messages import PTR_INDLEV_INVALID
 VarNameT = str
 FuncNameT = str
 LabelNameT = str
+RecordNameT = str
 StructNameT = str
 UnionNameT = str
 FieldNameT = str  # a structure field name
@@ -58,24 +64,30 @@ SourceLocationT = int
 # the order and ascending sequence is important
 VOID_TC: TypeCodeT        = 0
 
+INT_START_TC: TypeCodeT   = 10  # start int type codes
 INT1_TC: TypeCodeT        = 10  # bool
 INT8_TC: TypeCodeT        = 11  # char
 INT16_TC: TypeCodeT       = 12  # short
 INT32_TC: TypeCodeT       = 13  # int
 INT64_TC: TypeCodeT       = 14  # long long
 INT128_TC: TypeCodeT      = 15  # ??
+INT_END_TC: TypeCodeT     = 19  # end int type codes
 
+UINT_START_TC: TypeCodeT  = 20  # start unsigned int type codes
 UINT8_TC: TypeCodeT       = 20  # unsigned char
 UINT16_TC: TypeCodeT      = 21  # unsigned short
 UINT32_TC: TypeCodeT      = 22  # unsigned int
 UINT64_TC: TypeCodeT      = 23  # unsigned long long
 UINT128_TC: TypeCodeT     = 24  # ??
+UINT_END_TC: TypeCodeT    = 30  # end unsigned int type codes
 
+FLOAT_START_TC: TypeCodeT = 50  # start float type codes
 FLOAT16_TC: TypeCodeT     = 50  # ??
-FLOAT32_TC: TypeCodeT     = 51  # Float
-FLOAT64_TC: TypeCodeT     = 52  # Double
+FLOAT32_TC: TypeCodeT     = 51  # float
+FLOAT64_TC: TypeCodeT     = 52  # double
 FLOAT80_TC: TypeCodeT     = 53  # ??
 FLOAT128_TC: TypeCodeT    = 54  # ??
+FLOAT_END_TC: TypeCodeT   = 60  # start float type codes
 
 PTR_TC: TypeCodeT         = 100  # pointer type code
 ARR_TC: TypeCodeT         = 101  # array type code
@@ -87,7 +99,6 @@ FUNC_TC: TypeCodeT        = 200  # function type code
 FUNC_SIG_TC: TypeCodeT    = 201
 STRUCT_TC: TypeCodeT      = 300  # structure type code
 UNION_TC: TypeCodeT       = 400  # union type code
-
 
 ################################################
 #BOUND END  : type_codes
@@ -202,6 +213,33 @@ class Type(AnyT):
     return True
 
   def __hash__(self) -> int: return self.typeCode
+
+  def bitSize(self) -> int:
+    """Returns size in bits for builtin types.
+    For other types, see respective classes.
+    """
+    size = 0
+    tc = self.typeCode
+
+    if tc == INT1_TC:         size = 1
+    elif tc == INT8_TC:       size = 8
+    elif tc == INT16_TC:      size = 16
+    elif tc == INT32_TC:      size = 32
+    elif tc == INT64_TC:      size = 64
+    elif tc == INT128_TC:     size = 128
+    elif tc == UINT8_TC:      size = 8
+    elif tc == UINT16_TC:     size = 16
+    elif tc == UINT32_TC:     size = 32
+    elif tc == UINT64_TC:     size = 64
+    elif tc == UINT128_TC:    size = 128
+    elif tc == FLOAT16_TC:    size = 16
+    elif tc == FLOAT32_TC:    size = 32
+    elif tc == FLOAT64_TC:    size = 64
+    elif tc == FLOAT80_TC:    size = 80
+    elif tc == FLOAT128_TC:   size = 128
+    elif tc == PTR_TC:        size = 64  # assumes 64bit machine
+
+    return size
 
   def __str__(self) -> str:
     ss = ""
@@ -333,6 +371,12 @@ class ArrayT(Type):
     super().__init__(typeCode)
     self.of = of
 
+  def elementType(self) -> Type:
+    """Returns the type of elements this array holds."""
+    if isinstance(self.of, ArrayT):
+      return self.of.elementType()
+    return self.of
+
 class ConstSizeArray(ArrayT):
   """Concrete array type.
 
@@ -343,8 +387,14 @@ class ConstSizeArray(ArrayT):
                of: Type,
                size: Optional[List[int]],
   ) -> None:
-    super().__init__(of, CONST_ARR_TC)
+    super().__init__(of=of, typeCode=CONST_ARR_TC)
     self.size = size
+
+  def bitSize(self) -> int:
+    """Returns size in bits of this array."""
+    size = self.of.bitSize()
+    size = self.size * size
+    return size
 
   def __eq__(self,
              other: 'ConstSizeArray'
@@ -363,7 +413,7 @@ class ConstSizeArray(ArrayT):
       return False
     return True
 
-  def __hash__(self): return hash(self.of) * len(self.size)
+  def __hash__(self): return self.typeCode + (hash(self.of) * len(self.size))
 
   def __str__(self): return self.__repr__()
 
@@ -375,6 +425,11 @@ class VarArray(ArrayT):
                of: Type,
   ) -> None:
     super().__init__(of=of, typeCode=VAR_ARR_TC)
+
+  def bitSize(self):
+    """Returns size in bits of this array."""
+    if LS: _log.warning("Bit size asked !!!")
+    return 0 # No size of VarArray
 
   def __eq__(self,
              other: 'VarArray'
@@ -403,6 +458,11 @@ class IncompleteArray(ArrayT):
   ) -> None:
     super().__init__(of=of, typeCode=INCPL_ARR_TC)
     self.of = of
+
+  def bitSize(self):
+    """Returns size in bits of this array."""
+    if LS: _log.warning("Bit size asked !!!")
+    return 0 # No size of IncompleteArray
 
   def __eq__(self,
              other: 'IncompleteArray'
@@ -436,6 +496,11 @@ class FuncSig(Type):
     self.paramTypes = paramTypes if paramTypes else []
     self.variadic = variadic
 
+  def bitSize(self):
+    """Returns size in bits of this function signature."""
+    if LS: _log.warning("Bit size asked !!!")
+    return 0 # No size of FuncSig
+
   def __eq__(self,
              other: 'FuncSig'
   ) -> bool:
@@ -449,7 +514,7 @@ class FuncSig(Type):
       if LS: _log.warning("ReturnType Differs: %s, %s", self, other)
       return False
     if not self.paramTypes == other.paramTypes:
-      if LS: _log.warning("ParamTypes Differ: %s, %s", self, other)
+      if LS: _log.warning("ParamTypes Differ: %s, %s", self.paramTypes, other.paramTypes)
       return False
     if not self.variadic == other.variadic:
       if LS: _log.warning("Variadicness Differs: %s, %s", self, other)
@@ -464,7 +529,80 @@ class FuncSig(Type):
       increment += 17
     return hsh
 
-class Struct(Type):
+class RecordT(Type):
+  """A record type (base class to Struct and Union types)
+  Anonymous records are also given a unique name."""
+
+  def __init__(self,
+               name: RecordNameT,
+               fields: List[Tuple[FieldNameT, Type]] = None,
+               loc: Optional[Loc] = None,
+               typeCode: TypeCodeT = None,
+  ) -> None:
+    super().__init__(typeCode)
+    self.name = name
+    self.fields = fields
+    self.loc = loc
+    self.typeToFieldsMap: Dict[Type, Set[FieldNameT]] = {}
+
+  def getFieldType(self,
+                   fieldName: FieldNameT
+  ) -> Type:
+    for fName, fType in self.fields:
+      if fName == fieldName:
+        return fType
+    if LS: _log.error("Unknown field: '%s' in record: %s", fieldName, self)
+    return Void
+
+  def getFieldsOfType(self,
+                      givenType: Type,
+                      prefix: VarNameT = None,
+  ) -> Set[FieldNameT]:
+    """Set of field names of the given type (recursive).
+    The optional prefix prepends: "<prefix>." to the
+    field names. Thus if prefix="x" and the record
+    has field "f", it returns {"x.f"}.
+    """
+
+    if givenType in self.typeToFieldsMap:
+      fieldNames = self.typeToFieldsMap[givenType]
+    else:
+      fieldNames: Set[FieldNameT] = set()
+      for field in self.fields:
+        fieldType = field[1]
+        if fieldType == givenType:
+          fieldName = field[0]
+          fieldNames.add(fieldName)
+        elif isinstance(fieldType, RecordT):
+          innerFields = fieldType.getFieldsOfType(givenType)
+          for f in innerFields:
+            fieldNames.add(f"{fieldName}.{f}")
+      self.typeToFieldsMap[givenType] = fieldNames
+
+    if prefix:
+      prefixedFields = set()
+      for fieldName in fieldNames:
+        prefixedFields.add(f"{prefix}.{fieldName}")
+      fieldNames = prefixedFields
+
+    return fieldNames # Should never be None
+
+  def bitSize(self):
+    """Returns size in bits of this record (virtual function)."""
+    raise NotImplementedError()
+
+  def __hash__(self):
+    return hash(self.name) + STRUCT_TC
+
+  def __str__(self):
+    if self.typeCode == STRUCT_TC:
+      return f"Struct('{self.name}')"
+    elif self.typeCode == UNION_TC:
+      return f"Union('{self.name}')"
+    else:
+      if LS: _log.error("Record is neither a struct nor a union!")
+
+class Struct(RecordT):
   """A structure type.
   Anonymous structs are also given a unique name."""
 
@@ -473,10 +611,17 @@ class Struct(Type):
                fields: List[Tuple[str, Type]] = None,
                loc: Optional[Loc] = None,
   ) -> None:
-    super().__init__(STRUCT_TC)
+    super().__init__(name, fields, loc, STRUCT_TC)
     self.name = name
     self.fields = fields
     self.loc = loc
+
+  def bitSize(self):
+    """Returns size in bits of this structure."""
+    size = 0
+    for fieldName, fieldType in self.fields:
+      size += fieldType.bitSize()
+    return size
 
   def __eq__(self,
              other: 'Struct'
@@ -491,14 +636,11 @@ class Struct(Type):
       if LS: _log.warning("StructName Differs: %s, %s", self, other)
       return False
     if not self.fields == other.fields:
-      if LS: _log.warning("Fields Differs: %s, %s", self, other)
+      if LS: _log.warning("Fields Differs: %s, %s", self.fields, other.fields)
       return False
     return True
 
-  def __hash__(self):
-    return hash(self.name) + STRUCT_TC
-
-class Union(Type):
+class Union(RecordT):
   """A union type.
   Anonymous unions are also given a unique name."""
 
@@ -507,10 +649,15 @@ class Union(Type):
                fields: List[Tuple[str, Type]] = None,
                loc: Optional[Loc] = None,
   ) -> None:
-    super().__init__(UNION_TC)
-    self.name = name
-    self.fields = fields
-    self.loc = loc
+    super().__init__(name, fields, loc, UNION_TC)
+
+  def bitSize(self) -> int:
+    """Returns size in bits of this union."""
+    size = 0
+    for fieldName, fieldType in self.fields:
+      fieldBitSize = fieldType.bitSize()
+      size = size if size > fieldBitSize else fieldBitSize
+    return size
 
   def __eq__(self,
              other: 'Union'
@@ -528,7 +675,4 @@ class Union(Type):
       if LS: _log.warning("UnionName Differs: %s, %s", self, other)
       return False
     return True
-
-  def __hash__(self):
-    return hash(self.name) + STRUCT_TC
 

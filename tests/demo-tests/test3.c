@@ -1,13 +1,9 @@
 
-int main() {
-  int b, x, y, a;
-  b = 1;
-  if(b) {
-    y = 0;
-    if(y)
-      y = a;
-  } else {
-    y = x;
+int main(int argc) {
+  for (int i=0; i < 10; i++) {
+    if (i > argc) {
+      return 0;
+    }
   }
-  return y;
+  return 1;
 }

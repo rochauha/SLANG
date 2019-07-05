@@ -1,0 +1,6 @@
+digraph {
+  node [shape=box]
+  START [label="[START]\l1: x = 10\l2: y = 20\l3: z = y\l4: g = z\l"];
+  START -> END;
+  END [label="[END]\l5: nop()\l"];
+} // close digraph

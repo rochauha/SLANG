@@ -1,6 +1,13 @@
 digraph {
   node [shape=box]
-  START [label="[START]\l1: a = 10\l2: b = 20\l3: fun_ptr = &add\l4: t.1t = *fun_ptr\l5: t.1t(a,b)\l"];
-  START -> END;
-  END [label="[END]\l6: nop()\l"];
+  START [label="[START]\l1: x = 5\l2: y = 6\l3: if (x) BB1 BB2\l"];
+  START -> BB1 [color=green, penwidth=2];
+  START -> BB2 [color=red, penwidth=2];
+  BB1 [label="[BB1]\l5: p = &x\l"];
+  BB1 -> BB3;
+  BB2 [label="[BB2]\l4: p = &y\l"];
+  BB2 -> BB3;
+  BB3 [label="[BB3]\l6: t.1t = *p\l7: return t.1t\l"];
+  BB3 -> END;
+  END [label="[END]\l8: nop()\l"];
 } // close digraph

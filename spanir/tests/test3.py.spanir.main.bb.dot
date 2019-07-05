@@ -1,0 +1,14 @@
+digraph {
+  node [shape=box]
+  START [label="[START]\l1: b = 1\l2: if (b) None None\l"];
+  START -> BB2 [color=red, penwidth=2];
+  START -> BB3 [color=green, penwidth=2];
+  BB2 [label="[BB2]\l6: y = x\l"];
+  BB2 -> END;
+  BB3 [label="[BB3]\l3: y = 0\l4: if (y) None None\l"];
+  BB3 -> BB4 [color=green, penwidth=2];
+  BB3 -> END [color=red, penwidth=2];
+  BB4 [label="[BB4]\l5: y = a\l"];
+  BB4 -> END;
+  END [label="[END]\l7: use({y})\l"];
+} // close digraph

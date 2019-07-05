@@ -1,7 +1,0 @@
-language: c
-script: ./ci/travis.sh
-sudo: required
-branches:
-  only:
-  - master
-  

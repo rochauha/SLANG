@@ -1,9 +1,0 @@
-#! /bin/sh
-
-if ! test -f README.md
-then
-    echo "run from the base directory." >&2
-    exit 1
-fi
-
-./scripts/search-tests "not (arch-x86_64 or portable)"
