@@ -16,7 +16,8 @@
 // AD ../../../include/clang/StaticAnalyzer/Checkers/Checkers.td
 //===----------------------------------------------------------------------===//
 
-#include "ClangSACheckers.h"
+// #include "ClangSACheckers.h"
+#include "clang/StaticAnalyzer/Checkers/BuiltinCheckerRegistration.h"
 #include "clang/AST/ASTContext.h"
 #include "clang/AST/Attr.h"
 #include "clang/AST/ParentMap.h"

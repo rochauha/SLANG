@@ -1,0 +1,48 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# import span.ir.ir as ir
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TranslationUnit class.
+ir.TranslationUnit(
+  name = "deadstore.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:y": types.Int32,
+    "v:main:p": types.Ptr(to=types.Int32),
+    "v:main:x": types.Int32,
+  }, # end allVars dict
+
+  allObjs = {
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        instrSeq = [
+            instr.AssignI(expr.VarE("v:main:y", Loc(5,3)), expr.LitE(20, Loc(5,7)), Loc(5,3)),
+            instr.AssignI(expr.VarE("v:main:p", Loc(7,3)), expr.AddrOfE(expr.VarE("v:main:x", Loc(7,8)), Loc(7,7)), Loc(7,3)),
+            instr.AssignI(expr.UnaryE(op.UO_DEREF, expr.VarE("v:main:p", Loc(8,4)), Loc(8,3)), expr.LitE(10, Loc(8,8)), Loc(8,3)),
+            instr.ReturnI(expr.LitE(0, Loc(10,10))),
+        ], # instrSeq end.
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

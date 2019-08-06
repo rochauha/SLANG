@@ -11,4 +11,4 @@
 # SlangCheckers/SlangExpr.cpp #AD
 # SlangCheckers/SlangUtil.cpp #AD
 
-cp -R /home/codeman/itsoflife/mydata/local/packages-live/llvm-clang6/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers .
+cp -R /home/codeman/itsoflife/mydata/local/packages-live/llvm-clang8.0.1/llvm/tools/clang/lib/StaticAnalyzer/Checkers/SlangCheckers .

@@ -10,7 +10,8 @@
 //===----------------------------------------------------------------------===//
 //
 
-#include "ClangSACheckers.h"
+// #include "ClangSACheckers.h"
+#include "clang/StaticAnalyzer/Checkers/BuiltinCheckerRegistration.h"
 #include "clang/AST/Decl.h" //AD
 #include "clang/AST/Expr.h" //AD
 #include "clang/AST/Stmt.h" //AD
@@ -192,9 +193,9 @@ void MyTraverseAST::printParent(const Stmt *stmt) const {
 void MyTraverseAST::handleLocation(const Stmt *stmt) const {
     Location loc;
 
-    loc.line = D->getASTContext().getSourceManager().getExpansionLineNumber(stmt->getLocStart());
-    loc.col = D->getASTContext().getSourceManager().getExpansionColumnNumber(stmt->getLocStart());
-    loc.fileName = D->getASTContext().getSourceManager().getFilename(stmt->getLocStart()).str();
+    loc.line = D->getASTContext().getSourceManager().getExpansionLineNumber(stmt->getBeginLoc());
+    loc.col = D->getASTContext().getSourceManager().getExpansionColumnNumber(stmt->getBeginLoc());
+    loc.fileName = D->getASTContext().getSourceManager().getFilename(stmt->getBeginLoc()).str();
 
     loc.printLocation();
 }

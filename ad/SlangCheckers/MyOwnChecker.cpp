@@ -14,7 +14,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "ClangSACheckers.h"
+// #include "ClangSACheckers.h"
+#include "clang/StaticAnalyzer/Checkers/BuiltinCheckerRegistration.h"
 #include "clang/Analysis/Analyses/Dominators.h"
 #include "clang/Analysis/Analyses/LiveVariables.h"
 #include "clang/Analysis/CallGraph.h"

@@ -1,0 +1,16 @@
+START
+NAME Dead Code
+CATEGORY Dead Store
+LINE 5
+COLUMN 3
+MESSAGE This value of y is unused
+END
+
+START
+NAME Dead Code
+CATEGORY Dead Store
+LINE 8
+COLUMN 3
+MESSAGE None of the destinations are used ahead
+END
+

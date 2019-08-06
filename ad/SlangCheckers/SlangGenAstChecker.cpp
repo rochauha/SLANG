@@ -14,7 +14,8 @@
 //  which generates the file `test.c.spanir`.
 //===----------------------------------------------------------------------===//
 
-#include "ClangSACheckers.h"
+//#include "ClangSACheckers.h"
+#include "clang/StaticAnalyzer/Checkers/BuiltinCheckerRegistration.h"
 #include "clang/AST/Decl.h" //AD
 #include "clang/AST/Expr.h" //AD
 #include "clang/AST/Stmt.h" //AD
@@ -105,7 +106,7 @@ public:
   SlangVar() {}
 
   SlangVar(uint64_t id, std::string name) {
-    // specially for anonymous field names (needed in member expressions)
+    // specially for anonymous member names (needed in member expressions)
     this->id = id;
     this->name = name;
     this->typeStr = DONT_PRINT;
@@ -185,7 +186,7 @@ public:
   SlangRecordKind recordKind; // Struct, or Union
   bool anonymous;
   std::string name;
-  std::vector<SlangRecordField> fields;
+  std::vector<SlangRecordField> members;
   std::string locStr;
   int32_t nextAnonymousFieldId;
 
@@ -203,22 +204,22 @@ public:
     return ss.str();
   }
 
-  std::vector<SlangRecordField> getFields() const { return fields; }
+  std::vector<SlangRecordField> getFields() const { return members; }
 
   std::string genMemberExpr(std::vector<uint32_t> indexVector) {
     std::stringstream ss;
 
     std::vector<std::string> members;
     SlangRecord *currentRecord = this;
-    llvm::errs() << "\n------------------------\n" << currentRecord->fields.size() << "\n";
+    llvm::errs() << "\n------------------------\n" << currentRecord->members.size() << "\n";
     llvm::errs() << "\n------------------------\n" << indexVector.size() << "\n";
     llvm::errs() << "\n------------------------\n" << indexVector[0] << indexVector[1] << "\n";
     llvm::errs().flush();
     for (auto it = indexVector.begin(); it != indexVector.end(); ++it) {
-      members.push_back(currentRecord->fields[*it].name);
-      if (currentRecord->fields[*it].slangRecord != nullptr) {
-        // means its a field of type record
-        currentRecord = currentRecord->fields[*it].slangRecord;
+      members.push_back(currentRecord->members[*it].name);
+      if (currentRecord->members[*it].slangRecord != nullptr) {
+        // means its a member of type record
+        currentRecord = currentRecord->members[*it].slangRecord;
       }
     }
 
@@ -243,9 +244,9 @@ public:
        << ",\n";
 
     std::string suffix = ",\n";
-    ss << NBSP8 << "fields = [\n";
-    for (auto field : fields) {
-      ss << NBSP10 << field.toString() << suffix;
+    ss << NBSP8 << "members = [\n";
+    for (auto member : members) {
+      ss << NBSP10 << member.toString() << suffix;
     }
     ss << NBSP8 << "],\n";
 
@@ -443,17 +444,17 @@ public:
     ss << "# import span.ir.expr as expr\n";
     ss << "# import span.ir.instr as instr\n";
     ss << "# import span.ir.obj as obj\n";
-    ss << "# import span.ir.tunit as irTUnit\n";
+    ss << "# import span.ir.tunit as tunit\n";
     ss << "# from span.ir.types import Loc\n";
     ss << "\n";
-    ss << "# An instance of span.ir.tunit.TUnit class.\n";
-    ss << "irTUnit.TUnit(\n";
+    ss << "# An instance of span.ir.tunit.TranslationUnit class.\n";
+    ss << "tunit.TranslationUnit(\n";
     ss << NBSP2 << "name = \"" << fileName << "\",\n";
     ss << NBSP2 << "description = \"Auto-Translated from Clang AST.\",\n";
   } // dumpHeader()
 
   void dumpFooter(std::stringstream &ss) {
-    ss << ") # irTUnit.TUnit() ends\n";
+    ss << ") # tunit.TranslationUnit() ends\n";
     ss << "\n# END  : A_SPAN_translation_unit.\n";
   } // dumpFooter()
 
@@ -493,7 +494,7 @@ public:
       ss << "\"" << slangFunc.second.fullName << "\":\n";
       ss << NBSP6 << "obj.Func(\n";
 
-      // fields
+      // members
       ss << NBSP8 << "name = "
          << "\"" << slangFunc.second.fullName << "\",\n";
       ss << NBSP8 << "paramNames = [";
@@ -509,7 +510,7 @@ public:
 
       ss << NBSP8 << "returnType = " << slangFunc.second.retType << ",\n";
 
-      // field: basicBlocks
+      // member: basicBlocks
       ss << "\n";
       ss << NBSP8 << "# Note: -1 is always start/entry BB. (REQUIRED)\n";
       ss << NBSP8 << "# Note: 0 is always end/exit BB (REQUIRED)\n";
@@ -544,7 +545,7 @@ public:
 
     // SLANG_DEBUG("slang_add_nums: " << slang_add_nums(1,2) << "only\n"; // lib testing
     if (stu.fileName.size() == 0) {
-      stu.fileName = D->getASTContext().getSourceManager().getFilename(D->getLocStart()).str();
+      stu.fileName = D->getASTContext().getSourceManager().getFilename(D->getBeginLoc()).str();
     }
 
     FD = dyn_cast<FunctionDecl>(D);
@@ -628,93 +629,96 @@ public:
   void handleValueDecl(const ValueDecl *valueDecl, std::string funcName) const {
     uint64_t varAddr = (uint64_t)valueDecl;
     const VarDecl *varDecl = dyn_cast<VarDecl>(valueDecl);
+
     std::string varName;
-    if (varDecl && stu.isNewVar(varAddr)) {
-      // seeing the variable for the first time.
-      SlangVar slangVar{};
-      slangVar.id = varAddr;
+    if (varDecl) {
+      if (stu.isNewVar(varAddr)) {
+        // seeing the variable for the first time.
+        SlangVar slangVar{};
+        slangVar.id = varAddr;
 
-      varName = valueDecl->getNameAsString();
+        varName = valueDecl->getNameAsString();
 
-      slangVar.typeStr = convertClangType(valueDecl->getType());
-      SLANG_DEBUG("NEW_VAR: " << slangVar.convertToString())
+        slangVar.typeStr = convertClangType(valueDecl->getType());
+        SLANG_DEBUG("NEW_VAR: " << slangVar.convertToString())
 
-      if (varName == "") {
-        // used only to name anonymous function parameters
-        varName = "p." + Util::getNextUniqueIdStr();
-      }
-
-      if (varDecl->hasLocalStorage()) {
-        slangVar.setLocalVarName(varName, funcName);
-        if (stu.varCountMap.find(slangVar.name) != stu.varCountMap.end()) {
-          stu.varCountMap[slangVar.name]++;
-          uint64_t newVarId = stu.varCountMap[slangVar.name];
-          slangVar.setLocalVarName(std::to_string(newVarId) + "." + varName, funcName);
-        } else {
-          stu.varCountMap[slangVar.name] = 1;
+        if (varName == "") {
+          // used only to name anonymous function parameters
+          varName = Util::getNextUniqueIdStr() + "param";
         }
-      } else if (varDecl->hasGlobalStorage()) {
-        slangVar.setGlobalVarName(varName);
-      } else if (varDecl->hasExternalStorage()) {
-        SLANG_ERROR("External Storage Not Handled.")
-      } else {
-        SLANG_ERROR("Unknown variable storage.")
-      }
 
-      stu.addVar(slangVar.id, slangVar);
-
-      if (valueDecl->getType()->isArrayType()) {
-        auto arrayType = valueDecl->getType()->getAsArrayTypeUnsafe();
-        if (isa<VariableArrayType>(arrayType)) {
-          SlangExpr varExpr = convertVariable(varDecl, getLocationString(valueDecl));
-          SlangExpr sizeExpr = convertVarArrayVariable(valueDecl->getType(),
-                                                       arrayType->getElementType());
-
-          SlangExpr allocExpr;
-          std::stringstream ss;
-          ss << "expr.AllocE(" << sizeExpr.expr;
-          ss << ", " << getLocationString(valueDecl) << ")";
-          allocExpr.expr = ss.str();
-          allocExpr.qualType = FD->getASTContext().VoidPtrTy;
-          allocExpr.locStr = getLocationString(valueDecl);
-          allocExpr.compound = true;
-
-          SlangExpr tmpVoidPtr = convertToTmp(allocExpr);
-
-          SlangExpr castExpr;
-          ss.str("");
-          ss << "expr.CastE(" << tmpVoidPtr.expr;
-          ss << ", op.CastOp(" << convertClangType(valueDecl->getType()) << ")";
-          ss << ", " << getLocationString(valueDecl) << ")";
-          castExpr.expr = ss.str();
-          castExpr.qualType = valueDecl->getType();
-          castExpr.compound = true;
-          castExpr.locStr = getLocationString(valueDecl);
-
-          addAssignInstr(varExpr, castExpr, getLocationString(valueDecl));
-        }
-      }
-
-      // check if it has a initialization body
-      if (varDecl->hasInit()) {
-        // yes it has, so initialize it
-        if (varDecl->getInit()->getStmtClass() == Stmt::InitListExprClass) {
-          // TODO: uncomment when initializer list is fully supported
-          // std::vector<uint32_t> indexVector;
-          // convertInitListExpr(slangVar, cast<InitListExpr>(varDecl->getInit()),
-          //    varDecl, indexVector);
-
+        if (varDecl->hasLocalStorage()) {
+          slangVar.setLocalVarName(varName, funcName);
+          if (stu.varCountMap.find(slangVar.name) != stu.varCountMap.end()) {
+            stu.varCountMap[slangVar.name]++;
+            uint64_t newVarId = stu.varCountMap[slangVar.name];
+            slangVar.setLocalVarName(std::to_string(newVarId) + "D" + varName, funcName);
+          } else {
+            stu.varCountMap[slangVar.name] = 1;
+          }
+        } else if (varDecl->hasGlobalStorage()) {
+          slangVar.setGlobalVarName(varName);
+        } else if (varDecl->hasExternalStorage()) {
+          SLANG_ERROR("External Storage Not Handled.")
         } else {
-          if (varDecl->hasLocalStorage()) {
-            SlangExpr slangExpr = convertStmt(varDecl->getInit());
-            std::string locStr = getLocationString(valueDecl);
+          SLANG_ERROR("Unknown variable storage.")
+        }
+
+        stu.addVar(slangVar.id, slangVar);
+
+        if (valueDecl->getType()->isArrayType()) {
+          auto arrayType = valueDecl->getType()->getAsArrayTypeUnsafe();
+          if (isa<VariableArrayType>(arrayType)) {
+            SlangExpr varExpr = convertVariable(varDecl, getLocationString(valueDecl));
+            SlangExpr sizeExpr = convertVarArrayVariable(valueDecl->getType(),
+                                                         arrayType->getElementType());
+
+            SlangExpr allocExpr;
             std::stringstream ss;
-            ss << "instr.AssignI(";
-            ss << "expr.VarE(\"" << slangVar.name << "\"";
-            ss << ", " << locStr << ")"; // close expr.VarE(...
-            ss << ", " << slangExpr.expr;
-            ss << ", " << locStr << ")"; // close instr.AssignI(...
-            stu.addStmt(ss.str());
+            ss << "expr.AllocE(" << sizeExpr.expr;
+            ss << ", " << getLocationString(valueDecl) << ")";
+            allocExpr.expr = ss.str();
+            allocExpr.qualType = FD->getASTContext().VoidPtrTy;
+            allocExpr.locStr = getLocationString(valueDecl);
+            allocExpr.compound = true;
+
+            SlangExpr tmpVoidPtr = convertToTmp(allocExpr);
+
+            SlangExpr castExpr;
+            ss.str("");
+            ss << "expr.CastE(" << tmpVoidPtr.expr;
+            ss << ", op.CastOp(" << convertClangType(valueDecl->getType()) << ")";
+            ss << ", " << getLocationString(valueDecl) << ")";
+            castExpr.expr = ss.str();
+            castExpr.qualType = valueDecl->getType();
+            castExpr.compound = true;
+            castExpr.locStr = getLocationString(valueDecl);
+
+            addAssignInstr(varExpr, castExpr, getLocationString(valueDecl));
+          }
+        }
+
+        // check if it has a initialization body
+        if (varDecl->hasInit()) {
+          // yes it has, so initialize it
+          if (varDecl->getInit()->getStmtClass() == Stmt::InitListExprClass) {
+            // TODO: uncomment when initializer list is fully supported
+            // std::vector<uint32_t> indexVector;
+            // convertInitListExpr(slangVar, cast<InitListExpr>(varDecl->getInit()),
+            //    varDecl, indexVector);
+
+          } else {
+            if (varDecl->hasLocalStorage()) {
+              SlangExpr slangExpr = convertStmt(varDecl->getInit());
+              std::string locStr = getLocationString(valueDecl);
+              std::stringstream ss;
+              ss << "instr.AssignI(";
+              ss << "expr.VarE(\"" << slangVar.name << "\"";
+              ss << ", " << locStr << ")"; // close expr.VarE(...
+              ss << ", " << slangExpr.expr;
+              ss << ", " << locStr << ")"; // close instr.AssignI(...
+              stu.addStmt(ss.str());
+            }
           }
         }
       }
@@ -724,6 +728,7 @@ public:
 
     } else {
       SLANG_ERROR("ValueDecl not a VarDecl or FunctionDecl!")
+      valueDecl->dump(); //delit
     }
   } // handleValueDecl()
 
@@ -782,6 +787,7 @@ public:
     case Stmt::UnaryOperatorClass:
       return convertUnaryOperator(cast<UnaryOperator>(stmt));
 
+    case Stmt::CompoundAssignOperatorClass:
     case Stmt::BinaryOperatorClass:
       return convertBinaryOperator(cast<BinaryOperator>(stmt));
 
@@ -796,6 +802,9 @@ public:
 
     case Stmt::DeclRefExprClass:
       return convertDeclRefExpr(cast<DeclRefExpr>(stmt));
+
+    case Stmt::ConstantExprClass:
+      return convertConstantExpr(cast<ConstantExpr>(stmt));
 
     case Stmt::IntegerLiteralClass:
       return convertIntegerLiteral(cast<IntegerLiteral>(stmt));
@@ -836,10 +845,21 @@ public:
     case Stmt::CallExprClass:
       return convertCallExpr(cast<CallExpr>(stmt));
 
+    case Stmt::CaseStmtClass:
+      // we manually handle case stmt when we handle switch stmt
+      break;
+
+    case Stmt::NullStmtClass: // just a ";"
+      stu.addStmt("instr.NopI(" + getLocationString(stmt) + ")");
+      break;
+
     default:
       SLANG_ERROR("Unhandled_Stmt: " << stmt->getStmtClassName())
+      stmt->dump();
+      break;
     }
 
+    slangExpr.expr = "Unknown";
     return slangExpr;
   } // convertStmt()
 
@@ -1607,6 +1627,11 @@ public:
     return slangExpr;
   } // convertCharacterLiteral()
 
+  SlangExpr convertConstantExpr(const ConstantExpr *constExpr) const {
+    // a ConstantExpr contains a literal expression
+    return convertStmt(constExpr->getSubExpr());
+  } // convertConstantExpr()
+
   SlangExpr convertIntegerLiteral(const IntegerLiteral *il) const {
     std::stringstream ss;
     std::string suffix = ""; // helps make int appear float
@@ -1700,7 +1725,11 @@ public:
 
     std::string locStr = getLocationString(sl);
 
-    ss << "expr.LitE(\"\"\"" << sl->getBytes().str() << "\"\"\"";
+    llvm::errs() << "STRING_LITERAL:"; //delit
+    sl->dump(); //delit
+    // with extra text at the end since """" could occur
+    // making the string invalid in python
+    ss << "expr.LitE(\"\"\"" << sl->getBytes().str() << "XXX\"\"\"";
     ss << ", " << locStr << ")";
     slangExpr.expr = ss.str();
     slangExpr.locStr = locStr;
@@ -1997,8 +2026,8 @@ public:
     case BO_And: op = "op.BO_BIT_AND"; break;
     case BO_Xor: op = "op.BO_BIT_XOR"; break;
 
-    case BO_ShlAssign: op = "op.BO_LSHIFT"; break;
-    case BO_ShrAssign: op = "op.BO_RSHIFT"; break;
+    case BO_Shl: op = "op.BO_LSHIFT"; break;
+    case BO_Shr: op = "op.BO_RSHIFT"; break;
 
     case BO_Comma: return convertBinaryCommaOp(binOp);
 
@@ -2335,7 +2364,7 @@ public:
           slangRecordField.typeStr = convertClangType(slangRecordField.type);
         }
 
-        newSlangRecord.fields.push_back(slangRecordField);
+        newSlangRecord.members.push_back(slangRecordField);
       }
     }
 
@@ -2463,7 +2492,7 @@ public:
     SlangVar slangVar{};
     slangVar.id = stu.nextUniqueId();
     uint64_t tmpNumbering = stu.nextTmpId();
-    ss << "t." << tmpNumbering << suffix;
+    ss << "" << tmpNumbering << suffix;
     slangVar.setLocalVarName(ss.str(), stu.getCurrFuncName());
     slangVar.typeStr = typeStr;
 
@@ -2493,7 +2522,7 @@ public:
     SlangVar slangVar{};
     slangVar.id = stu.nextUniqueId();
     uint64_t tmpNumbering = stu.nextTmpId();
-    ss << "t." << tmpNumbering << suffix;
+    ss << "" << tmpNumbering << suffix;
     slangVar.setLocalVarName(ss.str(), stu.getCurrFuncName());
     slangVar.typeStr = convertClangType(qt);
 
@@ -2520,9 +2549,9 @@ public:
     uint32_t col = 0;
 
     ss << "Loc(";
-    line = FD->getASTContext().getSourceManager().getExpansionLineNumber(stmt->getLocStart());
+    line = FD->getASTContext().getSourceManager().getExpansionLineNumber(stmt->getBeginLoc());
     ss << line << ",";
-    col = FD->getASTContext().getSourceManager().getExpansionColumnNumber(stmt->getLocStart());
+    col = FD->getASTContext().getSourceManager().getExpansionColumnNumber(stmt->getBeginLoc());
     ss << col << ")";
 
     return ss.str();
@@ -2534,10 +2563,10 @@ public:
     uint32_t col = 0;
 
     ss << "Loc(";
-    line = FD->getASTContext().getSourceManager().getExpansionLineNumber(recordDecl->getLocStart());
+    line = FD->getASTContext().getSourceManager().getExpansionLineNumber(recordDecl->getBeginLoc());
     ss << line << ",";
     col =
-        FD->getASTContext().getSourceManager().getExpansionColumnNumber(recordDecl->getLocStart());
+        FD->getASTContext().getSourceManager().getExpansionColumnNumber(recordDecl->getBeginLoc());
     ss << col << ")";
 
     return ss.str();
@@ -2549,9 +2578,9 @@ public:
     uint32_t col = 0;
 
     ss << "Loc(";
-    line = FD->getASTContext().getSourceManager().getExpansionLineNumber(valueDecl->getLocStart());
+    line = FD->getASTContext().getSourceManager().getExpansionLineNumber(valueDecl->getBeginLoc());
     ss << line << ",";
-    col = FD->getASTContext().getSourceManager().getExpansionColumnNumber(valueDecl->getLocStart());
+    col = FD->getASTContext().getSourceManager().getExpansionColumnNumber(valueDecl->getBeginLoc());
     ss << col << ")";
 
     return ss.str();

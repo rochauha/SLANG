@@ -1,0 +1,11 @@
+digraph {
+  node [shape=box]
+  START [label="[START]\l1: t.1t = (types.Ptr(types.Array(INT32, 30), 1)) b[3]\l2: t.2t = (types.Ptr(INT32, 1)) t.1t[2]\l3: x = t.2t[1]\l4: t.3t = (types.Ptr(types.Array(INT32, 30), 1)) b[0]\l5: t.4t = (types.Ptr(INT32, 1)) t.3t[1]\l6: t.4t[2] = 100\l7: i = 0\l"];
+  START -> BB1;
+  BB1 [label="[BB1]\l8: t.5if = i < 10\l9: if (t.5if) BB2 BB3\l"];
+  BB1 -> BB2 [color=green, penwidth=2];
+  BB1 -> END [color=red, penwidth=2];
+  BB2 [label="[BB2]\l10: a[i] = 0\l11: t.6t = i\l12: i = i + 1\l"];
+  BB2 -> BB1;
+  END [label="[END]\l13: nop()\l"];
+} // close digraph

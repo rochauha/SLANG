@@ -1,0 +1,67 @@
+
+# START: A_SPAN_translation_unit.
+
+# eval() the contents of this file.
+# Keep the following imports in effect when calling eval.
+
+# import span.ir.types as types
+# import span.ir.expr as expr
+# import span.ir.instr as instr
+# import span.ir.obj as obj
+# import span.ir.tunit as irTUnit
+# import span.ir.ir as ir
+# from span.ir.types import Loc
+
+# An instance of span.ir.tunit.TranslationUnit class.
+ir.TranslationUnit(
+  name = "array.c",
+  description = "Auto-Translated from Clang AST.",
+
+  allVars = {
+    "v:main:t.5if": types.Int32,
+    "v:main:t.4t": types.Ptr(to=types.Int32),
+    "v:main:b": types.ConstSizeArray(of=types.ConstSizeArray(of=types.ConstSizeArray(of=types.Int32, size=30), size=20), size=10),
+    "v:main:a": types.ConstSizeArray(of=types.Int32, size=10),
+    "v:main:t.6t": types.Int32,
+    "v:main:x": types.Int32,
+    "v:main:t.1t": types.Ptr(to=types.ConstSizeArray(of=types.Int32, size=30)),
+    "v:main:i": types.Int32,
+    "v:main:t.2t": types.Ptr(to=types.Int32),
+    "v:main:t.3t": types.Ptr(to=types.ConstSizeArray(of=types.Int32, size=30)),
+  }, # end allVars dict
+
+  allObjs = {
+
+    "f:main":
+      obj.Func(
+        name = "f:main",
+        paramNames = [],
+        variadic = False,
+        returnType = types.Int32,
+
+        # Note: -1 is always start/entry BB. (REQUIRED)
+        # Note: 0 is always end/exit BB (REQUIRED)
+        instrSeq = [
+            instr.AssignI(expr.VarE("v:main:t.1t", Loc(6,7)), expr.CastE(expr.ArrayE(expr.LitE(3, Loc(6,9)), expr.VarE("v:main:b", Loc(6,7)), Loc(6,7)), op.CastOp(types.Ptr(to=types.ConstSizeArray(of=types.Int32, size=30))), Loc(6,7)), Loc(6,7)),
+            instr.AssignI(expr.VarE("v:main:t.2t", Loc(6,7)), expr.CastE(expr.ArrayE(expr.LitE(2, Loc(6,12)), expr.VarE("v:main:t.1t", Loc(6,7)), Loc(6,7)), op.CastOp(types.Ptr(to=types.Int32)), Loc(6,7)), Loc(6,7)),
+            instr.AssignI(expr.VarE("v:main:x", Loc(6,3)), expr.ArrayE(expr.LitE(1, Loc(6,15)), expr.VarE("v:main:t.2t", Loc(6,7)), Loc(6,7)), Loc(6,3)),
+            instr.AssignI(expr.VarE("v:main:t.3t", Loc(7,3)), expr.CastE(expr.ArrayE(expr.LitE(0, Loc(7,5)), expr.VarE("v:main:b", Loc(7,3)), Loc(7,3)), op.CastOp(types.Ptr(to=types.ConstSizeArray(of=types.Int32, size=30))), Loc(7,3)), Loc(7,3)),
+            instr.AssignI(expr.VarE("v:main:t.4t", Loc(7,3)), expr.CastE(expr.ArrayE(expr.LitE(1, Loc(7,8)), expr.VarE("v:main:t.3t", Loc(7,3)), Loc(7,3)), op.CastOp(types.Ptr(to=types.Int32)), Loc(7,3)), Loc(7,3)),
+            instr.AssignI(expr.ArrayE(expr.LitE(2, Loc(7,11)), expr.VarE("v:main:t.4t", Loc(7,3)), Loc(7,3)), expr.LitE(100, Loc(7,16)), Loc(7,3)),
+            instr.AssignI(expr.VarE("v:main:i", Loc(8,8)), expr.LitE(0, Loc(8,14)), Loc(8,8)),
+            instr.LabelI("ForCond1"),
+            instr.AssignI(expr.VarE("v:main:t.5if", Loc(8,17)), expr.BinaryE(expr.VarE("v:main:i", Loc(8,17)), op.BO_LT, expr.LitE(10, Loc(8,21)), Loc(8,17)), Loc(8,17)),
+            instr.CondI(expr.VarE("v:main:t.5if", Loc(8,17)), "ForBody1", "ForExit1", Loc(8,17)),
+            instr.LabelI("ForBody1"),
+            instr.AssignI(expr.ArrayE(expr.VarE("v:main:i", Loc(9,7)), expr.VarE("v:main:a", Loc(9,5)), Loc(9,5)), expr.LitE(0, Loc(9,12)), Loc(9,5)),
+            instr.AssignI(expr.VarE("v:main:t.6t", Loc(8,25)), expr.VarE("v:main:i", Loc(8,25)), Loc(8,25)),
+            instr.AssignI(expr.VarE("v:main:i", Loc(8,25)), expr.BinaryE(expr.VarE("v:main:i", Loc(8,25)), op.BO_ADD, expr.LitE(1, Loc(8,25)), Loc(8,25)), Loc(8,25)),
+            instr.GotoI("ForCond1"),
+            instr.LabelI("ForExit1"),
+        ], # instrSeq end.
+      ), # f:main() end. 
+
+  }, # end allObjs dict
+) # irTUnit.TUnit() ends
+
+# END  : A_SPAN_translation_unit.

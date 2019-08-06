@@ -11,7 +11,8 @@
 //===----------------------------------------------------------------------===//
 //
 
-#include "ClangSACheckers.h"
+// #include "ClangSACheckers.h"
+#include "clang/StaticAnalyzer/Checkers/BuiltinCheckerRegistration.h"
 #include "clang/AST/Decl.h" //AD
 #include "clang/AST/Expr.h" //AD
 #include "clang/AST/Stmt.h" //AD
@@ -289,7 +290,7 @@ void SlangBugReporterChecker::checkASTCodeBody(const Decl *D, AnalysisManager &m
     SlangBugReporterChecker::BR = &BR;
     AC = mgr.getAnalysisDeclContext(D);
 
-    bugRepo.fileName = D->getASTContext().getSourceManager().getFilename(D->getLocStart()).str();
+    bugRepo.fileName = D->getASTContext().getSourceManager().getFilename(D->getBeginLoc()).str();
     bugRepo.loadBugReports(bugRepo.fileName + ".spanreport");
 
     if (const CFG *cfg = mgr.getCFG(D)) {
@@ -341,10 +342,10 @@ uint64_t SlangBugReporterChecker::getStmtLocId(const Stmt *stmt) const {
     uint64_t locId = 0;
     uint32_t line =
         SlangBugReporterChecker::D->getASTContext().getSourceManager().getExpansionLineNumber(
-            stmt->getLocStart());
+            stmt->getBeginLoc());
     uint32_t col =
         SlangBugReporterChecker::D->getASTContext().getSourceManager().getExpansionColumnNumber(
-            stmt->getLocStart());
+            stmt->getBeginLoc());
 
     locId |= line;
     locId <<= 32;
