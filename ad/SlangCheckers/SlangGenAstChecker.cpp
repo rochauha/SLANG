@@ -1971,8 +1971,9 @@ public:
             }
         } else {
             // child is a type
-            slangExpr.qualType = stmt->getArgumentType();
-            TypeInfo typeInfo = FD->getASTContext().getTypeInfo(slangExpr.qualType);
+            slangExpr.qualType = stmt->getType();
+            TypeInfo typeInfo = FD->getASTContext().getTypeInfo(
+                stmt->getArgumentType());
             size = typeInfo.Width / 8;
         }
 
