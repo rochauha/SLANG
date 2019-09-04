@@ -441,6 +441,7 @@ public:
     ss << "# Keep the following imports in effect when calling eval.\n";
     ss << "\n";
     ss << "# import span.ir.types as types\n";
+    ss << "# import span.ir.op as op\n";
     ss << "# import span.ir.expr as expr\n";
     ss << "# import span.ir.instr as instr\n";
     ss << "# import span.ir.obj as obj\n";
@@ -1194,11 +1195,11 @@ public:
 
   SlangExpr convertSwitchStmt(const SwitchStmt *switchStmt) const {
     std::string id = stu.genNextLabelCountStr();
-    std::string switchStartLabel = "SwitchStart" + id;
-    std::string switchExitLabel = "SwitchExit" + id;
-    std::string caseCondLabel = "CaseCond" + id + "-";
-    std::string caseBodyLabel = "CaseBody" + id + "-";
-    std::string defaultLabel = "Default" + id;
+    std::string switchStartLabel = id + "SwitchStart";
+    std::string switchExitLabel = id + "SwitchExit";
+    std::string caseCondLabel = id + "CaseCond" + "-";
+    std::string caseBodyLabel = id + "CaseBody" + "-";
+    std::string defaultLabel = id + "Default";
     bool defaultLabelAdded = false;
 
     stu.pushLabels(switchStartLabel, switchExitLabel);
@@ -1479,9 +1480,9 @@ public:
 
   SlangExpr convertIfStmt(const IfStmt *ifStmt) const {
     std::string id = stu.genNextLabelCountStr();
-    std::string ifTrueLabel = "IfTrue" + id;
-    std::string ifFalseLabel = "IfFalse" + id;
-    std::string ifExitLabel = "IfExit" + id;
+    std::string ifTrueLabel = id + "IfTrue";
+    std::string ifFalseLabel = id + "IfFalse";
+    std::string ifExitLabel = id + "IfExit";
 
     const Stmt *condition = ifStmt->getCond();
     SlangExpr conditionExpr = convertStmt(condition);
@@ -1510,9 +1511,9 @@ public:
 
   SlangExpr convertWhileStmt(const WhileStmt *whileStmt) const {
     std::string id = stu.genNextLabelCountStr();
-    std::string whileCondLabel = "WhileCond" + id;
-    std::string whileBodyLabel = "WhileBody" + id;
-    std::string whileExitLabel = "WhileExit" + id;
+    std::string whileCondLabel = id + "WhileCond";
+    std::string whileBodyLabel = id + "WhileBody";
+    std::string whileExitLabel = id + "WhileExit";
 
     stu.pushLabels(whileCondLabel, whileExitLabel);
 
@@ -1567,9 +1568,9 @@ public:
 
   SlangExpr convertForStmt(const ForStmt *forStmt) const {
     std::string id = stu.genNextLabelCountStr();
-    std::string forCondLabel = "ForCond" + id;
-    std::string forBodyLabel = "ForBody" + id;
-    std::string forExitLabel = "ForExit" + id;
+    std::string forCondLabel = id + "ForCond";
+    std::string forBodyLabel = id + "ForBody";
+    std::string forExitLabel = id + "ForExit";
 
     stu.pushLabels(forCondLabel, forExitLabel);
 
@@ -1608,10 +1609,35 @@ public:
     return SlangExpr{}; // return empty expression
   } // convertForStmt()
 
-  SlangExpr convertImplicitCastExpr(const ImplicitCastExpr *stmt) const {
+  SlangExpr convertImplicitCastExpr(const ImplicitCastExpr *iCast) const {
     // only one child is expected
-    auto it = stmt->child_begin();
-    return convertStmt(*it);
+    auto it = iCast->child_begin();
+    auto ck = iCast->getCastKind();
+
+    switch(ck) {
+      case CastKind::CK_FloatingToIntegral:
+      case CastKind::CK_IntegralToFloating:
+      case CastKind::CK_FunctionToPointerDecay:
+      case CastKind::CK_ArrayToPointerDecay: {
+        SlangExpr castExpr;
+        SlangExpr exprArg = convertToTmp(convertStmt(*it));
+        std::string castTypeStr = convertClangType(iCast->getType());
+
+        std::stringstream ss;
+        ss << "expr.CastE(" << exprArg.expr;
+        ss << ", op.CastOp(" << castTypeStr << ")";
+        ss << ", " << getLocationString(iCast) << ")";
+
+        castExpr.expr = ss.str();
+        castExpr.compound = true;
+        castExpr.qualType = iCast->getType();
+        castExpr.locStr = getLocationString(iCast);
+        return castExpr;
+      }
+
+      default:
+        return convertStmt(*it);
+    }
   }
 
   SlangExpr convertCharacterLiteral(const CharacterLiteral *cl) const {
@@ -1812,15 +1838,15 @@ public:
     switch(binOp->getOpcode()) {
       case BO_LOr:
         op = "||";
-        nextCheck = "NextCheckLor" + id;
-        tmpReAssign = "TmpAssignLor" + id;
-        exitLabel = "ExitLor" + id;
+        nextCheck = id + "NextCheckLor";
+        tmpReAssign = id + "TmpAssignLor";
+        exitLabel = id + "ExitLor";
         break;
       case BO_LAnd:
         op = "&&";
-        nextCheck = "NextCheckLand" + id;
-        tmpReAssign = "TmpAssignLand" + id;
-        exitLabel = "ExitLand" + id;
+        nextCheck = id + "NextCheckLand";
+        tmpReAssign = id + "TmpAssignLand";
+        exitLabel = id + "ExitLand";
         break;
       default: SLANG_ERROR("ERROR:unknownLogicalOp"); break;
     }
