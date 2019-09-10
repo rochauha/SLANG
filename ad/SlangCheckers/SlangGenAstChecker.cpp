@@ -444,7 +444,7 @@ public:
     ss << "# import span.ir.op as op\n";
     ss << "# import span.ir.expr as expr\n";
     ss << "# import span.ir.instr as instr\n";
-    ss << "# import span.ir.obj as obj\n";
+    ss << "# import span.ir.constructs as constructs\n";
     ss << "# import span.ir.tunit as tunit\n";
     ss << "# from span.ir.types import Loc\n";
     ss << "\n";
@@ -472,10 +472,10 @@ public:
   } // dumpVariables()
 
   void dumpObjs(std::stringstream &ss) {
-    ss << NBSP2 << "allObjs = {\n";
+    ss << NBSP2 << "allConstructs = {\n";
     dumpRecords(ss);
     dumpFunctions(ss);
-    ss << NBSP2 << "}, # end allObjs dict\n";
+    ss << NBSP2 << "}, # end allConstructs dict\n";
   }
 
   void dumpRecords(std::stringstream &ss) {
@@ -493,7 +493,7 @@ public:
     for (auto slangFunc : funcMap) {
       ss << NBSP4; // indent
       ss << "\"" << slangFunc.second.fullName << "\":\n";
-      ss << NBSP6 << "obj.Func(\n";
+      ss << NBSP6 << "constructs.Func(\n";
 
       // members
       ss << NBSP8 << "name = "
@@ -2024,10 +2024,10 @@ public:
   SlangExpr convertBinaryOperator(const BinaryOperator *binOp) const {
     SlangExpr slangExpr;
 
-    if (binOp->isAssignmentOp()) {
-      return convertAssignmentOp(binOp);
-    } else if (binOp->isCompoundAssignmentOp()) {
+    if (binOp->isCompoundAssignmentOp()) {
       return convertCompoundAssignmentOp(binOp);
+    } else if (binOp->isAssignmentOp()) {
+      return convertAssignmentOp(binOp);
     } else if (binOp->isLogicalOp()) {
       return convertLogicalOp(binOp);
     }
@@ -2133,24 +2133,30 @@ public:
 
     std::string op;
     switch(binOp->getOpcode()) {
-      case BO_ShlAssign: op = "BO_LSHIFT"; break;
-      case BO_ShrAssign: op = "BO_RSHIFT"; break;
+      case BO_ShlAssign: op = "op.BO_LSHIFT"; break;
+      case BO_ShrAssign: op = "op.BO_RSHIFT"; break;
 
-      case BO_OrAssign: op = "BO_BIT_OR"; break;
-      case BO_AndAssign: op = "BO_BIT_AND"; break;
-      case BO_XorAssign: op = "BO_BIT_XOR"; break;
+      case BO_OrAssign: op = "op.BO_BIT_OR"; break;
+      case BO_AndAssign: op = "op.BO_BIT_AND"; break;
+      case BO_XorAssign: op = "op.BO_BIT_XOR"; break;
 
-      case BO_AddAssign: op = "BO_ADD"; break;
-      case BO_SubAssign: op = "BO_SUB"; break;
-      case BO_MulAssign: op = "BO_MUL"; break;
-      case BO_DivAssign: op = "BO_DIV"; break;
-      case BO_RemAssign: op = "BO_MOD"; break;
+      case BO_AddAssign: op = "op.BO_ADD"; break;
+      case BO_SubAssign: op = "op.BO_SUB"; break;
+      case BO_MulAssign: op = "op.BO_MUL"; break;
+      case BO_DivAssign: op = "op.BO_DIV"; break;
+      case BO_RemAssign: op = "op.BO_MOD"; break;
 
       default: op = "ERROR:compoundAssignOp"; break;
     }
 
-    SlangExpr newRhsExpr = convertToTmp(createBinaryExpr(
-        lhsExpr, op, rhsExpr, getLocationString(binOp)));
+    SlangExpr newRhsExpr;
+    if (lhsExpr.compound) {
+      newRhsExpr = convertToTmp(createBinaryExpr(
+          lhsExpr, op, rhsExpr, getLocationString(binOp)));
+    } else {
+      newRhsExpr = createBinaryExpr(
+          lhsExpr, op, rhsExpr, getLocationString(binOp));
+    }
 
     addAssignInstr(lhsExpr, newRhsExpr, getLocationString(binOp));
 
