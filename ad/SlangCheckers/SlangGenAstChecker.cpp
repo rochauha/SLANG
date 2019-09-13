@@ -1617,7 +1617,7 @@ public:
     switch(ck) {
       case CastKind::CK_FloatingToIntegral:
       case CastKind::CK_IntegralToFloating:
-      case CastKind::CK_FunctionToPointerDecay:
+      //case CastKind::CK_FunctionToPointerDecay:
       case CastKind::CK_ArrayToPointerDecay: {
         SlangExpr castExpr;
         SlangExpr exprArg = convertToTmp(convertStmt(*it));
