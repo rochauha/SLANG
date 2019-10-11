@@ -1452,7 +1452,11 @@ public:
     SlangExpr retExpr = convertToTmp(convertStmt(retVal));
 
     std::stringstream ss;
-    ss << "instr.ReturnI(" << retExpr.expr << ")";
+    if (retExpr.expr.size() == 0) {
+      retExpr.expr = "None";
+    }
+    ss << "instr.ReturnI(" << retExpr.expr;
+    ss << ", " << getLocationString(returnStmt) << ")";
     stu.addStmt(ss.str());
 
     return SlangExpr{};
@@ -1954,6 +1958,7 @@ public:
     switch (unOp->getOpcode()) {
       default:
         SLANG_DEBUG("convertUnaryOp: " << unOp->getOpcodeStr(unOp->getOpcode()))
+        unOp->dump();
         break;
       case UO_AddrOf: op = "op.UO_ADDROF"; break;
       case UO_Deref: op = "op.UO_DEREF"; break;
@@ -1961,6 +1966,12 @@ public:
       case UO_Plus: op = "op.UO_MINUS"; break;
       case UO_LNot: op = "op.UO_LNOT"; break;
       case UO_Not: op = "op.UO_BIT_NOT"; break;
+      case UO_Extension:
+        exprArg.expr = "expr.LitE(0," + getLocationString(unOp) + ")";
+        exprArg.qualType = unOp->getType();
+        exprArg.locStr = getLocationString(unOp);
+        exprArg.compound = false;
+        return exprArg; // don't handle __extension__ expressions
     }
 
     return createUnaryExpr(op, exprArg, getLocationString(unOp), unOp->getType());
